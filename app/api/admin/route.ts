@@ -13,16 +13,20 @@ const hashPassword = (password: string) => {
   return createHash("sha256").update(password).digest("hex");
 };
 
-// Config IO helpers
-const getAdminConfig = () => {
+// Config IO helpers (Async using DB)
+const getAdminConfig = async () => {
   try {
-    if (fs.existsSync(CONFIG_PATH)) {
-      const content = fs.readFileSync(CONFIG_PATH, "utf-8");
-      return JSON.parse(content);
+    const config = await prisma.adminConfig.findUnique({
+      where: { id: "admin" }
+    });
+    
+    if (config) {
+      return config;
     }
   } catch (err) {
-    console.error("Error reading admin config", err);
+    console.error("Error reading admin config from DB", err);
   }
+  
   // Safe defaults (nithin123 hashed)
   return {
     username: "Nithin",
@@ -30,12 +34,23 @@ const getAdminConfig = () => {
   };
 };
 
-const saveAdminConfig = (config: any) => {
+const saveAdminConfig = async (config: any) => {
   try {
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), "utf-8");
+    await prisma.adminConfig.upsert({
+      where: { id: "admin" },
+      update: {
+        username: config.username,
+        passwordHash: config.passwordHash,
+      },
+      create: {
+        id: "admin",
+        username: config.username,
+        passwordHash: config.passwordHash,
+      }
+    });
     return true;
   } catch (err) {
-    console.error("Error writing admin config", err);
+    console.error("Error writing admin config to DB", err);
     return false;
   }
 };
@@ -54,7 +69,7 @@ const verifySession = async () => {
     const token = cookieStore.get("admin_session")?.value;
     if (!token) return false;
 
-    const config = getAdminConfig();
+    const config = await getAdminConfig();
     const expectedToken = generateSessionToken(config.username, config.passwordHash);
     return token === expectedToken;
   } catch (err) {
@@ -244,7 +259,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { action } = body;
 
-    const config = getAdminConfig();
+    const config = await getAdminConfig();
 
     // ACTION: LOGIN
     if (action === "login") {
@@ -304,7 +319,7 @@ export async function POST(req: NextRequest) {
 
       // Update config credentials
       config.passwordHash = hashPassword(newPassword);
-      const isSaved = saveAdminConfig(config);
+      const isSaved = await saveAdminConfig(config);
 
       if (!isSaved) {
         return NextResponse.json({ error: "Failed to write updates" }, { status: 500 });
