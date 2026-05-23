@@ -266,9 +266,9 @@ export default function LandingPage() {
           </p>
         </motion.div>
 
-        {/* 3 Horizontally Aligned Cards */}
+        {/* 3 Horizontally Aligned Cards - Redesigned to be stunning & ultra-premium */}
         <motion.div 
-          className="grid md:grid-cols-3 gap-8 mb-16 relative z-10"
+          className="grid md:grid-cols-3 gap-8 mb-16 relative z-10 items-stretch"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
@@ -276,116 +276,132 @@ export default function LandingPage() {
         >
           {/* Card 1: Generic Resume */}
           <motion.div 
-            className="bg-surface border border-border/50 rounded-2xl p-6 md:p-8 flex flex-col justify-between transition-all duration-300 hover:border-error/30 hover:shadow-xs group"
+            className="bg-gradient-to-b from-[#ffffff] to-[#fff8f8] border border-error/15 rounded-3xl p-8 md:p-10 flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-300 hover:border-error/30 hover:shadow-xs group relative overflow-hidden"
             variants={cardVariants}
-            whileHover={{ y: -4 }}
+            whileHover={{ y: -6 }}
           >
+            {/* Subtle top decoration */}
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-error/20" />
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-lg text-text">Generic Resume</h3>
-                <span className="p-2 rounded-lg bg-error/5 text-error">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <span className="text-[10px] font-bold text-error uppercase tracking-widest block mb-1">Standard Way</span>
+                  <h3 className="font-serif tracking-tight text-text text-xl md:text-2xl">Generic Resume</h3>
+                </div>
+                <div className="p-3 rounded-2xl bg-error/5 text-error shadow-inner">
                   <XCircle className="w-5 h-5" />
-                </span>
+                </div>
               </div>
-              <ul className="space-y-3 text-sm text-text-muted mb-8">
-                <li className="flex items-start space-x-2">
-                  <span className="text-error/70 mt-1">•</span>
+              <ul className="space-y-4 text-sm text-text-muted mb-10 leading-relaxed">
+                <li className="flex items-start space-x-3">
+                  <span className="text-error/70 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
                   <span>Lists technologies without context</span>
                 </li>
-                <li className="flex items-start space-x-2">
-                  <span className="text-error/70 mt-1">•</span>
+                <li className="flex items-start space-x-3">
+                  <span className="text-error/70 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
                   <span>Weak project explanations</span>
                 </li>
-                <li className="flex items-start space-x-2">
-                  <span className="text-error/70 mt-1">•</span>
+                <li className="flex items-start space-x-3">
+                  <span className="text-error/70 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
                   <span>No measurable outcomes</span>
                 </li>
-                <li className="flex items-start space-x-2">
-                  <span className="text-error/70 mt-1">•</span>
+                <li className="flex items-start space-x-3">
+                  <span className="text-error/70 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
                   <span>Looks identical to thousands of resumes</span>
                 </li>
               </ul>
             </div>
-            <div className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-error/5 border border-error/10 text-xs font-bold text-error tracking-wide uppercase">
+            <div className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-error/[0.04] border border-error/10 text-[10px] font-bold text-error tracking-wider uppercase font-mono">
               ATS Visibility: 41%
             </div>
           </motion.div>
 
           {/* Card 2: Recruiter Reality */}
           <motion.div 
-            className="bg-surface border border-border/50 rounded-2xl p-6 md:p-8 flex flex-col justify-between transition-all duration-300 hover:border-border hover:shadow-xs group"
+            className="bg-gradient-to-b from-[#ffffff] to-[#fbfbfa] border border-border/40 rounded-3xl p-8 md:p-10 flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-300 hover:border-border hover:shadow-xs group relative overflow-hidden"
             variants={cardVariants}
-            whileHover={{ y: -4 }}
+            whileHover={{ y: -6 }}
           >
+            {/* Subtle top decoration */}
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-border/20" />
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-lg text-text">Recruiter Reality</h3>
-                <span className="p-2 rounded-lg bg-text/5 text-text-muted">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1">Recruiter Lens</span>
+                  <h3 className="font-serif tracking-tight text-text text-xl md:text-2xl">Recruiter Reality</h3>
+                </div>
+                <div className="p-3 rounded-2xl bg-text/5 text-text-muted shadow-inner">
                   <Eye className="w-5 h-5" />
-                </span>
+                </div>
               </div>
-              <ul className="space-y-3 text-sm text-text-muted mb-8">
-                <li className="flex items-start space-x-2">
-                  <span className="text-text-muted/70 mt-1">•</span>
+              <ul className="space-y-4 text-sm text-text-muted mb-10 leading-relaxed">
+                <li className="flex items-start space-x-3">
+                  <span className="text-text-muted/60 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
                   <span>Recruiters scan resumes in seconds</span>
                 </li>
-                <li className="flex items-start space-x-2">
-                  <span className="text-text-muted/70 mt-1">•</span>
+                <li className="flex items-start space-x-3">
+                  <span className="text-text-muted/60 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
                   <span>ATS filters missing keywords</span>
                 </li>
-                <li className="flex items-start space-x-2">
-                  <span className="text-text-muted/70 mt-1">•</span>
+                <li className="flex items-start space-x-3">
+                  <span className="text-text-muted/60 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
                   <span>Projects matter more than certificates</span>
                 </li>
-                <li className="flex items-start space-x-2">
-                  <span className="text-text-muted/70 mt-1">•</span>
+                <li className="flex items-start space-x-3">
+                  <span className="text-text-muted/60 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
                   <span>Generic bullets get ignored instantly</span>
                 </li>
               </ul>
             </div>
-            <div className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-text-muted/10 border border-border text-xs font-bold text-text-muted tracking-wide uppercase">
+            <div className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-text-muted/5 border border-border/80 text-[10px] font-bold text-text-muted tracking-wider uppercase font-mono">
               Average Scan Time: 6 Seconds
             </div>
           </motion.div>
 
-          {/* Card 3: ResumeForge Resume */}
+          {/* Card 3: ResumeForge Resume (The Masterpiece) */}
           <motion.div 
-            className="bg-surface border-2 border-primary rounded-2xl p-6 md:p-8 flex flex-col justify-between shadow-xs glow-primary relative md:-translate-y-2 transition-all duration-300 hover:shadow-md hover:border-primary group"
+            className="bg-gradient-to-b from-[#ffffff] to-primary/[0.015] border-2 border-primary rounded-3xl p-8 md:p-10 flex flex-col justify-between shadow-[0_16px_40px_rgba(1,105,111,0.06)] relative transition-all duration-300 group"
             variants={cardVariants}
-            whileHover={{ y: -8 }}
+            whileHover={{ y: -12, scale: 1.02 }}
           >
-            {/* Spotlight badge */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold tracking-wider px-3 py-1 rounded-full uppercase shadow-sm">
+            {/* Top capsule decoration */}
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-extrabold tracking-widest px-4 py-1 rounded-full uppercase shadow-md border border-white/20 whitespace-nowrap">
               Recommended Choice
             </div>
             <div>
-              <div className="flex items-center justify-between mb-4 mt-1">
-                <h3 className="font-bold text-lg text-text">ResumeForge Resume</h3>
-                <span className="p-2 rounded-lg bg-primary/10 text-primary animate-pulse">
-                  <TrendingUp className="w-5 h-5" />
-                </span>
+              <div className="flex items-center justify-between mb-8 mt-1">
+                <div>
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1">Engineered Output</span>
+                  <h3 className="font-bold text-xl md:text-2xl text-text">
+                    Resume<span className="text-primary font-serif italic font-medium">Forge</span>
+                  </h3>
+                </div>
+                <div className="p-3 rounded-2xl bg-primary/10 text-primary shadow-inner">
+                  <TrendingUp className="w-5 h-5 animate-pulse" />
+                </div>
               </div>
-              <ul className="space-y-3 text-sm text-text mb-8 font-medium">
-                <li className="flex items-start space-x-2">
-                  <span className="text-primary mt-1">•</span>
+              <ul className="space-y-4 text-sm text-text mb-10 leading-relaxed font-medium">
+                <li className="flex items-start space-x-3">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <span>Converts projects into technical impact</span>
                 </li>
-                <li className="flex items-start space-x-2">
-                  <span className="text-primary mt-1">•</span>
+                <li className="flex items-start space-x-3">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <span>Creates recruiter-readable bullets</span>
                 </li>
-                <li className="flex items-start space-x-2">
-                  <span className="text-primary mt-1">•</span>
+                <li className="flex items-start space-x-3">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <span>ATS-safe formatting structure</span>
                 </li>
-                <li className="flex items-start space-x-2">
-                  <span className="text-primary mt-1">•</span>
+                <li className="flex items-start space-x-3">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <span>Optimized for engineering placements</span>
                 </li>
               </ul>
             </div>
-            <div className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-bold tracking-wide uppercase shadow-xs transition-colors group-hover:bg-primary/95">
-              Interview Probability ↑
+            <div className="w-full inline-flex items-center justify-center px-4 py-3 rounded-2xl bg-primary hover:bg-primary/95 text-white text-xs font-bold tracking-widest uppercase shadow-sm transition-all duration-300 group-hover:shadow-md cursor-pointer flex items-center justify-center space-x-1.5">
+              <span>Interview Probability</span>
+              <TrendingUp className="w-4 h-4" />
             </div>
           </motion.div>
         </motion.div>

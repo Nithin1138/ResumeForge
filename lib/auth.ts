@@ -135,6 +135,10 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      console.log("signIn callback:", { user, account, email });
+      return true;
+    },
     async session({ session, token }) {
       if (session.user && token.sub) {
         // Expose the internal user ID so our dashboard components can query Prisma properly
