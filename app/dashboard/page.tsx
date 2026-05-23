@@ -1,85 +1,46 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, LogOut, Layout } from "lucide-react";
-import { getLocalSession } from "@/lib/authClient";
+import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, Layout } from "lucide-react";
+import { LogoutButton, DeleteButton } from "@/components/DashboardActions";
 
-export default function DashboardPage() {
-  const router = useRouter();
-  const [resumes, setResumes] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [session, setSession] = useState<any>(null);
-  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+export default async function DashboardPage() {
+  const session = await getServerSession(authOptions);
 
-  useEffect(() => {
-    // Check local session cookie
-    const activeSession = getLocalSession();
-    if (!activeSession) {
-      router.push("/login");
-      return;
-    }
-    setSession(activeSession);
-
-    const loadResumes = async () => {
-      try {
-        const res = await fetch("/api/user/resumes");
-        if (res.status === 401) {
-          router.push("/login");
-          return;
-        }
-        const data = await res.json();
-        setResumes(data.resumes || []);
-      } catch (error) {
-        console.error("Failed to load dashboard resumes:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadResumes();
-  }, [router]);
-
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth", { method: "DELETE" });
-      router.push("/");
-      router.refresh();
-    } catch (err) {
-      console.error("Logout failed:", err);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    setIsDeleting(id);
-    try {
-      const res = await fetch(`/api/resume/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        setResumes((prev) => prev.filter((r) => r.id !== id));
-      }
-    } catch (error) {
-      console.error("Delete failed:", error);
-    } finally {
-      setIsDeleting(null);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-base text-text flex flex-col items-center justify-center font-sans">
-        <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
-        <p className="text-sm font-semibold text-text-muted">Loading your placement workspace...</p>
-      </div>
-    );
+  if (!session?.user?.email) {
+    redirect("/login");
   }
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: {
+      resumes: {
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const resumes = user.resumes;
 
   // Calculate quick stats
   const totalBuilt = resumes.length;
   const totalPaid = resumes.filter((r) => r.paymentStatus === "PAID").length;
   const avgScore = totalBuilt
-    ? Math.round(resumes.reduce((acc, curr) => acc + curr.atsScore, 0) / totalBuilt)
+    ? Math.round(resumes.reduce((acc, curr) => {
+        let score = 85;
+        try {
+          if (curr.outputFull) {
+            score = JSON.parse(curr.outputFull).atsScore || 85;
+          }
+        } catch {}
+        return acc + score;
+      }, 0) / totalBuilt)
     : 0;
 
   return (
@@ -96,17 +57,18 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <div className="text-xs font-bold text-text hidden sm:flex items-center space-x-1">
-            <span>👋 Hello,</span>
-            <span className="text-primary font-bold">{session?.name || "Student"}</span>
+          <div className="hidden md:block text-right">
+            <div className="text-sm font-bold text-text">{user.name || session.user.email?.split("@")[0]}</div>
+            <div className="text-[10px] text-text-muted font-semibold">{session.user.email}</div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="p-2 border border-border hover:bg-error/10 hover:text-error text-text-muted rounded-full transition-colors cursor-pointer"
-            title="Log Out"
-          >
-            <LogOut className="w-4.5 h-4.5" />
-          </button>
+          <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-sm tracking-widest overflow-hidden">
+            {session.user.image ? (
+              <img src={session.user.image} alt={user.name || "User"} className="w-full h-full object-cover" />
+            ) : (
+              (user.name || session.user.email || "U").charAt(0).toUpperCase()
+            )}
+          </div>
+          <LogoutButton />
         </div>
       </header>
 
@@ -135,7 +97,6 @@ export default function DashboardPage() {
 
         {/* Quick Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {/* Stat 1 */}
           <div className="bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Resumes Formatted</span>
@@ -146,7 +107,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Stat 2 */}
           <div className="bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Unlocked Portals</span>
@@ -177,7 +137,9 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {resumes.map((resumeItem) => {
                 const isPaid = resumeItem.paymentStatus === "PAID";
-                const isGood = resumeItem.atsScore >= 80;
+                let atsScore = 85;
+                try { if (resumeItem.outputFull) { atsScore = JSON.parse(resumeItem.outputFull).atsScore || 85; } } catch {}
+                const isGood = atsScore >= 80;
                 
                 // Color-coded ATS scores
                 const scoreColor = isGood 
@@ -198,7 +160,7 @@ export default function DashboardPage() {
                         </span>
                         
                         <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-md border tracking-wider uppercase ${scoreColor}`}>
-                          ATS: {resumeItem.atsScore}/100
+                          ATS: {atsScore}/100
                         </span>
                       </div>
 
@@ -216,18 +178,7 @@ export default function DashboardPage() {
 
                     {/* Bottom Row: Actions */}
                     <div className="flex items-center justify-between border-t border-border/30 mt-6 pt-4 gap-4">
-                      <button
-                        onClick={() => handleDelete(resumeItem.id)}
-                        disabled={isDeleting === resumeItem.id}
-                        className="p-2.5 text-text-muted hover:text-error border border-border bg-bg-base/30 rounded-full transition-colors cursor-pointer"
-                        title="Delete Resume"
-                      >
-                        {isDeleting === resumeItem.id ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
-                      </button>
+                      <DeleteButton id={resumeItem.id} />
 
                       <Link
                         href={isPaid ? `/success/${resumeItem.id}?sandbox=true` : `/result/${resumeItem.id}`}

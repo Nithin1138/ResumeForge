@@ -1,30 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSessionUser } from "@/lib/auth";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   try {
-    const userSession = await getSessionUser(req);
-    if (!userSession) {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.email) {
       return NextResponse.json({ error: "Unauthorized access: Please sign in." }, { status: 401 });
     }
+    
+    // We get the user ID from the session or email
+    const userId = (session.user as any).id;
 
     // Intelligent query: Fetch by active userId OR find guest resumes matched to candidate email
     const resumes = await prisma.resume.findMany({
       where: {
         OR: [
-          { userId: userSession.userId },
+          userId ? { userId } : {},
           {
             inputData: {
-              contains: `"email":"${userSession.email}"`,
+              contains: `"email":"${session.user.email}"`,
             },
           },
-        ],
+        ].filter(Boolean) as any,
       },
       orderBy: { createdAt: "desc" },
     });
 
-    const parsedResumes = resumes.map((resume) => {
+    const parsedResumes = resumes.map((resume: any) => {
       let atsScore = 85;
       try {
         if (resume.outputFull) {

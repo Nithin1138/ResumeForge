@@ -100,7 +100,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   };
 
   return (
-    <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans pb-32">
+    <div className="h-screen overflow-hidden bg-bg-base text-text flex flex-col font-sans">
       {/* Navbar */}
       <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
@@ -125,28 +125,26 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
         </div>
       </header>
 
-      {/* Main Container — 2 column on desktop */}
-      <main className="max-w-6xl mx-auto w-full px-4 md:px-6 pt-8 pb-36 flex flex-col lg:flex-row gap-6 items-start relative">
+      {/* Main Container — fills remaining height, 2 columns */}
+      <main className="flex-1 overflow-hidden flex flex-col lg:flex-row">
 
-        {/* ── LEFT: Sticky Resume Preview Panel (Locked) ── */}
-        <div className="w-full lg:w-[42%] lg:sticky lg:top-6 flex-shrink-0" style={{ height: "calc(100vh - 120px)" }}>
-          <div className="flex flex-col h-full">
-            {/* Panel header */}
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-warning bg-warning/10 border border-warning/25 px-2.5 py-1 rounded-full">
-                <Lock className="w-3 h-3" /> Locked
-              </span>
-            </div>
-            {/* Preview panel — fills remaining height */}
-            <div className="flex-1 overflow-hidden">
-              <ResumePreviewPanel resume={resume} output={output} locked={true} />
-            </div>
+        {/* ── LEFT: Fixed-height Locked Resume Preview (never scrolls) ── */}
+        <div className="w-full lg:w-[42%] flex-shrink-0 flex flex-col p-5 pb-4 border-r border-border/40 overflow-hidden">
+          {/* Panel header */}
+          <div className="flex items-center justify-between mb-3 flex-shrink-0">
+            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-warning bg-warning/10 border border-warning/25 px-2.5 py-1 rounded-full">
+              <Lock className="w-3 h-3" /> Locked
+            </span>
+          </div>
+          {/* Preview panel — fills remaining height */}
+          <div className="flex-1 overflow-hidden min-h-0">
+            <ResumePreviewPanel resume={resume} output={output} locked={true} />
           </div>
         </div>
 
-        {/* ── RIGHT: Scrollable Content Cards ── */}
-        <div className="w-full lg:flex-1 grid grid-cols-1 gap-6">
+        {/* ── RIGHT: Only this column scrolls ── */}
+        <div className="flex-1 overflow-y-auto p-5 md:p-8 pb-36 flex flex-col gap-6">
         {/* ATS Score Header Card */}
         <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:justify-between gap-6 shadow-xs">
           <div className="text-center md:text-left space-y-2 max-w-md">

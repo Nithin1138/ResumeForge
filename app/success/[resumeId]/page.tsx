@@ -88,6 +88,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [regenerationsCount, setRegenerationsCount] = useState(1);
   const [session, setSession] = useState<any>(null);
+  const [liveResume, setLiveResume] = useState<any>(null);
   
   // Custom regeneration states
   const [customTone, setCustomTone] = useState<string>("Professional & Formal");
@@ -150,6 +151,9 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
         }
         
         setResume(data);
+        if (data.paymentStatus === "PAID" && data.outputFull) {
+          setLiveResume(data.outputFull);
+        }
         
         // Launch confetti if successfully paid
         if (data.paymentStatus === "PAID") {
@@ -292,7 +296,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
     );
   }
 
-  const output: FullResumeOutput = resume.outputFull;
+  const output: FullResumeOutput = liveResume || resume.outputFull;
   
   // Format the full plain-text version ready for clean Copy All operations
   const fullPlainTextContent = `
@@ -336,7 +340,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
   `.trim();
 
   return (
-    <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans pb-24 print:bg-white print:text-black">
+    <div className="h-screen overflow-hidden bg-bg-base text-text flex flex-col font-sans print:h-auto print:overflow-visible print:bg-white print:text-black">
       {/* Navbar (hidden during print) */}
       <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between print:hidden">
         <div className="flex items-center space-x-2">
@@ -361,37 +365,37 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
         </div>
       </header>
 
-      {/* 2-column layout ─ left: live preview | right: content cards */}
-      <main className="max-w-7xl mx-auto w-full px-4 md:px-6 pt-8 pb-24 flex flex-col lg:flex-row gap-6 items-start print:p-0 print:m-0 print:max-w-none print:block">
+      {/* 2-column layout — fills remaining viewport height */}
+      <main className="flex-1 overflow-hidden flex flex-col lg:flex-row print:block print:overflow-visible print:h-auto">
 
-        {/* ── LEFT: Sticky Unlocked Resume Preview ── */}
-        <div className="w-full lg:w-[40%] lg:sticky lg:top-6 flex-shrink-0 print:hidden" style={{ height: "calc(100vh - 110px)" }}>
-          <div className="flex flex-col h-full">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-success bg-success/10 border border-success/25 px-2.5 py-1 rounded-full">
-                  <CheckCircle2 className="w-3 h-3" /> Unlocked
-                </span>
-                <button
-                  onClick={triggerBrowserPrint}
-                  className="inline-flex items-center gap-1.5 text-[10px] font-bold text-primary bg-primary/10 border border-primary/25 px-2.5 py-1 rounded-full hover:bg-primary/15 transition-colors cursor-pointer"
-                >
-                  <Printer className="w-3 h-3" /> Save PDF
-                </button>
-              </div>
+        {/* ── LEFT: Fixed-height Resume Preview (never scrolls) ── */}
+        <div className="w-full lg:w-[42%] flex-shrink-0 flex flex-col p-5 pb-4 border-r border-border/40 print:hidden overflow-hidden">
+          {/* Panel header */}
+          <div className="flex items-center justify-between mb-3 flex-shrink-0">
+            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-success bg-success/10 border border-success/25 px-2.5 py-1 rounded-full">
+                <CheckCircle2 className="w-3 h-3" /> Unlocked
+              </span>
+              <button
+                onClick={triggerBrowserPrint}
+                className="inline-flex items-center gap-1.5 text-[10px] font-bold text-primary bg-primary/10 border border-primary/25 px-2.5 py-1 rounded-full hover:bg-primary/15 transition-colors cursor-pointer"
+              >
+                <Printer className="w-3 h-3" /> Save PDF
+              </button>
             </div>
-            <div className="flex-1 overflow-hidden">
-              <ResumePreviewPanel resume={resume} output={output} locked={false} />
-            </div>
+          </div>
+          {/* Preview fills all remaining height */}
+          <div className="flex-1 overflow-hidden min-h-0">
+            <ResumePreviewPanel resume={resume} output={output} locked={false} />
           </div>
         </div>
 
-        {/* ── RIGHT: Scrollable Content Cards ── */}
-        <div className="w-full lg:flex-1 flex flex-col gap-8 print:p-0 print:m-0 print:max-w-none">
+        {/* ── RIGHT: Only this column scrolls ── */}
+        <div className="flex-1 overflow-y-auto p-5 md:p-8 flex flex-col gap-8 print:p-0 print:m-0 print:overflow-visible">
 
-          {/* Page title (right col only) */}
-          <div className="text-center print:hidden space-y-2 pt-2">
+          {/* Page title */}
+          <div className="text-center print:hidden space-y-2 pt-1">
             <h1 className="text-2xl md:text-3xl font-serif tracking-tight">🎉 Your Resume Content is Ready!</h1>
             <p className="text-xs text-text-muted max-w-lg mx-auto leading-relaxed font-medium">
               Copy-paste bullet points directly into your resume template.
@@ -458,7 +462,14 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
               <span>{copiedStates["summary"] ? "Copied!" : "Copy Section"}</span>
             </button>
           </div>
-          <p className="text-sm font-medium leading-relaxed">{output.summary}</p>
+          <p 
+            className="text-sm font-medium leading-relaxed outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded p-1.5 -m-1.5 transition-all"
+            contentEditable 
+            suppressContentEditableWarning 
+            onBlur={(e) => setLiveResume((prev: any) => ({ ...prev, summary: e.target.textContent || "" }))}
+          >
+            {output.summary}
+          </p>
         </div>
 
         {/* Section: Skills Badges Card */}
@@ -520,7 +531,20 @@ Concepts: ${output.skills.concepts.join(", ")}
                 <div className="flex justify-between items-center mb-4 border-b border-border/30 pb-2">
                   <div className="text-left">
                     <span className="text-[9px] font-bold text-primary tracking-wider uppercase block">Project #{idx + 1}</span>
-                    <h4 className="font-bold text-base text-text">{proj.title}</h4>
+                    <h4 
+                      className="font-bold text-base text-text outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1"
+                      contentEditable 
+                      suppressContentEditableWarning
+                      onBlur={(e) => {
+                        setLiveResume((prev: any) => {
+                          const next = JSON.parse(JSON.stringify(prev));
+                          next.projects[idx].title = e.target.textContent || "";
+                          return next;
+                        });
+                      }}
+                    >
+                      {proj.title}
+                    </h4>
                   </div>
                   <button
                     onClick={() => copyToClipboard(projText, blockId)}
@@ -544,8 +568,22 @@ Concepts: ${output.skills.concepts.join(", ")}
                   </div>
 
                   <ul className="list-disc pl-5 space-y-2 text-sm font-medium leading-relaxed">
-                    {proj.bullets.map((bulletText, bIdx) => (
-                      <li key={bIdx}>{bulletText}</li>
+                    {proj.bullets.map((bulletText: string, bIdx: number) => (
+                      <li 
+                        key={bIdx}
+                        className="outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => {
+                          setLiveResume((prev: any) => {
+                            const next = JSON.parse(JSON.stringify(prev));
+                            next.projects[idx].bullets[bIdx] = e.target.textContent || "";
+                            return next;
+                          });
+                        }}
+                      >
+                        {bulletText}
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -570,7 +608,20 @@ Concepts: ${output.skills.concepts.join(", ")}
                   <div className="flex justify-between items-center mb-4 border-b border-border/30 pb-2">
                     <div className="text-left">
                       <span className="text-[9px] font-bold text-primary tracking-wider uppercase block">{exp.duration}</span>
-                      <h4 className="font-bold text-base text-text">{exp.company}</h4>
+                      <h4 
+                        className="font-bold text-base text-text outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1"
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => {
+                          setLiveResume((prev: any) => {
+                            const next = JSON.parse(JSON.stringify(prev));
+                            next.experience[idx].company = e.target.textContent || "";
+                            return next;
+                          });
+                        }}
+                      >
+                        {exp.company}
+                      </h4>
                     </div>
                     <button
                       onClick={() => copyToClipboard(expText, blockId)}
@@ -582,10 +633,37 @@ Concepts: ${output.skills.concepts.join(", ")}
                   </div>
 
                   <div className="space-y-3">
-                    <div className="text-[10px] font-bold text-primary uppercase">{exp.role}</div>
+                    <div 
+                      className="text-[10px] font-bold text-primary uppercase outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1 inline-block"
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) => {
+                        setLiveResume((prev: any) => {
+                          const next = JSON.parse(JSON.stringify(prev));
+                          next.experience[idx].role = e.target.textContent || "";
+                          return next;
+                        });
+                      }}
+                    >
+                      {exp.role}
+                    </div>
                     <ul className="list-disc pl-5 space-y-2 text-sm font-medium leading-relaxed">
-                      {exp.bullets.map((bulletText, bIdx) => (
-                        <li key={bIdx}>{bulletText}</li>
+                      {exp.bullets.map((bulletText: string, bIdx: number) => (
+                        <li 
+                          key={bIdx}
+                          className="outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => {
+                            setLiveResume((prev: any) => {
+                              const next = JSON.parse(JSON.stringify(prev));
+                              next.experience[idx].bullets[bIdx] = e.target.textContent || "";
+                              return next;
+                            });
+                          }}
+                        >
+                          {bulletText}
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -605,10 +683,36 @@ Concepts: ${output.skills.concepts.join(", ")}
                   {output.positions.map((pos, idx) => (
                     <div key={idx} className="space-y-1">
                       <div className="flex justify-between items-baseline">
-                        <span className="text-xs font-bold">{pos.title}</span>
+                        <span 
+                          className="text-xs font-bold outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1"
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => {
+                            setLiveResume((prev: any) => {
+                              const next = JSON.parse(JSON.stringify(prev));
+                              next.positions[idx].title = e.target.textContent || "";
+                              return next;
+                            });
+                          }}
+                        >
+                          {pos.title}
+                        </span>
                         <span className="text-[9px] font-bold text-text-muted">{pos.organization}</span>
                       </div>
-                      <p className="text-xs text-text-muted leading-relaxed font-medium">{pos.bullet}</p>
+                      <p 
+                        className="text-xs text-text-muted leading-relaxed font-medium outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1"
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => {
+                          setLiveResume((prev: any) => {
+                            const next = JSON.parse(JSON.stringify(prev));
+                            next.positions[idx].bullet = e.target.textContent || "";
+                            return next;
+                          });
+                        }}
+                      >
+                        {pos.bullet}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -619,8 +723,22 @@ Concepts: ${output.skills.concepts.join(", ")}
               <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs">
                 <h3 className="text-xs font-bold text-primary tracking-wider uppercase border-b border-border/40 pb-2 mb-4">Key Achievements</h3>
                 <ul className="list-disc pl-4 space-y-2 text-xs font-medium leading-relaxed text-text-muted">
-                  {output.achievements.map((ach, idx) => (
-                    <li key={idx}>{ach}</li>
+                  {output.achievements.map((ach: string, idx: number) => (
+                    <li 
+                      key={idx}
+                      className="outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) => {
+                        setLiveResume((prev: any) => {
+                          const next = JSON.parse(JSON.stringify(prev));
+                          next.achievements[idx] = e.target.textContent || "";
+                          return next;
+                        });
+                      }}
+                    >
+                      {ach}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -963,7 +1081,10 @@ Concepts: ${output.skills.concepts.join(", ")}
             </div>
           )}
         </div>
+        {/* end printable block */}
+
         </div>
+        {/* end right scrollable column */}
 
       </main>
     </div>
