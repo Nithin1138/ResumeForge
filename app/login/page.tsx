@@ -70,9 +70,19 @@ function LoginContent() {
         if (!registerRes.ok) {
           throw new Error(registerData.message || "Failed to register.");
         }
+        
+        // After successful registration, trigger the activation email via NextAuth
+        const emailSignInRes = await signIn("email", { email, redirect: false });
+        if (emailSignInRes?.error) {
+          throw new Error("Account created, but failed to send activation email.");
+        }
+        
+        setIsVerifyRequest(true);
+        setIsLoading(false);
+        return;
       }
 
-      // Now log them in (works for both sign up and sign in)
+      // Sign In Flow
       const res = await signIn("credentials", { 
         email, 
         password, 

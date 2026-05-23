@@ -19,23 +19,8 @@ export async function POST(req: Request) {
     });
 
     if (existingUser) {
-      // If user exists but has no password (e.g. they signed up with Google/Magic Link before)
-      if (!existingUser.password) {
-         // We can allow them to set a password by updating the user. 
-         // But for a simple flow, we might just say email in use.
-         // Let's just update them with the password to allow them to add credentials.
-         const hashedPassword = await bcrypt.hash(password, 10);
-         await prisma.user.update({
-            where: { email },
-            data: { password: hashedPassword }
-         });
-         return NextResponse.json(
-          { message: "Password added to existing account", userId: existingUser.id },
-          { status: 201 }
-        );
-      }
       return NextResponse.json(
-        { message: "User with this email already exists" },
+        { message: "Account already exists, please login" },
         { status: 409 }
       );
     }

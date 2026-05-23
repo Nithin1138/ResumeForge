@@ -26,8 +26,16 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email }
         });
         
-        if (!user || !user.password) {
-          throw new Error("Invalid email or password");
+        if (!user) {
+          throw new Error("No account found, please sign up");
+        }
+        
+        if (!user.password) {
+          throw new Error("Please sign in with Google or Magic Link");
+        }
+
+        if (!user.emailVerified) {
+          throw new Error("Please verify your email first. Use the sign up flow or magic link to receive an activation email.");
         }
         
         const isValid = await bcrypt.compare(credentials.password, user.password);
