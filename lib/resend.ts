@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { createTransport } from "nodemailer";
 
 const getResendClient = () => {
   const apiKey = process.env.RESEND_API_KEY;
@@ -15,7 +16,6 @@ export async function sendResumeEmail(
   resumeId: string,
   plainTextResume: string
 ): Promise<boolean> {
-  const resend = getResendClient();
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const successUrl = `${appUrl}/success/${resumeId}?sandbox=true`;
 
@@ -54,23 +54,55 @@ ${plainTextResume}
     </div>
   `;
 
+  const emailText = `Hi ${customerName},\n\nYour resume content is ready. Access it directly here: ${successUrl}\n\nPlain-Text Content:\n\n${plainTextResume}`;
+  const fromEmail = process.env.FROM_EMAIL || "ResumeForge <noreply@resumeforge.in>";
+
   try {
+    // Check if SMTP is configured (Gmail/Free SMTP)
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = process.env.SMTP_PORT;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASSWORD;
+
+    if (smtpHost && smtpUser && smtpPass) {
+      const transport = createTransport({
+        host: smtpHost,
+        port: Number(smtpPort) || 465,
+        secure: Number(smtpPort) === 465,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
+        },
+      });
+
+      await transport.sendMail({
+        from: fromEmail,
+        to: toEmail,
+        subject: emailSubject,
+        html: emailHtml,
+        text: emailText,
+      });
+      return true;
+    }
+
+    // Fallback to Resend Client
+    const resend = getResendClient();
     if (!resend) {
       console.log(`[Email Simulation] To: ${toEmail}\nSubject: ${emailSubject}\nUnlocked View URL: ${successUrl}\n--- Content ---\n${plainTextResume.substring(0, 300)}...\n--- End ---`);
       return true;
     }
 
     const result = await resend.emails.send({
-      from: process.env.FROM_EMAIL || "ResumeForge <noreply@resumeforge.in>",
+      from: fromEmail,
       to: toEmail,
       subject: emailSubject,
       html: emailHtml,
-      text: `Hi ${customerName},\n\nYour resume content is ready. Access it directly here: ${successUrl}\n\nPlain-Text Content:\n\n${plainTextResume}`,
+      text: emailText,
     });
 
     return !!result.data?.id;
   } catch (error) {
-    console.error("Failed to send transactional resume email via Resend:", error);
+    console.error("Failed to send transactional resume email:", error);
     return false;
   }
 }

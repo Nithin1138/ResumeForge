@@ -280,7 +280,7 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
     "Achievement bullet 1",
     "Achievement bullet 2"
   ],
-  "atsScore": 87,
+  "atsScore": 65, // Must be calculated dynamically (strictly between 40 and 95) based entirely on the actual strength of bullet points, missing keywords, and lack of metrics. Do NOT show partiality. Give low scores (40-60) if the input is weak. DO NOT hardcode this value.
   "atsTips": [
     "Tip 1: Add more quantifiable results to your project descriptions",
     "Tip 2: Include relevant keywords from job description in skills section",
@@ -316,5 +316,43 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
     console.error("Error communicating with Gemini API:", error);
     // Graceful fallback to mock response in case of API limits or timeouts
     return generateMockResume(formData);
+  }
+}
+
+export async function generateSectionContent(sectionType: string, currentText: string): Promise<string> {
+  const client = getGeminiClient();
+  
+  if (!client) {
+    // Return mock fallback for offline/no-key mode
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(currentText + " (Mock Regenerated)"), 1000);
+    });
+  }
+
+  const prompt = `
+SYSTEM:
+You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
+If it's a bullet point, output a single bullet point. If it's a paragraph, output a paragraph.
+Do not wrap the output in quotes or markdown formatting, just return the raw text.
+
+CURRENT TEXT:
+${currentText}
+`;
+
+  try {
+    const response = await client.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: prompt,
+    });
+
+    const responseText = response.text;
+    if (!responseText) {
+      throw new Error("Empty response from Gemini API");
+    }
+
+    return responseText.trim().replace(/^-\s*/, ""); // remove bullet dash if added by AI
+  } catch (error) {
+    console.error("Error communicating with Gemini API:", error);
+    return currentText;
   }
 }

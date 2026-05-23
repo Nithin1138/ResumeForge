@@ -85,6 +85,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copiedStates, setCopiedStates] = useState<Record<string, boolean>>({});
+  const [regeneratingStates, setRegeneratingStates] = useState<Record<string, boolean>>({});
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [regenerationsCount, setRegenerationsCount] = useState(1);
   const [session, setSession] = useState<any>(null);
@@ -182,6 +183,24 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
     setTimeout(() => {
       setCopiedStates((prev) => ({ ...prev, [id]: false }));
     }, 1500);
+  };
+
+  const handleRegenerateSection = async (id: string, sectionType: string, currentText: string, onUpdate: (newText: string) => void) => {
+    setRegeneratingStates((prev) => ({ ...prev, [id]: true }));
+    try {
+      const res = await fetch("/api/generate-section", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sectionType, currentText }),
+      });
+      if (!res.ok) throw new Error("Failed to regenerate section");
+      const data = await res.json();
+      onUpdate(data.newText);
+    } catch (err: any) {
+      alert("Error regenerating section: " + err.message);
+    } finally {
+      setRegeneratingStates((prev) => ({ ...prev, [id]: false }));
+    }
   };
 
   const handleRegenerate = async () => {
@@ -454,13 +473,28 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
         <div className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs print:hidden">
           <div className="flex justify-between items-center mb-4 border-b border-border/40 pb-3">
             <h3 className="text-xs font-bold text-primary tracking-wider uppercase">Professional Summary</h3>
-            <button
-              onClick={() => copyToClipboard(output.summary, "summary")}
-              className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
-            >
-              {copiedStates["summary"] ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedStates["summary"] ? "Copied!" : "Copy Section"}</span>
-            </button>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => handleRegenerateSection(
+                  "summary", 
+                  "Professional Summary", 
+                  output.summary, 
+                  (newText) => setLiveResume((prev: any) => ({ ...prev, summary: newText }))
+                )}
+                disabled={regeneratingStates["summary"]}
+                className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"
+              >
+                {regeneratingStates["summary"] ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                <span className="hidden sm:inline">Regenerate</span>
+              </button>
+              <button
+                onClick={() => copyToClipboard(output.summary, "summary")}
+                className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
+              >
+                {copiedStates["summary"] ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
+                <span className="hidden sm:inline">{copiedStates["summary"] ? "Copied!" : "Copy"}</span>
+              </button>
+            </div>
           </div>
           <p 
             className="text-sm font-medium leading-relaxed outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded p-1.5 -m-1.5 transition-all"
@@ -546,13 +580,34 @@ Concepts: ${output.skills.concepts.join(", ")}
                       {proj.title}
                     </h4>
                   </div>
-                  <button
-                    onClick={() => copyToClipboard(projText, blockId)}
-                    className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
-                  >
-                    {copiedStates[blockId] ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copiedStates[blockId] ? "Copied!" : "Copy"}</span>
-                  </button>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleRegenerateSection(
+                        blockId, 
+                        `Project Bullet Points for ${proj.title}`, 
+                        proj.bullets.join("\n"), 
+                        (newText) => {
+                          setLiveResume((prev: any) => {
+                            const next = JSON.parse(JSON.stringify(prev));
+                            next.projects[idx].bullets = newText.split("\n").filter(Boolean);
+                            return next;
+                          });
+                        }
+                      )}
+                      disabled={regeneratingStates[blockId]}
+                      className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"
+                    >
+                      {regeneratingStates[blockId] ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                      <span className="hidden sm:inline">Regenerate</span>
+                    </button>
+                    <button
+                      onClick={() => copyToClipboard(projText, blockId)}
+                      className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
+                    >
+                      {copiedStates[blockId] ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span className="hidden sm:inline">{copiedStates[blockId] ? "Copied!" : "Copy"}</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="space-y-3">
@@ -623,13 +678,34 @@ Concepts: ${output.skills.concepts.join(", ")}
                         {exp.company}
                       </h4>
                     </div>
-                    <button
-                      onClick={() => copyToClipboard(expText, blockId)}
-                      className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
-                    >
-                      {copiedStates[blockId] ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{copiedStates[blockId] ? "Copied!" : "Copy"}</span>
-                    </button>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleRegenerateSection(
+                          blockId, 
+                          `Experience Bullet Points for ${exp.role} at ${exp.company}`, 
+                          exp.bullets.join("\n"), 
+                          (newText) => {
+                            setLiveResume((prev: any) => {
+                              const next = JSON.parse(JSON.stringify(prev));
+                              next.experience[idx].bullets = newText.split("\n").filter(Boolean);
+                              return next;
+                            });
+                          }
+                        )}
+                        disabled={regeneratingStates[blockId]}
+                        className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"
+                      >
+                        {regeneratingStates[blockId] ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                        <span className="hidden sm:inline">Regenerate</span>
+                      </button>
+                      <button
+                        onClick={() => copyToClipboard(expText, blockId)}
+                        className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
+                      >
+                        {copiedStates[blockId] ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
+                        <span className="hidden sm:inline">{copiedStates[blockId] ? "Copied!" : "Copy"}</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="space-y-3">
