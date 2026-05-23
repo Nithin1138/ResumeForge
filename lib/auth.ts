@@ -6,6 +6,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { createTransport } from "nodemailer";
 import bcrypt from "bcryptjs";
+import { Resend } from "resend";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -46,7 +47,6 @@ export const authOptions: NextAuthOptions = {
       server: "", // Not used since we're overriding sendVerificationRequest
       from: process.env.FROM_EMAIL || "ResumeForge <noreply@resumeforge.in>",
       sendVerificationRequest: async ({ identifier, url, provider }) => {
-        const { host } = new URL(url);
 
         const emailHtml = `
           <div style="font-family: 'Satoshi', sans-serif; background-color: #f7f6f2; color: #28251d; padding: 40px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #d4d1ca;">
@@ -108,7 +108,6 @@ export const authOptions: NextAuthOptions = {
             return;
           }
 
-          const { Resend } = require("resend");
           const resend = new Resend(resendApiKey);
 
           await resend.emails.send({
@@ -131,7 +130,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user && token.sub) {
         // Expose the internal user ID so our dashboard components can query Prisma properly
-        (session.user as any).id = token.sub;
+        Object.assign(session.user, { id: token.sub });
       }
       return session;
     },
