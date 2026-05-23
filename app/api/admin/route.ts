@@ -120,6 +120,7 @@ export async function GET(req: NextRequest) {
         name: true,
         email: true,
         createdAt: true,
+        isBlocked: true,
         resumes: {
           select: { id: true },
         },
@@ -133,6 +134,7 @@ export async function GET(req: NextRequest) {
       email: u.email || "No Email",
       createdAt: u.createdAt,
       resumeCount: u.resumes.length,
+      isBlocked: u.isBlocked,
     }));
 
     // 4. Resume student metadata analytics

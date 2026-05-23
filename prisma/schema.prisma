@@ -21,6 +21,7 @@ model User {
   password      String?
   emailVerified DateTime?
   image         String?
+  isBlocked     Boolean   @default(false)
   accounts      Account[]
   sessions      Session[]
   resumes       Resume[]

@@ -136,7 +136,12 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      console.log("signIn callback:", { user, account, email });
+      if (user?.email) {
+        const dbUser = await prisma.user.findUnique({ where: { email: user.email }});
+        if (dbUser?.isBlocked) {
+          throw new Error("Your account has been suspended by the administrator.");
+        }
+      }
       return true;
     },
     async session({ session, token }) {
