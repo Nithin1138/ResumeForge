@@ -1148,7 +1148,7 @@ export default function BuildPage() {
                 className="flex flex-col items-center space-y-1 bg-transparent border-0 cursor-pointer focus:outline-hidden group"
               >
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center border text-xs font-bold transition-all duration-300 ${
+                  className={`w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center border text-[10px] md:text-xs font-bold transition-all duration-300 ${
                     isCompleted
                       ? "bg-primary border-primary text-white"
                       : isActive
@@ -1159,7 +1159,7 @@ export default function BuildPage() {
                   {isCompleted ? <Check className="w-4.5 h-4.5" /> : s.stepNum}
                 </div>
                 <span
-                  className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                  className={`text-[8px] md:text-[10px] font-bold uppercase tracking-wider transition-colors mt-1 ${
                     isActive ? "text-primary" : "text-text-muted"
                   }`}
                 >
@@ -1172,8 +1172,8 @@ export default function BuildPage() {
       </div>
 
       {/* Main Form Content */}
-      <main className="flex-1 max-w-4xl mx-auto w-full px-6 pb-24 pt-4">
-        <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 shadow-xs">
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 md:px-6 pb-24 pt-4">
+        <div className="bg-surface border border-border rounded-2xl p-4 md:p-8 shadow-xs">
           {activeStep === 1 && renderStep1()}
           {activeStep === 2 && renderStep2()}
           {activeStep === 3 && renderStep3()}
@@ -1185,27 +1185,27 @@ export default function BuildPage() {
             <button
               onClick={handlePrev}
               disabled={activeStep === 1}
-              className="px-6 py-3 border border-border hover:bg-bg-base/60 disabled:opacity-30 disabled:hover:bg-transparent text-sm font-semibold rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer"
+              className="px-4 py-2.5 md:px-6 md:py-3 border border-border hover:bg-bg-base/60 disabled:opacity-30 disabled:hover:bg-transparent text-xs md:text-sm font-semibold rounded-full flex items-center space-x-1 md:space-x-1.5 transition-colors cursor-pointer"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-3.5 h-3.5 md:w-4 md:h-4" />
               <span>Back</span>
             </button>
 
             {activeStep < 5 ? (
               <button
                 onClick={handleNext}
-                className="px-6 py-3 bg-primary hover:bg-primary/95 text-white text-sm font-semibold rounded-full flex items-center space-x-1.5 transition-all shadow-xs hover:shadow-md cursor-pointer"
+                className="px-4 py-2.5 md:px-6 md:py-3 bg-primary hover:bg-primary/95 text-white text-xs md:text-sm font-semibold rounded-full flex items-center space-x-1 md:space-x-1.5 transition-all shadow-xs hover:shadow-md cursor-pointer"
               >
                 <span>Continue</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
               </button>
             ) : (
               <button
                 onClick={handleSubmit}
-                className="px-8 py-3 bg-primary hover:bg-primary/95 text-white text-sm font-semibold rounded-full flex items-center space-x-1.5 transition-all shadow-md hover:shadow-lg cursor-pointer"
+                className="px-4 py-2.5 md:px-8 md:py-3 bg-primary hover:bg-primary/95 text-white text-xs md:text-sm font-semibold rounded-full flex items-center space-x-1 md:space-x-1.5 transition-all shadow-md hover:shadow-lg cursor-pointer"
               >
-                <Sparkles className="w-4 h-4" />
-                <span>Generate ATS Content</span>
+                <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                <span>Generate</span>
               </button>
             )}
           </div>

@@ -369,7 +369,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
       <main className="flex-1 overflow-hidden flex flex-col lg:flex-row print:block print:overflow-visible print:h-auto">
 
         {/* ── LEFT: Fixed-height Resume Preview (never scrolls) ── */}
-        <div className="w-full lg:w-[42%] flex-shrink-0 flex flex-col p-5 pb-4 border-r border-border/40 print:hidden overflow-hidden">
+        <div className="w-full h-[45vh] lg:h-auto lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 print:hidden overflow-hidden">
           {/* Panel header */}
           <div className="flex items-center justify-between mb-3 flex-shrink-0">
             <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>
@@ -392,7 +392,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
         </div>
 
         {/* ── RIGHT: Only this column scrolls ── */}
-        <div className="flex-1 overflow-y-auto p-5 md:p-8 flex flex-col gap-8 print:p-0 print:m-0 print:overflow-visible">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col gap-8 print:p-0 print:m-0 print:overflow-visible">
 
           {/* Page title */}
           <div className="text-center print:hidden space-y-2 pt-1">

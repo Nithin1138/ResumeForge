@@ -129,7 +129,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
       <main className="flex-1 overflow-hidden flex flex-col lg:flex-row">
 
         {/* ── LEFT: Fixed-height Locked Resume Preview (never scrolls) ── */}
-        <div className="w-full lg:w-[42%] flex-shrink-0 flex flex-col p-5 pb-4 border-r border-border/40 overflow-hidden">
+        <div className="w-full h-[45vh] lg:h-auto lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 overflow-hidden">
           {/* Panel header */}
           <div className="flex items-center justify-between mb-3 flex-shrink-0">
             <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>
@@ -144,7 +144,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
         </div>
 
         {/* ── RIGHT: Only this column scrolls ── */}
-        <div className="flex-1 overflow-y-auto p-5 md:p-8 pb-36 flex flex-col gap-6">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-36 flex flex-col gap-6">
         {/* ATS Score Header Card */}
         <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:justify-between gap-6 shadow-xs">
           <div className="text-center md:text-left space-y-2 max-w-md">

@@ -61,7 +61,7 @@ export default function LandingPage() {
           )}
           <Link
             href="/build"
-            className="px-5 py-2 bg-primary hover:bg-primary/95 text-white text-sm font-medium rounded-full transition-all duration-300 shadow-sm hover:shadow-md flex items-center space-x-1"
+            className="px-4 py-2 md:px-5 md:py-2 bg-primary hover:bg-primary/95 text-white text-xs md:text-sm font-medium rounded-full transition-all duration-300 shadow-sm hover:shadow-md flex items-center space-x-1"
           >
             <span>Start Free</span>
             <ArrowRight className="w-4 h-4" />
@@ -81,7 +81,7 @@ export default function LandingPage() {
         </div>
 
         {/* Hero Title */}
-        <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-text leading-[1.08] max-w-3xl mb-6">
+        <h1 className="text-4xl md:text-7xl font-serif tracking-tight text-text leading-[1.08] max-w-3xl mb-6">
           Your Projects Are Gold.<br />
           <span className="text-primary italic font-normal">Your Resume</span> Doesn&apos;t Show It.
         </h1>
@@ -143,8 +143,8 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Left Card: Input */}
-            <div className="border border-border bg-bg-base/60 rounded-2xl p-6 relative">
-              <div className="absolute top-4 right-4 text-xs font-bold tracking-wider text-text-muted bg-border/40 px-2.5 py-1 rounded-full uppercase">
+            <div className="border border-border bg-bg-base/60 rounded-2xl p-4 md:p-6 relative">
+              <div className="md:absolute static mb-4 md:mb-0 md:top-4 md:right-4 inline-block text-xs font-bold tracking-wider text-text-muted bg-border/40 px-2.5 py-1 rounded-full uppercase">
                 What you write
               </div>
               <h3 className="font-bold text-sm tracking-wide text-text-muted mb-4 uppercase">Raw Input</h3>
@@ -167,8 +167,8 @@ export default function LandingPage() {
             </div>
 
             {/* Right Card: Output */}
-            <div className="border-2 border-primary bg-surface rounded-2xl p-6 relative shadow-md glow-primary">
-              <div className="absolute top-4 right-4 flex items-center space-x-1.5 bg-success/15 border border-success/30 px-2.5 py-1 rounded-full">
+            <div className="border-2 border-primary bg-surface rounded-2xl p-4 md:p-6 relative shadow-md glow-primary">
+              <div className="md:absolute static mb-4 md:mb-0 md:top-4 md:right-4 inline-flex items-center space-x-1.5 bg-success/15 border border-success/30 px-2.5 py-1 rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
                 <span className="text-[10px] font-extrabold tracking-wider text-success uppercase">ATS Score: 94/100</span>
               </div>
@@ -299,7 +299,7 @@ export default function LandingPage() {
 
       {/* Final CTA */}
       <section className="px-6 py-24 text-center max-w-4xl mx-auto flex flex-col items-center">
-        <h2 className="text-4xl md:text-6xl font-serif tracking-tight text-text mb-6">
+        <h2 className="text-3xl md:text-6xl font-serif tracking-tight text-text mb-6 leading-tight">
           Ready to beat the <span className="italic text-primary font-normal">Placement Portal</span>?
         </h2>
         <p className="text-base text-text-muted max-w-lg mb-8 leading-relaxed">

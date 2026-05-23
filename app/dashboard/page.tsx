@@ -73,7 +73,7 @@ export default async function DashboardPage() {
       </header>
 
       {/* Main Panel Content */}
-      <main className="max-w-5xl mx-auto w-full px-6 py-10 space-y-8 flex-1">
+      <main className="max-w-5xl mx-auto w-full px-4 md:px-6 py-6 md:py-10 space-y-8 flex-1">
         
         {/* Header Block */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
