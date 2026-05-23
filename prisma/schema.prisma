@@ -1,0 +1,56 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  resumes   Resume[]
+}
+
+model Resume {
+  id            String   @id @default(cuid())
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id])
+  sessionId     String   // For non-logged-in users
+  status        String   @default("DRAFT") // DRAFT, GENERATED, PAID, EXPORTED
+  
+  // Input and output data stored as strings/JSON strings (SQLite friendly)
+  inputData     String   // Full form input (JSON stringified)
+  outputFree    String?  // Free tier output (JSON stringified teaser)
+  outputFull    String?  // Full paid output (JSON stringified)
+  
+  // Payment
+  paymentStatus String   @default("PENDING") // PENDING, PAID, FAILED, REFUNDED
+  paymentId     String?
+  paymentLinkId String?
+  amountPaid    Int?     // in paise (4900 = ₹49)
+  
+  // Metadata
+  targetRole    String?
+  branch        String?
+  cgpa          String?
+  college       String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([sessionId])
+  @@index([paymentStatus])
+}
+
+model WaitlistEmail {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  college   String?
+  branch    String?
+  createdAt DateTime @default(now())
+}
