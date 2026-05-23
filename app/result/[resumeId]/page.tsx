@@ -100,7 +100,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-bg-base text-text flex flex-col font-sans">
+    <div className="h-auto lg:h-screen lg:overflow-hidden bg-bg-base text-text flex flex-col font-sans">
       {/* Navbar */}
       <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
@@ -126,10 +126,10 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
       </header>
 
       {/* Main Container — fills remaining height, 2 columns */}
-      <main className="flex-1 overflow-hidden flex flex-col lg:flex-row">
+      <main className="flex-1 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row">
 
         {/* ── LEFT: Fixed-height Locked Resume Preview (never scrolls) ── */}
-        <div className="w-full h-[45vh] lg:h-auto lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 overflow-hidden">
+        <div className="w-full h-[45vh] lg:h-full lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 overflow-hidden">
           {/* Panel header */}
           <div className="flex items-center justify-between mb-3 flex-shrink-0">
             <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>

@@ -359,7 +359,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
   `.trim();
 
   return (
-    <div className="h-screen overflow-hidden bg-bg-base text-text flex flex-col font-sans print:h-auto print:overflow-visible print:bg-white print:text-black">
+    <div className="h-auto lg:h-screen lg:overflow-hidden bg-bg-base text-text flex flex-col font-sans print:h-auto print:overflow-visible print:bg-white print:text-black">
       {/* Navbar (hidden during print) */}
       <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between print:hidden">
         <div className="flex items-center space-x-2">
@@ -385,10 +385,10 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
       </header>
 
       {/* 2-column layout — fills remaining viewport height */}
-      <main className="flex-1 overflow-hidden flex flex-col lg:flex-row print:block print:overflow-visible print:h-auto">
+      <main className="flex-1 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row print:block print:overflow-visible print:h-auto">
 
         {/* ── LEFT: Fixed-height Resume Preview (never scrolls) ── */}
-        <div className="w-full h-[45vh] lg:h-auto lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 print:hidden overflow-hidden">
+        <div className="w-full h-[45vh] lg:h-full lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 print:hidden overflow-hidden">
           {/* Panel header */}
           <div className="flex items-center justify-between mb-3 flex-shrink-0">
             <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>

@@ -3,13 +3,15 @@
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Loader2, ArrowRight, Mail, Sparkles } from "lucide-react";
-import { signIn } from "next-auth/react";
+import { Loader2, ArrowRight, Mail, Sparkles, Lock } from "lucide-react";
+import { signIn, getSession } from "next-auth/react";
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,10 +26,30 @@ function LoginContent() {
     }
   }, [searchParams]);
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isVerifyRequest) {
+      interval = setInterval(async () => {
+        const session = await getSession();
+        if (session) {
+          router.push("/dashboard");
+        }
+      }, 3000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isVerifyRequest, router]);
+
+
+  const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
       setError("Please enter a valid university or personal email address.");
+      return;
+    }
+    if (!password.trim() || password.length < 6) {
+      setError("Password must be at least 6 characters long.");
       return;
     }
 
@@ -35,17 +57,37 @@ function LoginContent() {
     setIsLoading(true);
 
     try {
-      const res = await signIn("email", { email, callbackUrl: "/dashboard", redirect: false });
+      if (isSignUp) {
+        // Register the user
+        const registerRes = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        
+        const registerData = await registerRes.json();
+        
+        if (!registerRes.ok) {
+          throw new Error(registerData.message || "Failed to register.");
+        }
+      }
+
+      // Now log them in (works for both sign up and sign in)
+      const res = await signIn("credentials", { 
+        email, 
+        password, 
+        callbackUrl: "/dashboard", 
+        redirect: false 
+      });
 
       if (res?.error) {
         throw new Error(res.error);
+      } else if (res?.url) {
+        router.push("/dashboard");
       }
-
-      // If successful without redirect, the email was sent
-      setIsVerifyRequest(true);
-      setIsLoading(false);
     } catch (err: any) {
       setError(err.message || "An authentication error occurred.");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -138,12 +180,12 @@ function LoginContent() {
 
               <div className="flex items-center my-6">
                 <div className="flex-1 h-[1px] bg-border/60" />
-                <span className="text-[10px] text-text-muted font-bold px-3 uppercase tracking-wider">Or Magic Email</span>
+                <span className="text-[10px] text-text-muted font-bold px-3 uppercase tracking-wider">Or Email & Password</span>
                 <div className="flex-1 h-[1px] bg-border/60" />
               </div>
 
-              {/* Email Form */}
-              <form onSubmit={handleEmailLogin} className="space-y-4">
+              {/* Email & Password Form */}
+              <form onSubmit={handleAuthSubmit} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold mb-1.5 uppercase tracking-wider text-text-muted">
                     University / Personal Email
@@ -161,6 +203,23 @@ function LoginContent() {
                   </div>
                 </div>
 
+                <div>
+                  <label className="block text-xs font-bold mb-1.5 uppercase tracking-wider text-text-muted">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                    <input
+                      type="password"
+                      required
+                      className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
+                </div>
+
                 <button
                   type="submit"
                   disabled={isLoading || isGoogleLoading}
@@ -170,11 +229,21 @@ function LoginContent() {
                     <Loader2 className="w-4.5 h-4.5 animate-spin" />
                   ) : (
                     <>
-                      <span>Generate Magic Link</span>
+                      <span>{isSignUp ? "Create Account" : "Sign In"}</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </button>
+                
+                <div className="text-center mt-4 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsSignUp(!isSignUp)}
+                    className="text-xs text-text-muted hover:text-primary transition-colors font-medium cursor-pointer"
+                  >
+                    {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
+                  </button>
+                </div>
               </form>
             </div>
           )}

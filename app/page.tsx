@@ -409,9 +409,6 @@ export default function LandingPage() {
 
       {/* SECTION 2: Competitive Positioning */}
       <section className="px-6 py-24 max-w-5xl mx-auto w-full border-b border-border/40 relative overflow-hidden">
-        {/* Decorative subtle background glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/2 rounded-full blur-[100px] pointer-events-none" />
-
         {/* Centered Heading & Subtitle */}
         <motion.div 
           className="text-center mb-16 relative z-10"
@@ -428,195 +425,134 @@ export default function LandingPage() {
           </p>
         </motion.div>
 
-        {/* Comparison Matrix (Stagger Reveal) */}
-        <motion.div
-          className="relative z-10"
+        {/* Uniquely Designed Comparative Positioning Board */}
+        <motion.div 
+          className="bg-surface/50 border border-border/30 rounded-3xl p-2 max-w-5xl mx-auto mb-16 relative z-10 grid md:grid-cols-3 gap-2 md:gap-0 items-stretch"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={containerVariants}
         >
-          {/* Desktop Table Matrix (Visible only on desktop/tablet) */}
+          {/* Column 1: Generic Resume Builders */}
           <motion.div 
-            className="hidden md:block w-full border border-border/50 bg-surface rounded-2xl overflow-hidden shadow-xs"
+            className="p-8 md:p-10 flex flex-col justify-between md:border-r border-border/20 bg-transparent transition-all duration-300"
             variants={cardVariants}
           >
-            {/* Table Header */}
-            <div className="grid grid-cols-4 border-b border-border/40 bg-bg-base/30 text-xs font-bold uppercase tracking-wider text-text-muted">
-              <div className="p-6">Core Capability</div>
-              <div className="p-6 text-center flex items-center justify-center">Generic Builders</div>
-              <div className="p-6 text-center flex items-center justify-center">AI Chatbots</div>
-              <div className="p-6 text-center bg-primary/5 text-primary border-l border-r border-primary/10 relative flex items-center justify-center">
-                <span className="absolute -top-1 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-b-md shadow-xs uppercase">
-                  ResumeForge
-                </span>
-                ResumeForge
+            <div>
+              <div className="mb-6">
+                <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1">Standard Tool</span>
+                <h3 className="font-bold text-xl text-text font-serif italic">Generic Builders</h3>
               </div>
+              <ul className="space-y-4 text-sm text-text-muted mb-8">
+                <li className="flex items-start space-x-2.5">
+                  <span className="text-border/60 mt-1.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
+                  <span>Template-first approach</span>
+                </li>
+                <li className="flex items-start space-x-2.5">
+                  <span className="text-border/60 mt-1.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
+                  <span>Focused mainly on design</span>
+                </li>
+                <li className="flex items-start space-x-2.5">
+                  <span className="text-border/60 mt-1.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
+                  <span>Weak technical storytelling</span>
+                </li>
+                <li className="flex items-start space-x-2.5">
+                  <span className="text-border/60 mt-1.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
+                  <span>Same structure for every student</span>
+                </li>
+              </ul>
             </div>
-
-            {/* Row 1: Core Focus */}
-            <div className="grid grid-cols-4 border-b border-border/20 text-sm">
-              <div className="p-6 flex flex-col justify-center">
-                <span className="font-bold text-text mb-1">Core Focus</span>
-                <span className="text-xs text-text-muted leading-relaxed">What the platform is engineered to optimize for.</span>
-              </div>
-              <div className="p-6 text-center text-text-muted flex items-center justify-center border-l border-border/10">
-                Visual Appearance
-              </div>
-              <div className="p-6 text-center text-text-muted flex items-center justify-center border-l border-border/10">
-                Text Generation
-              </div>
-              <div className="p-6 text-center text-primary font-bold bg-primary/2 flex items-center justify-center border-l border-r border-primary/15">
-                Technical Placement Conversion
-              </div>
-            </div>
-
-            {/* Row 2: Bullet Writing */}
-            <div className="grid grid-cols-4 border-b border-border/20 text-sm">
-              <div className="p-6 flex flex-col justify-center">
-                <span className="font-bold text-text mb-1">Bullet Writing</span>
-                <span className="text-xs text-text-muted leading-relaxed">How technical projects and labs are written.</span>
-              </div>
-              <div className="p-6 text-center text-text-muted flex items-center justify-center border-l border-border/10">
-                Self-written templates; no guidance
-              </div>
-              <div className="p-6 text-center text-text-muted flex items-center justify-center border-l border-border/10">
-                Broad generic bullets with fake metrics
-              </div>
-              <div className="p-6 text-center text-primary font-bold bg-primary/2 flex items-center justify-center border-l border-r border-primary/15">
-                Quantified recruiter-ready bullets
-              </div>
-            </div>
-
-            {/* Row 3: Tech Context */}
-            <div className="grid grid-cols-4 border-b border-border/20 text-sm">
-              <div className="p-6 flex flex-col justify-center">
-                <span className="font-bold text-text mb-1">Tech Context</span>
-                <span className="text-xs text-text-muted leading-relaxed">Domain alignment with CS, ECE, EEE, Mechanical, etc.</span>
-              </div>
-              <div className="p-6 text-center text-text-muted flex items-center justify-center border-l border-border/10">
-                None (Requires manually pasting details)
-              </div>
-              <div className="p-6 text-center text-text-muted flex items-center justify-center border-l border-border/10">
-                Superficial keyword-stuffing only
-              </div>
-              <div className="p-6 text-center text-primary font-bold bg-primary/2 flex items-center justify-center border-l border-r border-primary/15">
-                Trained specifically on engineering pipelines
-              </div>
-            </div>
-
-            {/* Row 4: ATS Parser Safety */}
-            <div className="grid grid-cols-4 text-sm">
-              <div className="p-6 flex flex-col justify-center">
-                <span className="font-bold text-text mb-1">ATS Parser Safety</span>
-                <span className="text-xs text-text-muted leading-relaxed">Compliance with campus screening software.</span>
-              </div>
-              <div className="p-6 text-center text-text-muted flex items-center justify-center border-l border-border/10">
-                Risky (Visual blocks choke parsers)
-              </div>
-              <div className="p-6 text-center text-text-muted flex items-center justify-center border-l border-border/10">
-                Muted text (Often lacks parser structuring)
-              </div>
-              <div className="p-6 text-center text-primary font-bold bg-primary/2 flex items-center justify-center border-l border-r border-primary/15 rounded-b-2xl">
-                100% compliant single-column layout
-              </div>
+            <div className="border-t border-border/20 pt-4 text-center mt-auto">
+              <span className="text-[10px] font-bold tracking-wider text-text-muted uppercase block mb-1">Optimized For</span>
+              <span className="text-xs font-bold text-text">Visual Appearance</span>
             </div>
           </motion.div>
 
-          {/* Mobile Stacked Comparison Layout (Only on mobile/tablet screens) */}
+          {/* Column 2: AI Chatbots */}
           <motion.div 
-            className="block md:hidden space-y-6"
+            className="p-8 md:p-10 flex flex-col justify-between md:border-r border-border/20 bg-transparent transition-all duration-300"
             variants={cardVariants}
           >
-            {/* Capability 1 */}
-            <div className="p-5 bg-surface border border-border/40 rounded-xl space-y-3 shadow-xs">
-              <span className="text-xs font-bold tracking-wider text-text-muted uppercase block border-b border-border/20 pb-1.5">
-                1. Core Optimization Goal
-              </span>
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="p-2.5 bg-bg-base/40 rounded-lg text-center flex flex-col justify-between">
-                  <span className="text-text-muted font-bold block mb-1">Generic</span>
-                  <span className="text-text-muted text-[10px] leading-tight">Visual Appearance</span>
-                </div>
-                <div className="p-2.5 bg-bg-base/40 rounded-lg text-center flex flex-col justify-between">
-                  <span className="text-text-muted font-bold block mb-1">AI Chatbots</span>
-                  <span className="text-text-muted text-[10px] leading-tight">Text Generation</span>
-                </div>
-                <div className="p-2.5 bg-primary/10 border border-primary/25 rounded-lg text-center flex flex-col justify-between">
-                  <span className="text-primary font-bold block mb-1">ResumeForge</span>
-                  <span className="text-primary font-semibold text-[10px] leading-tight">Placement Conversion</span>
-                </div>
+            <div>
+              <div className="mb-6">
+                <span className="text-[10px] font-bold text-warning uppercase tracking-widest block mb-1">Raw AI Tool</span>
+                <h3 className="font-bold text-xl text-text font-serif italic">AI Chatbots</h3>
               </div>
+              <ul className="space-y-4 text-sm text-text-muted mb-8">
+                <li className="flex items-start space-x-2.5">
+                  <span className="text-warning/40 mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
+                  <span>Generic generated bullet points</span>
+                </li>
+                <li className="flex items-start space-x-2.5">
+                  <span className="text-warning/40 mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
+                  <span>Requires prompt engineering</span>
+                </li>
+                <li className="flex items-start space-x-2.5">
+                  <span className="text-warning/40 mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
+                  <span>Often creates fake metrics</span>
+                </li>
+                <li className="flex items-start space-x-2.5">
+                  <span className="text-warning/40 mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
+                  <span>No recruiter-specific optimization</span>
+                </li>
+              </ul>
             </div>
-
-            {/* Capability 2 */}
-            <div className="p-5 bg-surface border border-border/40 rounded-xl space-y-3 shadow-xs">
-              <span className="text-xs font-bold tracking-wider text-text-muted uppercase block border-b border-border/20 pb-1.5">
-                2. Bullet Writing Strategy
-              </span>
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="p-2.5 bg-bg-base/40 rounded-lg text-center flex flex-col justify-between">
-                  <span className="text-text-muted font-bold block mb-1">Generic</span>
-                  <span className="text-text-muted text-[10px] leading-tight">Self-written templates</span>
-                </div>
-                <div className="p-2.5 bg-bg-base/40 rounded-lg text-center flex flex-col justify-between">
-                  <span className="text-text-muted font-bold block mb-1">AI Chatbots</span>
-                  <span className="text-text-muted text-[10px] leading-tight">Generic; fake metrics</span>
-                </div>
-                <div className="p-2.5 bg-primary/10 border border-primary/25 rounded-lg text-center flex flex-col justify-between">
-                  <span className="text-primary font-bold block mb-1">ResumeForge</span>
-                  <span className="text-primary font-semibold text-[10px] leading-tight">Recruiter-ready</span>
-                </div>
-              </div>
+            <div className="border-t border-border/20 pt-4 text-center mt-auto">
+              <span className="text-[10px] font-bold tracking-wider text-warning uppercase block mb-1">Optimized For</span>
+              <span className="text-xs font-bold text-warning font-semibold">Text Generation</span>
             </div>
+          </motion.div>
 
-            {/* Capability 3 */}
-            <div className="p-5 bg-surface border border-border/40 rounded-xl space-y-3 shadow-xs">
-              <span className="text-xs font-bold tracking-wider text-text-muted uppercase block border-b border-border/20 pb-1.5">
-                3. Tech Domain Relevance
-              </span>
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="p-2.5 bg-bg-base/40 rounded-lg text-center flex flex-col justify-between">
-                  <span className="text-text-muted font-bold block mb-1">Generic</span>
-                  <span className="text-text-muted text-[10px] leading-tight">None (manual)</span>
-                </div>
-                <div className="p-2.5 bg-bg-base/40 rounded-lg text-center flex flex-col justify-between">
-                  <span className="text-text-muted font-bold block mb-1">AI Chatbots</span>
-                  <span className="text-text-muted text-[10px] leading-tight">Superficial keyword-stuffing</span>
-                </div>
-                <div className="p-2.5 bg-primary/10 border border-primary/25 rounded-lg text-center flex flex-col justify-between">
-                  <span className="text-primary font-bold block mb-1">ResumeForge</span>
-                  <span className="text-primary font-semibold text-[10px] leading-tight">Trained on pipelines</span>
-                </div>
-              </div>
+          {/* Column 3: ResumeForge (Sleek Floating Column) */}
+          <motion.div 
+            className="bg-surface border-2 border-primary rounded-2xl p-8 md:p-10 shadow-lg glow-primary relative md:-translate-y-4 md:scale-[1.03] z-20 flex flex-col justify-between transition-all duration-300"
+            variants={cardVariants}
+            whileHover={{ y: -20, scale: 1.05 }}
+          >
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-bold tracking-widest px-4 py-1.5 rounded-full uppercase shadow-sm whitespace-nowrap">
+              The Focused Solution
             </div>
-
-            {/* Capability 4 */}
-            <div className="p-5 bg-surface border border-border/40 rounded-xl space-y-3 shadow-xs">
-              <span className="text-xs font-bold tracking-wider text-text-muted uppercase block border-b border-border/20 pb-1.5">
-                4. ATS Parser Compliance
-              </span>
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="p-2.5 bg-bg-base/40 rounded-lg text-center flex flex-col justify-between">
-                  <span className="text-text-muted font-bold block mb-1">Generic</span>
-                  <span className="text-text-muted text-[10px] leading-tight">Risky layout design</span>
+            <div>
+              <div className="mb-6 mt-1 flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1">Engineered Solution</span>
+                  <h3 className="font-bold text-xl text-text">
+                    Resume<span className="text-primary font-serif italic font-medium">Forge</span>
+                  </h3>
                 </div>
-                <div className="p-2.5 bg-bg-base/40 rounded-lg text-center flex flex-col justify-between">
-                  <span className="text-text-muted font-bold block mb-1">AI Chatbots</span>
-                  <span className="text-text-muted text-[10px] leading-tight">Lacks structured metadata</span>
-                </div>
-                <div className="p-2.5 bg-primary/10 border border-primary/25 rounded-lg text-center flex flex-col justify-between">
-                  <span className="text-primary font-bold block mb-1">ResumeForge</span>
-                  <span className="text-primary font-semibold text-[10px] leading-tight">100% safe single column</span>
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                  <CheckCircle className="w-5 h-5 animate-pulse" />
                 </div>
               </div>
+              <ul className="space-y-4 text-sm text-text mb-8 font-medium">
+                <li className="flex items-start space-x-2.5">
+                  <span className="text-primary mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                  <span>Built for engineering students</span>
+                </li>
+                <li className="flex items-start space-x-2.5">
+                  <span className="text-primary mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                  <span>Converts raw projects into impact</span>
+                </li>
+                <li className="flex items-start space-x-2.5">
+                  <span className="text-primary mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                  <span>ATS-safe and recruiter-readable</span>
+                </li>
+                <li className="flex items-start space-x-2.5">
+                  <span className="text-primary mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                  <span>Structured for placement shortlisting</span>
+                </li>
+              </ul>
+            </div>
+            <div className="border-t border-primary/20 pt-5 text-center mt-auto bg-primary/5 rounded-b-xl -mx-8 -mb-8 p-5">
+              <span className="text-[10px] font-bold tracking-wider text-primary uppercase block mb-1">Optimized For</span>
+              <span className="text-sm font-bold text-primary">Technical Placement Conversion</span>
             </div>
           </motion.div>
         </motion.div>
 
         {/* Additional Microcopy Below Comparison */}
         <motion.div 
-          className="text-center max-w-xl mx-auto pt-8 relative z-10"
+          className="text-center max-w-xl mx-auto pt-4 relative z-10"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
