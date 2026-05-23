@@ -1072,7 +1072,6 @@ export default function AdminPanelPage() {
                   </tbody>
                 </table>
               </div>
-              </div>
             )}
 
             {/* Add User Modal */}
