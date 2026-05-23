@@ -26,14 +26,14 @@ export const authOptions: NextAuthOptions = {
             </div>
             
             <div style="background-color: #f9f8f5; border: 1px solid #d4d1ca; padding: 25px; border-radius: 8px; margin-bottom: 25px; text-align: center;">
-              <h3 style="font-size: 18px; margin: 0 0 10px 0;">Sign In Request</h3>
+              <h3 style="font-size: 18px; margin: 0 0 10px 0; color: #01696f;">Activate Your Account</h3>
               <p style="font-size: 14px; line-height: 1.6; color: #28251d; margin: 0 0 20px 0;">
-                Click the button below to sign in to your ResumeForge dashboard. This link expires in 24 hours.
+                Click the button below to activate your account and access your ResumeForge dashboard. This link expires in 24 hours.
               </p>
               
               <div style="text-align: center; margin-bottom: 10px;">
                 <a href="${url}" style="background-color: #01696f; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: bold; padding: 12px 25px; border-radius: 9999px; display: inline-block; box-shadow: 0 4px 6px rgba(1, 105, 111, 0.1);">
-                  Sign In to ResumeForge
+                  Activate Account
                 </a>
               </div>
               
@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
             await transport.sendMail({
               from: provider.from,
               to: identifier,
-              subject: `Sign in to ${host}`,
+              subject: `Activate your ResumeForge Account`,
               html: emailHtml,
             });
             return;
@@ -74,7 +74,7 @@ export const authOptions: NextAuthOptions = {
           // Resend Fallback
           const resendApiKey = process.env.RESEND_API_KEY;
           if (!resendApiKey || resendApiKey === "mock") {
-            console.log(`\n[Auth Simulation] To: ${identifier}\nSubject: Sign in to ${host}\nLogin URL: ${url}\n`);
+            console.log(`\n[Auth Simulation] To: ${identifier}\nSubject: Activate your ResumeForge Account\nLogin URL: ${url}\n`);
             return;
           }
 
@@ -84,7 +84,7 @@ export const authOptions: NextAuthOptions = {
           await resend.emails.send({
             from: provider.from,
             to: identifier,
-            subject: `Sign in to ${host}`,
+            subject: `Activate your ResumeForge Account`,
             html: emailHtml,
           });
         } catch (error) {

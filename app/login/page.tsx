@@ -35,7 +35,7 @@ function LoginContent() {
     setIsLoading(true);
 
     try {
-      const res = await signIn("email", { email, redirect: false });
+      const res = await signIn("email", { email, callbackUrl: "/dashboard", redirect: false });
 
       if (res?.error) {
         throw new Error(res.error);
