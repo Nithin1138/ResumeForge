@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
       amount: 4900, // ₹49 in paise (4900 paise)
       currency: "INR",
       accept_partial: false,
-      description: `ResumeForge — ATS Resume Content Generation for ${customerName}`,
+      description: `ATSLift — ATS Resume Content Generation for ${customerName}`,
       customer: {
         name: customerName,
         email: customerEmail,

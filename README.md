@@ -1,6 +1,6 @@
-# ResumeForge — CGPA to ATS Resume Converter for Indian Engineering Students
+# ATSLift — CGPA to ATS Resume Converter for Indian Engineering Students
 
-ResumeForge is an ultra-premium, production-ready full-stack web application built specifically for Indian engineering students (e.g. VIT, BITS, NITs, and IIITs) in placement season. 
+ATSLift is an ultra-premium, production-ready full-stack web application built specifically for Indian engineering students (e.g. VIT, BITS, NITs, and IIITs) in placement season. 
 
 It converts raw student academic data (CGPA, branch, projects, internships, club PORs) into recruiters-aligned, highly optimized ATS-compliant plain-text resume content utilizing generative LLMs.
 
@@ -22,7 +22,7 @@ It converts raw student academic data (CGPA, branch, projects, internships, club
 
 ## 🏗️ Architecture & Sandbox Modes
 
-ResumeForge is equipped with **zero-friction offline sandbox mechanisms**, enabling you to test the complete end-to-end generation, scorecard analysis, payment redirect, transaction webhook updates, and transactional email dispatches completely local without needing live API billing details.
+ATSLift is equipped with **zero-friction offline sandbox mechanisms**, enabling you to test the complete end-to-end generation, scorecard analysis, payment redirect, transaction webhook updates, and transactional email dispatches completely local without needing live API billing details.
 
 1. **AI Generative Fallback (`lib/gemini.ts`):** If no `GEMINI_API_KEY` environment variable is detected, the API automatically triggers a simulated generative response that uses the student's actual form inputs to construct beautiful, quantified resume bullet points.
 2. **Local Sandbox Checkout Bypass (`app/api/payment/create`):** If no `RAZORPAY_KEY_ID` is configured, checking out redirects the user to `/success/[resumeId]?sandbox=true`. This simulates payment links offline.
@@ -99,4 +99,4 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 5. Click **Unlock Full ATS Content**. Because Razorpay keys are omitted, the app issues a sandbox bypass and routes you to `/success/[id]?sandbox=true`.
 6. Confetti explodes on the success page! The mock webhook triggers in the background, updating SQLite payment status to **PAID**.
 7. Explore features: copy specific segments, copy the entire plain-text resume schema, download the `.txt` representation, adjust the tone and click **Re-Generate Content**, or select **Generate PDF Document** to inspect a print-optimized LaTeX-style page.
-# ResumeForge
+# ATSLift

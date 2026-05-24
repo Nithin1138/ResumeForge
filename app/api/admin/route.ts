@@ -6,7 +6,7 @@ import fs from "fs";
 import path from "path";
 
 const CONFIG_PATH = path.join(process.cwd(), "lib", "adminConfig.json");
-const SECRET_KEY = process.env.NEXTAUTH_SECRET || "admin-secret-key-for-resumeforge-dashboard";
+const SECRET_KEY = process.env.NEXTAUTH_SECRET || "admin-secret-key-for-atslift-dashboard";
 
 // Hashing helper
 const hashPassword = (password: string) => {

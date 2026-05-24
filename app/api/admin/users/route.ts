@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { createHash } from "crypto";
 import bcrypt from "bcryptjs";
 
-const SECRET_KEY = process.env.NEXTAUTH_SECRET || "admin-secret-key-for-resumeforge-dashboard";
+const SECRET_KEY = process.env.NEXTAUTH_SECRET || "admin-secret-key-for-atslift-dashboard";
 
 const getAdminConfig = async () => {
   try {

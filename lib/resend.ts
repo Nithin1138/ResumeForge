@@ -19,11 +19,11 @@ export async function sendResumeEmail(
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const successUrl = `${appUrl}/success/${resumeId}?sandbox=true`;
 
-  const emailSubject = "Your ATS Resume Content is Ready — ResumeForge";
+  const emailSubject = "Your ATS Resume Content is Ready — ATSLift";
   const emailHtml = `
     <div style="font-family: 'Satoshi', sans-serif; background-color: #f7f6f2; color: #28251d; padding: 40px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #d4d1ca;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <h2 style="font-family: 'Instrument Serif', Georgia, serif; font-size: 28px; margin: 0; color: #01696f;">ResumeForge</h2>
+        <h2 style="font-family: 'Instrument Serif', Georgia, serif; font-size: 28px; margin: 0; color: #01696f;">ATSLift</h2>
         <p style="font-size: 12px; color: #7a7974; margin: 5px 0 0 0;">ATS Resume Builder for Engineering Students</p>
       </div>
       
@@ -48,14 +48,14 @@ ${plainTextResume}
       </div>
 
       <div style="text-align: center; border-top: 1px solid #d4d1ca; padding-top: 20px; font-size: 11px; color: #7a7974;">
-        <p style="margin: 0;">ResumeForge — Built by engineering students for engineering students.</p>
+        <p style="margin: 0;">ATSLift — Built by engineering students for engineering students.</p>
         <p style="margin: 5px 0 0 0;">Secure checkout powered by Razorpay. Need help? Reply to this email.</p>
       </div>
     </div>
   `;
 
   const emailText = `Hi ${customerName},\n\nYour resume content is ready. Access it directly here: ${successUrl}\n\nPlain-Text Content:\n\n${plainTextResume}`;
-  const fromEmail = process.env.FROM_EMAIL || "ResumeForge <noreply@resumeforge.in>";
+  const fromEmail = process.env.FROM_EMAIL || "ATSLift <noreply@atslift.in>";
 
   try {
     // Check if SMTP is configured (Gmail/Free SMTP)

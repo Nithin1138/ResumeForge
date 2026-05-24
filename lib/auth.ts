@@ -53,20 +53,20 @@ export const authOptions: NextAuthOptions = {
     }),
     EmailProvider({
       server: "", // Not used since we're overriding sendVerificationRequest
-      from: process.env.FROM_EMAIL || "ResumeForge <noreply@resumeforge.in>",
+      from: process.env.FROM_EMAIL || "ATSLift <noreply@atslift.in>",
       sendVerificationRequest: async ({ identifier, url, provider }) => {
 
         const emailHtml = `
           <div style="font-family: 'Satoshi', sans-serif; background-color: #f7f6f2; color: #28251d; padding: 40px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #d4d1ca;">
             <div style="text-align: center; margin-bottom: 30px;">
-              <h2 style="font-family: 'Instrument Serif', Georgia, serif; font-size: 28px; margin: 0; color: #01696f;">ResumeForge</h2>
+              <h2 style="font-family: 'Instrument Serif', Georgia, serif; font-size: 28px; margin: 0; color: #01696f;">ATSLift</h2>
               <p style="font-size: 12px; color: #7a7974; margin: 5px 0 0 0;">ATS Resume Builder for Engineering Students</p>
             </div>
             
             <div style="background-color: #f9f8f5; border: 1px solid #d4d1ca; padding: 25px; border-radius: 8px; margin-bottom: 25px; text-align: center;">
               <h3 style="font-size: 18px; margin: 0 0 10px 0; color: #01696f;">Activate Your Account</h3>
               <p style="font-size: 14px; line-height: 1.6; color: #28251d; margin: 0 0 20px 0;">
-                Click the button below to activate your account and access your ResumeForge dashboard. This link expires in 24 hours.
+                Click the button below to activate your account and access your ATSLift dashboard. This link expires in 24 hours.
               </p>
               
               <div style="text-align: center; margin-bottom: 10px;">
@@ -103,7 +103,7 @@ export const authOptions: NextAuthOptions = {
             await transport.sendMail({
               from: provider.from,
               to: identifier,
-              subject: `Activate your ResumeForge Account`,
+              subject: `Activate your ATSLift Account`,
               html: emailHtml,
             });
             return;
@@ -112,7 +112,7 @@ export const authOptions: NextAuthOptions = {
           // Resend Fallback
           const resendApiKey = process.env.RESEND_API_KEY;
           if (!resendApiKey || resendApiKey === "mock") {
-            console.log(`\n[Auth Simulation] To: ${identifier}\nSubject: Activate your ResumeForge Account\nLogin URL: ${url}\n`);
+            console.log(`\n[Auth Simulation] To: ${identifier}\nSubject: Activate your ATSLift Account\nLogin URL: ${url}\n`);
             return;
           }
 
@@ -121,7 +121,7 @@ export const authOptions: NextAuthOptions = {
           await resend.emails.send({
             from: provider.from,
             to: identifier,
-            subject: `Activate your ResumeForge Account`,
+            subject: `Activate your ATSLift Account`,
             html: emailHtml,
           });
         } catch (error) {

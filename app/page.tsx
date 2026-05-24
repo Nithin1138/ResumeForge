@@ -91,10 +91,10 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm tracking-wider">
-            RF
+            AL
           </div>
           <span className="font-bold text-lg tracking-tight font-sans text-text">
-            Resume<span className="text-primary font-medium font-serif italic">Forge</span>
+            ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
         </div>
         
@@ -221,7 +221,7 @@ export default function LandingPage() {
                 <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
                 <span className="text-[10px] font-extrabold tracking-wider text-success uppercase">ATS Score: 94/100</span>
               </div>
-              <h3 className="font-bold text-sm tracking-wide text-primary mb-4 uppercase">ResumeForge Output</h3>
+              <h3 className="font-bold text-sm tracking-wide text-primary mb-4 uppercase">ATSLift Output</h3>
 
               <div className="space-y-4">
                 <div className="p-4 bg-bg-base rounded-xl border border-border/60 text-sm">
@@ -358,50 +358,58 @@ export default function LandingPage() {
             </div>
           </motion.div>
 
-          {/* Card 3: ResumeForge Resume (The Masterpiece) */}
+          {/* Card 3: Hiring Signal Engine (The Masterpiece) */}
           <motion.div 
             className="bg-gradient-to-b from-[#ffffff] to-primary/[0.015] border-2 border-primary rounded-3xl p-8 md:p-10 flex flex-col justify-between shadow-[0_16px_40px_rgba(1,105,111,0.06)] relative transition-all duration-300 group"
             variants={cardVariants}
             whileHover={{ y: -12, scale: 1.02 }}
           >
             {/* Top capsule decoration */}
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-extrabold tracking-widest px-4 py-1 rounded-full uppercase shadow-md border border-white/20 whitespace-nowrap">
-              Recommended Choice
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-extrabold tracking-widest px-4 py-1.5 rounded-full uppercase shadow-md border border-white/20 whitespace-nowrap">
+              Hiring Signal Engine
             </div>
             <div>
               <div className="flex items-center justify-between mb-8 mt-1">
                 <div>
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1">Engineered Output</span>
-                  <h3 className="font-bold text-xl md:text-2xl text-text">
-                    Resume<span className="text-primary font-serif italic font-medium">Forge</span>
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1">Recruiter Psychology</span>
+                  <h3 className="font-serif tracking-tight text-text text-xl md:text-2xl">
+                    What Recruiters Actually Notice
                   </h3>
                 </div>
                 <div className="p-3 rounded-2xl bg-primary/10 text-primary shadow-inner">
                   <TrendingUp className="w-5 h-5 animate-pulse" />
                 </div>
               </div>
-              <ul className="space-y-4 text-sm text-text mb-10 leading-relaxed font-medium">
+              <ul className="space-y-4 text-sm text-text mb-8 leading-relaxed font-medium">
                 <li className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span>Converts projects into technical impact</span>
+                  <span>Technical impact over technology lists</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span>Creates recruiter-readable bullets</span>
+                  <span>Quantified outcomes over vague descriptions</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span>ATS-safe formatting structure</span>
+                  <span>Clear engineering signals in seconds</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span>Optimized for engineering placements</span>
+                  <span>Structured for recruiter scan behavior</span>
                 </li>
               </ul>
             </div>
-            <div className="w-full inline-flex items-center justify-center px-4 py-3 rounded-2xl bg-primary hover:bg-primary/95 text-white text-xs font-bold tracking-widest uppercase shadow-sm transition-all duration-300 group-hover:shadow-md cursor-pointer flex items-center justify-center space-x-1.5">
-              <span>Interview Probability</span>
-              <TrendingUp className="w-4 h-4" />
+            
+            <div className="mt-auto">
+              {/* Premium grey centered italic microcopy */}
+              <span className="text-[11px] md:text-xs text-text-muted/80 text-center font-serif italic block mb-4">
+                “Most recruiters evaluate visible impact, not effort.”
+              </span>
+              
+              <div className="w-full inline-flex items-center justify-center px-4 py-3 rounded-2xl bg-primary hover:bg-primary/95 text-white text-xs font-bold tracking-widest uppercase shadow-sm transition-all duration-300 group-hover:shadow-md cursor-pointer flex items-center justify-center space-x-1.5">
+                <span>Higher Shortlisting Probability</span>
+                <TrendingUp className="w-4 h-4" />
+              </div>
             </div>
           </motion.div>
         </motion.div>
@@ -437,7 +445,7 @@ export default function LandingPage() {
             Built For How Engineering Hiring Actually Works
           </h2>
           <p className="text-sm md:text-base text-text-muted max-w-2xl mx-auto leading-relaxed">
-            Most tools optimize for appearance or generic writing. ResumeForge optimizes for technical placement conversion.
+            Most tools generate resumes. <span className="text-primary font-bold">ATSLift</span> optimizes how recruiters perceive technical ability.
           </p>
         </motion.div>
 
@@ -451,117 +459,127 @@ export default function LandingPage() {
         >
           {/* Column 1: Generic Resume Builders */}
           <motion.div 
-            className="p-8 md:p-10 flex flex-col justify-between md:border-r border-border/20 bg-transparent transition-all duration-300"
+            className="p-8 md:p-10 flex flex-col justify-between md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-70 hover:opacity-90"
             variants={cardVariants}
+            whileHover={{ y: -4 }}
           >
             <div>
               <div className="mb-6">
-                <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1">Standard Tool</span>
-                <h3 className="font-bold text-xl text-text font-serif italic">Generic Builders</h3>
+                <span className="text-[10px] font-bold text-text-muted/80 uppercase tracking-widest block mb-1">Standard Tool</span>
+                <h3 className="font-bold text-xl text-text-muted font-serif italic">Generic Builders</h3>
               </div>
-              <ul className="space-y-4 text-sm text-text-muted mb-8">
+              <ul className="space-y-4 text-sm text-text-muted/80 mb-8">
                 <li className="flex items-start space-x-2.5">
-                  <span className="text-border/60 mt-1.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
+                  <span className="text-border/40 mt-1.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
                   <span>Template-first approach</span>
                 </li>
                 <li className="flex items-start space-x-2.5">
-                  <span className="text-border/60 mt-1.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
+                  <span className="text-border/40 mt-1.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
                   <span>Focused mainly on design</span>
                 </li>
                 <li className="flex items-start space-x-2.5">
-                  <span className="text-border/60 mt-1.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
+                  <span className="text-border/40 mt-1.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
                   <span>Weak technical storytelling</span>
                 </li>
                 <li className="flex items-start space-x-2.5">
-                  <span className="text-border/60 mt-1.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
+                  <span className="text-border/40 mt-1.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
                   <span>Same structure for every student</span>
                 </li>
               </ul>
             </div>
-            <div className="border-t border-border/20 pt-4 text-center mt-auto">
-              <span className="text-[10px] font-bold tracking-wider text-text-muted uppercase block mb-1">Optimized For</span>
-              <span className="text-xs font-bold text-text">Visual Appearance</span>
+            <div className="border-t border-border/15 pt-4 text-center mt-auto">
+              <span className="text-[10px] font-bold tracking-wider text-text-muted/60 uppercase block mb-1">Optimized For</span>
+              <span className="text-xs font-bold text-text-muted/90">Visual Appearance</span>
             </div>
           </motion.div>
 
           {/* Column 2: AI Chatbots */}
           <motion.div 
-            className="p-8 md:p-10 flex flex-col justify-between md:border-r border-border/20 bg-transparent transition-all duration-300"
+            className="p-8 md:p-10 flex flex-col justify-between md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-85 hover:opacity-100"
             variants={cardVariants}
+            whileHover={{ y: -4 }}
           >
             <div>
               <div className="mb-6">
-                <span className="text-[10px] font-bold text-warning uppercase tracking-widest block mb-1">Raw AI Tool</span>
+                <span className="text-[10px] font-bold text-warning/80 uppercase tracking-widest block mb-1">Raw AI Tool</span>
                 <h3 className="font-bold text-xl text-text font-serif italic">AI Chatbots</h3>
               </div>
               <ul className="space-y-4 text-sm text-text-muted mb-8">
                 <li className="flex items-start space-x-2.5">
-                  <span className="text-warning/40 mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
+                  <span className="text-warning/45 mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
                   <span>Generic generated bullet points</span>
                 </li>
                 <li className="flex items-start space-x-2.5">
-                  <span className="text-warning/40 mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
+                  <span className="text-warning/45 mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
                   <span>Requires prompt engineering</span>
                 </li>
                 <li className="flex items-start space-x-2.5">
-                  <span className="text-warning/40 mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
+                  <span className="text-warning/45 mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
                   <span>Often creates fake metrics</span>
                 </li>
                 <li className="flex items-start space-x-2.5">
-                  <span className="text-warning/40 mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
+                  <span className="text-warning/45 mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
                   <span>No recruiter-specific optimization</span>
                 </li>
               </ul>
             </div>
-            <div className="border-t border-border/20 pt-4 text-center mt-auto">
-              <span className="text-[10px] font-bold tracking-wider text-warning uppercase block mb-1">Optimized For</span>
-              <span className="text-xs font-bold text-warning font-semibold">Text Generation</span>
+            <div className="border-t border-border/15 pt-4 text-center mt-auto">
+              <span className="text-[10px] font-bold tracking-wider text-warning/80 uppercase block mb-1">Optimized For</span>
+              <span className="text-xs font-bold text-warning/90 font-semibold">Text Generation</span>
             </div>
           </motion.div>
 
-          {/* Column 3: ResumeForge (Sleek Floating Column) */}
+          {/* Column 3: ATSLift (Sleek Floating Column) */}
           <motion.div 
-            className="bg-gradient-to-b from-[#ffffff] to-primary/[0.015] border-2 border-primary rounded-3xl p-8 md:p-10 shadow-[0_16px_40px_rgba(1,105,111,0.06)] relative md:-translate-y-4 md:scale-[1.03] z-20 flex flex-col justify-between transition-all duration-300 group"
+            className="bg-gradient-to-b from-[#ffffff] to-primary/[0.02] border-2 border-primary rounded-3xl p-8 md:p-10 shadow-[0_20px_50px_rgba(1,105,111,0.08)] relative md:-translate-y-6 md:scale-[1.04] z-20 flex flex-col justify-between transition-all duration-300 group"
             variants={cardVariants}
-            whileHover={{ y: -28, scale: 1.05 }}
+            whileHover={{ y: -32, scale: 1.06 }}
           >
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-extrabold tracking-widest px-4 py-1.5 rounded-full uppercase shadow-md border border-white/20 whitespace-nowrap">
-              The Focused Solution
+              High Signal Format
             </div>
             <div>
               <div className="flex items-center justify-between mb-8 mt-1">
                 <div>
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1">Engineered Solution</span>
-                  <h3 className="font-bold text-xl md:text-2xl text-text">
-                    Resume<span className="text-primary font-serif italic font-medium">Forge</span>
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1">What Recruiters Actually Notice</span>
+                  <h3 className="font-bold text-xl md:text-2xl text-text leading-tight">
+                    Engineering Hiring Signals
                   </h3>
                 </div>
                 <div className="p-3 rounded-2xl bg-primary/10 text-primary shadow-inner">
                   <CheckCircle className="w-5 h-5 animate-pulse" />
                 </div>
               </div>
-              <ul className="space-y-4 text-sm text-text mb-10 leading-relaxed font-medium">
+              <ul className="space-y-4 text-sm text-text mb-8 leading-relaxed font-medium">
                 <li className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span>Built for engineering students</span>
+                  <span>Highlights technical depth clearly</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span>Converts raw projects into impact</span>
+                  <span>Converts vague work into hiring signals</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span>ATS-safe and recruiter-readable</span>
+                  <span>Prioritizes recruiter scan behavior</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span>Structured for placement shortlisting</span>
+                  <span>Structured for fast shortlisting</span>
                 </li>
               </ul>
             </div>
-            <div className="border-t border-primary/20 pt-5 text-center mt-auto bg-primary/5 rounded-b-3xl -mx-8 -mb-8 md:-mx-10 md:-mb-10 p-5 md:p-6">
-              <span className="text-[10px] font-bold tracking-wider text-primary uppercase block mb-1">Optimized For</span>
-              <span className="text-sm font-bold text-primary">Technical Placement Conversion</span>
+            
+            <div className="mt-auto">
+              {/* Premium grey centered italic microcopy */}
+              <span className="text-[11px] md:text-xs text-text-muted/80 text-center font-serif italic block mb-4">
+                “Most recruiters evaluate visible impact, not effort.”
+              </span>
+              
+              <div className="border-t border-primary/20 pt-5 text-center bg-primary/5 rounded-b-3xl -mx-8 -mb-8 md:-mx-10 md:-mb-10 p-5 md:p-6">
+                <span className="text-[10px] font-bold tracking-wider text-primary uppercase block mb-1">Optimized For</span>
+                <span className="text-sm font-bold text-primary">Shortlisting Signals</span>
+              </div>
             </div>
           </motion.div>
         </motion.div>
@@ -575,7 +593,7 @@ export default function LandingPage() {
           variants={textVariants}
         >
           <p className="text-xs md:text-sm text-text-muted leading-relaxed font-medium">
-            ResumeForge understands how engineering recruiters evaluate projects, internships, and ATS relevance.
+            ATSLift understands how engineering recruiters evaluate technical ability.
           </p>
         </motion.div>
       </section>
@@ -583,7 +601,7 @@ export default function LandingPage() {
       {/* How it works */}
       <section className="px-6 py-20 max-w-5xl mx-auto w-full">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-serif tracking-tight mb-3">How ResumeForge Works</h2>
+          <h2 className="text-3xl md:text-4xl font-serif tracking-tight mb-3">How ATSLift Works</h2>
           <p className="text-text-muted text-sm md:text-base max-w-md mx-auto">
             From empty text areas to recruiting-ready summaries in three steps. No credentials or login required to start.
           </p>
@@ -646,7 +664,7 @@ export default function LandingPage() {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif tracking-tight mb-3">Frequently Asked Questions</h2>
-            <p className="text-text-muted text-sm">Everything you need to know about ResumeForge.</p>
+            <p className="text-text-muted text-sm">Everything you need to know about ATSLift.</p>
           </div>
 
           <div className="space-y-4">
@@ -705,10 +723,10 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
             <span className="font-bold text-sm tracking-tight text-text">
-              Resume<span className="text-primary font-serif italic">Forge</span>
+              ATS<span className="text-primary font-serif italic">Lift</span>
             </span>
             <span className="text-border">|</span>
-            <span>© {new Date().getFullYear()} ResumeForge. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} ATSLift. All rights reserved.</span>
           </div>
           <div className="flex items-center space-x-4">
             <Link href="/about" className="hover:text-primary transition-colors">

@@ -335,10 +335,10 @@ export default function AdminPanelPage() {
         <div className="w-full max-w-md bg-surface border border-border/50 rounded-3xl p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] relative z-10">
           <div className="text-center mb-8">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm tracking-wider mx-auto mb-3">
-              RF
+              AL
             </div>
             <h1 className="text-2xl font-serif tracking-tight text-text leading-tight mb-2">
-              ResumeForge <span className="italic text-primary font-normal">Admin Login</span>
+              ATSLift <span className="italic text-primary font-normal">Admin Login</span>
             </h1>
             <p className="text-xs text-text-muted leading-relaxed font-semibold">
               Enter your credentials to manage operations and statistics.
@@ -418,10 +418,10 @@ export default function AdminPanelPage() {
       <header className="sticky top-0 z-50 glass-panel border-b border-border/45 px-4 md:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Link href="/" className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm tracking-wider cursor-pointer">
-            RF
+            AL
           </Link>
           <span className="font-bold text-base md:text-lg tracking-tight text-text">
-            ResumeForge<span className="text-primary font-medium font-serif italic ml-1">AdminPanel</span>
+            ATSLift<span className="text-primary font-medium font-serif italic ml-1">AdminPanel</span>
           </span>
         </div>
         
@@ -673,7 +673,7 @@ export default function AdminPanelPage() {
                       <div className="inline-flex items-center gap-1 bg-primary text-white text-[8px] font-extrabold tracking-widest px-2.5 py-1 rounded-full uppercase shadow-xs mb-2">
                         <TrendingUp className="w-2.5 h-2.5" /> High Net Margin
                       </div>
-                      <h4 className="font-bold text-base md:text-lg font-serif italic text-text">ResumeForge Net Profit</h4>
+                      <h4 className="font-bold text-base md:text-lg font-serif italic text-text">ATSLift Net Profit</h4>
                       <p className="text-[10px] text-text-muted max-w-xs font-semibold leading-relaxed mt-1">
                         Your direct net operations payout balance after all standard gateway collections and processing costs.
                       </p>
@@ -969,7 +969,7 @@ export default function AdminPanelPage() {
                   onClick={() => exportToCSV(
                     usersList.map(u => ({ Name: u.name, Email: u.email, Resumes: u.resumeCount, Registered: new Date(u.createdAt).toISOString() })),
                     ["Name", "Email", "ResumesBuiltCount", "RegistrationDate"],
-                    "resumeforge_users.csv"
+                    "atslift_users.csv"
                   )}
                   disabled={usersList.length === 0}
                   className="h-[36px] px-3.5 bg-primary text-white font-bold text-[10px] md:text-xs rounded-full flex items-center justify-center gap-1.5 transition-colors cursor-pointer hover:bg-primary/95 disabled:opacity-50"
@@ -1131,7 +1131,7 @@ export default function AdminPanelPage() {
                   onClick={() => exportToCSV(
                     waitlistList.map(w => ({ Email: w.email, College: w.college, Branch: w.branch, SubscribedAt: new Date(w.createdAt).toISOString() })),
                     ["Email", "CollegeName", "EngineeringBranch", "SubscriptionDate"],
-                    "resumeforge_waitlist.csv"
+                    "atslift_waitlist.csv"
                   )}
                   disabled={waitlistList.length === 0}
                   className="h-[36px] px-3.5 bg-primary text-white font-bold text-[10px] md:text-xs rounded-full flex items-center justify-center gap-1.5 transition-colors cursor-pointer hover:bg-primary/95 disabled:opacity-50"
@@ -1318,7 +1318,7 @@ export default function AdminPanelPage() {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
             <span className="font-bold text-sm tracking-tight text-text">
-              ResumeForge<span className="text-primary font-serif italic ml-0.5">AdminPanel</span>
+              ATSLift<span className="text-primary font-serif italic ml-0.5">AdminPanel</span>
             </span>
             <span className="text-border">|</span>
             <span>© {new Date().getFullYear()} Operations Dashboard. All rights reserved.</span>

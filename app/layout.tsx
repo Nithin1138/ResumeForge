@@ -2,18 +2,18 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ResumeForge — ATS Resume Builder for Engineering Students",
+  title: "ATSLift — ATS Resume Builder for Engineering Students",
   description: "Turn your CGPA, projects, and skills into ATS-optimized resume content in 2 minutes. Built for VIT, BITS, NIT, IIIT students.",
-  metadataBase: new URL("https://resumeforge.in"),
+  metadataBase: new URL("https://atslift.in"),
   openGraph: {
-    title: "ResumeForge — ATS Resume Builder for Engineering Students",
+    title: "ATSLift — ATS Resume Builder for Engineering Students",
     description: "Turn your CGPA, projects, and skills into ATS-optimized resume content in 2 minutes. Built for VIT, BITS, NIT, IIIT students.",
     images: ["/og-image.png"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ResumeForge — ATS Resume Builder for Engineering Students",
+    title: "ATSLift — ATS Resume Builder for Engineering Students",
     description: "Turn your CGPA, projects, and skills into ATS-optimized resume content in 2 minutes. Built for VIT, BITS, NIT, IIIT students.",
     images: ["/og-image.png"],
   },

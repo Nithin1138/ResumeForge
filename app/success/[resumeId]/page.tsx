@@ -901,7 +901,7 @@ Concepts: ${output.skills.concepts.join(", ")}
                   const url = URL.createObjectURL(blob);
                   const a = document.createElement("a");
                   a.href = url;
-                  a.download = `ResumeForge_${resume.inputData.personal.fullName.replace(/\s+/g, "_")}.txt`;
+                  a.download = `ATSLift_${resume.inputData.personal.fullName.replace(/\s+/g, "_")}.txt`;
                   a.click();
                   URL.revokeObjectURL(url);
                 }}

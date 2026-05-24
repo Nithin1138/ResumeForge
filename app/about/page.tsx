@@ -10,10 +10,10 @@ export default function AboutPage() {
       <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-2 cursor-pointer">
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm tracking-wider">
-            RF
+            AL
           </div>
           <span className="font-bold text-lg tracking-tight text-text">
-            Resume<span className="text-primary font-medium font-serif italic">Forge</span>
+            ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
         </Link>
         <Link
@@ -33,7 +33,7 @@ export default function AboutPage() {
             Our Story & <span className="text-primary italic font-normal">Mission</span>
           </h1>
           <p className="text-sm md:text-base text-text-muted max-w-lg mx-auto leading-relaxed font-semibold">
-            ResumeForge was born out of placement room frustration. Built by engineering students, for engineering students.
+            ATSLift was born out of placement room frustration. Built by engineering students, for engineering students.
           </p>
         </div>
 
@@ -58,7 +58,7 @@ export default function AboutPage() {
             </div>
             <h2 className="text-xl font-bold font-sans">Our Approach: ATS-Safe, Bullet-First</h2>
             <p className="text-sm text-text-muted leading-relaxed font-medium">
-              Instead of locking you into proprietary resume editors that force you to buy expensive subscriptions, ResumeForge is built to do one thing flawlessly: <strong>optimize your written content</strong>.
+              Instead of locking you into proprietary resume editors that force you to buy expensive subscriptions, ATSLift is built to do one thing flawlessly: <strong>optimize your written content</strong>.
             </p>
             <p className="text-sm text-text-muted leading-relaxed font-medium">
               We translate raw details (like college CGPA, technology lists, and project summaries) into quantified, metrics-focused bullet points utilizing industry-specific action verbs. Our outputs are formatted as clean, standard plain text that can be copied directly into clean, single-column Microsoft Word or Overleaf LaTeX templates.
@@ -88,7 +88,7 @@ export default function AboutPage() {
             <span>for the Indian SDE campus community.</span>
           </p>
           <p className="text-[10px] text-text-muted font-semibold">
-            ResumeForge is not affiliated with any particular college or placement system. Built to level the playing field.
+            ATSLift is not affiliated with any particular college or placement system. Built to level the playing field.
           </p>
         </div>
       </main>
@@ -96,7 +96,7 @@ export default function AboutPage() {
       {/* Footer */}
       <footer className="border-t border-border/60 bg-surface px-6 py-8 text-center text-xs text-text-muted font-medium">
         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span>© {new Date().getFullYear()} ResumeForge. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} ATSLift. All rights reserved.</span>
           <Link href="/" className="hover:text-primary transition-colors">
             Home
           </Link>
