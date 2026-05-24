@@ -5,7 +5,10 @@ export const metadata: Metadata = {
   title: "ATSLift — ATS Resume Builder for Engineering Students",
   description: "Turn your CGPA, projects, and skills into ATS-optimized resume content in 2 minutes. Built for VIT, BITS, NIT, IIIT students.",
   metadataBase: new URL("https://atslift.in"),
-
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
   openGraph: {
     title: "ATSLift — ATS Resume Builder for Engineering Students",
     description: "Turn your CGPA, projects, and skills into ATS-optimized resume content in 2 minutes. Built for VIT, BITS, NIT, IIIT students.",
