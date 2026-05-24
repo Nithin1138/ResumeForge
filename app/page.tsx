@@ -521,45 +521,45 @@ export default function LandingPage() {
 
           {/* Column 3: ResumeForge (Sleek Floating Column) */}
           <motion.div 
-            className="bg-surface border-2 border-primary rounded-2xl p-8 md:p-10 shadow-lg glow-primary relative md:-translate-y-4 md:scale-[1.03] z-20 flex flex-col justify-between transition-all duration-300"
+            className="bg-gradient-to-b from-[#ffffff] to-primary/[0.015] border-2 border-primary rounded-3xl p-8 md:p-10 shadow-[0_16px_40px_rgba(1,105,111,0.06)] relative md:-translate-y-4 md:scale-[1.03] z-20 flex flex-col justify-between transition-all duration-300 group"
             variants={cardVariants}
-            whileHover={{ y: -20, scale: 1.05 }}
+            whileHover={{ y: -28, scale: 1.05 }}
           >
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-bold tracking-widest px-4 py-1.5 rounded-full uppercase shadow-sm whitespace-nowrap">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-extrabold tracking-widest px-4 py-1.5 rounded-full uppercase shadow-md border border-white/20 whitespace-nowrap">
               The Focused Solution
             </div>
             <div>
-              <div className="mb-6 mt-1 flex items-center justify-between">
+              <div className="flex items-center justify-between mb-8 mt-1">
                 <div>
                   <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1">Engineered Solution</span>
-                  <h3 className="font-bold text-xl text-text">
+                  <h3 className="font-bold text-xl md:text-2xl text-text">
                     Resume<span className="text-primary font-serif italic font-medium">Forge</span>
                   </h3>
                 </div>
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                <div className="p-3 rounded-2xl bg-primary/10 text-primary shadow-inner">
                   <CheckCircle className="w-5 h-5 animate-pulse" />
                 </div>
               </div>
-              <ul className="space-y-4 text-sm text-text mb-8 font-medium">
-                <li className="flex items-start space-x-2.5">
-                  <span className="text-primary mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+              <ul className="space-y-4 text-sm text-text mb-10 leading-relaxed font-medium">
+                <li className="flex items-start space-x-3">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <span>Built for engineering students</span>
                 </li>
-                <li className="flex items-start space-x-2.5">
-                  <span className="text-primary mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                <li className="flex items-start space-x-3">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <span>Converts raw projects into impact</span>
                 </li>
-                <li className="flex items-start space-x-2.5">
-                  <span className="text-primary mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                <li className="flex items-start space-x-3">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <span>ATS-safe and recruiter-readable</span>
                 </li>
-                <li className="flex items-start space-x-2.5">
-                  <span className="text-primary mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                <li className="flex items-start space-x-3">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <span>Structured for placement shortlisting</span>
                 </li>
               </ul>
             </div>
-            <div className="border-t border-primary/20 pt-5 text-center mt-auto bg-primary/5 rounded-b-xl -mx-8 -mb-8 p-5">
+            <div className="border-t border-primary/20 pt-5 text-center mt-auto bg-primary/5 rounded-b-3xl -mx-8 -mb-8 md:-mx-10 md:-mb-10 p-5 md:p-6">
               <span className="text-[10px] font-bold tracking-wider text-primary uppercase block mb-1">Optimized For</span>
               <span className="text-sm font-bold text-primary">Technical Placement Conversion</span>
             </div>
