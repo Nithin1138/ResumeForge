@@ -9,9 +9,7 @@ export default function AboutPage() {
       {/* Navbar */}
       <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-2 cursor-pointer">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm tracking-wider">
-            AL
-          </div>
+          <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain" />
           <span className="font-bold text-lg tracking-tight text-text">
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>

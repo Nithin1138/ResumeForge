@@ -90,9 +90,7 @@ export default function LandingPage() {
       {/* Premium Navbar */}
       <header className="sticky top-0 z-50 glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm tracking-wider">
-            AL
-          </div>
+          <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain" />
           <span className="font-bold text-lg tracking-tight font-sans text-text">
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
@@ -720,6 +718,7 @@ export default function LandingPage() {
       <footer className="mt-auto border-t border-border/60 bg-surface px-6 py-12 text-center text-xs text-text-muted font-medium">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
+            <img src="/logo.png" alt="ATSLift Logo" className="w-5 h-5 object-contain" />
             <span className="font-bold text-sm tracking-tight text-text">
               ATS<span className="text-primary font-serif italic">Lift</span>
             </span>
