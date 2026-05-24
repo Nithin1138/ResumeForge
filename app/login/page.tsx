@@ -72,7 +72,11 @@ function LoginContent() {
         }
         
         // After successful registration, trigger the activation email via NextAuth
-        const emailSignInRes = await signIn("email", { email, redirect: false });
+        const emailSignInRes = await signIn("email", { 
+          email, 
+          callbackUrl: "/dashboard",
+          redirect: false 
+        });
         if (emailSignInRes?.error) {
           throw new Error("Account created, but failed to send activation email.");
         }
