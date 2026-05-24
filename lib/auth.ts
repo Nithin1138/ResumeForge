@@ -157,4 +157,5 @@ export const authOptions: NextAuthOptions = {
     error: "/login", // Redirect errors back to login page
     verifyRequest: "/login?verifyRequest=true",
   },
+  secret: process.env.NEXTAUTH_SECRET || "YXePPOpDNOtVL90aXCbf9dejJSD/zRYkiiuBi2icyZc",
 };
