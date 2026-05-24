@@ -104,11 +104,11 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
       {/* Navbar */}
       <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Link href="/" className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm tracking-wider cursor-pointer">
-            RF
+          <Link href="/" className="flex items-center justify-center">
+            <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain" />
           </Link>
           <span className="font-bold text-lg tracking-tight text-text">
-            Resume<span className="text-primary font-medium font-serif italic">Forge</span>
+            ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
         </div>
         
