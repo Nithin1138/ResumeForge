@@ -131,16 +131,75 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
   };
 };
 
-export async function generateResumeContent(formData: ResumeFormData): Promise<FullResumeOutput> {
-  const client = getGeminiClient();
-  
-  if (!client) {
-    // Return mock fallback for offline/no-key mode
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(generateMockResume(formData)), 1500);
-    });
+// High-performance Groq Fallback Engine [NEW]
+async function generateGroqFallback(prompt: string, isJson: boolean = false): Promise<string> {
+  const groqKey = process.env.GROQ_API_KEY;
+  if (!groqKey) {
+    throw new Error("Groq API key missing");
   }
 
+  // High-performance standard Groq models
+  const MODELS = [
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
+    "openai/gpt-oss-safeguard-120b",
+    "groq/compound",
+    "groq/compound-mini",
+    "qwen/qwen3-32b",
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+    "mixtral-8x7b-32768",
+    "gemma2-9b-it"
+  ];
+
+  for (const modelName of MODELS) {
+    try {
+      console.log(`🔄 Trying Groq model: ${modelName}`);
+      const payload: any = {
+        model: modelName,
+        messages: [{ role: "user", content: prompt }]
+      };
+      if (isJson) {
+        payload.response_format = { type: "json_object" };
+      }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${groqKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.warn(`❌ Groq model failed [${modelName}]: ${errorText.substring(0, 200)}`);
+        continue;
+      }
+
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content;
+      if (content) {
+        console.log(`✅ Groq success via ${modelName}`);
+        return content;
+      }
+    } catch (e: any) {
+      console.error(`🔥 Groq error on ${modelName}:`, e.message || e);
+      continue;
+    }
+  }
+
+  throw new Error("All AI providers (Gemini/Groq) are currently exhausted.");
+}
+
+export async function generateResumeContent(formData: ResumeFormData): Promise<FullResumeOutput> {
   const { personal, skills, projects, internships, positions, options } = formData;
 
   // Build precise prompt instructions
@@ -297,6 +356,23 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
 }
 `;
 
+  const client = getGeminiClient();
+  
+  if (!client) {
+    if (process.env.GROQ_API_KEY) {
+      try {
+        console.log("No Gemini API key available, but Groq key is present. Using Groq directly for resume generation.");
+        const groqResponse = await generateGroqFallback(prompt, true);
+        return JSON.parse(groqResponse.trim()) as FullResumeOutput;
+      } catch (groqError) {
+        console.error("Groq direct call failed:", groqError);
+      }
+    }
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(generateMockResume(formData)), 1500);
+    });
+  }
+
   try {
     const response = await client.models.generateContent({
       model: "gemini-1.5-flash",
@@ -313,22 +389,18 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
 
     return JSON.parse(responseText.trim()) as FullResumeOutput;
   } catch (error) {
-    console.error("Error communicating with Gemini API:", error);
-    // Graceful fallback to mock response in case of API limits or timeouts
-    return generateMockResume(formData);
+    console.error("Error communicating with Gemini API, trying Groq fallback:", error);
+    try {
+      const groqResponse = await generateGroqFallback(prompt, true);
+      return JSON.parse(groqResponse.trim()) as FullResumeOutput;
+    } catch (groqError) {
+      console.error("Groq fallback failed as well, using mock response:", groqError);
+      return generateMockResume(formData);
+    }
   }
 }
 
 export async function generateSectionContent(sectionType: string, currentText: string): Promise<string> {
-  const client = getGeminiClient();
-  
-  if (!client) {
-    // Return mock fallback for offline/no-key mode
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(currentText + " (Mock Regenerated)"), 1000);
-    });
-  }
-
   const prompt = `
 SYSTEM:
 You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
@@ -338,6 +410,23 @@ Do not wrap the output in quotes or markdown formatting, just return the raw tex
 CURRENT TEXT:
 ${currentText}
 `;
+
+  const client = getGeminiClient();
+  
+  if (!client) {
+    if (process.env.GROQ_API_KEY) {
+      try {
+        console.log("No Gemini API key available, but Groq key is present. Using Groq directly for section generation.");
+        const groqResponse = await generateGroqFallback(prompt, false);
+        return groqResponse.trim().replace(/^-\s*/, "");
+      } catch (groqError) {
+        console.error("Groq direct call failed for section:", groqError);
+      }
+    }
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(currentText + " (Mock Regenerated)"), 1000);
+    });
+  }
 
   try {
     const response = await client.models.generateContent({
@@ -352,7 +441,13 @@ ${currentText}
 
     return responseText.trim().replace(/^-\s*/, ""); // remove bullet dash if added by AI
   } catch (error) {
-    console.error("Error communicating with Gemini API:", error);
-    return currentText;
+    console.error("Error communicating with Gemini API, trying Groq fallback:", error);
+    try {
+      const groqResponse = await generateGroqFallback(prompt, false);
+      return groqResponse.trim().replace(/^-\s*/, "");
+    } catch (groqError) {
+      console.error("Groq fallback failed as well, using current text:", groqError);
+      return currentText;
+    }
   }
 }
