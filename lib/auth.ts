@@ -9,6 +9,7 @@ import bcrypt from "bcryptjs";
 import { Resend } from "resend";
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
@@ -157,5 +158,4 @@ export const authOptions: NextAuthOptions = {
     error: "/login", // Redirect errors back to login page
     verifyRequest: "/login?verifyRequest=true",
   },
-  secret: process.env.NEXTAUTH_SECRET || "YXePPOpDNOtVL90aXCbf9dejJSD/zRYkiiuBi2icyZc",
 };
