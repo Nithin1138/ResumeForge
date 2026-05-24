@@ -266,112 +266,110 @@ export default function LandingPage() {
           </p>
         </motion.div>
 
-        {/* 3 Horizontally Aligned Cards - Redesigned to be stunning & ultra-premium */}
+        {/* Scannable Connected Horizontal Comparison Container */}
         <motion.div 
-          className="grid md:grid-cols-3 gap-8 mb-16 relative z-10 items-stretch"
+          className="grid grid-cols-1 md:grid-cols-3 items-stretch bg-surface/50 border border-border/40 rounded-[32px] shadow-[0_12px_40px_rgba(0,0,0,0.015)] relative z-10"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={containerVariants}
         >
-          {/* Card 1: Generic Resume */}
+          {/* Column 1: Generic Resume */}
           <motion.div 
-            className="bg-gradient-to-b from-[#ffffff] to-[#fff8f8] border border-error/15 rounded-3xl p-8 md:p-10 flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-300 hover:border-error/30 hover:shadow-xs group relative overflow-hidden"
+            className="p-8 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/15 bg-transparent transition-all duration-300 opacity-70 hover:opacity-90 rounded-t-[30px] md:rounded-tr-none md:rounded-l-[30px]"
             variants={cardVariants}
-            whileHover={{ y: -6 }}
+            whileHover={{ y: -3 }}
           >
-            {/* Subtle top decoration */}
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-error/20" />
             <div>
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <span className="text-[10px] font-bold text-error uppercase tracking-widest block mb-1">Standard Way</span>
-                  <h3 className="font-serif tracking-tight text-text text-xl md:text-2xl">Generic Resume</h3>
+                  <span className="text-[10px] font-bold text-error/80 uppercase tracking-widest block mb-1">STANDARD WAY</span>
+                  <h3 className="font-serif tracking-tight text-text-muted text-xl md:text-2xl">Generic Resume</h3>
                 </div>
-                <div className="p-3 rounded-2xl bg-error/5 text-error shadow-inner">
-                  <XCircle className="w-5 h-5" />
+                <div className="p-2.5 rounded-xl bg-error/5 text-error/60 shadow-inner">
+                  <XCircle className="w-4 h-4" />
                 </div>
               </div>
-              <ul className="space-y-4 text-sm text-text-muted mb-10 leading-relaxed">
+              <ul className="space-y-4 text-sm text-text-muted/80 mb-10 leading-relaxed">
                 <li className="flex items-start space-x-3">
-                  <span className="text-error/70 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
+                  <span className="text-error/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
                   <span>Lists technologies without context</span>
                 </li>
                 <li className="flex items-start space-x-3">
-                  <span className="text-error/70 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
+                  <span className="text-error/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
                   <span>Weak project explanations</span>
                 </li>
                 <li className="flex items-start space-x-3">
-                  <span className="text-error/70 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
+                  <span className="text-error/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
                   <span>No measurable outcomes</span>
                 </li>
                 <li className="flex items-start space-x-3">
-                  <span className="text-error/70 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
+                  <span className="text-error/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
                   <span>Looks identical to thousands of resumes</span>
                 </li>
               </ul>
             </div>
-            <div className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-error/[0.04] border border-error/10 text-[10px] font-bold text-error tracking-wider uppercase font-mono">
-              ATS Visibility: 41%
+            <div className="border-t border-border/15 pt-5 text-center mt-auto">
+              <span className="text-[10px] font-bold tracking-wider text-text-muted/50 uppercase block mb-1">Status</span>
+              <span className="text-xs font-bold text-error/70 font-mono">ATS Visibility: 41%</span>
             </div>
           </motion.div>
 
-          {/* Card 2: Recruiter Reality */}
+          {/* Column 2: Recruiter Reality */}
           <motion.div 
-            className="bg-gradient-to-b from-[#ffffff] to-[#fbfbfa] border border-border/40 rounded-3xl p-8 md:p-10 flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-300 hover:border-border hover:shadow-xs group relative overflow-hidden"
+            className="p-8 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/15 bg-transparent transition-all duration-300 opacity-90 hover:opacity-100"
             variants={cardVariants}
-            whileHover={{ y: -6 }}
+            whileHover={{ y: -3 }}
           >
-            {/* Subtle top decoration */}
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-border/20" />
             <div>
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1">Recruiter Lens</span>
+                  <span className="text-[10px] font-bold text-text-muted/80 uppercase tracking-widest block mb-1">RECRUITER LENS</span>
                   <h3 className="font-serif tracking-tight text-text text-xl md:text-2xl">Recruiter Reality</h3>
                 </div>
-                <div className="p-3 rounded-2xl bg-text/5 text-text-muted shadow-inner">
-                  <Eye className="w-5 h-5" />
+                <div className="p-2.5 rounded-xl bg-text/5 text-text-muted/65 shadow-inner">
+                  <Eye className="w-4 h-4" />
                 </div>
               </div>
               <ul className="space-y-4 text-sm text-text-muted mb-10 leading-relaxed">
                 <li className="flex items-start space-x-3">
-                  <span className="text-text-muted/60 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
+                  <span className="text-text-muted/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
                   <span>Recruiters scan resumes in seconds</span>
                 </li>
                 <li className="flex items-start space-x-3">
-                  <span className="text-text-muted/60 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
+                  <span className="text-text-muted/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
                   <span>ATS filters missing keywords</span>
                 </li>
                 <li className="flex items-start space-x-3">
-                  <span className="text-text-muted/60 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
+                  <span className="text-text-muted/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
                   <span>Projects matter more than certificates</span>
                 </li>
                 <li className="flex items-start space-x-3">
-                  <span className="text-text-muted/60 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
+                  <span className="text-text-muted/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
                   <span>Generic bullets get ignored instantly</span>
                 </li>
               </ul>
             </div>
-            <div className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-text-muted/5 border border-border/80 text-[10px] font-bold text-text-muted tracking-wider uppercase font-mono">
-              Average Scan Time: 6 Seconds
+            <div className="border-t border-border/15 pt-5 text-center mt-auto">
+              <span className="text-[10px] font-bold tracking-wider text-text-muted/50 uppercase block mb-1">Recruiter Fact</span>
+              <span className="text-xs font-bold text-text-muted font-mono">Average Scan Time: 6 Seconds</span>
             </div>
           </motion.div>
 
-          {/* Card 3: Hiring Signal Engine (The Masterpiece) */}
+          {/* Column 3: Hiring Signal Engine (The Masterpiece) */}
           <motion.div 
-            className="bg-gradient-to-b from-[#ffffff] to-primary/[0.015] border-2 border-primary rounded-3xl p-8 md:p-10 flex flex-col justify-between shadow-[0_16px_40px_rgba(1,105,111,0.06)] relative transition-all duration-300 group"
+            className="bg-gradient-to-b from-[#ffffff] to-primary/[0.015] border-2 border-primary rounded-3xl p-8 md:p-10 shadow-[0_16px_40px_rgba(1,105,111,0.06)] relative md:-my-[2px] md:-mr-[2px] md:-ml-[1px] z-20 flex flex-col justify-between transition-all duration-300 group"
             variants={cardVariants}
-            whileHover={{ y: -12, scale: 1.02 }}
+            whileHover={{ y: -8, scale: 1.01 }}
           >
             {/* Top capsule decoration */}
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-extrabold tracking-widest px-4 py-1.5 rounded-full uppercase shadow-md border border-white/20 whitespace-nowrap">
-              Hiring Signal Engine
+              HIRING SIGNAL ENGINE
             </div>
             <div>
               <div className="flex items-center justify-between mb-8 mt-1">
                 <div>
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1">Recruiter Psychology</span>
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1">RECRUITER PSYCHOLOGY</span>
                   <h3 className="font-serif tracking-tight text-text text-xl md:text-2xl">
                     What Recruiters Actually Notice
                   </h3>
