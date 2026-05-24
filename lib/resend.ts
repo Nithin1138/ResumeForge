@@ -106,3 +106,83 @@ ${plainTextResume}
     return false;
   }
 }
+
+export async function sendOtpEmail(toEmail: string, otp: string): Promise<boolean> {
+  const emailSubject = "Your Password Reset OTP — ATSLift";
+  const emailHtml = `
+    <div style="font-family: 'Satoshi', sans-serif; background-color: #f7f6f2; color: #28251d; padding: 40px; border-radius: 12px; max-width: 500px; margin: 0 auto; border: 1px solid #d4d1ca;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h2 style="font-family: 'Instrument Serif', Georgia, serif; font-size: 28px; margin: 0; color: #01696f;">ATSLift</h2>
+        <p style="font-size: 12px; color: #7a7974; margin: 5px 0 0 0;">ATS Resume Builder for Engineering Students</p>
+      </div>
+      
+      <div style="background-color: #f9f8f5; border: 1px solid #d4d1ca; padding: 25px; border-radius: 8px; margin-bottom: 25px; text-align: center;">
+        <h3 style="font-size: 18px; margin: 0 0 10px 0; color: #28251d;">Reset Your Password</h3>
+        <p style="font-size: 14px; line-height: 1.6; color: #7a7974; margin: 0 0 20px 0;">
+          Use the OTP code below to verify your email and set a new password. This code will expire in 10 minutes.
+        </p>
+        
+        <div style="font-family: monospace; font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #01696f; background-color: #ffffff; padding: 15px; border-radius: 6px; border: 1px solid #d4d1ca; display: inline-block; margin-bottom: 10px;">
+          ${otp}
+        </div>
+      </div>
+      
+      <div style="text-align: center; border-top: 1px solid #d4d1ca; padding-top: 20px; font-size: 11px; color: #7a7974;">
+        <p style="margin: 0;">If you did not request this, you can safely ignore this email.</p>
+        <p style="margin: 5px 0 0 0;">ATSLift — Built by engineering students for engineering students.</p>
+      </div>
+    </div>
+  `;
+  const emailText = `Reset Your Password\n\nUse the OTP code below to verify your email and set a new password. This code will expire in 10 minutes.\n\nOTP Code: ${otp}`;
+  const fromEmail = process.env.FROM_EMAIL || "ATSLift <noreply@atslift.in>";
+
+  try {
+    // Check if SMTP is configured
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = process.env.SMTP_PORT;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASSWORD;
+
+    if (smtpHost && smtpUser && smtpPass) {
+      const transport = createTransport({
+        host: smtpHost,
+        port: Number(smtpPort) || 465,
+        secure: Number(smtpPort) === 465,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
+        },
+      });
+
+      await transport.sendMail({
+        from: fromEmail,
+        to: toEmail,
+        subject: emailSubject,
+        html: emailHtml,
+        text: emailText,
+      });
+      return true;
+    }
+
+    // Fallback to Resend Client
+    const resend = getResendClient();
+    if (!resend) {
+      console.log(`[Email Simulation - OTP] To: ${toEmail}\nSubject: ${emailSubject}\nOTP: ${otp}`);
+      return true;
+    }
+
+    const result = await resend.emails.send({
+      from: fromEmail,
+      to: toEmail,
+      subject: emailSubject,
+      html: emailHtml,
+      text: emailText,
+    });
+
+    return !!result.data?.id;
+  } catch (error) {
+    console.error("Failed to send OTP email:", error);
+    return false;
+  }
+}
+

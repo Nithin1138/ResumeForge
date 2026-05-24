@@ -3,12 +3,14 @@
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Loader2, ArrowRight, Mail, Sparkles, Lock } from "lucide-react";
+import { Loader2, ArrowRight, Mail, Sparkles, Lock, Eye, EyeOff } from "lucide-react";
 import { signIn, getSession } from "next-auth/react";
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  
+  // Standard Login States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
@@ -16,6 +18,16 @@ function LoginContent() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isVerifyRequest, setIsVerifyRequest] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Forgot Password / OTP States
+  const [isForgotPass, setIsForgotPass] = useState(false);
+  const [forgotPassStep, setForgotPassStep] = useState<"email" | "otp">("email");
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     if (searchParams.get("verifyRequest") === "true") {
@@ -71,6 +83,7 @@ function LoginContent() {
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setResetSuccess(null);
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
       setError("Please enter a valid university or personal email address.");
       return;
@@ -136,11 +149,83 @@ function LoginContent() {
   const handleGoogleLogin = async () => {
     setIsGoogleLoading(true);
     setError(null);
+    setResetSuccess(null);
     try {
       await signIn("google", { callbackUrl: "/dashboard" });
     } catch (err: any) {
       setError(err.message || "Google Authentication failed.");
       setIsGoogleLoading(false);
+    }
+  };
+
+  const handleForgotPassSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail.trim() || !/\S+@\S+\.\S+/.test(forgotEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setError(null);
+    setResetSuccess(null);
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to request password reset.");
+      }
+
+      setForgotPassStep("otp");
+    } catch (err: any) {
+      setError(err.message || "Failed to send verification code.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResetPassSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!otp.trim() || otp.length !== 6 || !/^\d+$/.test(otp)) {
+      setError("OTP code must be a 6-digit number.");
+      return;
+    }
+    if (!newPassword.trim() || newPassword.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail, otp, newPassword }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to reset password.");
+      }
+
+      setResetSuccess("Password reset successfully. Please log in with your new password.");
+      setIsForgotPass(false);
+      setForgotPassStep("email");
+      setEmail(forgotEmail); // Prefill the sign in email field
+      setPassword(""); // Clear password field
+      setOtp("");
+      setNewPassword("");
+    } catch (err: any) {
+      setError(err.message || "Failed to reset password.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -150,10 +235,10 @@ function LoginContent() {
       <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center">
         <Link href="/" className="flex items-center space-x-2 cursor-pointer">
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm tracking-wider">
-            RF
+            AL
           </div>
           <span className="font-bold text-lg tracking-tight text-text">
-            Resume<span className="text-primary font-medium font-serif italic">Forge</span>
+            ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
         </Link>
       </header>
@@ -181,6 +266,12 @@ function LoginContent() {
             </div>
           )}
 
+          {resetSuccess && (
+            <div className="p-3.5 bg-success/10 border border-success/20 text-success text-xs rounded-xl font-bold mb-5">
+              {resetSuccess}
+            </div>
+          )}
+
           {isVerifyRequest ? (
             <div className="text-center py-6">
               <div className="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center mx-auto mb-4">
@@ -192,10 +283,150 @@ function LoginContent() {
               </p>
               <button 
                 onClick={() => setIsVerifyRequest(false)}
-                className="mt-6 text-xs text-primary font-bold hover:underline"
+                className="mt-6 text-xs text-primary font-bold hover:underline cursor-pointer"
               >
                 Try a different email
               </button>
+            </div>
+          ) : isForgotPass ? (
+            <div className="space-y-4">
+              <div className="mb-4">
+                <h2 className="text-xl font-bold mb-1">
+                  {forgotPassStep === "email" ? "Forgot Password" : "Reset Password"}
+                </h2>
+                <p className="text-xs text-text-muted font-semibold">
+                  {forgotPassStep === "email"
+                    ? "Enter your email and we'll send a 6-digit OTP code to verify your account."
+                    : `Enter the 6-digit code sent to ${forgotEmail} and choose your new password.`}
+                </p>
+              </div>
+
+              {forgotPassStep === "email" ? (
+                <form onSubmit={handleForgotPassSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5 uppercase tracking-wider text-text-muted">
+                      Email Address
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                      <input
+                        type="email"
+                        required
+                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                        placeholder="e.g. nithin.kumar@vit.edu"
+                        value={forgotEmail}
+                        onChange={(e) => setForgotEmail(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-3.5 bg-primary hover:bg-primary/95 text-white text-sm font-semibold rounded-full flex items-center justify-center space-x-1.5 shadow-md transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-4.5 h-4.5 animate-spin" />
+                    ) : (
+                      <>
+                        <span>Send OTP</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+
+                  <div className="text-center mt-4 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsForgotPass(false);
+                        setError(null);
+                      }}
+                      className="text-xs text-text-muted hover:text-primary transition-colors font-medium cursor-pointer"
+                    >
+                      Back to Sign In
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handleResetPassSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5 uppercase tracking-wider text-text-muted">
+                      6-Digit OTP Code
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                      <input
+                        type="text"
+                        required
+                        maxLength={6}
+                        pattern="\d{6}"
+                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm tracking-widest font-bold"
+                        placeholder="123456"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5 uppercase tracking-wider text-text-muted">
+                      New Password
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                      <input
+                        type={showNewPassword ? "text" : "password"}
+                        required
+                        className="w-full pl-11 pr-12 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                        placeholder="Min 6 characters"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text cursor-pointer"
+                        tabIndex={-1}
+                      >
+                        {showNewPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-3.5 bg-primary hover:bg-primary/95 text-white text-sm font-semibold rounded-full flex items-center justify-center space-x-1.5 shadow-md transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-4.5 h-4.5 animate-spin" />
+                    ) : (
+                      <>
+                        <span>Reset Password</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+
+                  <div className="text-center mt-4 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForgotPassStep("email");
+                        setError(null);
+                      }}
+                      className="text-xs text-text-muted hover:text-primary transition-colors font-medium cursor-pointer"
+                    >
+                      Try a different email
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
@@ -245,19 +476,48 @@ function LoginContent() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold mb-1.5 uppercase tracking-wider text-text-muted">
-                    Password
-                  </label>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-text-muted">
+                      Password
+                    </label>
+                    {!isSignUp && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsForgotPass(true);
+                          setForgotPassStep("email");
+                          setForgotEmail(email); // prefill with whatever is in email input
+                          setError(null);
+                          setResetSuccess(null);
+                        }}
+                        className="text-xs font-bold text-primary hover:underline cursor-pointer"
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </div>
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       required
-                      className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                      className="w-full pl-11 pr-12 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text cursor-pointer"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
                   </div>
                 </div>
 
@@ -279,7 +539,11 @@ function LoginContent() {
                 <div className="text-center mt-4 pt-2">
                   <button
                     type="button"
-                    onClick={() => setIsSignUp(!isSignUp)}
+                    onClick={() => {
+                      setIsSignUp(!isSignUp);
+                      setResetSuccess(null);
+                      setError(null);
+                    }}
                     className="text-xs text-text-muted hover:text-primary transition-colors font-medium cursor-pointer"
                   >
                     {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
