@@ -1114,7 +1114,7 @@ export default function BuildPage() {
       <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Link href="/" className="flex items-center justify-center">
-            <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain" />
+            <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
           </Link>
           <span className="font-bold text-lg tracking-tight text-text">
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>

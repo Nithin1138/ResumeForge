@@ -70,3 +70,8 @@ body {
 .glow-primary {
   box-shadow: 0 0 40px rgba(1, 105, 111, 0.08);
 }
+
+/* Rotated Logo */
+.logo-rotated {
+  transform: rotate(45deg);
+}

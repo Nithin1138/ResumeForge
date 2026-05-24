@@ -242,7 +242,7 @@ function LoginContent() {
       {/* Header */}
       <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center">
         <Link href="/" className="flex items-center space-x-2 cursor-pointer">
-          <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain" />
+          <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
           <span className="font-bold text-lg tracking-tight text-text">
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>

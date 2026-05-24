@@ -498,7 +498,7 @@ export default function AdminPanelPage() {
       <header className="sticky top-0 z-50 glass-panel border-b border-border/45 px-4 md:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Link href="/" className="cursor-pointer">
-            <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain" />
+            <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
           </Link>
           <span className="font-bold text-base md:text-lg tracking-tight text-text">
             ATSLift<span className="text-primary font-medium font-serif italic ml-1">CommandCenter</span>
@@ -2298,7 +2298,7 @@ export default function AdminPanelPage() {
       <footer className="mt-auto border-t border-border/40 bg-surface px-4 md:px-6 py-6 md:py-8 text-center text-xs text-text-muted font-medium">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
-            <img src="/logo.png" alt="ATSLift Logo" className="w-5 h-5 object-contain" />
+            <img src="/logo.png" alt="ATSLift Logo" className="w-5 h-5 object-contain logo-rotated" />
             <span className="font-bold text-sm tracking-tight text-text">
               ATSLift<span className="text-primary font-serif italic ml-0.5">CommandCenter</span>
             </span>
