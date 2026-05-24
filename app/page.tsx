@@ -265,146 +265,99 @@ export default function LandingPage() {
         </motion.div>
 
         {/* Scannable Connected Horizontal Comparison Container */}
+        {/* Editorial Horizontal Flow - No Vertical Cards */}
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-3 items-stretch bg-surface/50 border border-border/40 rounded-[32px] shadow-[0_12px_40px_rgba(0,0,0,0.015)] relative z-10"
+          className="flex flex-col border border-border/40 rounded-[32px] overflow-hidden shadow-2xl relative z-10 bg-surface/30"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={containerVariants}
         >
-          {/* Column 1: Generic Resume */}
+          {/* Top Row: The Old Way */}
           <motion.div 
-            className="p-8 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/15 bg-transparent transition-all duration-300 opacity-70 hover:opacity-90 rounded-t-[30px] md:rounded-tr-none md:rounded-l-[30px]"
+            className="flex flex-col md:flex-row items-stretch border-b border-border/40"
             variants={cardVariants}
-            whileHover={{ y: -3 }}
           >
-            <div>
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <span className="text-[10px] font-bold text-error/80 uppercase tracking-widest block mb-1">STANDARD WAY</span>
-                  <h3 className="font-serif tracking-tight text-text-muted text-xl md:text-2xl">Generic Resume</h3>
-                </div>
-                <div className="p-2.5 rounded-xl bg-error/5 text-error/60 shadow-inner">
-                  <XCircle className="w-4 h-4" />
-                </div>
+            <div className="md:w-[40%] p-8 md:p-12 bg-surface/80 flex flex-col justify-center border-b md:border-b-0 md:border-r border-border/40">
+              <div className="inline-flex items-center space-x-2 text-error/80 mb-4">
+                <XCircle className="w-5 h-5" />
+                <span className="font-bold tracking-widest text-[10px] uppercase">The Standard Way</span>
               </div>
-              <ul className="space-y-4 text-sm text-text-muted/80 mb-10 leading-relaxed">
-                <li className="flex items-start space-x-3">
-                  <span className="text-error/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
-                  <span>Lists technologies without context</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-error/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
-                  <span>Weak project explanations</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-error/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
-                  <span>No measurable outcomes</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-error/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-error" />
-                  <span>Looks identical to thousands of resumes</span>
-                </li>
-              </ul>
-            </div>
-            <div className="border-t border-border/15 pt-5 text-center mt-auto">
-              <span className="text-[10px] font-bold tracking-wider text-text-muted/50 uppercase block mb-1">Status</span>
-              <span className="text-xs font-bold text-error/70 font-mono">ATS Visibility: 41%</span>
-            </div>
-          </motion.div>
-
-          {/* Column 2: Recruiter Reality */}
-          <motion.div 
-            className="p-8 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/15 bg-transparent transition-all duration-300 opacity-90 hover:opacity-100"
-            variants={cardVariants}
-            whileHover={{ y: -3 }}
-          >
-            <div>
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <span className="text-[10px] font-bold text-text-muted/80 uppercase tracking-widest block mb-1">RECRUITER LENS</span>
-                  <h3 className="font-serif tracking-tight text-text text-xl md:text-2xl">Recruiter Reality</h3>
-                </div>
-                <div className="p-2.5 rounded-xl bg-text/5 text-text-muted/65 shadow-inner">
-                  <Eye className="w-4 h-4" />
-                </div>
-              </div>
-              <ul className="space-y-4 text-sm text-text-muted mb-10 leading-relaxed">
-                <li className="flex items-start space-x-3">
-                  <span className="text-text-muted/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
-                  <span>Recruiters scan resumes in seconds</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-text-muted/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
-                  <span>ATS filters missing keywords</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-text-muted/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
-                  <span>Projects matter more than certificates</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-text-muted/40 mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-text-muted" />
-                  <span>Generic bullets get ignored instantly</span>
-                </li>
-              </ul>
-            </div>
-            <div className="border-t border-border/15 pt-5 text-center mt-auto">
-              <span className="text-[10px] font-bold tracking-wider text-text-muted/50 uppercase block mb-1">Recruiter Fact</span>
-              <span className="text-xs font-bold text-text-muted font-mono">Average Scan Time: 6 Seconds</span>
-            </div>
-          </motion.div>
-
-          {/* Column 3: Hiring Signal Engine (The Masterpiece) */}
-          <motion.div 
-            className="bg-gradient-to-b from-[#ffffff] to-primary/[0.015] border-2 border-primary rounded-3xl p-8 md:p-10 shadow-[0_16px_40px_rgba(1,105,111,0.06)] relative md:-my-[2px] md:-mr-[2px] md:-ml-[1px] z-20 flex flex-col justify-between transition-all duration-300 group"
-            variants={cardVariants}
-            whileHover={{ y: -8, scale: 1.01 }}
-          >
-            {/* Top capsule decoration */}
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-extrabold tracking-widest px-4 py-1.5 rounded-full uppercase shadow-md border border-white/20 whitespace-nowrap">
-              HIRING SIGNAL ENGINE
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-8 mt-1">
-                <div>
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1">RECRUITER PSYCHOLOGY</span>
-                  <h3 className="font-serif tracking-tight text-text text-xl md:text-2xl">
-                    What Recruiters Actually Notice
-                  </h3>
-                </div>
-                <div className="p-3 rounded-2xl bg-primary/10 text-primary shadow-inner">
-                  <TrendingUp className="w-5 h-5 animate-pulse" />
-                </div>
-              </div>
-              <ul className="space-y-4 text-sm text-text mb-8 leading-relaxed font-medium">
-                <li className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span>Technical impact over technology lists</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span>Quantified outcomes over vague descriptions</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span>Clear engineering signals in seconds</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span>Structured for recruiter scan behavior</span>
-                </li>
-              </ul>
+              <h3 className="text-2xl md:text-3xl font-serif text-text-muted mb-3">Lost in the noise</h3>
+              <p className="text-sm md:text-base text-text-muted/70 leading-relaxed">
+                Recruiters spend an average of 6 seconds scanning a resume. Standard templates list technologies but fail to show actual engineering competence, resulting in immediate rejection.
+              </p>
             </div>
             
-            <div className="mt-auto">
-              {/* Premium grey centered italic microcopy */}
-              <span className="text-[11px] md:text-xs text-text-muted/80 text-center font-serif italic block mb-4">
-                “Most recruiters evaluate visible impact, not effort.”
-              </span>
-              
-              <div className="w-full inline-flex items-center justify-center px-4 py-3 rounded-2xl bg-primary hover:bg-primary/95 text-white text-xs font-bold tracking-widest uppercase shadow-sm transition-all duration-300 group-hover:shadow-md cursor-pointer flex items-center justify-center space-x-1.5">
-                <span>Higher Shortlisting Probability</span>
-                <TrendingUp className="w-4 h-4" />
+            <div className="md:w-[60%] p-8 md:p-12 bg-bg-base flex flex-col justify-center space-y-4 relative">
+              {/* Feature list horizontally structured */}
+              <div className="bg-surface/50 p-4 rounded-2xl border border-border/30 flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-error/50 shrink-0 hidden sm:block" />
+                <div className="flex-1">
+                  <span className="text-error/80 text-xs font-bold block mb-1">Vague Bullet Points</span>
+                  <span className="text-text-muted text-sm font-medium">Describes effort, not outcomes. Missing critical metrics.</span>
+                </div>
+              </div>
+              <div className="bg-surface/50 p-4 rounded-2xl border border-border/30 flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-error/50 shrink-0 hidden sm:block" />
+                <div className="flex-1">
+                  <span className="text-error/80 text-xs font-bold block mb-1">ATS Parsing Failures</span>
+                  <span className="text-text-muted text-sm font-medium">Visual templates from Canva choke legacy recruitment software.</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Bottom Row: The ATSLift Engine */}
+          <motion.div 
+            className="flex flex-col md:flex-row items-stretch bg-gradient-to-br from-surface to-primary/5 relative overflow-hidden"
+            variants={cardVariants}
+          >
+            {/* Ambient Glow */}
+            <div className="absolute right-0 top-0 w-96 h-96 bg-primary/10 rounded-full blur-[80px] pointer-events-none" />
+            
+            <div className="md:w-[40%] p-8 md:p-12 flex flex-col justify-center border-b md:border-b-0 md:border-r border-primary/10 relative z-10">
+              <div className="inline-flex items-center space-x-2 text-primary mb-4">
+                <Sparkles className="w-5 h-5 animate-pulse" />
+                <span className="font-bold tracking-widest text-[10px] uppercase">The ATSLift Engine</span>
+              </div>
+              <h3 className="text-2xl md:text-3xl font-serif text-text mb-3">Hiring signal amplified</h3>
+              <p className="text-sm md:text-base text-text-muted leading-relaxed mb-6">
+                We restructure your raw experience into the exact format tech recruiters and automated parsers search for.
+              </p>
+              <div className="w-fit inline-flex items-center px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/95 text-white text-xs font-bold tracking-widest uppercase shadow-sm transition-all duration-300">
+                <TrendingUp className="w-4 h-4 mr-2" />
+                <span>Higher Selection Rate</span>
+              </div>
+            </div>
+            
+            <div className="md:w-[60%] p-8 md:p-12 flex flex-col justify-center space-y-4 relative z-10">
+              <div className="bg-surface p-5 rounded-2xl border border-primary/20 shadow-[0_8px_30px_rgba(1,105,111,0.06)] flex items-start sm:items-center space-x-4 transition-transform hover:-translate-y-1 duration-300">
+                <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-primary text-xs font-bold uppercase tracking-wider block mb-1">Quantified Impact & Outcomes</span>
+                  <span className="text-text text-sm font-medium">Metrics, scale, and engineering decisions are extracted and highlighted.</span>
+                </div>
+              </div>
+              <div className="bg-surface p-5 rounded-2xl border border-primary/20 shadow-[0_8px_30px_rgba(1,105,111,0.06)] flex items-start sm:items-center space-x-4 transition-transform hover:-translate-y-1 duration-300">
+                <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
+                  <Award className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-primary text-xs font-bold uppercase tracking-wider block mb-1">Recruiter-Optimized Structure</span>
+                  <span className="text-text text-sm font-medium">Reordered to show your strongest technical signals in the first 6 seconds.</span>
+                </div>
+              </div>
+              <div className="bg-surface p-5 rounded-2xl border border-primary/20 shadow-[0_8px_30px_rgba(1,105,111,0.06)] flex items-start sm:items-center space-x-4 transition-transform hover:-translate-y-1 duration-300">
+                <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-primary text-xs font-bold uppercase tracking-wider block mb-1">100% Parser Safe Output</span>
+                  <span className="text-text text-sm font-medium">Clean, structured output that passes all legacy and modern ATS filters.</span>
+                </div>
               </div>
             </div>
           </motion.div>
