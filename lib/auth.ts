@@ -19,10 +19,14 @@ export const authOptions: NextAuthOptions = {
           where: { identifier, token },
         });
         if (verificationToken) {
-          // Use deleteMany to avoid compound key delete issues
+          // Disable token deletion to prevent email client prefetching (e.g. Gmail/Outlook) 
+          // from consuming the token before the user actually clicks the link.
+          // The token will still naturally expire based on its 'expires' field.
+          /*
           await prisma.verificationToken.deleteMany({
             where: { identifier, token },
           });
+          */
           return verificationToken;
         }
         return null;
