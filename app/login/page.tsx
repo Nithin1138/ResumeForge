@@ -28,18 +28,45 @@ function LoginContent() {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (isVerifyRequest) {
+    if (isVerifyRequest && email && password) {
       interval = setInterval(async () => {
-        const session = await getSession();
-        if (session) {
-          router.push("/dashboard");
+        try {
+          // Check if session exists on current device
+          const session = await getSession();
+          if (session) {
+            router.push("/dashboard");
+            return;
+          }
+          
+          // Cross-device check: Poll backend to see if email was verified on another device (e.g. mobile)
+          const res = await fetch("/api/auth/check-status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          const data = await res.json();
+          
+          if (data.verified) {
+            clearInterval(interval);
+            // Automatically log them in on this device since they are now verified
+            const signInRes = await signIn("credentials", { 
+              email, 
+              password, 
+              redirect: false 
+            });
+            if (signInRes && !signInRes.error) {
+              router.push("/dashboard");
+            }
+          }
+        } catch (error) {
+          // Ignore polling errors
         }
       }, 3000);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isVerifyRequest, router]);
+  }, [isVerifyRequest, router, email, password]);
 
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
