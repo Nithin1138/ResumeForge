@@ -492,7 +492,7 @@ export default function LandingPage() {
                 <div>
                   <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1">What Recruiters Actually Notice</span>
                   <h3 className="font-bold text-xl md:text-2xl text-text leading-tight">
-                    Engineering Hiring Signals
+                    ATSLift
                   </h3>
                 </div>
                 <div className="p-3 rounded-2xl bg-primary/10 text-primary shadow-inner">
