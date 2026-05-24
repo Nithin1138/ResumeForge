@@ -10,7 +10,28 @@ import { Resend } from "resend";
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET || "resumeforge_fallback_secret_2024_for_testing_12345",
-  adapter: PrismaAdapter(prisma),
+  adapter: {
+    ...PrismaAdapter(prisma),
+    async useVerificationToken({ identifier, token }) {
+      try {
+        // Use findFirst instead of findUnique with compound key to bypass adapter-pg bug
+        const verificationToken = await prisma.verificationToken.findFirst({
+          where: { identifier, token },
+        });
+        if (verificationToken) {
+          // Use deleteMany to avoid compound key delete issues
+          await prisma.verificationToken.deleteMany({
+            where: { identifier, token },
+          });
+          return verificationToken;
+        }
+        return null;
+      } catch (error) {
+        console.error("Verification Token Error:", error);
+        return null;
+      }
+    },
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",
