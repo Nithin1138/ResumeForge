@@ -10,7 +10,15 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // Standard Login States
+  
+  useEffect(() => {
+    getSession().then(session => {
+      if (session) {
+        router.push("/dashboard");
+      }
+    });
+  }, [router]);
+// Standard Login States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);

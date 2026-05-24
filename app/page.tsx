@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle, Flame, ShieldCheck, Sparkles, ChevronDown, Award, XCircle, Eye, TrendingUp } from "lucide-react";
-import { getLocalSession } from "@/lib/authClient";
+import { getSession } from "next-auth/react";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -59,7 +59,7 @@ export default function LandingPage() {
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
-    setSession(getLocalSession());
+    getSession().then(setSession);
   }, []);
 
   const faqs = [
