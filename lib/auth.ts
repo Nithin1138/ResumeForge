@@ -9,7 +9,7 @@ import bcrypt from "bcryptjs";
 import { Resend } from "resend";
 
 export const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || "resumeforge_fallback_secret_2024_for_testing_12345",
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
