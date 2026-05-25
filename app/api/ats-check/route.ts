@@ -32,10 +32,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         overallScore: 78,
         categories: [
-          { name: "Keywords & Skills", weightage: 30, score: 22, feedback: "You have a solid tech stack, but try to include more cloud computing keywords like AWS or Docker." },
-          { name: "Impact & Metrics", weightage: 40, score: 32, feedback: "Great project descriptions, but quantify your achievements (e.g., 'improved speed by X%')." },
-          { name: "Formatting & Readability", weightage: 10, score: 9, feedback: "Your resume appears to have a clean, parseable structure." },
-          { name: "Education & Experience", weightage: 20, score: 15, feedback: "Good academic background. Highlighting coursework might add more value." }
+          { name: "Keyword Match & Searchability", weightage: 35, score: 25, feedback: "You have a solid tech stack, but try to include more keywords." },
+          { name: "Resume Parsing & Structure", weightage: 25, score: 20, feedback: "Your resume appears to have a clean, parseable structure." },
+          { name: "Technical Signal Strength", weightage: 20, score: 15, feedback: "Good signal, but highlighting more complex engineering helps." },
+          { name: "Impact & Quantification", weightage: 10, score: 7, feedback: "Great project descriptions, but quantify your achievements." },
+          { name: "Recruiter Readability", weightage: 7, score: 5, feedback: "Easy to skim and formatted cleanly." },
+          { name: "Experience & Relevance", weightage: 3, score: 2, feedback: "Good academic background." }
         ]
       });
     }
@@ -86,22 +88,26 @@ export async function POST(req: NextRequest) {
 You are an expert ATS (Applicant Tracking System) used by top-tier tech companies.
 Analyze the provided resume document and evaluate it against realtime universal software engineering and tech company needs.
 Provide a realistic score out of 100 based on the following metrics:
-- Keywords & Skills (Weightage: 30)
-- Impact & Metrics (Weightage: 40)
-- Formatting & Readability (Weightage: 10)
-- Education & Experience (Weightage: 20)
+- Keyword Match & Searchability (Weightage: 35)
+- Resume Parsing & Structure (Weightage: 25)
+- Technical Signal Strength (Weightage: 20)
+- Impact & Quantification (Weightage: 10)
+- Recruiter Readability (Weightage: 7)
+- Experience & Relevance (Weightage: 3)
 
-Calculate the scores proportionally based on the weightage (e.g. if a category is out of 30, a perfect score is 30).
+Calculate the scores proportionally based on the weightage (e.g. if a category is out of 35, a perfect score is 35).
 Also provide a short, actionable feedback sentence for each category.
 
 Return ONLY a valid JSON object with no markdown formatting. It must exactly match this structure:
 {
   "overallScore": 82,
   "categories": [
-    { "name": "Keywords & Skills", "weightage": 30, "score": 25, "feedback": "Good use of Python, but missing cloud keywords." },
-    { "name": "Impact & Metrics", "weightage": 40, "score": 30, "feedback": "Need more quantified results in projects." },
-    { "name": "Formatting & Readability", "weightage": 10, "score": 9, "feedback": "Clean formatting." },
-    { "name": "Education & Experience", "weightage": 20, "score": 18, "feedback": "Strong academic background." }
+    { "name": "Keyword Match & Searchability", "weightage": 35, "score": 30, "feedback": "Good use of Python, but missing cloud keywords." },
+    { "name": "Resume Parsing & Structure", "weightage": 25, "score": 22, "feedback": "Clean formatting and easily parseable." },
+    { "name": "Technical Signal Strength", "weightage": 20, "score": 15, "feedback": "Solid engineering projects." },
+    { "name": "Impact & Quantification", "weightage": 10, "score": 7, "feedback": "Need more quantified results in projects." },
+    { "name": "Recruiter Readability", "weightage": 7, "score": 6, "feedback": "Well-organized and skim-friendly." },
+    { "name": "Experience & Relevance", "weightage": 3, "score": 2, "feedback": "Highly relevant background." }
   ]
 }
 
