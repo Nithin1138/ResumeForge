@@ -97,6 +97,9 @@ export default function LandingPage() {
         </div>
         
         <div className="flex items-center space-x-4">
+          <Link href="/ats-check" className="text-xs font-bold text-text-muted hover:text-primary transition-colors hidden sm:block">
+            ATS Check
+          </Link>
           {session ? (
             <Link href="/dashboard" className="text-xs font-bold text-primary hover:underline">
               Dashboard
@@ -679,6 +682,10 @@ export default function LandingPage() {
             <span>© {new Date().getFullYear()} ATSLift. All rights reserved.</span>
           </div>
           <div className="flex items-center space-x-4">
+            <Link href="/ats-check" className="hover:text-primary transition-colors">
+              ATS Score
+            </Link>
+            <span className="text-border">•</span>
             <Link href="/about" className="hover:text-primary transition-colors">
               About
             </Link>
