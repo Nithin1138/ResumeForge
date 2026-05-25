@@ -55,8 +55,18 @@ export async function POST(req: NextRequest) {
           pdfParser.parseBuffer(buffer);
         });
         
-        // pdf2json uses URL encoding for spaces etc, so decode it
-        resumeText = decodeURIComponent(resumeText);
+        // pdf2json uses URL encoding for spaces etc, so decode it safely
+        // Resumes often have raw "%" symbols which break standard decodeURIComponent.
+        const safeDecode = (str: string) => {
+          return str.replace(/%([0-9A-Fa-f]{2})/g, (match, p1) => {
+            try {
+              return decodeURIComponent(match);
+            } catch {
+              return match; // Fallback to raw string if it can't be decoded
+            }
+          });
+        };
+        resumeText = safeDecode(resumeText as string);
       } catch (pdfError) {
         console.error("PDF Parsing Error:", pdfError);
         throw new Error("Failed to parse the PDF file. Ensure it is not corrupted or password protected.");
