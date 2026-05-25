@@ -21,6 +21,15 @@ interface ATSResult {
   categories: CategoryScore[];
 }
 
+const SCORING_CRITERIA = [
+  { name: "Keyword Match & Searchability", weightage: 35, description: "Measures density and relevance of technical keywords." },
+  { name: "Resume Parsing & Structure", weightage: 25, description: "Evaluates standard section formatting and machine readability." },
+  { name: "Technical Signal Strength", weightage: 20, description: "Assesses complexity and depth of engineering projects." },
+  { name: "Impact & Quantification", weightage: 10, description: "Checks for quantifiable achievements and metrics." },
+  { name: "Recruiter Readability", weightage: 7, description: "Measures skim-friendliness and layout clarity." },
+  { name: "Experience & Relevance", weightage: 3, description: "Matches background with target role expectations." },
+];
+
 export default function ATSCheckPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -139,7 +148,7 @@ export default function ATSCheckPage() {
         {/* Background glow */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="max-w-3xl w-full z-10">
+        <div className="max-w-5xl w-full z-10">
           <div className="text-center mb-10">
             <h1 className="text-4xl md:text-5xl font-serif tracking-tight text-text mb-4">
               Check Your <span className="text-primary italic">ATS Score</span>
@@ -156,66 +165,102 @@ export default function ATSCheckPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-surface border border-border/50 rounded-3xl p-8 shadow-xl"
+                className="w-full flex flex-col md:flex-row gap-8 items-stretch"
               >
-                <div
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 ${
-                    isDragging 
-                      ? "border-primary bg-primary/5" 
-                      : file ? "border-success/50 bg-success/5" : "border-border hover:border-primary/50 hover:bg-surface/80"
-                  }`}
-                >
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileSelect}
-                    accept=".pdf,application/pdf"
-                    className="hidden"
-                  />
-                  
-                  {file ? (
-                    <div className="flex flex-col items-center space-y-4">
-                      <div className="p-4 bg-success/10 text-success rounded-full">
-                        <FileText className="w-8 h-8" />
+                {/* Upload Box */}
+                <div className="flex-1 bg-surface border border-border/50 rounded-3xl p-8 shadow-xl flex flex-col justify-center">
+                  <div className="mb-6 text-center">
+                    <h3 className="font-serif text-2xl font-bold text-text">Upload Resume</h3>
+                    <p className="text-sm text-text-muted mt-2">Get an instant reality check on your ATS score.</p>
+                  </div>
+                  <div
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all duration-300 ${
+                      isDragging 
+                        ? "border-primary bg-primary/5" 
+                        : file ? "border-success/50 bg-success/5" : "border-border hover:border-primary/50 hover:bg-surface/80"
+                    }`}
+                  >
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileSelect}
+                      accept=".pdf,application/pdf"
+                      className="hidden"
+                    />
+                    
+                    {file ? (
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className="p-4 bg-success/10 text-success rounded-full">
+                          <FileText className="w-8 h-8" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-text">{file.name}</p>
+                          <p className="text-xs text-text-muted mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-semibold text-text">{file.name}</p>
-                        <p className="text-xs text-text-muted mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                    ) : (
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className="p-4 bg-primary/10 text-primary rounded-full">
+                          <UploadCloud className="w-8 h-8" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-text mb-1">Click to upload or drag and drop</p>
+                          <p className="text-xs text-text-muted">PDF only (Max 5MB)</p>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center space-y-4">
-                      <div className="p-4 bg-primary/10 text-primary rounded-full">
-                        <UploadCloud className="w-8 h-8" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-text mb-1">Click to upload or drag and drop</p>
-                        <p className="text-xs text-text-muted">PDF only (Max 5MB)</p>
-                      </div>
+                    )}
+                  </div>
+
+                  {error && (
+                    <div className="mt-4 p-3 rounded-lg bg-error/10 border border-error/20 flex items-center space-x-2 text-error text-sm">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>{error}</span>
                     </div>
                   )}
+
+                  <div className="mt-8 flex justify-center">
+                    <button
+                      onClick={handleUpload}
+                      disabled={!file}
+                      className="w-full sm:w-auto px-8 py-3 bg-primary hover:bg-primary/95 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    >
+                      <span>Analyze Resume</span>
+                      <TrendingUp className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
 
-                {error && (
-                  <div className="mt-4 p-3 rounded-lg bg-error/10 border border-error/20 flex items-center space-x-2 text-error text-sm">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
-                    <span>{error}</span>
+                {/* ATS Criteria Box */}
+                <div className="flex-1 bg-surface border border-border/50 rounded-3xl p-8 shadow-xl">
+                  <h3 className="font-serif text-xl font-bold mb-2 flex items-center text-text">
+                    <ShieldCheck className="w-5 h-5 text-primary mr-2" />
+                    Evaluation Criteria
+                  </h3>
+                  <p className="text-xs text-text-muted mb-6">How top-tier company ATS systems weigh your resume</p>
+                  
+                  <div className="space-y-5">
+                    {SCORING_CRITERIA.map((cat, idx) => (
+                      <div key={idx} className="flex flex-col">
+                        <div className="flex justify-between items-end mb-1.5">
+                          <span className="font-semibold text-sm text-text">{cat.name}</span>
+                          <span className="text-xs font-bold text-primary">{cat.weightage}%</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-border/40 rounded-full overflow-hidden mb-1.5">
+                          <div 
+                            className="h-full rounded-full bg-primary/40"
+                            style={{ width: `${cat.weightage}%` }}
+                          />
+                        </div>
+                        <p className="text-[11px] text-text-muted leading-relaxed">
+                          {cat.description}
+                        </p>
+                      </div>
+                    ))}
                   </div>
-                )}
-
-                <div className="mt-8 flex justify-center">
-                  <button
-                    onClick={handleUpload}
-                    disabled={!file}
-                    className="px-8 py-3 bg-primary hover:bg-primary/95 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-                  >
-                    <span>Analyze Resume</span>
-                    <TrendingUp className="w-4 h-4" />
-                  </button>
                 </div>
               </motion.div>
             )}
