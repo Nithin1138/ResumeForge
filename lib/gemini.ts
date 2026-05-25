@@ -132,7 +132,7 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
 };
 
 // High-performance Groq Fallback Engine [NEW]
-async function generateGroqFallback(prompt: string, isJson: boolean = false): Promise<string> {
+export async function generateGroqFallback(prompt: string, isJson: boolean = false): Promise<string> {
   const groqKey = process.env.GROQ_API_KEY;
   if (!groqKey) {
     throw new Error("Groq API key missing");

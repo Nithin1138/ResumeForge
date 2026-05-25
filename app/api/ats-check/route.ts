@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
+import { generateGroqFallback } from "@/lib/gemini";
+// @ts-ignore
+const PDFParser = require("pdf2json");
 
 // Configure maximum size (e.g., 5MB)
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -37,12 +40,38 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const arrayBuffer = await file.arrayBuffer();
-    const base64Data = Buffer.from(arrayBuffer).toString('base64');
-    const mimeType = file.type === "application/pdf" ? "application/pdf" : "text/plain";
-
-    const ai = new GoogleGenAI({ apiKey });
+    let resumeText = "";
     
+    // Parse the file based on its type
+    if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      
+      try {
+        resumeText = await new Promise((resolve, reject) => {
+          const pdfParser = new PDFParser(null, 1);
+          pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
+          pdfParser.on("pdfParser_dataReady", () => resolve(pdfParser.getRawTextContent()));
+          pdfParser.parseBuffer(buffer);
+        });
+        
+        // pdf2json uses URL encoding for spaces etc, so decode it
+        resumeText = decodeURIComponent(resumeText);
+      } catch (pdfError) {
+        console.error("PDF Parsing Error:", pdfError);
+        throw new Error("Failed to parse the PDF file. Ensure it is not corrupted or password protected.");
+      }
+    } else {
+      resumeText = await file.text();
+    }
+
+    if (!resumeText || resumeText.trim().length === 0) {
+      return NextResponse.json(
+        { error: "Could not extract text from the file" },
+        { status: 400 }
+      );
+    }
+
     const prompt = `
 You are an expert ATS (Applicant Tracking System) used by top-tier tech companies.
 Analyze the provided resume document and evaluate it against realtime universal software engineering and tech company needs.
@@ -65,41 +94,52 @@ Return ONLY a valid JSON object with no markdown formatting. It must exactly mat
     { "name": "Education & Experience", "weightage": 20, "score": 18, "feedback": "Strong academic background." }
   ]
 }
+
+RESUME TEXT:
+${resumeText.substring(0, 10000)} // Truncate to avoid massive tokens
 `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
-      contents: [
-        {
-          role: "user",
-          parts: [
-            { text: prompt },
-            {
-              inlineData: {
-                data: base64Data,
-                mimeType: mimeType
-              }
-            }
-          ]
-        }
-      ],
-      config: {
-        responseMimeType: "application/json",
-      }
-    });
+    let responseText = "";
 
-    const responseText = response.text;
-    if (!responseText) {
-      throw new Error("Empty response from Gemini API");
+    try {
+      const ai = new GoogleGenAI({ apiKey });
+      const response = await ai.models.generateContent({
+        model: "gemini-1.5-flash",
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+        }
+      });
+      responseText = response.text || "";
+      if (!responseText) {
+        throw new Error("Empty response from Gemini API");
+      }
+    } catch (geminiError: any) {
+      console.warn("Gemini generation failed, falling back to Groq:", geminiError.message || geminiError);
+      
+      try {
+        responseText = await generateGroqFallback(prompt, true);
+      } catch (groqError: any) {
+        console.error("Groq fallback also failed:", groqError);
+        throw new Error("All AI generation engines are currently exhausted or unavailable.");
+      }
     }
 
-    const jsonResult = JSON.parse(responseText.trim());
-    return NextResponse.json(jsonResult);
+    // Strip possible markdown code blocks
+    responseText = responseText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
 
-  } catch (error) {
+    try {
+      const jsonResult = JSON.parse(responseText);
+      return NextResponse.json(jsonResult);
+    } catch (parseError) {
+      console.error("Failed to parse AI response:", responseText);
+      throw new Error(`Failed to parse AI response. Raw output: ${responseText.substring(0, 100)}...`);
+    }
+
+  } catch (error: any) {
     console.error("API /api/ats-check POST error:", error);
     return NextResponse.json(
-      { error: "Internal server error occurred during resume parsing." },
+      { error: error.message || "Internal server error occurred during resume parsing." },
       { status: 500 }
     );
   }
