@@ -300,20 +300,22 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             <div style={{
               position: "absolute", inset: 0,
               background: "linear-gradient(to bottom, transparent 10%, rgba(255,255,255,0.08) 35%, rgba(255,255,255,0.88) 60%, white 80%)",
-              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end",
-              paddingBottom: "48px", zIndex: 3,
+              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+              zIndex: 3,
             }}>
-              <div style={{
-                background: "rgba(255,255,255,0.96)", backdropFilter: "blur(12px)",
-                border: "1px solid rgba(0,0,0,0.10)", borderRadius: "16px",
-                padding: "18px 28px", display: "flex", flexDirection: "column", alignItems: "center",
-                gap: "8px", boxShadow: "0 8px 32px rgba(0,0,0,0.12)", maxWidth: "260px", textAlign: "center",
+              <div 
+                className="cursor-pointer hover:scale-105 hover:shadow-2xl transition-all duration-300"
+                style={{
+                  background: "rgba(255,255,255,0.96)", backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(0,0,0,0.10)", borderRadius: "24px",
+                  padding: "32px 48px", display: "flex", flexDirection: "column", alignItems: "center",
+                  gap: "16px", boxShadow: "0 8px 32px rgba(0,0,0,0.12)", maxWidth: "380px", textAlign: "center",
               }}>
-                <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "rgba(67,122,34,0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Lock size={16} color="#437a22" />
+                <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: "rgba(67,122,34,0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Lock size={28} color="#437a22" />
                 </div>
-                <span style={{ fontSize: "9pt", fontWeight: 700, color: "#1a1a1a", lineHeight: 1.3 }}>Unlock Full Resume Preview</span>
-                <span style={{ fontSize: "7.5pt", color: "#888", lineHeight: 1.4 }}>Pay once to view, edit & download your complete ATS resume</span>
+                <span style={{ fontSize: "14pt", fontWeight: 700, color: "#1a1a1a", lineHeight: 1.3 }}>Unlock Full Resume Preview</span>
+                <span style={{ fontSize: "10pt", color: "#666", lineHeight: 1.5 }}>Pay once to view, edit & download your complete ATS resume</span>
               </div>
             </div>
           </>

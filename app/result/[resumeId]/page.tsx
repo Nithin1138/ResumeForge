@@ -148,12 +148,14 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
         {/* ATS Score Header Card */}
         <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:justify-between gap-6 shadow-xs">
           <div className="text-center md:text-left space-y-2 max-w-md">
-            <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-success/15 border border-success/30 text-xs font-bold text-success uppercase">
-              <span>Excellent Structure</span>
+            <div className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full border text-xs font-bold uppercase ${
+              (output.atsScore || 87) >= 70 ? 'bg-success/15 border-success/30 text-success' : 'bg-warning/15 border-warning/30 text-warning'
+            }`}>
+              <span>{output.atsFeedbackCategory || "Excellent Structure"}</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-bold font-sans">Your Resume Output is Ready!</h1>
             <p className="text-sm text-text-muted leading-relaxed font-medium">
-              We parsed your branch-specific skills and CGPA metrics. Your resume already scores higher than <strong className="text-text">85% of other applicants</strong>.
+              {output.atsFeedbackSummary || "We parsed your branch-specific skills and CGPA metrics. Your resume already scores higher than 85% of other applicants based on its initial structure."}
             </p>
           </div>
 

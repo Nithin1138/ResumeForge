@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useFormStore } from "@/stores/formStore";
-import { ArrowLeft, ArrowRight, Plus, Trash2, Loader2, Sparkles, Check, ChevronDown, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, Trash2, Loader2, Sparkles, Check, ChevronDown, X, Cloud, CloudOff, RotateCcw, User, Code2, Rocket, Briefcase, Wand2, Zap } from "lucide-react";
+import { getLocalSession } from "@/lib/authClient";
 
 // Curated popular suggestions for each skill block
 const LANGUAGES_SUGGESTIONS = ["JavaScript", "TypeScript", "Python", "Java", "C++", "C", "Go", "Rust", "SQL", "Kotlin", "Swift", "PHP"];
@@ -166,33 +167,7 @@ function TagInput({
 }
 
 export default function BuildPage() {
-  const handleExportData = () => {
-    const state = useFormStore.getState();
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.formData, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "resume_data.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-  };
 
-  const handleImportData = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const json = JSON.parse(event.target?.result as string);
-          useFormStore.getState().setFullFormData(json);
-        } catch (error) {
-          console.error("Failed to parse JSON file", error);
-          alert("Invalid JSON file.");
-        }
-      };
-      reader.readAsText(file);
-    }
-  };
 
   const [isParsing, setIsParsing] = useState(false);
   const handleAutoFillUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -249,11 +224,123 @@ export default function BuildPage() {
     removePosition,
     updatePosition,
     updateOptions,
+    setFullFormData,
+    resetForm,
   } = useFormStore();
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState(0);
+
+  // Draft persistence state
+  const [draftStatus, setDraftStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showDraftBanner, setShowDraftBanner] = useState(false);
+  const lastSaved = useFormStore((s) => s.lastSaved);
+
+  // Flash Project Modal State
+  const [flashProjectModal, setFlashProjectModal] = useState({ isOpen: false, title: "", repoUrl: "", isLoading: false, error: "" });
+
+  const handleFlashProjectSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!flashProjectModal.title || !flashProjectModal.repoUrl) return;
+    
+    setFlashProjectModal(prev => ({ ...prev, isLoading: true, error: "" }));
+    try {
+      const res = await fetch("/api/flash-project", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: flashProjectModal.title, repoUrl: flashProjectModal.repoUrl })
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to fetch project details.");
+
+      // Add new project if limit not reached
+      if (formData.projects.length < 4 && !formData.options.noProjects) {
+        // We need to add a new project and then update it.
+        // Wait, the formStore doesn't return the new state from addProject,
+        // so we can't easily grab the index. But it appends.
+        addProject();
+        // The newly added project will be at index = formData.projects.length
+        // But because of React state closure, formData.projects.length here is the old length.
+        const newIndex = formData.projects.length;
+        updateProject(newIndex, {
+          title: flashProjectModal.title,
+          link: flashProjectModal.repoUrl,
+          techStack: data.techStack || "",
+          description: data.description || "",
+          keyResult: data.keyResult || "",
+          duration: data.duration || ""
+        });
+      }
+      setFlashProjectModal({ isOpen: false, title: "", repoUrl: "", isLoading: false, error: "" });
+    } catch (err: any) {
+      setFlashProjectModal(prev => ({ ...prev, isLoading: false, error: err.message }));
+    }
+  };
+
+  // Check if user is logged in
+  useEffect(() => {
+    const session = getLocalSession();
+    setIsLoggedIn(!!session);
+  }, []);
+
+  // Cloud auto-save for logged-in users (debounced, every 15s)
+  useEffect(() => {
+    if (!isLoggedIn || !lastSaved) return;
+    const timer = setTimeout(async () => {
+      try {
+        setDraftStatus("saving");
+        await fetch("/api/draft", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ formData, activeStep }),
+        });
+        setDraftStatus("saved");
+        setTimeout(() => setDraftStatus("idle"), 3000);
+      } catch {
+        setDraftStatus("error");
+        setTimeout(() => setDraftStatus("idle"), 3000);
+      }
+    }, 2000); // debounce 2s after last change
+    return () => clearTimeout(timer);
+  }, [lastSaved, isLoggedIn]);
+
+  // On mount: for logged-in users, check if there's a newer server draft vs localStorage
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    (async () => {
+      try {
+        const res = await fetch("/api/draft");
+        const data = await res.json();
+        if (data.draft) {
+          const serverTime = new Date(data.draft.updatedAt).getTime();
+          const localTime = lastSaved || 0;
+          // Show banner only if server draft is newer than what we have locally
+          if (serverTime > localTime + 5000) {
+            setShowDraftBanner(true);
+          }
+        }
+      } catch {
+        // Silently fail
+      }
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (validationErrors.projectsGlobal) {
+      const timer = setTimeout(() => {
+        setValidationErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors.projectsGlobal;
+          return newErrors;
+        });
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [validationErrors.projectsGlobal]);
 
   const loadingSteps = [
     "Structuring resume schema...",
@@ -307,17 +394,17 @@ export default function BuildPage() {
     }
 
     if (step === 3) {
-      if (formData.projects.length === 0) {
-        errors.projectsGlobal = "Please add at least one project to build your resume content";
-      } else {
-        formData.projects.forEach((proj, idx) => {
-          if (!proj.title.trim()) errors[`proj_${idx}_title`] = "Project title is required";
-          if (!proj.techStack.trim()) errors[`proj_${idx}_tech`] = "Tech stack is required";
-          if (!proj.description.trim()) errors[`proj_${idx}_desc`] = "Description is required";
-          if (proj.description.length > 200) errors[`proj_${idx}_desc`] = "Description must be under 200 characters";
-          if (!proj.keyResult.trim()) errors[`proj_${idx}_result`] = "Key feature/result is required";
-          if (proj.keyResult.length > 150) errors[`proj_${idx}_result`] = "Key feature must be under 150 characters";
-        });
+      if (!formData.options.noProjects) {
+        if (formData.projects.length === 0) {
+          errors.projectsGlobal = "Please add at least one project to build your resume content";
+        } else {
+          formData.projects.forEach((proj, idx) => {
+            if (!proj.title.trim()) errors[`proj_${idx}_title`] = "Project title is required";
+            if (!proj.techStack.trim()) errors[`proj_${idx}_tech`] = "Tech stack is required";
+            if (!proj.description.trim()) errors[`proj_${idx}_desc`] = "Description is required";
+            if (!proj.keyResult.trim()) errors[`proj_${idx}_result`] = "Key feature/result is required";
+          });
+        }
       }
     }
 
@@ -725,22 +812,51 @@ export default function BuildPage() {
   // Step 3: Projects Repeater Form
   const renderStep3 = () => (
     <div className="space-y-6">
-      <div className="border-b border-border/60 pb-4 flex justify-between items-end">
+      <div className="border-b border-border/60 pb-4 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
           <h2 className="text-xl font-bold font-sans">Engineering Projects</h2>
           <p className="text-sm text-text-muted">Add up to 4 core projects. Describe what you built in plain language.</p>
         </div>
-        <button
-          onClick={addProject}
-          disabled={formData.projects.length >= 4}
-          className="px-4 py-2 bg-primary/10 border border-primary/20 hover:bg-primary/25 disabled:opacity-50 text-primary font-bold text-xs rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Project ({formData.projects.length}/4)</span>
-        </button>
+        
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+          <button
+            onClick={() => setFlashProjectModal(prev => ({ ...prev, isOpen: true }))}
+            disabled={formData.projects.length >= 4 || formData.options.noProjects}
+            className="px-4 py-2 bg-[#facc15]/10 border border-[#facc15]/40 hover:bg-[#facc15]/20 disabled:opacity-50 text-[#ca8a04] font-bold text-xs rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer w-full md:w-auto justify-center"
+          >
+            <Zap className="w-4 h-4 fill-current" />
+            <span>+ Flash Project</span>
+          </button>
+          
+          <button
+            onClick={addProject}
+            disabled={formData.projects.length >= 4 || formData.options.noProjects}
+            className="px-4 py-2 bg-primary/10 border border-primary/20 hover:bg-primary/25 disabled:opacity-50 text-primary font-bold text-xs rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer w-full md:w-auto justify-center"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Project ({formData.projects.length}/4)</span>
+          </button>
+        </div>
       </div>
 
-      {validationErrors.projectsGlobal && (
+      <div className="bg-surface/30 border border-border/60 p-4 rounded-xl flex flex-col space-y-2">
+        <label className={`flex items-center space-x-3 w-fit ${formData.projects.length > 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:text-primary"}`} title={formData.projects.length > 0 ? "Remove all projects to check this" : ""}>
+          <input 
+            type="checkbox" 
+            className={`w-4 h-4 rounded-xs border-border text-primary focus:ring-primary ${formData.projects.length > 0 ? "cursor-not-allowed" : "cursor-pointer"}`}
+            checked={formData.options.noProjects || false}
+            onChange={(e) => updateOptions({ noProjects: e.target.checked })}
+            disabled={formData.projects.length > 0}
+          />
+          <span className="text-sm font-bold text-text">I don't have any projects (skip this section)</span>
+        </label>
+        
+        <p className={`text-xs font-medium ml-7 ${formData.options.noProjects ? "text-warning" : "text-text-muted"}`}>
+          <strong className="text-error">Important:</strong> Since you are skipping projects, make sure to add expanded Internships, Work Experience, or extra-curriculars to ensure your resume has enough strong content!
+        </p>
+      </div>
+
+      {validationErrors.projectsGlobal && !formData.options.noProjects && (
         <div className="p-4 bg-error/10 border border-error/20 text-error text-xs rounded-xl font-semibold">
           {validationErrors.projectsGlobal}
         </div>
@@ -811,11 +927,10 @@ export default function BuildPage() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-xs font-bold mb-1">What did you build? * (Max 200 chars)</label>
+                <label className="block text-xs font-bold mb-1">What did you build? *</label>
                 <textarea
                   rows={2}
-                  maxLength={200}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-surface focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-xs font-semibold resize-none"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-surface focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-xs font-semibold resize-y"
                   placeholder="Explain what the project is and why you built it. Keep it plain and honest."
                   value={proj.description}
                   onChange={(e) => updateProject(idx, { description: e.target.value })}
@@ -826,16 +941,14 @@ export default function BuildPage() {
                   ) : (
                     <div />
                   )}
-                  <span className="text-[10px] text-text-muted font-bold">{proj.description.length}/200</span>
                 </div>
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-xs font-bold mb-1">Key Feature or Result * (Max 150 chars)</label>
+                <label className="block text-xs font-bold mb-1">Key Feature or Result *</label>
                 <textarea
                   rows={2}
-                  maxLength={150}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-surface focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-xs font-semibold resize-none"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-surface focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-xs font-semibold resize-y"
                   placeholder="What was the most interesting technical highlight, feature, or result? (e.g. parsed 500 resumes/sec, integrated LLM with zero latency)"
                   value={proj.keyResult}
                   onChange={(e) => updateProject(idx, { keyResult: e.target.value })}
@@ -846,14 +959,13 @@ export default function BuildPage() {
                   ) : (
                     <div />
                   )}
-                  <span className="text-[10px] text-text-muted font-bold">{proj.keyResult.length}/150</span>
                 </div>
               </div>
             </div>
           </div>
         ))}
 
-        {formData.projects.length === 0 && (
+        {!formData.options.noProjects && formData.projects.length === 0 && (
           <div className="text-center py-10 border border-dashed border-border rounded-2xl bg-surface/30">
             <Sparkles className="w-8 h-8 text-primary/40 mx-auto mb-3" />
             <p className="text-sm font-semibold text-text-muted mb-2">No projects added yet.</p>
@@ -864,6 +976,12 @@ export default function BuildPage() {
               <Plus className="w-4 h-4" />
               <span>Add Your First Project</span>
             </button>
+          </div>
+        )}
+
+        {formData.options.noProjects && (
+          <div className="text-center py-10 border border-border rounded-2xl bg-surface/30">
+            <p className="text-sm font-semibold text-text-muted">You have opted to continue without adding projects.</p>
           </div>
         )}
       </div>
@@ -1081,6 +1199,11 @@ export default function BuildPage() {
             value={formData.options.jobDescription}
             onChange={(e) => updateOptions({ jobDescription: e.target.value })}
           />
+          {formData.options.noProjects && (
+            <p className="text-xs text-text-muted mt-2 font-medium">
+              Note: Since you have no projects, the job description will only be used to optimize your skills and summary.
+            </p>
+          )}
         </div>
 
         <div>
@@ -1173,7 +1296,14 @@ export default function BuildPage() {
   );
 
   return (
-    <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans relative">
+    <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans">
+      {isParsing && (
+        <div className="fixed inset-0 z-50 bg-bg-base/80 backdrop-blur-sm flex flex-col items-center justify-center">
+          <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
+          <h2 className="text-xl font-bold">Auto-filling your Resume...</h2>
+          <p className="text-sm font-semibold text-text-muted mt-2">Extracting details using AI. This will just take a moment.</p>
+        </div>
+      )}
       {/* Header */}
       <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
@@ -1185,116 +1315,293 @@ export default function BuildPage() {
           </span>
         </div>
         <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={handleExportData}
-              className="text-xs text-text hover:text-primary transition-colors font-semibold px-2 py-1 bg-surface rounded-md border border-border"
-              title="Export form data to JSON"
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={() => {
+                if (window.confirm("Are you sure you want to reset the form? This will clear all your data.")) {
+                  resetForm();
+                  goToStep(1);
+                }
+              }}
+              className="relative text-sm text-error transition-all duration-300 ease-in-out font-bold cursor-pointer px-5 py-2.5 rounded-[14px] border border-error/20 flex items-center space-x-2 hover:bg-error/10 hover:-translate-y-0.5"
+              title="Reset Form"
             >
-              Export JSON
+              <RotateCcw className="w-4 h-4" />
+              <span className="tracking-wide">Reset</span>
             </button>
-            <label className="text-xs text-text hover:text-primary transition-colors font-semibold cursor-pointer px-2 py-1 bg-surface rounded-md border border-border" title="Import form data from JSON">
-              Import JSON
-              <input type="file" accept=".json,application/json" onChange={handleImportData} className="hidden" />
-            </label>
-            <label className={`text-xs text-bg-base transition-colors font-semibold cursor-pointer px-3 py-1 rounded-md border border-primary flex items-center space-x-1 ${isParsing ? 'bg-primary/70 cursor-wait' : 'bg-primary hover:bg-primary/90'}`} title="Auto-fill form from a PDF or DOCX resume">
-              {isParsing ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-              <span>{isParsing ? 'Parsing...' : 'Auto-Fill from Resume'}</span>
+
+            <label className={`relative text-sm text-white transition-all duration-300 ease-in-out font-bold cursor-pointer px-6 py-2.5 rounded-[14px] flex items-center space-x-2 shadow-[0_2px_10px_rgba(1,105,111,0.2)] hover:shadow-[0_6px_20px_rgba(1,105,111,0.3)] hover:-translate-y-0.5 ${isParsing ? 'bg-primary/70 cursor-wait' : 'bg-primary hover:bg-[#014e52]'}`} title="Auto-fill form from a PDF or DOCX resume">
+              {isParsing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              <span className="tracking-wide">{isParsing ? 'Parsing Document...' : 'Auto-Fill from Resume'}</span>
               <input type="file" accept=".pdf,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={handleAutoFillUpload} className="hidden" disabled={isParsing} />
             </label>
-          </div>
-          <div className="text-xs text-text-muted font-bold uppercase tracking-wider bg-border/40 px-3 py-1 rounded-full">
-            Step {activeStep} of 5
           </div>
         </div>
       </header>
 
-      {/* Steps indicator chips */}
-      <div className="max-w-4xl mx-auto w-full px-6 pt-8 pb-4">
-        <div className="flex items-center justify-between relative">
-          {/* Progress bar background line */}
-          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[2px] bg-border/60 -z-10" />
-          
-          {[
-            { stepNum: 1, name: "Info" },
-            { stepNum: 2, name: "Skills" },
-            { stepNum: 3, name: "Projects" },
-            { stepNum: 4, name: "Experience" },
-            { stepNum: 5, name: "Optimize" }
-          ].map((s) => {
-            const isCompleted = activeStep > s.stepNum;
-            const isActive = activeStep === s.stepNum;
-
-            return (
-              <button
-                key={s.stepNum}
-                onClick={() => handleStepClick(s.stepNum)}
-                className="flex flex-col items-center space-y-1 bg-transparent border-0 cursor-pointer focus:outline-hidden group"
-              >
-                <div
-                  className={`w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center border text-[10px] md:text-xs font-bold transition-all duration-300 ${
-                    isCompleted
-                      ? "bg-primary border-primary text-white"
-                      : isActive
-                      ? "bg-surface border-primary text-primary ring-2 ring-primary/20 scale-105"
-                      : "bg-surface border-border text-text-muted group-hover:border-primary/50"
-                  }`}
-                >
-                  {isCompleted ? <Check className="w-4.5 h-4.5" /> : s.stepNum}
-                </div>
-                <span
-                  className={`text-[8px] md:text-[10px] font-bold uppercase tracking-wider transition-colors mt-1 ${
-                    isActive ? "text-primary" : "text-text-muted"
-                  }`}
-                >
-                  {s.name}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Main Form Content */}
-      <main className="flex-1 max-w-4xl mx-auto w-full px-4 md:px-6 pb-24 pt-4">
-        <div className="bg-surface border border-border rounded-2xl p-4 md:p-8 shadow-xs">
-          {activeStep === 1 && renderStep1()}
-          {activeStep === 2 && renderStep2()}
-          {activeStep === 3 && renderStep3()}
-          {activeStep === 4 && renderStep4()}
-          {activeStep === 5 && renderStep5()}
-
-          {/* Form Actions Footer */}
-          <div className="flex justify-between items-center border-t border-border/40 mt-8 pt-6">
+      {/* Server Draft Restore Banner */}
+      {showDraftBanner && (
+        <div className="bg-primary/10 border-b border-primary/20 px-4 py-2.5 flex items-center justify-between">
+          <div className="flex items-center space-x-2 text-sm font-semibold text-primary">
+            <RotateCcw className="w-4 h-4 shrink-0" />
+            <span>A newer draft was found in your account. Restore it to continue where you left off.</span>
+          </div>
+          <div className="flex items-center space-x-2 shrink-0 ml-4">
             <button
-              onClick={handlePrev}
-              disabled={activeStep === 1}
-              className="px-4 py-2.5 md:px-6 md:py-3 border border-border hover:bg-bg-base/60 disabled:opacity-30 disabled:hover:bg-transparent text-xs md:text-sm font-semibold rounded-full flex items-center space-x-1 md:space-x-1.5 transition-colors cursor-pointer"
+              onClick={async () => {
+                const res = await fetch("/api/draft");
+                const data = await res.json();
+                if (data.draft) {
+                  setFullFormData(data.draft.formData);
+                  goToStep(data.draft.activeStep || 1);
+                }
+                setShowDraftBanner(false);
+              }}
+              className="px-3 py-1 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-all cursor-pointer"
             >
-              <ArrowLeft className="w-3.5 h-3.5 md:w-4 md:h-4" />
-              <span>Back</span>
+              Restore Draft
             </button>
-
-            {activeStep < 5 ? (
-              <button
-                onClick={handleNext}
-                className="px-4 py-2.5 md:px-6 md:py-3 bg-primary hover:bg-primary/95 text-white text-xs md:text-sm font-semibold rounded-full flex items-center space-x-1 md:space-x-1.5 transition-all shadow-xs hover:shadow-md cursor-pointer"
-              >
-                <span>Continue</span>
-                <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
-              </button>
-            ) : (
-              <button
-                onClick={handleSubmit}
-                className="px-4 py-2.5 md:px-8 md:py-3 bg-primary hover:bg-primary/95 text-white text-xs md:text-sm font-semibold rounded-full flex items-center space-x-1 md:space-x-1.5 transition-all shadow-md hover:shadow-lg cursor-pointer"
-              >
-                <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span>Generate</span>
-              </button>
-            )}
+            <button
+              onClick={() => setShowDraftBanner(false)}
+              className="p-1 text-text-muted hover:text-text transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
         </div>
-      </main>
+      )}
+
+      {/* Layout wrapper */}
+      <div className="flex flex-col lg:flex-row w-full min-h-[calc(100vh-73px)] bg-bg-base">
+        {/* Mobile horizontal steps (hidden on large screens) */}
+        <div className="lg:hidden w-full overflow-x-auto px-4 py-4 hide-scrollbar border-b border-border/40 bg-surface/50">
+          <div className="flex items-center justify-between relative min-w-[300px]">
+            {/* Progress bar background line */}
+            <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[2px] bg-border/60 -z-10" />
+            
+            {[
+              { stepNum: 1, name: "Info" },
+              { stepNum: 2, name: "Skills" },
+              { stepNum: 3, name: "Projects" },
+              { stepNum: 4, name: "Experience" },
+              { stepNum: 5, name: "Optimize" }
+            ].map((s) => {
+              const isCompleted = activeStep > s.stepNum;
+              const isActive = activeStep === s.stepNum;
+              return (
+                <button
+                  key={s.stepNum}
+                  onClick={() => handleStepClick(s.stepNum)}
+                  className="flex flex-col items-center space-y-1 bg-transparent border-0 cursor-pointer focus:outline-hidden group"
+                >
+                  <div
+                    className={`w-7 h-7 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all duration-300 ${
+                      isCompleted
+                        ? "bg-primary border-primary text-white"
+                        : isActive
+                        ? "bg-surface border-primary text-primary ring-2 ring-primary/20 scale-105"
+                        : "bg-surface border-border text-text-muted"
+                    }`}
+                  >
+                    {isCompleted ? <Check className="w-4 h-4" /> : s.stepNum}
+                  </div>
+                  <span
+                    className={`text-[8px] font-bold uppercase tracking-wider transition-colors mt-1 ${
+                      isActive ? "text-primary" : "text-text-muted"
+                    }`}
+                  >
+                    {s.name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Desktop Vertical Sidebar Steps */}
+        <aside className="hidden lg:flex w-72 shrink-0 border-r border-border/40 flex-col" style={{background: "linear-gradient(180deg, #f7f6f2 0%, #f3f2ee 100%)"}}>
+          <div className="sticky top-[73px] h-[calc(100vh-73px)] flex flex-col overflow-y-auto">
+            
+            {/* Top brand area */}
+            <div className="px-8 pt-10 pb-6">
+              <p className="text-[10px] font-bold text-text-muted/60 uppercase tracking-[0.2em] mb-1">Resume Builder</p>
+              <h2 className="text-xl font-bold text-text leading-tight">Build your <span className="text-primary font-serif italic">perfect</span> resume</h2>
+
+              {/* Overall progress bar */}
+              <div className="mt-5">
+                <div className="flex justify-between items-center mb-1.5">
+                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Progress</span>
+                  <span className="text-[10px] font-bold text-primary">{Math.round(((activeStep - 1) / 4) * 100)}%</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-border/60 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
+                    style={{ width: `${Math.round(((activeStep - 1) / 4) * 100)}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Steps */}
+            <div className="flex-1 px-5 pb-8">
+              <div className="relative flex flex-col space-y-1">
+                {/* Vertical connecting line */}
+                <div className="absolute left-[27px] top-7 bottom-7 w-[1.5px] bg-border/50 -z-10" />
+
+                {[
+                  { stepNum: 1, name: "Personal Info", desc: "Basic details & branch", icon: User },
+                  { stepNum: 2, name: "Core Skills", desc: "Languages & technologies", icon: Code2 },
+                  { stepNum: 3, name: "Projects", desc: "Engineering portfolio", icon: Rocket },
+                  { stepNum: 4, name: "Experience", desc: "Internships & roles", icon: Briefcase },
+                  { stepNum: 5, name: "Optimize", desc: "ATS & job keywords", icon: Wand2 },
+                ].map((s) => {
+                  const isCompleted = activeStep > s.stepNum;
+                  const isActive = activeStep === s.stepNum;
+
+                  return (
+                    <button
+                      key={s.stepNum}
+                      onClick={() => handleStepClick(s.stepNum)}
+                      className={`relative flex items-center space-x-3.5 w-full text-left cursor-pointer border-none rounded-2xl px-3 py-3.5 transition-all duration-300 group ${
+                        isActive
+                          ? "bg-primary/8 shadow-sm"
+                          : "bg-transparent hover:bg-border/20"
+                      }`}
+                      style={isActive ? { background: "rgba(1,105,111,0.07)" } : undefined}
+                    >
+                      {/* Step circle / icon */}
+                      <div className={`w-[42px] h-[42px] rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${
+                        isCompleted
+                          ? "bg-primary shadow-sm"
+                          : isActive
+                          ? "bg-white border-2 border-primary shadow-md"
+                          : "bg-white border border-border group-hover:border-primary/40"
+                      }`}>
+                        {isCompleted
+                          ? <Check className="w-5 h-5 text-white" />
+                          : isActive
+                          ? <s.icon className="w-5 h-5 text-primary" strokeWidth={2.5} />
+                          : <span className="text-sm font-bold text-text-muted/60">{s.stepNum}</span>
+                        }
+                      </div>
+
+                      {/* Text */}
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className={`text-sm font-bold transition-colors ${
+                          isActive ? "text-primary" : isCompleted ? "text-text" : "text-text-muted"
+                        }`}>
+                          {s.name}
+                        </span>
+                        <span className={`text-[11px] font-medium mt-0.5 transition-colors ${
+                          isActive ? "text-primary/70" : "text-text-muted/60"
+                        }`}>
+                          {s.desc}
+                        </span>
+                      </div>
+
+                      {/* Active indicator dot */}
+                      {isActive && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 animate-pulse" />
+                      )}
+                      {isCompleted && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary/30 shrink-0" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Bottom tip */}
+            <div className="px-5 pb-8">
+              <div className="rounded-2xl border border-border/60 bg-white/60 p-4">
+                <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">💡 Pro Tip</p>
+                <p className="text-xs text-text-muted leading-relaxed">
+                  {activeStep === 1 && "Add your LinkedIn & GitHub links to boost ATS scores by up to 15%."}
+                  {activeStep === 2 && "List at least 4–5 core CS concepts — recruiters scan for these first."}
+                  {activeStep === 3 && "Every project needs a measurable result. Think: \"reduced load time by 40%\"."}
+                  {activeStep === 4 && "Even 1 internship listed can double your shortlisting rate."}
+                  {activeStep === 5 && "Paste the actual job description for the highest ATS match score."}
+                </p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Main Form Content */}
+        <main className="flex-1 min-w-0 bg-bg-base">
+          <div className="w-full px-8 md:px-14 lg:px-16 pt-10 pb-32">
+            {activeStep === 1 && renderStep1()}
+            {activeStep === 2 && renderStep2()}
+            {activeStep === 3 && renderStep3()}
+            {activeStep === 4 && renderStep4()}
+            {activeStep === 5 && renderStep5()}
+          </div>
+
+          {/* Sticky Footer Nav */}
+          <div className="fixed bottom-0 left-0 right-0 lg:left-72 z-30 bg-bg-base/80 backdrop-blur-md border-t border-border/40 px-8 md:px-14 lg:px-16 py-4">
+            <div className="flex justify-between items-center">
+              <button
+                onClick={handlePrev}
+                disabled={activeStep === 1}
+                className="px-5 py-2.5 border border-border hover:bg-surface disabled:opacity-25 disabled:cursor-not-allowed text-sm font-semibold rounded-full flex items-center space-x-2 transition-all cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+
+              <div className="flex items-center space-x-4">
+                <div className="flex flex-col items-end hidden sm:flex">
+                  <span className="text-xs text-text-muted font-bold tracking-widest uppercase mb-0.5">Step {activeStep} of 5</span>
+                  <div className="flex items-center space-x-1.5 text-[10px] font-semibold">
+                    {draftStatus === "saving" && (
+                      <span className="flex items-center space-x-1 text-text-muted animate-pulse">
+                        <Cloud className="w-3 h-3" />
+                        <span>Saving...</span>
+                      </span>
+                    )}
+                    {draftStatus === "saved" && (
+                      <span className="flex items-center space-x-1 text-success">
+                        <Cloud className="w-3 h-3" />
+                        <span>Saved</span>
+                      </span>
+                    )}
+                    {draftStatus === "error" && (
+                      <span className="flex items-center space-x-1 text-error">
+                        <CloudOff className="w-3 h-3" />
+                        <span>Save failed</span>
+                      </span>
+                    )}
+                    {draftStatus === "idle" && lastSaved && (
+                      <span className="flex items-center space-x-1 text-text-muted/60">
+                        <Check className="w-3 h-3" />
+                        <span>Draft saved locally</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {activeStep < 5 ? (
+                  <button
+                    onClick={handleNext}
+                    className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-full flex items-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer"
+                  >
+                    <span>Continue</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSubmit}
+                    className="px-8 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-full flex items-center space-x-2 transition-all shadow-md hover:shadow-lg cursor-pointer"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>Generate Resume</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
 
       {/* Processing Loader Modal */}
       {isGenerating && (
@@ -1332,6 +1639,79 @@ export default function BuildPage() {
                 {loadingSteps[generationStep]}
               </p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Flash Project Modal */}
+      {flashProjectModal.isOpen && (
+        <div className="fixed inset-0 bg-text/45 backdrop-blur-md z-50 flex items-center justify-center p-6">
+          <div className="bg-surface border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <button 
+              onClick={() => setFlashProjectModal(prev => ({ ...prev, isOpen: false }))}
+              className="absolute top-4 right-4 p-1 rounded-full hover:bg-border/30 text-text-muted hover:text-text transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-center space-x-2 mb-2">
+              <div className="w-10 h-10 rounded-full bg-[#facc15]/10 flex items-center justify-center">
+                <Zap className="w-5 h-5 text-[#ca8a04] fill-current" />
+              </div>
+              <h3 className="text-xl font-bold text-text">Flash Project</h3>
+            </div>
+            <p className="text-sm text-text-muted mb-6">Enter a GitHub repository URL. Our AI will instantly analyze the README and fill out your project details.</p>
+            
+            <form onSubmit={handleFlashProjectSubmit} className="space-y-4">
+              <div className="space-y-1.5 text-left">
+                <label className="text-sm font-semibold text-text">Project Title *</label>
+                <input 
+                  type="text" 
+                  required
+                  value={flashProjectModal.title}
+                  onChange={e => setFlashProjectModal(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-sm text-text focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden transition-all"
+                  placeholder="e.g. Resume Builder"
+                  disabled={flashProjectModal.isLoading}
+                />
+              </div>
+              
+              <div className="space-y-1.5 text-left">
+                <label className="text-sm font-semibold text-text">GitHub Repository URL *</label>
+                <input 
+                  type="url" 
+                  required
+                  value={flashProjectModal.repoUrl}
+                  onChange={e => setFlashProjectModal(prev => ({ ...prev, repoUrl: e.target.value }))}
+                  className="w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-sm text-text focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden transition-all"
+                  placeholder="https://github.com/username/repo"
+                  disabled={flashProjectModal.isLoading}
+                />
+              </div>
+              
+              {flashProjectModal.error && (
+                <div className="p-3 rounded-lg bg-error/10 border border-error/20 text-error text-xs font-semibold">
+                  {flashProjectModal.error}
+                </div>
+              )}
+              
+              <button
+                type="submit"
+                disabled={flashProjectModal.isLoading}
+                className="w-full py-3 bg-[#ca8a04] hover:bg-[#a16207] text-white font-bold rounded-xl flex items-center justify-center space-x-2 transition-colors disabled:opacity-70 mt-2"
+              >
+                {flashProjectModal.isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Analyzing Repository...</span>
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-5 h-5 fill-current" />
+                    <span>Auto-Fill Project</span>
+                  </>
+                )}
+              </button>
+            </form>
           </div>
         </div>
       )}

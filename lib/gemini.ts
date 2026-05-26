@@ -115,6 +115,8 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
     positions: mockPositions,
     achievements: mockAchievements,
     atsScore: 89,
+    atsFeedbackCategory: "EXCELLENT STRUCTURE",
+    atsFeedbackSummary: `We parsed your ${branchName}-specific skills and CGPA metrics. Your resume already scores higher than 85% of other applicants based on its initial structure.`,
     atsTips: [
       "Tip 1: Double-check that all project links (e.g. GitHub) resolve to active repositories to build recruiter trust.",
       "Tip 2: Your skills category for programming languages is strong, consider adding certification badges for your cloud tools.",
@@ -218,8 +220,9 @@ Your output must strictly follow these rules:
 8. Keep bullet points to 1-2 lines maximum. Scannable, not paragraphs.
 9. For skills: group logically. Do not repeat skills across sections.
 10. For the summary: mention target role in first line. Keep to 3 sentences max. ATS reads the first 100 words hard.
-11. If the tech stack is already displayed below the project title, do NOT repeat technologies inside bullet points unless absolutely necessary for explaining a specific implementation detail (e.g. do not write 'built using Python/React...' if Python/React is already in the project's tech stack above). Focus strictly on technical implementation, architecture, functionality, outcomes, and technical depth.
+11. If the tech stack is already displayed below the project title, do NOT repeat technologies inside bullet points unless absolutely necessary for explaining a specific implementation detail. Focus strictly on technical implementation, architecture, and outcomes.
 12. Avoid fake corporate buzzwords or exaggerated claims inside project bullet points.
+13. IMPORTANT FOR TIPS: Do NOT give tips about resume structure, adding keywords, or formatting (since this app handles the formatting for them). The \`atsTips\` should strictly contain highly personalized CAREER and SKILL improvement advice based on their exact input (e.g., "Since you know React, learning Next.js would boost your frontend profile", "Your projects lack backend databases, try adding PostgreSQL to your next project").
 
 RESUME DATA INPUT:
 Name: ${personal.fullName}
@@ -341,10 +344,12 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
     "Achievement bullet 2"
   ],
   "atsScore": 65, // Must be calculated dynamically (strictly between 40 and 95) based entirely on the actual strength of bullet points, missing keywords, and lack of metrics. Do NOT show partiality. Give low scores (40-60) if the input is weak. DO NOT hardcode this value.
-  "atsTips": [
-    "Tip 1: Add more quantifiable results to your project descriptions",
-    "Tip 2: Include relevant keywords from job description in skills section",
-    "Tip 3: Expand internship bullet points with specific technologies used"
+  "atsFeedbackCategory": "NEEDS IMPROVEMENT", // A 1-3 word short category (e.g. EXCELLENT STRUCTURE, NEEDS METRICS, POOR KEYWORDS) based on the resume's true state.
+  "atsFeedbackSummary": "Your resume lacks quantifiable metrics in your project descriptions and fails to hit key industry keywords. You need to focus on results over responsibilities to pass modern ATS filters.", // A 1-3 sentence summary of the exact flaws or strengths in the user's input data. Be brutally honest.
+  "atsTips": [ // IMPORTANT: DO NOT give generic advice about resume structure, formatting, or keywords (we build the resume for them). Instead, give highly personalized CAREER & SKILL tips based on their actual background. What next project should they do? What certification fits their skills? What gap exists in their tech stack?
+    "Tip 1: Since you have strong Python skills, consider completing an AWS certification to strengthen your cloud deployment profile.",
+    "Tip 2: Your projects focus heavily on frontend React; try building a full-stack project using Node.js to show backend competency.",
+    "Tip 3: You have great academic scores, try contributing to open-source projects in the Data Science space to stand out."
   ],
   "keywordsAdded": ["REST API", "Machine Learning", "Data Analysis"],
   "freeTierPreview": {

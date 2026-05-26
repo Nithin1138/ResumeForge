@@ -120,7 +120,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative px-6 pt-20 pb-16 max-w-5xl mx-auto text-center flex flex-col items-center">
+      <section className="relative px-6 py-12 md:py-20 w-full max-w-5xl mx-auto text-center flex flex-col items-center justify-center min-h-[calc(100dvh-75px)]">
         {/* Decorative background glow */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
 

@@ -56,6 +56,7 @@ export interface FinalOptions {
   includeAchievements: boolean;
   achievements: string;
   projectVariants: "1 version" | "3 versions";
+  noProjects?: boolean;
 }
 
 export interface ResumeFormData {
@@ -117,6 +118,8 @@ export interface FullResumeOutput {
   }[];
   achievements: string[];
   atsScore: number;
+  atsFeedbackCategory?: string;
+  atsFeedbackSummary?: string;
   atsTips: string[];
   keywordsAdded: string[];
   freeTierPreview: FreeTierPreview;
