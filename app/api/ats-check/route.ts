@@ -103,7 +103,8 @@ Provide a realistic score out of 100 based on the following metrics:
 - Readability (Weightage: 7)
 - Role Relevance (Weightage: 3)
 
-Also, extract all structured data from the resume to populate a Resume Builder form. If a field is missing in the resume, leave it as an empty string. Return ONLY a valid JSON object matching this exact structure:
+Also, extract all structured data from the resume to populate a Resume Builder form. 
+CRITICAL RULE: If a field is missing in the resume, you MUST leave it as an empty string "". Do not make up information. Do not use placeholder text like 'Extracted Name'. Return ONLY a valid JSON object matching this exact structure:
 
 {
   "overallScore": 82,
@@ -117,16 +118,16 @@ Also, extract all structured data from the resume to populate a Resume Builder f
   ],
   "extractedData": {
     "personal": {
-      "fullName": "Extracted Name or empty",
-      "email": "Extracted Email or empty",
-      "collegeName": "Extracted College or empty",
-      "branch": "Extracted Branch/Major or empty",
-      "graduationYear": "Extracted Year or empty",
-      "cgpa": "Extracted CGPA or empty",
-      "targetRole": "Extracted Target Role from summary/objective or empty",
-      "phone": "Extracted Phone or empty",
-      "linkedin": "Extracted LinkedIn URL or empty",
-      "github": "Extracted GitHub URL or empty",
+      "fullName": "",
+      "email": "",
+      "collegeName": "",
+      "branch": "",
+      "graduationYear": "",
+      "cgpa": "",
+      "targetRole": "",
+      "phone": "",
+      "linkedin": "",
+      "github": "",
       "hasPG": false,
       "pgCollegeName": "",
       "pgBranch": "",
@@ -135,38 +136,38 @@ Also, extract all structured data from the resume to populate a Resume Builder f
       "pgDegreeName": ""
     },
     "skills": {
-      "languages": "comma, separated, languages",
-      "frameworks": "comma, separated, frameworks",
-      "tools": "comma, separated, tools",
-      "databases": "comma, separated, databases",
-      "concepts": "comma, separated, concepts",
-      "softSkills": "comma, separated, soft skills",
-      "certifications": "comma, separated, certifications"
+      "languages": "",
+      "frameworks": "",
+      "tools": "",
+      "databases": "",
+      "concepts": "",
+      "softSkills": "",
+      "certifications": ""
     },
     "projects": [
       {
-        "title": "Project Title",
-        "techStack": "React, Node.js",
-        "description": "Short description",
-        "keyResult": "Key impact or result",
-        "link": "Project URL",
-        "duration": "e.g., Jan 2023 - Mar 2023"
+        "title": "",
+        "techStack": "",
+        "description": "",
+        "keyResult": "",
+        "link": "",
+        "duration": ""
       }
     ],
     "internships": [
       {
-        "company": "Company Name",
-        "role": "Intern Role",
-        "duration": "e.g., May 2023 - Aug 2023",
-        "workDone": "Summary of work done",
-        "techUsed": "Technologies used"
+        "company": "",
+        "role": "",
+        "duration": "",
+        "workDone": "",
+        "techUsed": ""
       }
     ],
     "positions": [
       {
-        "title": "Role Title",
-        "organization": "Club or Org",
-        "description": "Short description"
+        "title": "",
+        "organization": "",
+        "description": ""
       }
     ],
     "options": {

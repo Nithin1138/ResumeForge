@@ -86,7 +86,16 @@ export const useFormStore = create<FormStore>((set) => ({
   prevStep: () => set((state) => ({ activeStep: Math.max(state.activeStep - 1, 1) })),
   goToStep: (step) => set(() => ({ activeStep: Math.max(1, Math.min(step, 5)) })),
 
-  setFullFormData: (data) => set(() => ({ formData: data })),
+  setFullFormData: (data) => set(() => ({
+    formData: {
+      personal: { ...initialFormData.personal, ...(data.personal || {}) },
+      skills: { ...initialFormData.skills, ...(data.skills || {}) },
+      projects: data.projects || [],
+      internships: data.internships || [],
+      positions: data.positions || [],
+      options: { ...initialFormData.options, ...(data.options || {}) },
+    }
+  })),
 
   updatePersonal: (personal) =>
     set((state) => ({
