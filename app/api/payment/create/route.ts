@@ -33,7 +33,12 @@ export async function POST(req: NextRequest) {
     const inputData = JSON.parse(resume.inputData);
     const customerName = inputData.personal.fullName || "Student";
     const customerEmail = inputData.personal.email || "student@college.edu";
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    
+    // Dynamically get the exact origin to prevent NextAuth redirect bugs if NEXT_PUBLIC_APP_URL is misconfigured
+    let appUrl = req.nextUrl.origin;
+    if (appUrl.includes("localhost") && process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes("callback")) {
+      appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    }
 
     const razorpay = getRazorpayClient();
 
