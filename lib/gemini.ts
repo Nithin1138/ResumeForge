@@ -157,6 +157,7 @@ export async function generateGroqFallback(prompt: string, isJson: boolean = fal
       console.log(`🔄 Trying Groq model: ${modelName}`);
       const payload: any = {
         model: modelName,
+        temperature: 0,
         messages: [{ role: "user", content: prompt }]
       };
       if (isJson) {

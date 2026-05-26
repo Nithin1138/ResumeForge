@@ -124,6 +124,7 @@ ${resumeText.substring(0, 10000)} // Truncate to avoid massive tokens
         contents: prompt,
         config: {
           responseMimeType: "application/json",
+          temperature: 0,
         }
       });
       responseText = response.text || "";
