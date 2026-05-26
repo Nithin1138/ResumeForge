@@ -50,6 +50,7 @@ interface Props {
   output: any;        // AI output (fallback when liveData not set)
   locked: boolean;    // true = blur below header + show lock
   liveData?: LiveResumeData | null;  // when set, overrides output for preview
+  includeSummary?: boolean; // whether to show professional summary
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────
@@ -69,7 +70,7 @@ function SectionTitle({ children }: { children: string }) {
 }
 
 // ── Main component ─────────────────────────────────────────────────────────
-export default function ResumePreviewPanel({ resume, output, locked, liveData }: Props) {
+export default function ResumePreviewPanel({ resume, output, locked, liveData, includeSummary = false }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
 
@@ -162,6 +163,15 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData }:
 
         {/* ── BODY (blurred when locked) ── */}
         <div style={locked ? { filter: "blur(4px)", userSelect: "none", pointerEvents: "none" } : {}}>
+
+          {/* Professional Summary */}
+          {includeSummary && d.summary && (
+            <div style={{ marginBottom: "13pt" }}>
+              <p style={{ fontSize: "10pt", textAlign: "justify", margin: 0, padding: 0 }}>
+                {d.summary}
+              </p>
+            </div>
+          )}
 
           {/* Education */}
           <div style={{ marginBottom: "13pt" }}>

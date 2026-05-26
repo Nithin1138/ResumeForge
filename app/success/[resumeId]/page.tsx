@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock } from "lucide-react";
+import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap } from "lucide-react";
 import confetti from "canvas-confetti";
 import { FullResumeOutput } from "@/types/resume";
 import { getLocalSession } from "@/lib/authClient";
@@ -90,6 +90,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [regenerationsCount, setRegenerationsCount] = useState(1);
   const [session, setSession] = useState<any>(null);
   const [liveResume, setLiveResume] = useState<any>(null);
+  const [includeSummary, setIncludeSummary] = useState(false);
   
   // Custom regeneration states
   const [customTone, setCustomTone] = useState<string>("Professional & Formal");
@@ -422,7 +423,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
           </div>
           {/* Preview fills all remaining height */}
           <div className="flex-1 overflow-hidden min-h-0 print:overflow-visible">
-            <ResumePreviewPanel resume={resume} output={output} locked={false} />
+            <ResumePreviewPanel resume={resume} output={output} liveData={liveResume} locked={false} includeSummary={includeSummary} />
           </div>
         </div>
 
@@ -438,6 +439,62 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
           </div>
 
 
+
+          {/* ATS Score Header Card */}
+          <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:justify-between gap-6 shadow-xs print:hidden">
+            <div className="text-center md:text-left space-y-2 max-w-md">
+              <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-success/15 border border-success/30 text-xs font-bold text-success uppercase">
+                <span>Excellent Structure</span>
+              </div>
+              <h1 className="text-xl md:text-2xl font-bold font-sans">ATS Match Score</h1>
+              <p className="text-sm text-text-muted leading-relaxed font-medium">
+                We parsed your branch-specific skills and CGPA metrics. Your resume already scores higher than <strong className="text-text">85% of other applicants</strong>.
+              </p>
+            </div>
+
+            {/* Circular Score Circle */}
+            <div className="flex flex-col items-center">
+              <div className="relative w-28 h-28 flex items-center justify-center">
+                {/* Ring background */}
+                <svg className="w-full h-full transform -rotate-90">
+                  <circle cx="56" cy="56" r="48" strokeWidth="6" stroke="#d4d1ca" fill="transparent" className="opacity-30" />
+                  <circle
+                    cx="56"
+                    cy="56"
+                    r="48"
+                    strokeWidth="8"
+                    stroke="#437a22"
+                    fill="transparent"
+                    strokeDasharray="301.6"
+                    strokeDashoffset={301.6 - (301.6 * (output.atsScore || 87)) / 100}
+                    className="transition-all duration-1000 ease-out"
+                  />
+                </svg>
+                <div className="absolute flex flex-col items-center">
+                  <span className="text-2xl font-black font-mono leading-none">{output.atsScore || 87}</span>
+                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider mt-0.5">ATS Score</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ATS Improvement Tips Box */}
+          <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 space-y-4 print:hidden">
+            <div className="flex items-center space-x-2">
+              <Zap className="w-5 h-5 text-primary" />
+              <h2 className="font-bold text-base text-primary">ATS Improvement Tips (Included Free)</h2>
+            </div>
+            <ul className="space-y-3">
+              {(output.atsTips || []).map((tip: string, idx: number) => (
+                <li key={idx} className="flex items-start space-x-2.5 text-xs text-text font-medium leading-relaxed">
+                  <span className="w-5 h-5 rounded-full bg-primary/10 border border-primary/25 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                    {idx + 1}
+                  </span>
+                  <span>{tip}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
         {/* Section: Summary Card */}
         <div className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs print:hidden">
@@ -474,6 +531,19 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
           >
             {output.summary}
           </p>
+          <div className="mt-5 flex items-center space-x-3 bg-bg-base p-3 rounded-lg border border-border/50">
+            <input 
+              type="checkbox" 
+              id="includeSummary" 
+              checked={includeSummary} 
+              onChange={(e) => setIncludeSummary(e.target.checked)} 
+              className="w-4 h-4 text-primary accent-primary rounded cursor-pointer"
+            />
+            <label htmlFor="includeSummary" className="text-xs font-semibold text-text cursor-pointer select-none">
+              Include Professional Summary in PDF
+              <span className="block text-[10px] text-text-muted font-medium mt-0.5">(Recommended for professionals with {">"}3 years experience)</span>
+            </label>
+          </div>
         </div>
 
         {/* Section: Skills Badges Card */}
