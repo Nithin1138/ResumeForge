@@ -89,9 +89,9 @@ body {
     margin: 0 !important;
     padding: 0 !important;
     background-color: white !important;
-    height: 100vh !important;
-    max-height: 100vh !important;
-    overflow: hidden !important;
+    height: auto !important;
+    min-height: 100% !important;
+    overflow: visible !important;
   }
   canvas {
     display: none !important;
