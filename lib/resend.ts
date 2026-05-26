@@ -186,3 +186,60 @@ export async function sendOtpEmail(toEmail: string, otp: string): Promise<boolea
   }
 }
 
+export async function sendBroadcastEmail(
+  toEmail: string,
+  subject: string,
+  htmlBody: string
+): Promise<boolean> {
+  const fromEmail = process.env.FROM_EMAIL || "ATSLift <noreply@atslift.in>";
+  const plainText = htmlBody.replace(/<[^>]*>/g, ""); // basic HTML tag strip
+  
+  try {
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = process.env.SMTP_PORT;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASSWORD;
+
+    if (smtpHost && smtpUser && smtpPass) {
+      const transport = createTransport({
+        host: smtpHost,
+        port: Number(smtpPort) || 465,
+        secure: Number(smtpPort) === 465,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
+        },
+      });
+
+      await transport.sendMail({
+        from: fromEmail,
+        to: toEmail,
+        subject,
+        html: htmlBody,
+        text: plainText,
+      });
+      return true;
+    }
+
+    const resend = getResendClient();
+    if (!resend) {
+      console.log(`[Email Simulation - Broadcast] To: ${toEmail}\nSubject: ${subject}\nBody: ${plainText.substring(0, 100)}...`);
+      return true;
+    }
+
+    const result = await resend.emails.send({
+      from: fromEmail,
+      to: toEmail,
+      subject,
+      html: htmlBody,
+      text: plainText,
+    });
+
+    return !!result.data?.id;
+  } catch (error) {
+    console.error("Failed to send broadcast email:", error);
+    return false;
+  }
+}
+
+

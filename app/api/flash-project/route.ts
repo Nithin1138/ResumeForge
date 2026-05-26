@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { generateGroqFallback } from "@/lib/gemini";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
+  let title = "";
+  let repoUrl = "";
+  
   try {
-    const { title, repoUrl } = await req.json();
+    const body = await req.json();
+    repoUrl = body.repoUrl;
 
-    if (!title || !repoUrl) {
-      return NextResponse.json({ error: "Title and GitHub URL are required" }, { status: 400 });
+    if (!repoUrl) {
+      return NextResponse.json({ error: "GitHub URL is required" }, { status: 400 });
     }
 
     // Extract owner and repo from URL
@@ -47,6 +52,8 @@ export async function POST(req: NextRequest) {
     const defaultBranch = repoData.default_branch;
     const description = repoData.description || "No description provided";
     const language = repoData.language || "Unknown";
+    
+    title = repoData.name.replace(/[-_]/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
 
     // Calculate duration from GitHub dates
     const createdDate = new Date(repoData.created_at);
@@ -148,6 +155,23 @@ Return ONLY a valid JSON object matching exactly this structure (no markdown tag
       }
       // Attach the calculated duration from GitHub
       jsonResult.duration = duration;
+      jsonResult.title = title;
+
+      // Log success (only original data)
+      if (apiKey && apiKey !== "mock" && apiKey !== "xxx") {
+        try {
+          await prisma.flashProjectLog.create({
+            data: {
+              repoUrl,
+              projectTitle: title,
+              status: "SUCCESS"
+            }
+          });
+        } catch (dbErr) {
+          console.error("Failed to log flash project success:", dbErr);
+        }
+      }
+
       return NextResponse.json(jsonResult);
     } catch (parseError) {
       console.error("AI JSON Parse Error:", responseText);
@@ -156,6 +180,24 @@ Return ONLY a valid JSON object matching exactly this structure (no markdown tag
 
   } catch (error: any) {
     console.error("API /api/flash-project POST error:", error);
+    
+    // Log error (only original data)
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (apiKey && apiKey !== "mock" && apiKey !== "xxx" && repoUrl) {
+      try {
+        await prisma.flashProjectLog.create({
+          data: {
+            repoUrl: repoUrl || "Unknown",
+            projectTitle: title || "Unknown",
+            status: "ERROR",
+            errorMessage: error.message || "Unknown error"
+          }
+        });
+      } catch (dbErr) {
+        console.error("Failed to log flash project error:", dbErr);
+      }
+    }
+
     return NextResponse.json(
       { error: error.message || "Internal server error occurred." },
       { status: 500 }

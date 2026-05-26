@@ -113,10 +113,11 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
     }
 
-    // Delete user (associated accounts, sessions, and resumes will cascade if configured, but to be safe we can delete them if cascading isn't set up.
-    // Assuming Cascade deletion is configured for accounts/sessions. 
-    // We should explicitly delete resumes or let Prisma cascade if set. 
-    // Usually Prisma schema for NextAuth has Cascade.
+    // Delete user resumes first to avoid foreign key constraint error
+    await prisma.resume.deleteMany({
+      where: { userId },
+    });
+
     await prisma.user.delete({
       where: { id: userId },
     });

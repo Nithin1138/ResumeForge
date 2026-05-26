@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { createHash } from "crypto";
+import { sendBroadcastEmail } from "@/lib/resend";
 
 const SECRET_KEY = process.env.NEXTAUTH_SECRET || "admin-secret-key-for-atslift-dashboard";
 
@@ -28,6 +29,14 @@ const getAdminConfig = async () => {
   return {
     username: "Nithin",
     passwordHash: "80f86da84da5b0e35545fcec0a5d8c786b075f3bea545aa6bd090f097392b8ed",
+    bannerText: "🚀 Placement Season Hack: Get 20% off unlocked copyable resume formats today only!",
+    isBannerActive: true,
+    dynamicPrice: 49,
+    landingVariant: "minimal",
+    isFlashOfferActive: false,
+    flashPrice: 39,
+    isReferralActive: true,
+    invitesRequired: 3
   };
 };
 
@@ -82,12 +91,25 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const config = await getAdminConfig();
     // 1. Core Roster lists
     const totalUsers = await prisma.user.count();
     const waitlistCount = await prisma.waitlistEmail.count();
     const waitlistList = await prisma.waitlistEmail.findMany({
       orderBy: { createdAt: "desc" }
     });
+
+    let flashProjectLogs = [];
+    try {
+      if ((prisma as any).flashProjectLog) {
+        flashProjectLogs = await (prisma as any).flashProjectLog.findMany({
+          orderBy: { createdAt: "desc" },
+          take: 100 // limit to last 100 for performance
+        });
+      }
+    } catch (logErr) {
+      console.error("Failed to query flashProjectLog:", logErr);
+    }
 
     // 2. Fetch all resumes in the database to run high-performance analytical aggregates
     const allResumes = await prisma.resume.findMany({
@@ -396,6 +418,8 @@ export async function GET(req: NextRequest) {
       users: usersList,
       waitlist: waitlistList,
       weeklyTrend,
+      flashProjectLogs,
+      config
     });
   } catch (err: any) {
     console.error("Failed to query stats", err);
@@ -490,6 +514,127 @@ export async function POST(req: NextRequest) {
       });
 
       return NextResponse.json({ success: true });
+    }
+
+    // ACTION: SAVE CONTROLS
+    if (action === "saveControls") {
+      const isAuthorized = await verifySession();
+      if (!isAuthorized) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      const { 
+        bannerText, 
+        isBannerActive, 
+        dynamicPrice, 
+        landingVariant, 
+        isFlashOfferActive, 
+        flashPrice, 
+        isReferralActive, 
+        invitesRequired 
+      } = body;
+
+      try {
+        await prisma.adminConfig.upsert({
+          where: { id: "admin" },
+          update: {
+            bannerText,
+            isBannerActive,
+            dynamicPrice: Number(dynamicPrice),
+            landingVariant,
+            isFlashOfferActive,
+            flashPrice: Number(flashPrice),
+            isReferralActive,
+            invitesRequired: Number(invitesRequired)
+          },
+          create: {
+            id: "admin",
+            username: "Nithin",
+            passwordHash: "80f86da84da5b0e35545fcec0a5d8c786b075f3bea545aa6bd090f097392b8ed",
+            bannerText,
+            isBannerActive,
+            dynamicPrice: Number(dynamicPrice),
+            landingVariant,
+            isFlashOfferActive,
+            flashPrice: Number(flashPrice),
+            isReferralActive,
+            invitesRequired: Number(invitesRequired)
+          }
+        });
+
+        return NextResponse.json({ success: true });
+      } catch (err: any) {
+        return NextResponse.json({ error: "Failed to save controls configuration: " + err.message }, { status: 500 });
+      }
+    }
+
+    // ACTION: SEND BROADCAST
+    if (action === "sendBroadcast") {
+      const isAuthorized = await verifySession();
+      if (!isAuthorized) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      const { target, subject, emailBody } = body;
+      if (!target || !subject || !emailBody) {
+        return NextResponse.json({ error: "Target, subject, and body are required" }, { status: 400 });
+      }
+
+      // Fetch matching waitlist emails
+      let subscribers: any[] = [];
+      if (target === "all") {
+        subscribers = await prisma.waitlistEmail.findMany({});
+      } else if (target === "vit") {
+        subscribers = await prisma.waitlistEmail.findMany({
+          where: {
+            college: {
+              contains: "vit",
+              mode: "insensitive"
+            }
+          }
+        });
+      } else if (target === "bits") {
+        subscribers = await prisma.waitlistEmail.findMany({
+          where: {
+            college: {
+              contains: "bits",
+              mode: "insensitive"
+            }
+          }
+        });
+      } else if (target === "cs") {
+        subscribers = await prisma.waitlistEmail.findMany({
+          where: {
+            branch: {
+              contains: "cs",
+              mode: "insensitive"
+            }
+          }
+        });
+      }
+
+      const emails = subscribers.map(s => s.email).filter(Boolean);
+      
+      if (emails.length === 0) {
+        return NextResponse.json({ success: true, count: 0, message: "No subscribers found matching the target audience criteria." });
+      }
+
+      // Send emails sequentially to be gentle on SMTP/Resend rate limits
+      let successCount = 0;
+      for (const email of emails) {
+        try {
+          const sent = await sendBroadcastEmail(email, subject, emailBody);
+          if (sent) successCount++;
+        } catch (e) {
+          console.error(`Failed to send broadcast email to ${email}:`, e);
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        count: successCount,
+        message: `Mass email announcement dispatched to ${successCount} of ${emails.length} matching subscribers successfully!`
+      });
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });

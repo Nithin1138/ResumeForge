@@ -243,14 +243,14 @@ export default function BuildPage() {
 
   const handleFlashProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!flashProjectModal.title || !flashProjectModal.repoUrl) return;
+    if (!flashProjectModal.repoUrl) return;
     
     setFlashProjectModal(prev => ({ ...prev, isLoading: true, error: "" }));
     try {
       const res = await fetch("/api/flash-project", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: flashProjectModal.title, repoUrl: flashProjectModal.repoUrl })
+        body: JSON.stringify({ repoUrl: flashProjectModal.repoUrl })
       });
       
       const data = await res.json();
@@ -266,7 +266,7 @@ export default function BuildPage() {
         // But because of React state closure, formData.projects.length here is the old length.
         const newIndex = formData.projects.length;
         updateProject(newIndex, {
-          title: flashProjectModal.title,
+          title: data.title || "Flash Project",
           link: flashProjectModal.repoUrl,
           techStack: data.techStack || "",
           description: data.description || "",
@@ -1662,19 +1662,6 @@ export default function BuildPage() {
             <p className="text-sm text-text-muted mb-6">Enter a GitHub repository URL. Our AI will instantly analyze the README and fill out your project details.</p>
             
             <form onSubmit={handleFlashProjectSubmit} className="space-y-4">
-              <div className="space-y-1.5 text-left">
-                <label className="text-sm font-semibold text-text">Project Title *</label>
-                <input 
-                  type="text" 
-                  required
-                  value={flashProjectModal.title}
-                  onChange={e => setFlashProjectModal(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-sm text-text focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden transition-all"
-                  placeholder="e.g. Resume Builder"
-                  disabled={flashProjectModal.isLoading}
-                />
-              </div>
-              
               <div className="space-y-1.5 text-left">
                 <label className="text-sm font-semibold text-text">GitHub Repository URL *</label>
                 <input 

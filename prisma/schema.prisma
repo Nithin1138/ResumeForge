@@ -9,9 +9,17 @@ datasource db {
 }
 
 model AdminConfig {
-  id           String @id @default("admin")
-  username     String
-  passwordHash String
+  id                 String  @id @default("admin")
+  username           String
+  passwordHash       String
+  bannerText         String  @default("🚀 Placement Season Hack: Get 20% off unlocked copyable resume formats today only!")
+  isBannerActive     Boolean @default(true)
+  dynamicPrice       Int     @default(49)
+  landingVariant     String  @default("minimal")
+  isFlashOfferActive Boolean @default(false)
+  flashPrice         Int     @default(39)
+  isReferralActive   Boolean @default(true)
+  invitesRequired    Int     @default(3)
 }
 
 model User {
@@ -110,4 +118,13 @@ model WaitlistEmail {
   college   String?
   branch    String?
   createdAt DateTime @default(now())
+}
+
+model FlashProjectLog {
+  id           String   @id @default(cuid())
+  repoUrl      String
+  projectTitle String
+  status       String   // SUCCESS or ERROR
+  errorMessage String?  @db.Text
+  createdAt    DateTime @default(now())
 }

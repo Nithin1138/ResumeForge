@@ -69,6 +69,7 @@ export default function AdminPanelPage() {
   const [usersList, setUsersList] = useState<any[]>([]);
   const [waitlistList, setWaitlistList] = useState<any[]>([]);
   const [weeklyTrend, setWeeklyTrend] = useState<any[]>([]);
+  const [flashProjectLogs, setFlashProjectLogs] = useState<any[]>([]);
   const [loadingData, setLoadingData] = useState(false);
   const [dataError, setDataError] = useState("");
   
@@ -93,6 +94,7 @@ export default function AdminPanelPage() {
     | "aicost"
     | "users"
     | "security"
+    | "github-logs"
   >("overview");
 
   // Founder Controls Interactive States
@@ -124,6 +126,17 @@ export default function AdminPanelPage() {
           setUsersList(data.users || []);
           setWaitlistList(data.waitlist || []);
           setWeeklyTrend(data.weeklyTrend || []);
+          setFlashProjectLogs(data.flashProjectLogs || []);
+          if (data.config) {
+            setBannerText(data.config.bannerText);
+            setIsBannerActive(data.config.isBannerActive);
+            setDynamicPrice(data.config.dynamicPrice);
+            setLandingVariant(data.config.landingVariant);
+            setIsFlashOfferActive(data.config.isFlashOfferActive);
+            setFlashPrice(data.config.flashPrice);
+            setIsReferralActive(data.config.isReferralActive);
+            setInvitesRequired(data.config.invitesRequired);
+          }
           setIsLoggedIn(true);
         }
       } catch (err) {
@@ -141,14 +154,25 @@ export default function AdminPanelPage() {
     setDataError("");
     try {
       const res = await fetch("/api/admin");
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        const data = await res.json();
         setStats(data.stats);
         setUsersList(data.users || []);
         setWaitlistList(data.waitlist || []);
         setWeeklyTrend(data.weeklyTrend || []);
+        setFlashProjectLogs(data.flashProjectLogs || []);
+        if (data.config) {
+          setBannerText(data.config.bannerText);
+          setIsBannerActive(data.config.isBannerActive);
+          setDynamicPrice(data.config.dynamicPrice);
+          setLandingVariant(data.config.landingVariant);
+          setIsFlashOfferActive(data.config.isFlashOfferActive);
+          setFlashPrice(data.config.flashPrice);
+          setIsReferralActive(data.config.isReferralActive);
+          setInvitesRequired(data.config.invitesRequired);
+        }
       } else {
-        throw new Error("Failed to load statistics");
+        throw new Error(data.error || "Failed to load statistics");
       }
     } catch (err: any) {
       setDataError(err.message || "Failed to load details");
@@ -156,6 +180,26 @@ export default function AdminPanelPage() {
       setLoadingData(false);
     }
   };
+
+  // Real-time polling
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const interval = setInterval(() => {
+      // Background fetch without setting loading state
+      fetch("/api/admin")
+        .then(res => res.json())
+        .then(data => {
+          if (data.stats) {
+            setStats(data.stats);
+            setUsersList(data.users || []);
+            setWaitlistList(data.waitlist || []);
+            setWeeklyTrend(data.weeklyTrend || []);
+            setFlashProjectLogs(data.flashProjectLogs || []);
+          }
+        }).catch(err => console.error("Polling error", err));
+    }, 15000); // 15 seconds real-time update
+    return () => clearInterval(interval);
+  }, [isLoggedIn]);
 
   // Handle Login
   const handleLogin = async (e: React.FormEvent) => {
@@ -281,31 +325,78 @@ export default function AdminPanelPage() {
   };
 
   // Handle Save Founder Controls Configuration
-  const handleSaveControls = (e: React.FormEvent) => {
+  const handleSaveControls = async (e: React.FormEvent) => {
     e.preventDefault();
     setControlSuccessMessage(null);
     setLoadingData(true);
     
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "saveControls",
+          bannerText,
+          isBannerActive,
+          dynamicPrice,
+          landingVariant,
+          isFlashOfferActive,
+          flashPrice,
+          isReferralActive,
+          invitesRequired,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setControlSuccessMessage("SaaS growth parameters and dynamic pricing metrics saved in database successfully!");
+        setTimeout(() => setControlSuccessMessage(null), 5000);
+      } else {
+        alert(data.error || "Failed to save configurations");
+      }
+    } catch (err) {
+      console.error("Save controls failed:", err);
+      alert("Failed to connect to server. Please try again.");
+    } finally {
       setLoadingData(false);
-      setControlSuccessMessage("SaaS growth parameters and dynamic pricing metrics updated successfully!");
-      setTimeout(() => setControlSuccessMessage(null), 3000);
-    }, 800);
+    }
   };
 
-  // Simulate Broadcast send
-  const handleSendBroadcast = (e: React.FormEvent) => {
+  // Real Broadcast send
+  const [broadcastCount, setBroadcastCount] = useState(0);
+  const handleSendBroadcast = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsBroadcasting(true);
     setBroadcastSuccess(false);
 
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "sendBroadcast",
+          target: broadcastTarget,
+          subject: broadcastSubject,
+          emailBody: broadcastBody,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setBroadcastCount(data.count || 0);
+        setBroadcastSuccess(true);
+        setBroadcastSubject("🚀 Placements Update: New ATS Optimization Templates Unlocked");
+        setBroadcastBody("");
+        setTimeout(() => setBroadcastSuccess(false), 8000);
+      } else {
+        alert(data.error || "Failed to dispatch broadcast");
+      }
+    } catch (err) {
+      console.error("Broadcast failed:", err);
+      alert("Broadcast connection error. Please try again.");
+    } finally {
       setIsBroadcasting(false);
-      setBroadcastSuccess(true);
-      setBroadcastSubject("🚀 Placements Update: New ATS Optimization Templates Unlocked");
-      setBroadcastBody("");
-      setTimeout(() => setBroadcastSuccess(false), 4000);
-    }, 1500);
+    }
   };
   const handleToggleBlock = async (userId: string, currentStatus: boolean) => {
     if (!confirm(`Are you sure you want to ${currentStatus ? "unblock" : "block"} this user?`)) return;
@@ -644,6 +735,7 @@ export default function AdminPanelPage() {
                     { id: "waitlist", name: "Waitlist Expansion", icon: Mail },
                     { id: "marketing", name: "Marketing & Pricing", icon: Server },
                     { id: "aicost", name: "AI Spend Optimizer", icon: Cpu },
+                    { id: "github-logs", name: "Flash Project AI Logs", icon: Activity },
                     { id: "users", name: "User Roster", icon: Users },
                     { id: "security", name: "Access Settings", icon: Lock },
                   ].map(item => (
@@ -1801,7 +1893,7 @@ export default function AdminPanelPage() {
 
                     {broadcastSuccess && (
                       <div className="p-3.5 bg-success/10 border border-success/20 text-success text-xs font-bold rounded-xl text-center">
-                        🚀 Mass email announcement broadcasted to {waitlistList.length} waitlist subscribers successfully!
+                        🚀 Mass email announcement broadcasted to {broadcastCount} subscribers successfully!
                       </div>
                     )}
 
@@ -2287,6 +2379,80 @@ export default function AdminPanelPage() {
                       )}
                     </button>
                   </form>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: GITHUB LOGS */}
+            {activeTab === "github-logs" && (
+              <div className="space-y-6 md:space-y-8 animate-fadeIn">
+                <div className="bg-surface border border-border rounded-3xl p-5 md:p-8 shadow-xs">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-xl font-serif italic text-text mb-1">GitHub API & AI Calls</h3>
+                      <p className="text-xs text-text-muted font-semibold leading-relaxed">
+                        Real-time tracking of Flash Project feature usage. Only actual data is logged.
+                      </p>
+                    </div>
+                    <button
+                      onClick={fetchStats}
+                      className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Refresh Now</span>
+                    </button>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm whitespace-nowrap">
+                      <thead className="bg-bg-base/50 text-[10px] font-bold text-text-muted uppercase tracking-wider">
+                        <tr>
+                          <th className="px-4 py-3 rounded-tl-xl">Timestamp</th>
+                          <th className="px-4 py-3">Repo URL</th>
+                          <th className="px-4 py-3">Project Title</th>
+                          <th className="px-4 py-3">Status</th>
+                          <th className="px-4 py-3 rounded-tr-xl">Error details</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/40 font-medium">
+                        {flashProjectLogs.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="text-center py-10 text-xs text-text-muted">
+                              No GitHub API requests have been logged yet.
+                            </td>
+                          </tr>
+                        ) : (
+                          flashProjectLogs.map((log: any) => (
+                            <tr key={log.id} className="hover:bg-bg-base/30 transition-colors">
+                              <td className="px-4 py-4 text-xs text-text-muted">
+                                {new Date(log.createdAt).toLocaleString("en-IN", {
+                                  month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+                                })}
+                              </td>
+                              <td className="px-4 py-4 max-w-[200px] truncate">
+                                <a href={log.repoUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-mono text-xs">
+                                  {log.repoUrl}
+                                </a>
+                              </td>
+                              <td className="px-4 py-4 text-text truncate max-w-[150px]">
+                                {log.projectTitle}
+                              </td>
+                              <td className="px-4 py-4">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
+                                  log.status === "SUCCESS" ? "bg-success/10 text-success" : "bg-error/10 text-error"
+                                }`}>
+                                  {log.status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-4 text-xs text-text-muted max-w-[200px] truncate" title={log.errorMessage || "-"}>
+                                {log.errorMessage || "-"}
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}

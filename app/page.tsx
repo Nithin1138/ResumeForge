@@ -57,9 +57,21 @@ const quoteVariants = {
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [session, setSession] = useState<any>(null);
+  const [price, setPrice] = useState(49);
+  const [bannerText, setBannerText] = useState("🚀 Placement Season Hack: Get 20% off unlocked copyable resume formats today only!");
+  const [isBannerActive, setIsBannerActive] = useState(true);
 
   useEffect(() => {
     getSession().then(setSession);
+    
+    // Fetch active config dynamically from database
+    fetch("/api/config")
+      .then(res => res.json())
+      .then(data => {
+        if (data.activePrice) setPrice(data.activePrice);
+        if (data.bannerText) setBannerText(data.bannerText);
+        if (data.isBannerActive !== undefined) setIsBannerActive(data.isBannerActive);
+      }).catch(err => console.error("Failed to load config", err));
   }, []);
 
   const faqs = [
@@ -76,8 +88,8 @@ export default function LandingPage() {
       a: "No problem at all. Most Indian engineering students apply for their first internships using this tool. We emphasize your academic projects, course laboratory work, and technical skills to make you stand out."
     },
     {
-      q: "Is ₹49 a subscription?",
-      a: "No. It is a one-time payment of ₹49 per resume generation. No recurring monthly fees, no hidden cards, and no unexpected charges."
+      q: `Is ₹${price} a subscription?`,
+      a: `No. It is a one-time payment of ₹${price} per resume generation. No recurring monthly fees, no hidden cards, and no unexpected charges.`
     },
     {
       q: "Can I regenerate after paying?",
@@ -87,6 +99,11 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-bg-base text-text selection:bg-primary/20 font-sans">
+      {isBannerActive && (
+        <div className="w-full bg-primary/10 border-b border-primary/20 text-primary text-center py-2 px-4 text-xs font-bold font-sans flex items-center justify-center gap-2 relative z-50">
+          <span>{bannerText}</span>
+        </div>
+      )}
       {/* Premium Navbar */}
       <header className="sticky top-0 z-50 glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
@@ -152,7 +169,7 @@ export default function LandingPage() {
           </Link>
           
           <div className="text-xs text-text-muted flex flex-wrap justify-center gap-x-3 gap-y-1 font-medium">
-            <span>₹49 to unlock full output</span>
+            <span>₹{price} to unlock full output</span>
             <span className="text-border">•</span>
             <span>No account needed</span>
             <span className="text-border">•</span>
@@ -587,9 +604,9 @@ export default function LandingPage() {
             <span className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 text-primary font-bold flex items-center justify-center text-sm mb-4">
               3
             </span>
-            <h3 className="font-bold text-lg mb-2">Preview & Pay ₹49</h3>
+            <h3 className="font-bold text-lg mb-2">Preview & Pay ₹{price}</h3>
             <p className="text-sm text-text-muted leading-relaxed">
-              Check your free teaser output, score rating, and 3 custom improvement tips. Pay a one-time ₹49 to instantly unlock copyable content.
+              Check your free teaser output, score rating, and 3 custom improvement tips. Pay a one-time ₹{price} to instantly unlock copyable content.
             </p>
           </div>
         </div>
@@ -666,7 +683,7 @@ export default function LandingPage() {
           Start Building Free
         </Link>
         <span className="text-xs text-text-muted mt-3 font-semibold">
-          Takes 2 minutes. Pay ₹49 only if you love the preview.
+          Takes 2 minutes. Pay ₹{price} only if you love the preview.
         </span>
       </section>
 

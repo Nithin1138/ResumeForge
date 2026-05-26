@@ -14,9 +14,23 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const [error, setError] = useState<string | null>(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [session, setSession] = useState<any>(null);
+  const [price, setPrice] = useState(49);
 
   useEffect(() => {
     setSession(getLocalSession());
+
+    const fetchConfig = async () => {
+      try {
+        const res = await fetch("/api/config");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.activePrice) {
+            setPrice(data.activePrice);
+          }
+        }
+      } catch (err) {}
+    };
+    fetchConfig();
 
     const fetchResume = async () => {
       try {
@@ -321,10 +335,10 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
           <div className="flex items-center space-x-3.5">
             <div className="text-left">
               <div className="flex items-baseline space-x-1.5">
-                <span className="text-xl md:text-2xl font-black text-text">₹49</span>
+                <span className="text-xl md:text-2xl font-black text-text">₹{price}</span>
                 <span className="text-xs text-text-muted line-through font-semibold">₹199</span>
                 <span className="text-[10px] bg-success/15 border border-success/30 px-1.5 py-0.5 rounded-md font-extrabold text-success uppercase">
-                  75% OFF
+                  {Math.round(((199 - price) / 199) * 100)}% OFF
                 </span>
               </div>
               <p className="text-[10px] text-text-muted font-bold mt-0.5 flex items-center space-x-1">

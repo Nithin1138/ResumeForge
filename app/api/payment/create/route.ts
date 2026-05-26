@@ -34,6 +34,20 @@ export async function POST(req: NextRequest) {
     const customerName = inputData.personal.fullName || "Student";
     const customerEmail = inputData.personal.email || "student@college.edu";
     
+    // Fetch dynamic pricing configuration from database
+    let pricePaise = 4900; // default ₹49
+    try {
+      const config = await prisma.adminConfig.findUnique({
+        where: { id: "admin" }
+      });
+      if (config) {
+        const activePrice = config.isFlashOfferActive ? config.flashPrice : config.dynamicPrice;
+        pricePaise = activePrice * 100;
+      }
+    } catch (e) {
+      console.warn("Failed to fetch price config, using default ₹49:", e);
+    }
+    
     // Dynamically get the exact origin to prevent NextAuth redirect bugs if NEXT_PUBLIC_APP_URL is misconfigured
     let appUrl = req.nextUrl.origin;
     if (appUrl.includes("localhost") && process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes("callback")) {
@@ -51,7 +65,7 @@ export async function POST(req: NextRequest) {
         where: { id: resumeId },
         data: {
           paymentLinkId: mockPaymentLinkId,
-          amountPaid: 4900, // ₹49 in paise
+          amountPaid: pricePaise,
         },
       });
 
@@ -66,7 +80,7 @@ export async function POST(req: NextRequest) {
 
     // Real Razorpay Payment Link Creation
     const paymentLink = await razorpay.paymentLink.create({
-      amount: 4900, // ₹49 in paise (4900 paise)
+      amount: pricePaise,
       currency: "INR",
       accept_partial: false,
       description: `ATSLift — ATS Resume Content Generation for ${customerName}`,
@@ -91,7 +105,7 @@ export async function POST(req: NextRequest) {
       where: { id: resumeId },
       data: {
         paymentLinkId: paymentLink.id,
-        amountPaid: 4900,
+        amountPaid: pricePaise,
       },
     });
 
