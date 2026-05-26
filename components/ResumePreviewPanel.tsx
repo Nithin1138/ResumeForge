@@ -118,7 +118,11 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData }:
             margin: 0 !important;
             border-radius: 0 !important;
             width: 794px !important;
-            height: 1123px !important;
+            height: 1122px !important;
+            max-height: 1122px !important;
+            overflow: hidden !important;
+            page-break-after: avoid !important;
+            page-break-inside: avoid !important;
           }
         }
       `}</style>
