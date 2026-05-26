@@ -437,23 +437,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
             </p>
           </div>
 
-        {/* Printable View Stylesheet Injector */}
-        <style jsx global>{`
-          @page {
-            size: A4;
-            margin: 0;
-          }
-          @media print {
-            .print\:hidden { display: none !important; }
-            .print\:block { display: block !important; }
-            .print\:overflow-visible { overflow: visible !important; }
-            .print\:h-auto { height: auto !important; }
-            .print\:w-full { width: 100% !important; }
-            .print\:border-none { border: none !important; }
-            .print\:p-0 { padding: 0 !important; }
-            body { background: white !important; }
-          }
-        `}</style>
+
 
         {/* Section: Summary Card */}
         <div className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs print:hidden">

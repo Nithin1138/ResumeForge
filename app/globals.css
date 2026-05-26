@@ -75,3 +75,18 @@ body {
 .logo-rotated {
   transform: rotate(45deg);
 }
+
+/* Strict Print Settings */
+@media print {
+  @page {
+    size: auto;
+    margin: 0mm !important;
+  }
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: white !important;
+  }
+}
