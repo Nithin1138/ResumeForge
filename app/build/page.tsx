@@ -166,6 +166,33 @@ function TagInput({
 }
 
 export default function BuildPage() {
+  const handleExportData = () => {
+    const state = useFormStore.getState();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.formData, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "resume_data.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
+  const handleImportData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const json = JSON.parse(event.target?.result as string);
+          useFormStore.getState().setFullFormData(json);
+        } catch (error) {
+          console.error("Failed to parse JSON file", error);
+          alert("Invalid JSON file.");
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
   const router = useRouter();
   const {
     formData,
@@ -1120,8 +1147,23 @@ export default function BuildPage() {
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
         </div>
-        <div className="text-xs text-text-muted font-bold uppercase tracking-wider bg-border/40 px-3 py-1 rounded-full">
-          Step {activeStep} of 5
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleExportData}
+              className="text-xs text-text hover:text-primary transition-colors font-semibold px-2 py-1 bg-surface rounded-md border border-border"
+              title="Export form data to JSON"
+            >
+              Export JSON
+            </button>
+            <label className="text-xs text-text hover:text-primary transition-colors font-semibold cursor-pointer px-2 py-1 bg-surface rounded-md border border-border" title="Import form data from JSON">
+              Import JSON
+              <input type="file" accept=".json,application/json" onChange={handleImportData} className="hidden" />
+            </label>
+          </div>
+          <div className="text-xs text-text-muted font-bold uppercase tracking-wider bg-border/40 px-3 py-1 rounded-full">
+            Step {activeStep} of 5
+          </div>
         </div>
       </header>
 
