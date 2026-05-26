@@ -139,7 +139,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData }:
           fontSize: "10.5pt",
           lineHeight: 1.35,
           color: "#222",
-          padding: "52px 56px",
+          padding: "64px 72px",
           boxSizing: "border-box",
         }}
       >
