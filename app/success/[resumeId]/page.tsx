@@ -123,12 +123,28 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
           });
           // Increased delay and retry mechanism for database sync
           await new Promise(resolve => setTimeout(resolve, 1000));
+        } else {
+          // Manual Verification Fallback: If Razorpay redirected us here with a payment ID,
+          // manually verify it immediately. This handles cases where webhooks are delayed
+          // or failed entirely (e.g. testing on localhost without ngrok).
+          const paymentId = searchParams.get("razorpay_payment_id");
+          if (paymentId) {
+            try {
+              await fetch("/api/payment/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ paymentId, resumeId })
+              });
+            } catch (verifyErr) {
+              console.warn("Manual verification error:", verifyErr);
+            }
+          }
         }
 
-        // Retry fetch up to 3 times if payment status isn't PAID
+        // Retry fetch up to 10 times if payment status isn't PAID to allow time for Razorpay webhooks
         let data = null;
         let retries = 0;
-        const maxRetries = 3;
+        const maxRetries = 12; // Wait up to 12 seconds
         
         while (retries < maxRetries) {
           const res = await fetch(`/api/resume/${resumeId}`, {
@@ -141,13 +157,13 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
           data = await res.json();
           console.log(`[Success Page] Fetch attempt ${retries + 1}: paymentStatus=${data.paymentStatus}`);
           
-          if (data.paymentStatus === "PAID" || !isSandbox) {
+          if (data.paymentStatus === "PAID") {
             break;
           }
           
           retries++;
           if (retries < maxRetries) {
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1000));
           }
         }
         
