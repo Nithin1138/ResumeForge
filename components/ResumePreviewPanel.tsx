@@ -110,7 +110,20 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData }:
         A4 paper at NATURAL size, then scaled with CSS transform.
         transformOrigin = top center so it stays pinned to the top.
       */}
+      <style>{`
+        @media print {
+          .print-exact {
+            transform: none !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            width: 794px !important;
+            height: 1123px !important;
+          }
+        }
+      `}</style>
       <div
+        className="print-exact"
         style={{
           width: NATURAL_W,
           height: NATURAL_H,

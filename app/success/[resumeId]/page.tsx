@@ -404,9 +404,9 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
       <main className="flex-1 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row print:block print:overflow-visible print:h-auto">
 
         {/* ── LEFT: Fixed-height Resume Preview (never scrolls) ── */}
-        <div className="w-full h-[45vh] lg:h-full lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 print:hidden overflow-hidden">
+        <div className="w-full h-[45vh] lg:h-full lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 print:w-full print:h-auto print:border-none print:p-0 print:overflow-visible overflow-hidden">
           {/* Panel header */}
-          <div className="flex items-center justify-between mb-3 flex-shrink-0">
+          <div className="flex items-center justify-between mb-3 flex-shrink-0 print:hidden">
             <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-success bg-success/10 border border-success/25 px-2.5 py-1 rounded-full">
@@ -421,13 +421,13 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
             </div>
           </div>
           {/* Preview fills all remaining height */}
-          <div className="flex-1 overflow-hidden min-h-0">
+          <div className="flex-1 overflow-hidden min-h-0 print:overflow-visible">
             <ResumePreviewPanel resume={resume} output={output} locked={false} />
           </div>
         </div>
 
         {/* ── RIGHT: Only this column scrolls ── */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col gap-8 print:p-0 print:m-0 print:overflow-visible">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col gap-8 print:hidden">
 
           {/* Page title */}
           <div className="text-center print:hidden space-y-2 pt-1">
@@ -440,48 +440,18 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
         {/* Printable View Stylesheet Injector */}
         <style jsx global>{`
           @page {
-            size: letter;
-            margin: 0.6in 0.6in 0.6in 0.6in;
-            @top-left { content: ""; }
-            @top-center { content: ""; }
-            @top-right { content: ""; }
-            @bottom-left { content: ""; }
-            @bottom-center { content: ""; }
-            @bottom-right { content: ""; }
+            size: A4;
+            margin: 0;
           }
           @media print {
-            @page {
-              size: letter;
-              margin: 0.6in 0.6in 0.6in 0.6in !important;
-              @top-left { content: ""; }
-              @top-center { content: ""; }
-              @top-right { content: ""; }
-              @bottom-left { content: ""; }
-              @bottom-center { content: ""; }
-              @bottom-right { content: ""; }
-            }
-            body {
-              background-color: white !important;
-              color: #222222 !important;
-              padding: 0 !important;
-              margin: 0 !important;
-              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-            .print\:hidden {
-              display: none !important;
-            }
-            .print\:border-none {
-              border: none !important;
-              box-shadow: none !important;
-              background: transparent !important;
-              padding: 0 !important;
-            }
-            a {
-              color: #333333 !important;
-              text-decoration: none !important;
-            }
+            .print\:hidden { display: none !important; }
+            .print\:block { display: block !important; }
+            .print\:overflow-visible { overflow: visible !important; }
+            .print\:h-auto { height: auto !important; }
+            .print\:w-full { width: 100% !important; }
+            .print\:border-none { border: none !important; }
+            .print\:p-0 { padding: 0 !important; }
+            body { background: white !important; }
           }
         `}</style>
 
@@ -951,229 +921,6 @@ Concepts: ${output.skills.concepts.join(", ")}
             <span>Generate PDF Document</span>
           </button>
         </div>
-
-        {/* PRINTABLE DRAFT CONTAINER (Only visible when printing / invisible during standard UI scrolling) */}
-        <div className="hidden print:block print:border-none print:p-0 print:m-0 text-[#222222]" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5pt", lineHeight: "1.3" }}>
-          {/* Header */}
-          <div className="text-center" style={{ marginBottom: "14pt" }}>
-            <h1 style={{ fontSize: "23pt", fontWeight: "bold", textTransform: "uppercase", margin: "0 0 3pt 0", color: "#111111", letterSpacing: "-0.5px" }}>
-              {resume.inputData.personal.fullName.toUpperCase()}
-            </h1>
-            {/* Contact row — 9pt, single line, tighter gap */}
-            <div style={{ fontSize: "9pt", color: "#333333", margin: "0", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px", flexWrap: "nowrap", whiteSpace: "nowrap" }}>
-              <a href={`mailto:${resume.inputData.personal.email}`} style={{ color: "#333333", textDecoration: "none" }}>
-                {resume.inputData.personal.email}
-              </a>
-              {resume.inputData.personal.phone && (
-                <>
-                  <span style={{ color: "#aaaaaa", margin: "0 1px" }}>|</span>
-                  <span>{formatPhone(resume.inputData.personal.phone)}</span>
-                </>
-              )}
-              {resume.inputData.personal.linkedin && (
-                <>
-                  <span style={{ color: "#aaaaaa", margin: "0 1px" }}>|</span>
-                  <a href={getLinkedInUrl(resume.inputData.personal.linkedin)} target="_blank" rel="noopener noreferrer" style={{ color: "#333333", textDecoration: "none" }}>
-                    {formatLinkedIn(resume.inputData.personal.linkedin)}
-                  </a>
-                </>
-              )}
-              {resume.inputData.personal.github && (
-                <>
-                  <span style={{ color: "#aaaaaa", margin: "0 1px" }}>|</span>
-                  <a href={getGitHubUrl(resume.inputData.personal.github)} target="_blank" rel="noopener noreferrer" style={{ color: "#333333", textDecoration: "none" }}>
-                    {formatGitHub(resume.inputData.personal.github)}
-                  </a>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* 1. Education Section */}
-          <div style={{ marginBottom: "15pt" }}>
-            <h3 style={{ fontSize: "13pt", fontWeight: "bold", textTransform: "uppercase", color: "#1a1a1a", margin: "0 0 3pt 0", letterSpacing: "0.4px" }}>
-              Education
-            </h3>
-            <div style={{ height: "0.5px", backgroundColor: "#cccccc", marginBottom: "6pt" }} />
-            
-            {/* PG Education (If provided) */}
-            {(output.pgEducation || resume.inputData.personal.hasPG) && (
-              <div style={{ marginBottom: "7pt" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "8px", fontSize: "10.5pt", fontWeight: "bold" }}>
-                  <span style={{ flex: 1 }}>{output.pgEducation?.institution || resume.inputData.personal.pgCollegeName}</span>
-                  <span style={{ fontSize: "10pt", fontWeight: "normal", color: "#555555", flexShrink: 0 }}>Graduation: {output.pgEducation?.year || resume.inputData.personal.pgGraduationYear}</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "8px", fontSize: "10pt", color: "#444444", marginTop: "2pt" }}>
-                  <span style={{ flex: 1 }}>{output.pgEducation?.degree || `${resume.inputData.personal.pgDegreeName || "Post Graduation"} in ${resume.inputData.personal.pgBranch}`}</span>
-                  <span style={{ flexShrink: 0 }}>CGPA: {output.pgEducation?.cgpa || `${resume.inputData.personal.pgCgpa} / 10.0`}</span>
-                </div>
-              </div>
-            )}
-
-            {/* UG Education */}
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "8px", fontSize: "10.5pt", fontWeight: "bold" }}>
-                <span style={{ flex: 1 }}>{output.education.institution}</span>
-                <span style={{ fontSize: "10pt", fontWeight: "normal", color: "#555555", flexShrink: 0 }}>Graduation: {output.education.year}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "8px", fontSize: "10pt", color: "#444444", marginTop: "2pt" }}>
-                <span style={{ flex: 1 }}>{output.education.degree} ({resume.inputData.personal.branch || "Engineering"})</span>
-                <span style={{ flexShrink: 0 }}>CGPA: {output.education.cgpa}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* 2. Technical Skills Section */}
-          <div style={{ marginBottom: "15pt" }}>
-            <h3 style={{ fontSize: "13pt", fontWeight: "bold", textTransform: "uppercase", color: "#1a1a1a", margin: "0 0 3pt 0", letterSpacing: "0.4px" }}>
-              Technical Skills
-            </h3>
-            <div style={{ height: "0.5px", backgroundColor: "#cccccc", marginBottom: "6pt" }} />
-            <div style={{ fontSize: "10.5pt", lineHeight: "1.4" }}>
-              {output.skills.languages && output.skills.languages.length > 0 && (
-                <p style={{ margin: "0 0 4pt 0" }}>
-                  <strong>Programming:</strong> {output.skills.languages.join(", ")}
-                </p>
-              )}
-              {output.skills.frameworks && output.skills.frameworks.length > 0 && (
-                <p style={{ margin: "0 0 4pt 0" }}>
-                  <strong>Frameworks:</strong> {output.skills.frameworks.join(", ")}
-                </p>
-              )}
-              {output.skills.databases && output.skills.databases.length > 0 && (
-                <p style={{ margin: "0 0 4pt 0" }}>
-                  <strong>Databases:</strong> {output.skills.databases.join(", ")}
-                </p>
-              )}
-              {output.skills.tools && output.skills.tools.length > 0 && (
-                <p style={{ margin: "0 0 4pt 0" }}>
-                  <strong>Tools:</strong> {output.skills.tools.join(", ")}
-                </p>
-              )}
-              {output.skills.concepts && output.skills.concepts.length > 0 && (
-                <p style={{ margin: output.skills.softSkills && output.skills.softSkills.length > 0 ? "0 0 4pt 0" : "0" }}>
-                  <strong>Concepts:</strong> {output.skills.concepts.join(", ")}
-                </p>
-              )}
-              {output.skills.softSkills && output.skills.softSkills.length > 0 && (
-                <p style={{ margin: "0" }}>
-                  <strong>Soft Skills:</strong> {output.skills.softSkills.join(", ")}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* 3. Academic Projects Section */}
-          <div style={{ marginBottom: "15pt" }}>
-            <h3 style={{ fontSize: "13pt", fontWeight: "bold", textTransform: "uppercase", color: "#1a1a1a", margin: "0 0 3pt 0", letterSpacing: "0.4px" }}>
-              Academic Projects
-            </h3>
-            <div style={{ height: "0.5px", backgroundColor: "#cccccc", marginBottom: "6pt" }} />
-            {output.projects.map((proj, idx) => (
-              <div key={idx} style={{ marginBottom: idx === output.projects.length - 1 ? "0" : "11pt" }}>
-                {/* Project Title */}
-                <div style={{ fontSize: "11pt", fontWeight: "bold", color: "#111111", margin: "0" }}>
-                  {proj.title}
-                </div>
-                
-                {/* Tech Stack and Dates Line */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "10px", fontSize: "10pt", color: "#555555", marginTop: "3px", lineHeight: "1.25" }}>
-                  <span style={{ fontStyle: "italic", flex: 1 }}>{proj.techStack}</span>
-                  <span style={{ whiteSpace: "nowrap", flexShrink: 0 }}>{proj.duration}</span>
-                </div>
-
-                {/* Bullets */}
-                <ul style={{ listStyleType: "disc", paddingLeft: "15px", margin: "6px 0 0 0", fontSize: "10.5pt", color: "#333333" }}>
-                  {proj.bullets.map((bullet, bIdx) => (
-                    <li key={bIdx} style={{ marginBottom: bIdx === proj.bullets.length - 1 ? "0" : "5px", lineHeight: "1.35" }}>
-                      {bullet}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* 4. Experience & Leadership Section */}
-          {((output.experience && output.experience.length > 0) || (output.positions && output.positions.length > 0)) && (
-            <div style={{ marginBottom: "15pt" }}>
-              <h3 style={{ fontSize: "13pt", fontWeight: "bold", textTransform: "uppercase", color: "#1a1a1a", margin: "0 0 3pt 0", letterSpacing: "0.4px" }}>
-                Experience & Leadership
-              </h3>
-              <div style={{ height: "0.5px", backgroundColor: "#cccccc", marginBottom: "6pt" }} />
-              
-              {/* Internships */}
-              {output.experience && output.experience.map((exp, idx) => (
-                <div key={`exp_${idx}`} style={{ marginBottom: "8pt" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "8px" }}>
-                    <div style={{ fontSize: "10.5pt", flex: 1 }}>
-                      <strong style={{ color: "#111111" }}>{exp.company}</strong>
-                      <span style={{ fontSize: "10pt", color: "#444444", marginLeft: "6pt" }}>
-                        — {exp.role}
-                      </span>
-                    </div>
-                    <span style={{ fontSize: "10pt", color: "#555555", flexShrink: 0 }}>
-                      {exp.duration}
-                    </span>
-                  </div>
-                  <ul style={{ listStyleType: "disc", paddingLeft: "15px", margin: "6pt 0 0 0", fontSize: "10.5pt" }}>
-                    {exp.bullets.map((bullet, bIdx) => (
-                      <li key={bIdx} style={{ marginBottom: bIdx === exp.bullets.length - 1 ? "0" : "5px", lineHeight: "1.35" }}>
-                        {bullet}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-
-              {/* Positions of Responsibility */}
-              {output.positions && output.positions.map((pos, idx) => (
-                <div key={`pos_${idx}`} style={{ marginBottom: idx === output.positions.length - 1 ? "0" : "6pt" }}>
-                  <div style={{ fontSize: "10.5pt" }}>
-                    <strong style={{ color: "#111111" }}>{pos.title}</strong>
-                    <span style={{ fontSize: "10pt", color: "#555555", marginLeft: "6pt" }}>
-                      ({pos.organization})
-                    </span>
-                  </div>
-                  <p style={{ fontSize: "10.5pt", margin: "5px 0 0 15px", lineHeight: "1.35" }}>
-                    • {pos.bullet}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* 5. Key Achievements Section */}
-          {output.achievements && output.achievements.length > 0 && (
-            <div style={{ marginBottom: "15pt" }}>
-              <h3 style={{ fontSize: "13pt", fontWeight: "bold", textTransform: "uppercase", color: "#1a1a1a", margin: "0 0 3pt 0", letterSpacing: "0.4px" }}>
-                Key Achievements
-              </h3>
-              <div style={{ height: "0.5px", backgroundColor: "#cccccc", marginBottom: "6pt" }} />
-              <ul style={{ listStyleType: "disc", paddingLeft: "15px", margin: "0", fontSize: "10.5pt" }}>
-                {output.achievements.map((ach, idx) => (
-                  <li key={idx} style={{ marginBottom: idx === output.achievements.length - 1 ? "0" : "5px", lineHeight: "1.35" }}>
-                    {ach}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* 6. Certifications Section */}
-          {resume.inputData.skills.certifications && (
-            <div style={{ marginBottom: "0pt" }}>
-              <h3 style={{ fontSize: "13pt", fontWeight: "bold", textTransform: "uppercase", color: "#1a1a1a", margin: "0 0 3pt 0", letterSpacing: "0.4px" }}>
-                Certifications
-              </h3>
-              <div style={{ height: "0.5px", backgroundColor: "#cccccc", marginBottom: "6pt" }} />
-              <div style={{ fontSize: "10.5pt", lineHeight: "1.4" }}>
-                {resume.inputData.skills.certifications}
-              </div>
-            </div>
-          )}
-        </div>
-        {/* end printable block */}
 
         </div>
         {/* end right scrollable column */}
