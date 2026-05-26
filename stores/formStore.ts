@@ -33,6 +33,9 @@ interface FormStore {
   updateOptions: (options: Partial<FinalOptions>) => void;
   
   resetForm: () => void;
+  
+  // Set entirely new parsed data
+  setFullFormData: (data: ResumeFormData) => void;
 }
 
 const initialFormData: ResumeFormData = {
@@ -82,6 +85,8 @@ export const useFormStore = create<FormStore>((set) => ({
   nextStep: () => set((state) => ({ activeStep: Math.min(state.activeStep + 1, 5) })),
   prevStep: () => set((state) => ({ activeStep: Math.max(state.activeStep - 1, 1) })),
   goToStep: (step) => set(() => ({ activeStep: Math.max(1, Math.min(step, 5)) })),
+
+  setFullFormData: (data) => set(() => ({ formData: data })),
 
   updatePersonal: (personal) =>
     set((state) => ({

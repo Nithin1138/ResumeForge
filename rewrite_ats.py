@@ -1,10 +1,9 @@
-"use client";
+with open("app/ats-check/page.tsx", "w") as f:
+    f.write("""\"use client\";
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useFormStore } from "@/stores/formStore";
 import { 
   UploadCloud, FileText, CheckCircle, 
   ArrowRight, AlertCircle, RefreshCw,
@@ -23,7 +22,6 @@ interface CategoryScore {
 interface ATSResult {
   overallScore: number;
   categories: CategoryScore[];
-  extractedData?: any;
 }
 
 const SCORING_CRITERIA = [
@@ -51,9 +49,6 @@ export default function ATSCheckPage() {
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ATSResult | null>(null);
-  
-  const router = useRouter();
-  const setFullFormData = useFormStore((state) => state.setFullFormData);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -149,13 +144,6 @@ export default function ATSCheckPage() {
     if (ratio >= 0.8) return "text-primary";
     if (ratio >= 0.6) return "text-warning";
     return "text-error";
-  };
-
-  const handleImproveResume = () => {
-    if (result?.extractedData) {
-      setFullFormData(result.extractedData);
-    }
-    router.push("/build");
   };
 
   return (
@@ -379,12 +367,12 @@ export default function ATSCheckPage() {
                     >
                       Scan Another
                     </button>
-                    <button
-                      onClick={handleImproveResume}
+                    <Link
+                      href="/build"
                       className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-bold rounded-full transition-all duration-300"
                     >
                       Improve Resume
-                    </button>
+                    </Link>
                   </div>
                 </div>
 
@@ -396,3 +384,4 @@ export default function ATSCheckPage() {
     </div>
   );
 }
+""")

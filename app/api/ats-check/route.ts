@@ -38,7 +38,15 @@ export async function POST(req: NextRequest) {
           { name: "Impact & Quantification", weightage: 10, score: 7, feedback: "Great project descriptions, but quantify your achievements." },
           { name: "Recruiter Readability", weightage: 7, score: 5, feedback: "Easy to skim and formatted cleanly." },
           { name: "Experience & Relevance", weightage: 3, score: 2, feedback: "Good academic background." }
-        ]
+        ],
+        extractedData: {
+          personal: { fullName: "Mock User", email: "mock@example.com", collegeName: "Mock University", branch: "Computer Science", graduationYear: "2025", cgpa: "8.5", targetRole: "Software Engineer", phone: "1234567890", linkedin: "", github: "", hasPG: false, pgCollegeName: "", pgBranch: "", pgGraduationYear: "", pgCgpa: "", pgDegreeName: "" },
+          skills: { languages: "Python, JavaScript", frameworks: "React, Node.js", tools: "Git, Docker", databases: "MySQL", concepts: "OOP", softSkills: "Communication", certifications: "" },
+          projects: [{ title: "Mock Project", techStack: "React", description: "A simple web app", keyResult: "Increased speed by 10%", link: "", duration: "" }],
+          internships: [],
+          positions: [],
+          options: { jobDescription: "", tone: "Professional & Formal", includeAchievements: false, achievements: "", projectVariants: "1 version" }
+        }
       });
     }
 
@@ -88,31 +96,91 @@ export async function POST(req: NextRequest) {
 You are an expert ATS (Applicant Tracking System) used by top-tier tech companies.
 Analyze the provided resume document and evaluate it against realtime universal software engineering and tech company needs.
 Provide a realistic score out of 100 based on the following metrics:
-- Keyword Match & Searchability (Weightage: 35)
-- Resume Parsing & Structure (Weightage: 25)
-- Technical Signal Strength (Weightage: 20)
-- Impact & Quantification (Weightage: 10)
-- Recruiter Readability (Weightage: 7)
-- Experience & Relevance (Weightage: 3)
+- Keyword Match (Weightage: 35)
+- Parsing & Structure (Weightage: 25)
+- Signal Strength (Weightage: 20)
+- Quantification (Weightage: 10)
+- Readability (Weightage: 7)
+- Role Relevance (Weightage: 3)
 
-Calculate the scores proportionally based on the weightage (e.g. if a category is out of 35, a perfect score is 35).
-Also provide a short, actionable feedback sentence for each category.
+Also, extract all structured data from the resume to populate a Resume Builder form. If a field is missing in the resume, leave it as an empty string. Return ONLY a valid JSON object matching this exact structure:
 
-Return ONLY a valid JSON object with no markdown formatting. It must exactly match this structure:
 {
   "overallScore": 82,
   "categories": [
-    { "name": "Keyword Match & Searchability", "weightage": 35, "score": 30, "feedback": "Good use of Python, but missing cloud keywords." },
-    { "name": "Resume Parsing & Structure", "weightage": 25, "score": 22, "feedback": "Clean formatting and easily parseable." },
-    { "name": "Technical Signal Strength", "weightage": 20, "score": 15, "feedback": "Solid engineering projects." },
-    { "name": "Impact & Quantification", "weightage": 10, "score": 7, "feedback": "Need more quantified results in projects." },
-    { "name": "Recruiter Readability", "weightage": 7, "score": 6, "feedback": "Well-organized and skim-friendly." },
-    { "name": "Experience & Relevance", "weightage": 3, "score": 2, "feedback": "Highly relevant background." }
-  ]
+    { "name": "Keyword Match", "weightage": 35, "score": 30, "feedback": "Good use of Python, but missing cloud keywords." },
+    { "name": "Parsing & Structure", "weightage": 25, "score": 22, "feedback": "Clean formatting and easily parseable." },
+    { "name": "Signal Strength", "weightage": 20, "score": 15, "feedback": "Solid engineering projects." },
+    { "name": "Quantification", "weightage": 10, "score": 7, "feedback": "Need more quantified results in projects." },
+    { "name": "Readability", "weightage": 7, "score": 6, "feedback": "Well-organized and skim-friendly." },
+    { "name": "Role Relevance", "weightage": 3, "score": 2, "feedback": "Highly relevant background." }
+  ],
+  "extractedData": {
+    "personal": {
+      "fullName": "Extracted Name or empty",
+      "email": "Extracted Email or empty",
+      "collegeName": "Extracted College or empty",
+      "branch": "Extracted Branch/Major or empty",
+      "graduationYear": "Extracted Year or empty",
+      "cgpa": "Extracted CGPA or empty",
+      "targetRole": "Extracted Target Role from summary/objective or empty",
+      "phone": "Extracted Phone or empty",
+      "linkedin": "Extracted LinkedIn URL or empty",
+      "github": "Extracted GitHub URL or empty",
+      "hasPG": false,
+      "pgCollegeName": "",
+      "pgBranch": "",
+      "pgGraduationYear": "",
+      "pgCgpa": "",
+      "pgDegreeName": ""
+    },
+    "skills": {
+      "languages": "comma, separated, languages",
+      "frameworks": "comma, separated, frameworks",
+      "tools": "comma, separated, tools",
+      "databases": "comma, separated, databases",
+      "concepts": "comma, separated, concepts",
+      "softSkills": "comma, separated, soft skills",
+      "certifications": "comma, separated, certifications"
+    },
+    "projects": [
+      {
+        "title": "Project Title",
+        "techStack": "React, Node.js",
+        "description": "Short description",
+        "keyResult": "Key impact or result",
+        "link": "Project URL",
+        "duration": "e.g., Jan 2023 - Mar 2023"
+      }
+    ],
+    "internships": [
+      {
+        "company": "Company Name",
+        "role": "Intern Role",
+        "duration": "e.g., May 2023 - Aug 2023",
+        "workDone": "Summary of work done",
+        "techUsed": "Technologies used"
+      }
+    ],
+    "positions": [
+      {
+        "title": "Role Title",
+        "organization": "Club or Org",
+        "description": "Short description"
+      }
+    ],
+    "options": {
+      "jobDescription": "",
+      "tone": "Professional & Formal",
+      "includeAchievements": false,
+      "achievements": "",
+      "projectVariants": "1 version"
+    }
+  }
 }
 
 RESUME TEXT:
-${resumeText.substring(0, 10000)} // Truncate to avoid massive tokens
+${resumeText.substring(0, 10000)}
 `;
 
     let responseText = "";
