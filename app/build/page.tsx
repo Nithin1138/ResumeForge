@@ -193,6 +193,43 @@ export default function BuildPage() {
       reader.readAsText(file);
     }
   };
+
+  const [isParsing, setIsParsing] = useState(false);
+  const handleAutoFillUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size exceeds 5MB limit");
+        return;
+      }
+      setIsParsing(true);
+      const formDataToSend = new FormData();
+      formDataToSend.append("file", file);
+
+      try {
+        const response = await fetch("/api/parse-resume", {
+          method: "POST",
+          body: formDataToSend,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to parse resume");
+        }
+
+        const data = await response.json();
+        useFormStore.getState().setFullFormData(data);
+        alert("Auto-fill complete! Please review the extracted data.");
+      } catch (error: any) {
+        console.error("Parse error:", error);
+        alert(error.message || "Failed to extract data. Please try again.");
+      } finally {
+        setIsParsing(false);
+        if (e.target) e.target.value = "";
+      }
+    }
+  };
+
   const router = useRouter();
   const {
     formData,
@@ -1159,6 +1196,11 @@ export default function BuildPage() {
             <label className="text-xs text-text hover:text-primary transition-colors font-semibold cursor-pointer px-2 py-1 bg-surface rounded-md border border-border" title="Import form data from JSON">
               Import JSON
               <input type="file" accept=".json,application/json" onChange={handleImportData} className="hidden" />
+            </label>
+            <label className={`text-xs text-bg-base transition-colors font-semibold cursor-pointer px-3 py-1 rounded-md border border-primary flex items-center space-x-1 ${isParsing ? 'bg-primary/70 cursor-wait' : 'bg-primary hover:bg-primary/90'}`} title="Auto-fill form from a PDF or DOCX resume">
+              {isParsing ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+              <span>{isParsing ? 'Parsing...' : 'Auto-Fill from Resume'}</span>
+              <input type="file" accept=".pdf,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={handleAutoFillUpload} className="hidden" disabled={isParsing} />
             </label>
           </div>
           <div className="text-xs text-text-muted font-bold uppercase tracking-wider bg-border/40 px-3 py-1 rounded-full">

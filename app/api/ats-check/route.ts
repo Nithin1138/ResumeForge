@@ -50,47 +50,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    let resumeText = "";
-    
-    // Parse the file based on its type
-    if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      
-      try {
-        resumeText = await new Promise((resolve, reject) => {
-          const pdfParser = new PDFParser(null, 1);
-          pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
-          pdfParser.on("pdfParser_dataReady", () => resolve(pdfParser.getRawTextContent()));
-          pdfParser.parseBuffer(buffer);
-        });
-        
-        // pdf2json uses URL encoding for spaces etc, so decode it safely
-        // Resumes often have raw "%" symbols which break standard decodeURIComponent.
-        const safeDecode = (str: string) => {
-          return str.replace(/%([0-9A-Fa-f]{2})/g, (match, p1) => {
-            try {
-              return decodeURIComponent(match);
-            } catch {
-              return match; // Fallback to raw string if it can't be decoded
-            }
-          });
-        };
-        resumeText = safeDecode(resumeText as string);
-      } catch (pdfError) {
-        console.error("PDF Parsing Error:", pdfError);
-        throw new Error("Failed to parse the PDF file. Ensure it is not corrupted or password protected.");
-      }
-    } else {
-      resumeText = await file.text();
-    }
-
-    if (!resumeText || resumeText.trim().length === 0) {
-      return NextResponse.json(
-        { error: "Could not extract text from the file" },
-        { status: 400 }
-      );
-    }
+    const isPDF = file.type === "application/pdf" || file.name.endsWith(".pdf");
 
     const prompt = `
 You are an expert ATS (Applicant Tracking System) used by top-tier tech companies.
@@ -179,18 +139,34 @@ CRITICAL RULE: If a field is missing in the resume, you MUST leave it as an empt
     }
   }
 }
-
-RESUME TEXT:
-${resumeText.substring(0, 10000)}
 `;
 
     let responseText = "";
 
     try {
       const ai = new GoogleGenAI({ apiKey });
+      
+      let contents: any[] = [];
+      if (isPDF) {
+        const arrayBuffer = await file.arrayBuffer();
+        const base64String = Buffer.from(arrayBuffer).toString("base64");
+        contents = [
+          prompt,
+          {
+            inlineData: {
+              data: base64String,
+              mimeType: "application/pdf"
+            }
+          }
+        ];
+      } else {
+        const resumeText = await file.text();
+        contents = [prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000)];
+      }
+
       const response = await ai.models.generateContent({
         model: "gemini-1.5-flash",
-        contents: prompt,
+        contents: contents,
         config: {
           responseMimeType: "application/json",
           temperature: 0,
@@ -204,7 +180,22 @@ ${resumeText.substring(0, 10000)}
       console.warn("Gemini generation failed, falling back to Groq:", geminiError.message || geminiError);
       
       try {
-        responseText = await generateGroqFallback(prompt, true);
+        // Fallback text extraction if Gemini fails
+        let fallbackText = "";
+        if (isPDF) {
+          const arrayBuffer = await file.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          fallbackText = await new Promise((resolve, reject) => {
+            const pdfParser = new PDFParser(null, 1);
+            pdfParser.on("pdfParser_dataError", (err: any) => reject(err.parserError));
+            pdfParser.on("pdfParser_dataReady", () => resolve(pdfParser.getRawTextContent()));
+            pdfParser.parseBuffer(buffer);
+          });
+        } else {
+          fallbackText = await file.text();
+        }
+        
+        responseText = await generateGroqFallback(prompt + "\n\nRESUME TEXT:\n" + fallbackText, true);
       } catch (groqError: any) {
         console.error("Groq fallback also failed:", groqError);
         throw new Error("All AI generation engines are currently exhausted or unavailable.");
