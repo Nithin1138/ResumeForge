@@ -77,11 +77,12 @@ body {
 }
 
 /* Strict Print Settings */
+@page {
+  size: A4;
+  margin: 0mm;
+}
+
 @media print {
-  @page {
-    size: auto;
-    margin: 0mm !important;
-  }
   body {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
