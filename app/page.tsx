@@ -170,23 +170,57 @@ export default function LandingPage() {
       </header>
 
       {landingVariant === "dashboard" ? (
-        <div className="flex-1 w-full bg-[#080b0c] text-[#eae9e5] min-h-screen py-16 flex flex-col gap-20 relative overflow-hidden font-sans">
-          {/* Subtle neon glowing backdrops for premium aesthetic */}
-          <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-          <div className="absolute bottom-1/3 right-10 w-[350px] h-[350px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="flex-1 w-full bg-[#080b0c] text-[#eae9e5] min-h-screen py-16 flex flex-col gap-20 relative overflow-hidden font-sans bg-[linear-gradient(rgba(255,255,255,0.005)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.005)_1px,transparent_1px)] bg-[size:30px_30px]">
+          {/* Organic floating mesh glow blurs for maximum wow factor */}
+          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[160px] pointer-events-none animate-pulse duration-[12000ms]" />
+          <div className="absolute top-[10%] right-[-100px] w-[600px] h-[600px] bg-[#00e1ec]/8 rounded-full blur-[180px] pointer-events-none animate-pulse duration-[10000ms]" />
+          <div className="absolute bottom-1/4 left-[-150px] w-[500px] h-[500px] bg-emerald-500/4 rounded-full blur-[150px] pointer-events-none" />
 
           {/* ── SECTION 1: PROFESSIONAL HERO HEADER ── */}
-          <div className="text-center space-y-5 max-w-3xl mx-auto pt-8 md:pt-14 relative z-10 px-4 animate-fadeIn">
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full border border-[#00e1ec]/30 bg-primary/10 text-[9px] font-bold tracking-widest text-[#00e1ec] uppercase shadow-[0_0_15px_rgba(0,225,236,0.15)]">
-              <Sparkles className="w-3.5 h-3.5 text-[#00e1ec]" />
+          <div className="text-center space-y-6 max-w-4xl mx-auto pt-10 md:pt-20 relative z-10 px-4 animate-fadeIn">
+            {/* Floating SDE Candidate Portal Badge */}
+            <div className="inline-flex items-center space-x-2 px-4.5 py-2.5 rounded-full border border-[#00e1ec]/30 bg-[#00e1ec]/5 text-[10px] font-black tracking-widest text-[#00e1ec] uppercase shadow-[0_0_30px_rgba(0,225,236,0.15),inset_0_1px_rgba(255,255,255,0.05)] hover:border-[#00e1ec]/50 hover:bg-[#00e1ec]/10 hover:scale-105 transition-all duration-300 backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-[#00e1ec] animate-spin-slow" />
               <span>{badgeText}</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-serif tracking-tight text-white leading-tight font-light">
-              {heroHeadline}
+
+            {/* Glowing Headline */}
+            <h1 className="text-3xl md:text-6.5xl font-serif tracking-tight text-white leading-tight font-extralight max-w-4xl mx-auto drop-shadow-md">
+              {heroHeadline.includes(".") ? (
+                <>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-[#eae9e5]">{heroHeadline.split(".")[0]}.</span>
+                  <br className="hidden md:inline" />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-[#00e1ec] to-success font-normal italic drop-shadow-[0_2px_15px_rgba(0,225,236,0.25)]">
+                    {heroHeadline.split(".")[1]}
+                  </span>
+                </>
+              ) : (
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-[#eae9e5] to-[#00e1ec] font-bold">
+                  {heroHeadline}
+                </span>
+              )}
             </h1>
-            <p className="text-xs md:text-sm text-[#9f9d98] leading-relaxed max-w-xl mx-auto font-medium">
+
+            {/* Subheading */}
+            <p className="text-xs md:text-sm text-[#9f9d98] leading-relaxed max-w-2xl mx-auto font-semibold">
               {heroSubheadline}
             </p>
+
+            {/* Hero Trust Badge Stats Row */}
+            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-[#eae9e5]/80 pt-4">
+              <span className="flex items-center gap-2 bg-[#111618]/80 border border-[#20292b] px-4 py-2 rounded-full shadow-[inset_0_1px_rgba(255,255,255,0.03)] hover:border-primary/30 transition-colors duration-300">
+                <Check className="w-3.5 h-3.5 text-[#00e1ec]" />
+                <span>100% SDE Optimized</span>
+              </span>
+              <span className="flex items-center gap-2 bg-[#111618]/80 border border-[#20292b] px-4 py-2 rounded-full shadow-[inset_0_1px_rgba(255,255,255,0.03)] hover:border-success/30 transition-colors duration-300">
+                <ShieldCheck className="w-3.5 h-3.5 text-success" />
+                <span>Razorpay Secured</span>
+              </span>
+              <span className="flex items-center gap-2 bg-[#111618]/80 border border-[#20292b] px-4 py-2 rounded-full shadow-[inset_0_1px_rgba(255,255,255,0.03)] hover:border-warning/30 transition-colors duration-300">
+                <Flame className="w-3.5 h-3.5 text-warning animate-pulse" />
+                <span>2-Min Generation</span>
+              </span>
+            </div>
           </div>
 
           {/* ── SECTION 2: INTERACTIVE ATS WORKSPACE SIMULATOR ── */}
@@ -686,32 +720,32 @@ export default function LandingPage() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 text-left">
-              <div className="bg-[#111618]/50 border border-[#20292b] rounded-2xl p-6 space-y-3">
-                <span className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 text-[#00e1ec] font-bold flex items-center justify-center text-xs">
+              <div className="bg-[#111618]/50 border border-[#20292b] rounded-2xl p-6 space-y-4 hover:-translate-y-1 hover:border-primary/45 hover:bg-[#111618]/70 shadow-[inset_0_1px_rgba(255,255,255,0.03),0_4px_20px_rgba(0,0,0,0.15)] transition-all duration-300">
+                <span className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 text-[#00e1ec] font-bold flex items-center justify-center text-xs shadow-inner">
                   1
                 </span>
-                <h4 className="font-bold text-sm text-white">Enter Projects & Skills</h4>
-                <p className="text-xs text-[#9f9d98] leading-relaxed">
+                <h4 className="font-bold text-sm text-white tracking-wide">Enter Projects & Skills</h4>
+                <p className="text-xs text-[#9f9d98] leading-relaxed font-medium">
                   Type in your college projects, branch, and programming languages. Simple, unedited descriptions are perfect.
                 </p>
               </div>
 
-              <div className="bg-[#111618]/50 border border-[#20292b] rounded-2xl p-6 space-y-3">
-                <span className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 text-[#00e1ec] font-bold flex items-center justify-center text-xs">
+              <div className="bg-[#111618]/50 border border-[#20292b] rounded-2xl p-6 space-y-4 hover:-translate-y-1 hover:border-[#00e1ec]/45 hover:bg-[#111618]/70 shadow-[inset_0_1px_rgba(255,255,255,0.03),0_4px_20px_rgba(0,0,0,0.15)] transition-all duration-300">
+                <span className="w-9 h-9 rounded-full bg-[#00e1ec]/10 border border-[#00e1ec]/20 text-[#00e1ec] font-bold flex items-center justify-center text-xs shadow-inner">
                   2
                 </span>
-                <h4 className="font-bold text-sm text-white">AI Grader Evaluates</h4>
-                <p className="text-xs text-[#9f9d98] leading-relaxed">
+                <h4 className="font-bold text-sm text-white tracking-wide">AI Grader Evaluates</h4>
+                <p className="text-xs text-[#9f9d98] leading-relaxed font-medium">
                   Our algorithm reviews your text, injects critical technical keywords, and calculates a dynamic ATS score.
                 </p>
               </div>
 
-              <div className="bg-[#111618]/50 border border-[#20292b] rounded-2xl p-6 space-y-3">
-                <span className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 text-[#00e1ec] font-bold flex items-center justify-center text-xs">
+              <div className="bg-[#111618]/50 border border-[#20292b] rounded-2xl p-6 space-y-4 hover:-translate-y-1 hover:border-success/45 hover:bg-[#111618]/70 shadow-[inset_0_1px_rgba(255,255,255,0.03),0_4px_20px_rgba(0,0,0,0.15)] transition-all duration-300">
+                <span className="w-9 h-9 rounded-full bg-success/10 border border-success/20 text-[#00e1ec] font-bold flex items-center justify-center text-xs shadow-inner">
                   3
                 </span>
-                <h4 className="font-bold text-sm text-white">Unlock & Download</h4>
-                <p className="text-xs text-[#9f9d98] leading-relaxed">
+                <h4 className="font-bold text-sm text-white tracking-wide">Unlock & Download</h4>
+                <p className="text-xs text-[#9f9d98] leading-relaxed font-medium">
                   Check your free circular score. Pay a one-time fee of ₹{price} to unlock the complete optimized content.
                 </p>
               </div>
@@ -725,29 +759,29 @@ export default function LandingPage() {
               <p className="text-xs text-[#9f9d98]">Most recruiters spend less than 10 seconds reviewing a resume. Here is exactly what they seek.</p>
             </div>
 
-            <div className="bg-[#111618]/50 border border-[#20292b] rounded-3xl p-6 md:p-8">
+            <div className="bg-[#111618]/50 border border-[#20292b] rounded-3xl p-6 md:p-8 shadow-[inset_0_1px_rgba(255,255,255,0.03),0_4px_30px_rgba(0,0,0,0.2)] hover:border-primary/30 transition-colors duration-500">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-xs font-semibold text-left">
                 <div className="space-y-2">
                   <h4 className="font-bold text-sm text-[#00e1ec] flex items-center gap-1.5">
-                    <Check className="w-4 h-4 text-[#00e1ec]" /> Hard Skills
+                    <Check className="w-4 h-4 text-[#00e1ec] p-0.5 bg-[#00e1ec]/10 rounded-full" /> Hard Skills
                   </h4>
-                  <p className="text-[#9f9d98] leading-relaxed">
+                  <p className="text-[#9f9d98] leading-relaxed font-medium">
                     Programming languages, framework libraries (like FastAPI, React), database configurations, and deployment tools.
                   </p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-bold text-sm text-[#00e1ec] flex items-center gap-1.5">
-                    <Check className="w-4 h-4 text-[#00e1ec]" /> Quantifiable Results
+                    <Check className="w-4 h-4 text-[#00e1ec] p-0.5 bg-[#00e1ec]/10 rounded-full" /> Quantifiable Results
                   </h4>
-                  <p className="text-[#9f9d98] leading-relaxed">
+                  <p className="text-[#9f9d98] leading-relaxed font-medium">
                     Numbers showing system speed improvements, user active sessions, or calculated percentages to demonstrate value.
                   </p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-bold text-sm text-[#00e1ec] flex items-center gap-1.5">
-                    <Check className="w-4 h-4 text-[#00e1ec]" /> Simple Formatting
+                    <Check className="w-4 h-4 text-[#00e1ec] p-0.5 bg-[#00e1ec]/10 rounded-full" /> Simple Formatting
                   </h4>
-                  <p className="text-[#9f9d98] leading-relaxed">
+                  <p className="text-[#9f9d98] leading-relaxed font-medium">
                     Strict single-column text structures that company scanning algorithms can index with 100% compliance.
                   </p>
                 </div>
@@ -764,22 +798,22 @@ export default function LandingPage() {
 
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto font-medium">
               {/* Canva */}
-              <div className="border border-[#20292b] bg-[#111618]/30 rounded-2xl p-5 relative">
-                <div className="absolute top-4 right-4 inline-block text-[9px] font-extrabold tracking-wider text-error bg-error/10 px-2.5 py-1 rounded-full uppercase">
+              <div className="border border-[#20292b] bg-[#111618]/30 rounded-2xl p-6 relative shadow-[0_4px_20px_rgba(0,0,0,0.15)] hover:border-error/30 transition-all duration-300">
+                <div className="absolute top-4 right-4 inline-block text-[9px] font-extrabold tracking-wider text-error bg-error/10 border border-error/25 px-2.5 py-1 rounded-full uppercase">
                   Legacy Formats
                 </div>
-                <h3 className="font-bold text-xs tracking-wide text-error mb-4 uppercase">Standard Canva Formats</h3>
+                <h3 className="font-bold text-xs tracking-wide text-error mb-5 uppercase">Standard Canva Formats</h3>
                 
                 <div className="space-y-4 text-left text-xs">
-                  <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-[#20292b]">
-                    <span className="font-bold block text-[10px] text-[#7a7974] mb-1">COMPLEX GRAPHICS</span>
+                  <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-[#20292b] shadow-inner">
+                    <span className="font-bold block text-[10px] text-[#7a7974] mb-1 uppercase tracking-wider">COMPLEX GRAPHICS</span>
                     <p className="text-error font-mono leading-relaxed italic">
                       [Parser Error: Tables and complex columns detect as corrupted blocks or skipped entirely by system.]
                     </p>
                   </div>
-                  <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-[#20292b]">
-                    <span className="font-bold block text-[10px] text-[#7a7974] mb-1">GENERIC PHRASING</span>
-                    <p className="text-[#eae9e5] italic">
+                  <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-[#20292b] shadow-inner">
+                    <span className="font-bold block text-[10px] text-[#7a7974] mb-1 uppercase tracking-wider">GENERIC PHRASING</span>
+                    <p className="text-[#eae9e5]/80 italic">
                       &quot;Worked at a startup building APIs and backend queries.&quot; (Generic phrasing, no technical keywords)
                     </p>
                   </div>
@@ -787,21 +821,21 @@ export default function LandingPage() {
               </div>
 
               {/* ATSLift */}
-              <div className="border-2 border-primary bg-[#111618]/50 rounded-2xl p-5 relative shadow-[0_0_30px_rgba(1,105,111,0.2)]">
-                <div className="absolute top-4 right-4 inline-block text-[9px] font-extrabold tracking-wider text-success bg-success/10 px-2.5 py-1 rounded-full uppercase">
+              <div className="border-2 border-primary bg-[#111618]/50 rounded-2xl p-6 relative shadow-[0_0_35px_rgba(0,225,236,0.15),inset_0_1px_rgba(255,255,255,0.03)] hover:border-[#00e1ec] transition-all duration-300">
+                <div className="absolute top-4 right-4 inline-block text-[9px] font-extrabold tracking-wider text-success bg-success/15 border border-success/25 px-2.5 py-1 rounded-full uppercase">
                   ATSLift Format
                 </div>
-                <h3 className="font-bold text-xs tracking-wide text-[#00e1ec] mb-4 uppercase">ATS Compliant Formats</h3>
+                <h3 className="font-bold text-xs tracking-wide text-[#00e1ec] mb-5 uppercase">ATS Compliant Formats</h3>
 
                 <div className="space-y-4 text-left text-xs">
-                  <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-primary/20">
-                    <span className="font-bold block text-[10px] text-primary mb-1">quantified achievements</span>
+                  <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-primary/20 shadow-inner">
+                    <span className="font-bold block text-[10px] text-primary mb-1 uppercase tracking-wider">quantified achievements</span>
                     <p className="text-[#eae9e5]">
                       • Optimized relational queries in <strong className="text-[#00e1ec] font-bold">PostgreSQL</strong>, decreasing query execution latency by <strong className="text-success font-bold">35%</strong>.
                     </p>
                   </div>
-                  <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-primary/20">
-                    <span className="font-bold block text-[10px] text-primary mb-1">HIGH-SIGNAL TECH STACK</span>
+                  <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-primary/20 shadow-inner">
+                    <span className="font-bold block text-[10px] text-primary mb-1 uppercase tracking-wider">HIGH-SIGNAL TECH STACK</span>
                     <p className="text-[#eae9e5]">
                       • Built and containerized backend services using <strong className="text-[#00e1ec] font-bold">Docker</strong> and <strong className="text-[#00e1ec] font-bold">FastAPI</strong> for 5,000+ daily active users.
                     </p>
@@ -813,39 +847,42 @@ export default function LandingPage() {
 
           {/* ── SECTION 6: GUARANTEES & PAYWALL UNLOCK ── */}
           <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 text-center">
-            <div className="bg-gradient-to-b from-[#111618]/90 to-[#0a0d0e] border border-primary/20 rounded-3xl p-8 md:p-12 space-y-8 relative overflow-hidden">
-              <div className="space-y-4 max-w-2xl mx-auto">
-                <div className="inline-flex items-center gap-1.5 bg-success/15 border border-success/30 px-3 py-1.5 rounded-full text-[9px] font-extrabold uppercase text-[#10b981] tracking-widest shadow-xs mx-auto mb-2">
+            <div className="bg-gradient-to-b from-[#111618]/90 to-[#0a0d0e] border border-primary/20 rounded-3xl p-8 md:p-12 space-y-8 relative overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.4),inset_0_1px_rgba(255,255,255,0.03)]">
+              <div className="absolute -right-24 -top-24 w-80 h-80 bg-primary/10 rounded-full blur-[80px] pointer-events-none" />
+              <div className="absolute -left-24 -bottom-24 w-80 h-80 bg-[#00e1ec]/5 rounded-full blur-[80px] pointer-events-none" />
+              
+              <div className="space-y-4 max-w-2xl mx-auto relative z-10">
+                <div className="inline-flex items-center gap-1.5 bg-success/15 border border-success/30 px-3 py-1.5 rounded-full text-[9px] font-extrabold uppercase text-[#10b981] tracking-widest shadow-xs mx-auto mb-2 backdrop-blur-md">
                   <ShieldCheck className="w-4 h-4" /> Compliance Guarantee
                 </div>
-                <h2 className="text-2xl md:text-4xl font-serif italic text-white leading-tight font-light">
+                <h2 className="text-2xl md:text-4.5xl font-serif italic text-white leading-tight font-light">
                   Simple payment. <br />
                   Placement-ready resume text.
                 </h2>
-                <p className="text-xs md:text-sm text-[#9f9d98] font-medium max-w-md mx-auto leading-relaxed">
+                <p className="text-xs md:text-sm text-[#9f9d98] font-semibold max-w-md mx-auto leading-relaxed">
                   Join thousands of students who bypassed automatic CV filters. Pay a one-time fee of ₹{price} once you review the score.
                 </p>
               </div>
 
               {/* standard vs premium grid */}
-              <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto text-left text-xs font-semibold">
-                <div className="border border-[#20292b] bg-[#0a0d0e]/60 rounded-2xl p-5 space-y-3.5">
+              <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto text-left text-xs font-semibold relative z-10">
+                <div className="border border-[#20292b] bg-[#0a0d0e]/60 rounded-2xl p-6 space-y-4 hover:border-primary/20 transition-colors duration-300 shadow-inner">
                   <span className="text-[10px] font-black text-[#7a7974] tracking-widest uppercase">Free Preview Includes</span>
-                  <ul className="space-y-2 text-[#9f9d98]">
+                  <ul className="space-y-2.5 text-[#9f9d98]">
                     <li className="flex items-center gap-2">❌ High-scoring, copyable resume bullets</li>
                     <li className="flex items-center gap-2">❌ Tailoring tool for specific job openings</li>
                     <li className="flex items-center gap-2">❌ Direct formatting strings export</li>
-                    <li className="flex items-center gap-2">✓ Circular ATS score compatability rating</li>
-                    <li className="flex items-center gap-2">✓ Basic resume structure checklist</li>
+                    <li className="flex items-center gap-2 text-[#eae9e5]">✓ Circular ATS score compatability rating</li>
+                    <li className="flex items-center gap-2 text-[#eae9e5]">✓ Basic resume structure checklist</li>
                   </ul>
                 </div>
 
-                <div className="border-2 border-primary bg-[#111618] rounded-2xl p-5 space-y-3.5 shadow-[0_0_25px_rgba(1,105,111,0.25)] relative">
-                  <div className="absolute top-4 right-4 inline-block text-[8px] font-black tracking-widest text-[#00e1ec] uppercase">
+                <div className="border-2 border-primary bg-[#111618] rounded-2xl p-6 space-y-4 shadow-[0_0_30px_rgba(1,105,111,0.25),inset_0_1px_rgba(255,255,255,0.03)] relative hover:border-[#00e1ec] transition-colors duration-300">
+                  <div className="absolute top-4 right-4 inline-block text-[8px] font-black tracking-widest text-[#00e1ec] bg-[#00e1ec]/10 border border-[#00e1ec]/20 px-2.5 py-1 rounded-full uppercase">
                     Recommended
                   </div>
                   <span className="text-[10px] font-black text-[#00e1ec] tracking-widest uppercase">Premium Unlock Includes</span>
-                  <ul className="space-y-2 text-[#eae9e5]">
+                  <ul className="space-y-2.5 text-[#eae9e5]">
                     <li className="flex items-center gap-2 text-success">✓ Copy-ready optimized technical bullets</li>
                     <li className="flex items-center gap-2 text-success">✓ 3 Free AI adjustments for custom job targets</li>
                     <li className="flex items-center gap-2 text-success">✓ Industry-recognized keywords injected</li>
@@ -855,10 +892,10 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="pt-4 max-w-md mx-auto">
+              <div className="pt-4 max-w-md mx-auto relative z-10">
                 <Link
                   href="/build"
-                  className="w-full h-12 bg-primary hover:bg-primary/95 text-white font-bold text-sm rounded-full transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-[0_4px_15px_rgba(1,105,111,0.3)]"
+                  className="w-full h-12 bg-primary hover:bg-primary/95 hover:scale-[1.01] text-white font-bold text-sm rounded-full transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-[0_4px_20px_rgba(1,105,111,0.35)]"
                 >
                   <span>{ctaText}</span>
                   <ArrowRight className="w-4 h-4" />
@@ -891,7 +928,7 @@ export default function LandingPage() {
                   a: "The small one-time payment unlocks the complete optimized copy-ready text, provides 3 additional free custom edits to target specific jobs, and includes 100% money-back compliance coverage."
                 }
               ].map((faqItem, idx) => (
-                <div key={idx} className="border border-[#20292b] bg-[#111618]/30 rounded-2xl p-5">
+                <div key={idx} className="border border-[#20292b] bg-[#111618]/30 rounded-2xl p-5 hover:border-primary/30 hover:bg-[#111618]/50 shadow-[inset_0_1px_rgba(255,255,255,0.02)] transition-all duration-300">
                   <h4 className="font-bold text-xs md:text-sm text-white mb-2">{faqItem.q}</h4>
                   <p className="text-xs text-[#9f9d98] leading-relaxed font-semibold">{faqItem.a}</p>
                 </div>
