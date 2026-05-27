@@ -424,6 +424,12 @@ export default function AdminPanelPage() {
           flashPrice,
           isReferralActive,
           invitesRequired,
+          heroHeadline,
+          heroSubheadline,
+          ctaText,
+          badgeText,
+          testimonialsJson: JSON.stringify(testimonialsList),
+          faqsJson: JSON.stringify(faqsList),
         }),
       });
 
@@ -2038,11 +2044,108 @@ export default function AdminPanelPage() {
                   </div>
                   <h3 className="text-sm md:text-base font-serif italic text-text">SaaS Marketing & Experiments Command Center</h3>
                   <p className="text-xs text-text-muted mt-1 font-semibold leading-relaxed">
-                    Powerful marketing control triggers allowing the founder to edit announcement states, dynamically scale prices, and run landing page A/B tests instantly.
+                    Configure landing layout experiments, dynamically scale pricing, customize copy dynamically, and deploy presets instantly.
                   </p>
                 </div>
 
+                {/* Instant Template Presets */}
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl space-y-3">
+                  <span className="text-xs font-bold text-primary uppercase tracking-wider block">⚡ Quick CMS Copy Presets (Single Click Fill)</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBadgeText("🏆 100% SDE Placement Accelerator");
+                        setHeroHeadline("Stop Getting Screened Out. Get Your Resume SDE-Ready in 2 Minutes.");
+                        setHeroSubheadline("We translate raw college projects and standard lab courses into high-converting, quantified engineering bullet points recruiters scan for.");
+                        setCtaText("Optimize My Resume Free");
+                      }}
+                      className="p-3 bg-surface hover:bg-primary/10 border border-border hover:border-primary/50 text-[10px] text-left rounded-xl transition-all cursor-pointer font-bold space-y-1 block w-full text-text"
+                    >
+                      <span className="text-primary block text-xs">🚀 SDE Placement Pitch</span>
+                      <p className="text-text-muted font-medium leading-relaxed font-sans truncate">Translates raw projects into SDE achievements.</p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBadgeText("⚡ High-Signal Recruitment Grader");
+                        setHeroHeadline("Your Projects Are Gold. Make Recruiters Believe It in 6 Seconds.");
+                        setHeroSubheadline("Our AI scanner targets placement portal algorithms to inject premium tech-keywords and performance numbers automatically.");
+                        setCtaText("Grade My Resume Free");
+                      }}
+                      className="p-3 bg-surface hover:bg-primary/10 border border-border hover:border-primary/50 text-[10px] text-left rounded-xl transition-all cursor-pointer font-bold space-y-1 block w-full text-text"
+                    >
+                      <span className="text-[#00e1ec] block text-xs">⚡ Metrics & Keywords Pitch</span>
+                      <p className="text-text-muted font-medium leading-relaxed font-sans truncate">Emphasizes automated scanner scoring.</p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBadgeText("Built for Indian Engineering Students");
+                        setHeroHeadline("Your Projects Are Gold. Your Resume Doesn't Show It.");
+                        setHeroSubheadline("Turn your CGPA, branch-specific skills, and raw projects into ATS-ready, recruiter-approved resume content in 2 minutes.");
+                        setCtaText("Build My Resume Free");
+                      }}
+                      className="p-3 bg-surface hover:bg-primary/10 border border-border hover:border-primary/50 text-[10px] text-left rounded-xl transition-all cursor-pointer font-bold space-y-1 block w-full text-text"
+                    >
+                      <span className="text-text block text-xs">🌱 Classic Minimalist Pitch</span>
+                      <p className="text-text-muted font-medium leading-relaxed font-sans truncate">Standard, clean copy for general applicants.</p>
+                    </button>
+                  </div>
+                </div>
+
                 <form onSubmit={handleSaveControls} className="space-y-6 text-left max-w-2xl">
+                  {/* Dynamic Landing Page CMS Copy Editor */}
+                  <div className="p-5 bg-bg-base/30 border border-border/50 rounded-2xl space-y-4">
+                    <span className="text-xs font-bold text-text uppercase tracking-wider block border-b border-border/40 pb-2">🎨 Landing Page Dynamic Copy Editor</span>
+                    
+                    <div className="space-y-3.5">
+                      <div className="space-y-1.5">
+                        <label className="block text-[10px] font-extrabold text-text-muted uppercase">Accent Badge Text</label>
+                        <input 
+                          type="text"
+                          value={badgeText}
+                          onChange={(e) => setBadgeText(e.target.value)}
+                          className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs font-semibold focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-text"
+                          placeholder="e.g. Built for Indian Engineering Students"
+                        />
+                      </div>
+                      
+                      <div className="space-y-1.5">
+                        <label className="block text-[10px] font-extrabold text-text-muted uppercase">Hero Headline Text</label>
+                        <textarea 
+                          rows={2}
+                          value={heroHeadline}
+                          onChange={(e) => setHeroHeadline(e.target.value)}
+                          className="w-full p-3 rounded-lg border border-border bg-surface text-xs font-semibold focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden leading-relaxed text-text"
+                          placeholder="e.g. Your Projects Are Gold. Your Resume Doesn't Show It."
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-[10px] font-extrabold text-text-muted uppercase">Hero Subheadline Description</label>
+                        <textarea 
+                          rows={3}
+                          value={heroSubheadline}
+                          onChange={(e) => setHeroSubheadline(e.target.value)}
+                          className="w-full p-3 rounded-lg border border-border bg-surface text-xs font-semibold focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden leading-relaxed text-text"
+                          placeholder="e.g. Turn your CGPA, branch-specific skills, and raw projects..."
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-[10px] font-extrabold text-text-muted uppercase">Call-To-Action Button Text</label>
+                        <input 
+                          type="text"
+                          value={ctaText}
+                          onChange={(e) => setCtaText(e.target.value)}
+                          className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs font-semibold focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-text"
+                          placeholder="e.g. Build My Resume Free"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Announcement banner */}
                   <div className="p-4 bg-bg-base/30 border border-border/50 rounded-xl space-y-3">
                     <div className="flex justify-between items-center">
@@ -2070,7 +2173,7 @@ export default function AdminPanelPage() {
                       value={bannerText}
                       disabled={!isBannerActive}
                       onChange={(e) => setBannerText(e.target.value)}
-                      className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs font-medium focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden disabled:opacity-50"
+                      className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs font-medium focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden disabled:opacity-50 text-text"
                       placeholder="Enter announcement banner message..."
                     />
                   </div>
@@ -2147,7 +2250,7 @@ export default function AdminPanelPage() {
                           value={flashPrice}
                           disabled={!isFlashOfferActive}
                           onChange={(e) => setFlashPrice(Number(e.target.value))}
-                          className="w-24 h-10 px-3 rounded-lg border border-border bg-surface text-xs font-mono font-bold focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden disabled:opacity-50"
+                          className="w-24 h-10 px-3 rounded-lg border border-border bg-surface text-xs font-mono font-bold focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden disabled:opacity-50 text-text"
                           placeholder="Price"
                         />
                         <span className="text-xs font-bold text-text-muted uppercase">Flash Pricing (e.g. ₹39)</span>

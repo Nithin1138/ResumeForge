@@ -62,6 +62,12 @@ export default function LandingPage() {
   const [isBannerActive, setIsBannerActive] = useState(true);
   const [landingVariant, setLandingVariant] = useState<"minimal" | "dashboard">("minimal");
   
+  // Dynamic Landing CMS copy states
+  const [badgeText, setBadgeText] = useState("Built for Indian Engineering Students");
+  const [heroHeadline, setHeroHeadline] = useState("Your Projects Are Gold. Your Resume Doesn't Show It.");
+  const [heroSubheadline, setHeroSubheadline] = useState("Turn your CGPA, branch-specific skills, and raw projects into ATS-ready, recruiter-approved resume content in 2 minutes. Trained on modern Indian tech hiring patterns.");
+  const [ctaText, setCtaText] = useState("Build My Resume Free");
+
   // Interactive Variant B (Dashboard) States
   const [bActiveTab, setBActiveTab] = useState<"details" | "projects" | "skills">("projects");
   const [bQuantified, setBQuantified] = useState(true);
@@ -79,6 +85,10 @@ export default function LandingPage() {
         if (data.bannerText) setBannerText(data.bannerText);
         if (data.isBannerActive !== undefined) setIsBannerActive(data.isBannerActive);
         if (data.landingVariant) setLandingVariant(data.landingVariant);
+        if (data.heroHeadline) setHeroHeadline(data.heroHeadline);
+        if (data.heroSubheadline) setHeroSubheadline(data.heroSubheadline);
+        if (data.ctaText) setCtaText(data.ctaText);
+        if (data.badgeText) setBadgeText(data.badgeText);
       }).catch(err => console.error("Failed to load config", err));
   }, []);
 
@@ -159,28 +169,32 @@ export default function LandingPage() {
       </header>
 
       {landingVariant === "dashboard" ? (
-        <div className="flex-1 w-full bg-[#080b0c] text-[#eae9e5] min-h-screen py-12 flex flex-col gap-16 relative overflow-hidden font-sans">
-          {/* Subtle neon glowing backdrops */}
+        <div className="flex-1 w-full bg-[#080b0c] text-[#eae9e5] min-h-screen py-16 flex flex-col gap-20 relative overflow-hidden font-sans">
+          {/* Subtle neon glowing backdrops for premium aesthetic */}
           <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute bottom-1/3 right-10 w-[350px] h-[350px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
-          {/* ── SECTION 1: HERO (SIMPLE WORDS) ── */}
-          <div className="text-center space-y-4 max-w-3xl mx-auto pt-8 md:pt-14 relative z-10 px-4">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/10 text-[9px] font-bold tracking-widest text-[#00e1ec] uppercase">
+          {/* ── SECTION 1: PROFESSIONAL HERO HEADER ── */}
+          <div className="text-center space-y-5 max-w-3xl mx-auto pt-8 md:pt-14 relative z-10 px-4 animate-fadeIn">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full border border-[#00e1ec]/30 bg-primary/10 text-[9px] font-bold tracking-widest text-[#00e1ec] uppercase shadow-[0_0_15px_rgba(0,225,236,0.15)]">
               <Sparkles className="w-3.5 h-3.5 text-[#00e1ec]" />
-              <span>Campus Resume Optimizer</span>
+              <span>{badgeText}</span>
             </div>
             <h1 className="text-3xl md:text-5xl font-serif tracking-tight text-white leading-tight font-light">
-              Get Your Resume Ready for <br />
-              <span className="text-primary italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#00e1ec]">Campus Placements</span>. Instantly.
+              {heroHeadline}
             </h1>
             <p className="text-xs md:text-sm text-[#9f9d98] leading-relaxed max-w-xl mx-auto font-medium">
-              See how our AI tool turns basic student descriptions into clean, SDE-ready resume bullets.
+              {heroSubheadline}
             </p>
           </div>
 
           {/* ── SECTION 2: INTERACTIVE ATS WORKSPACE SIMULATOR ── */}
-          <div className="max-w-6xl mx-auto w-full px-4 md:px-6 relative z-10">
+          <div className="max-w-6xl mx-auto w-full px-4 md:px-6 relative z-10 space-y-6">
+            <div className="text-center md:text-left space-y-1">
+              <h2 className="text-lg md:text-xl font-bold text-white uppercase tracking-wider">1. Try the Interactive Resume Grader</h2>
+              <p className="text-xs text-[#9f9d98]">Input your details on the left, choose enhancements, and watch your ATS compatibility score rise on the right.</p>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch bg-[#111618]/90 border border-primary/20 rounded-3xl p-4 md:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
               
               {/* Left Column: Mock Workbench inputs (5 cols) */}
@@ -188,8 +202,8 @@ export default function LandingPage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-[#20292b] pb-3 flex-wrap gap-2 text-left">
                     <div>
-                      <span className="text-[9px] font-black text-[#00e1ec] tracking-widest uppercase block">Interactive Demo</span>
-                      <h4 className="text-xs font-bold text-white">1. Type Your Project Details</h4>
+                      <span className="text-[9px] font-black text-[#00e1ec] tracking-widest uppercase block">Workbench Input</span>
+                      <h4 className="text-xs font-bold text-white">Student Details</h4>
                     </div>
                     <div className="flex gap-1 text-[9px] font-bold uppercase tracking-wider">
                       {["details", "projects", "skills"].map((tab) => (
@@ -202,7 +216,7 @@ export default function LandingPage() {
                               : "bg-[#111618] border-[#20292b] text-[#9f9d98] hover:border-primary/50"
                           }`}
                         >
-                          {tab}
+                          {tab === "details" ? "My Profile" : tab === "projects" ? "My Project" : "My Skills"}
                         </button>
                       ))}
                     </div>
@@ -214,19 +228,19 @@ export default function LandingPage() {
                       <div className="space-y-1.5">
                         <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Target Job Role</span>
                         <div className="w-full h-9 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center">
-                          Software Development Engineer
+                          Software Development Engineer (SDE)
                         </div>
                       </div>
                       <div className="space-y-1.5">
                         <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Engineering Branch</span>
                         <div className="w-full h-9 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center">
-                          Computer Science (CSE)
+                          Computer Science & Engineering (CSE)
                         </div>
                       </div>
                       <div className="space-y-1.5">
                         <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">CGPA</span>
                         <div className="w-full h-9 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center font-mono">
-                          8.32
+                          8.32 / 10.0
                         </div>
                       </div>
                     </div>
@@ -238,11 +252,11 @@ export default function LandingPage() {
                       <div className="space-y-1.5">
                         <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Project Title</span>
                         <div className="w-full h-9 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center">
-                          AI Customer Support chatbot
+                          AI Customer Support Chatbot
                         </div>
                       </div>
                       <div className="space-y-1.5">
-                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">What did you build?</span>
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Your Basic Project Description</span>
                         <textarea
                           readOnly
                           value="I created a chatbot using OpenAI API and Python. I set up a server in FastAPI to run queries. It helps answer standard customer support questions fast."
@@ -266,7 +280,7 @@ export default function LandingPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase block">Libraries & Frameworks</span>
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase block">Frameworks & Tools</span>
                         <div className="flex flex-wrap gap-1.5">
                           {["FastAPI", "React.js", "Docker", "LangChain", "Git"].map((f) => (
                             <span key={f} className="px-2 py-1 bg-[#111618] border border-[#20292b] rounded text-[10px] font-semibold text-[#eae9e5]">
@@ -286,7 +300,7 @@ export default function LandingPage() {
                     href="/build"
                     className="w-full h-11 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
                   >
-                    <span>Build Your Resume Free</span>
+                    <span>{ctaText}</span>
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
@@ -297,11 +311,11 @@ export default function LandingPage() {
                 <div className="space-y-5">
                   <div className="flex items-center justify-between border-b border-[#20292b] pb-3">
                     <div className="text-left">
-                      <span className="text-[9px] font-extrabold text-success tracking-widest uppercase block">Preview Score</span>
-                      <h3 className="text-sm font-bold text-white">2. Watch Your ATS Score Increase</h3>
+                      <span className="text-[9px] font-extrabold text-success tracking-widest uppercase block">Live Scoring</span>
+                      <h3 className="text-sm font-bold text-white">Parser Compatibility Results</h3>
                     </div>
                     <span className="inline-flex items-center gap-1 text-[9px] font-bold text-[#00e1ec] bg-[#00e1ec]/10 border border-[#00e1ec]/30 px-2.5 py-1 rounded-full uppercase">
-                      Interactive Live Grader
+                      Automatic Grader
                     </span>
                   </div>
 
@@ -415,14 +429,12 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* ── SECTION 3: HOW IT WORKS (NEW TARGETED SECTION) ── */}
-          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 text-center">
-            <div className="mb-12">
-              <h2 className="text-2xl md:text-4xl font-serif text-white mb-3">
-                How It Works
-              </h2>
-              <p className="text-xs md:text-sm text-[#9f9d98] max-w-xl mx-auto leading-relaxed">
-                Create a high-scoring, professional engineering resume in three simple steps.
+          {/* ── SECTION 3: HOW IT WORKS (SIMPLE 3 STEPS) ── */}
+          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 text-center space-y-8">
+            <div className="space-y-1">
+              <h2 className="text-lg md:text-xl font-bold text-white uppercase tracking-wider">2. Simple Three-Step Process</h2>
+              <p className="text-xs text-[#9f9d98] max-w-md mx-auto leading-relaxed">
+                Create a high-scoring, professional engineering resume in three quick steps.
               </p>
             </div>
 
@@ -459,17 +471,15 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* ── SECTION 4: WHAT RECRUITERS ACTUALLY SCAN FOR (NEW TARGETED SECTION) ── */}
-          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10">
-            <div className="bg-[#111618]/50 border border-[#20292b] rounded-3xl p-6 md:p-8 space-y-6">
-              <div className="text-center md:text-left border-b border-[#20292b] pb-4">
-                <h3 className="text-xl font-serif text-white">What Engineering Recruiters Scan For</h3>
-                <p className="text-xs text-[#9f9d98] mt-1 font-semibold">
-                  Most recruiters spend less than 10 seconds reviewing a resume. Here is exactly what they seek.
-                </p>
-              </div>
+          {/* ── SECTION 4: WHAT RECRUITERS ACTUALLY SCAN FOR ── */}
+          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 space-y-6">
+            <div className="text-center md:text-left space-y-1">
+              <h2 className="text-lg md:text-xl font-bold text-white uppercase tracking-wider">3. What Engineering Recruiters Scan For</h2>
+              <p className="text-xs text-[#9f9d98]">Most recruiters spend less than 10 seconds reviewing a resume. Here is exactly what they seek.</p>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+            <div className="bg-[#111618]/50 border border-[#20292b] rounded-3xl p-6 md:p-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-xs font-semibold text-left">
                 <div className="space-y-2">
                   <h4 className="font-bold text-sm text-[#00e1ec] flex items-center gap-1.5">
                     <Check className="w-4 h-4 text-[#00e1ec]" /> Hard Skills
@@ -499,14 +509,10 @@ export default function LandingPage() {
           </div>
 
           {/* ── SECTION 5: WHY CANVA / DOCX RESUMES FAIL ── */}
-          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-4xl font-serif text-white mb-3">
-                Why Standard Resumes Fail
-              </h2>
-              <p className="text-xs md:text-sm text-[#9f9d98] max-w-xl mx-auto leading-relaxed">
-                Standard design builders like Canva block screeners using multi-column tables and generic descriptions.
-              </p>
+          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 space-y-6">
+            <div className="text-center md:text-left space-y-1">
+              <h2 className="text-lg md:text-xl font-bold text-white uppercase tracking-wider">4. Why Graphic Templates Fail</h2>
+              <p className="text-xs text-[#9f9d98]">Standard design builders like Canva block screeners using multi-column tables and generic descriptions.</p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto font-medium">
@@ -607,7 +613,7 @@ export default function LandingPage() {
                   href="/build"
                   className="w-full h-12 bg-primary hover:bg-primary/95 text-white font-bold text-sm rounded-full transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-[0_4px_15px_rgba(1,105,111,0.3)]"
                 >
-                  <span>Build Your Optimized Resume Now</span>
+                  <span>{ctaText}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <span className="text-[9px] font-bold text-[#7a7974] uppercase tracking-wider block mt-3">
@@ -656,18 +662,17 @@ export default function LandingPage() {
             {/* Dynamic Badge */}
             <div className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full border border-border bg-surface text-xs font-semibold tracking-wide text-primary shadow-xs mb-8 uppercase">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Built for Indian Engineering Students</span>
+              <span>{badgeText}</span>
             </div>
 
             {/* Hero Title */}
             <h1 className="text-4xl md:text-7xl font-serif tracking-tight text-text leading-[1.08] max-w-3xl mb-6">
-              Your Projects Are Gold.<br />
-              <span className="text-primary italic font-normal">Your Resume</span> Doesn&apos;t Show It.
+              {heroHeadline}
             </h1>
 
             {/* Subtitle */}
             <p className="text-base md:text-lg text-text-muted max-w-xl mb-10 leading-relaxed">
-              Turn your CGPA, branch-specific skills, and raw projects into ATS-ready, recruiter-approved resume content in 2 minutes. Trained on modern Indian tech hiring patterns.
+              {heroSubheadline}
             </p>
 
             {/* CTA Area */}
@@ -676,7 +681,7 @@ export default function LandingPage() {
                 href="/build"
                 className="group px-8 py-4 bg-primary hover:bg-primary/95 text-white text-base font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center space-x-2"
               >
-                <span>Build My Resume Free</span>
+                <span>{ctaText}</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               

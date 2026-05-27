@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import BottomNav from "./components/BottomNav";
 
 export const metadata: Metadata = {
   title: "ATSLift — ATS Resume Builder for Engineering Students",
@@ -30,8 +31,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased selection:bg-primary/20">
-      <body className="min-h-full flex flex-col bg-bg-base text-text selection:bg-primary/20">
-        {children}
+      <body className="min-h-full bg-[#0a0d0e] text-text selection:bg-primary/20 flex justify-center">
+        <div className="max-w-[480px] w-full min-h-screen bg-bg-base border-x border-border/30 relative flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.35)] overflow-x-hidden pb-20">
+          {children}
+          <BottomNav />
+        </div>
       </body>
     </html>
   );
