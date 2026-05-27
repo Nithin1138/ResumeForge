@@ -17,7 +17,14 @@ export async function GET(req: NextRequest) {
         flashPrice: config.flashPrice,
         isReferralActive: config.isReferralActive,
         invitesRequired: config.invitesRequired,
-        activePrice: config.isFlashOfferActive ? config.flashPrice : config.dynamicPrice
+        activePrice: config.isFlashOfferActive ? config.flashPrice : config.dynamicPrice,
+        // Dynamic CMS fields
+        heroHeadline: (config as any).heroHeadline || "Your Projects Are Gold. Your Resume Doesn't Show It.",
+        heroSubheadline: (config as any).heroSubheadline || "Turn your CGPA, branch-specific skills, and raw projects into ATS-ready, recruiter-approved resume content in 2 minutes.",
+        ctaText: (config as any).ctaText || "Build My Resume Free",
+        badgeText: (config as any).badgeText || "Built for Indian Engineering Students",
+        testimonialsJson: (config as any).testimonialsJson || "[]",
+        faqsJson: (config as any).faqsJson || "[]"
       });
     }
 
@@ -31,7 +38,13 @@ export async function GET(req: NextRequest) {
       flashPrice: 39,
       isReferralActive: true,
       invitesRequired: 3,
-      activePrice: 49
+      activePrice: 49,
+      heroHeadline: "Your Projects Are Gold. Your Resume Doesn't Show It.",
+      heroSubheadline: "Turn your CGPA, branch-specific skills, and raw projects into ATS-ready, recruiter-approved resume content in 2 minutes.",
+      ctaText: "Build My Resume Free",
+      badgeText: "Built for Indian Engineering Students",
+      testimonialsJson: "[]",
+      faqsJson: "[]"
     });
   } catch (error: any) {
     console.error("Failed to query public config:", error);
@@ -44,7 +57,13 @@ export async function GET(req: NextRequest) {
       flashPrice: 39,
       isReferralActive: true,
       invitesRequired: 3,
-      activePrice: 49
+      activePrice: 49,
+      heroHeadline: "Your Projects Are Gold. Your Resume Doesn't Show It.",
+      heroSubheadline: "Turn your CGPA, branch-specific skills, and raw projects into ATS-ready, recruiter-approved resume content in 2 minutes.",
+      ctaText: "Build My Resume Free",
+      badgeText: "Built for Indian Engineering Students",
+      testimonialsJson: "[]",
+      faqsJson: "[]"
     });
   }
 }

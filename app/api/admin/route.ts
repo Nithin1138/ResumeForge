@@ -380,6 +380,18 @@ export async function GET(req: NextRequest) {
       };
     });
 
+    // Upgraded systems-centric operational telemetry queries [NEW]
+    const featureFlags = await prisma.featureFlag.findMany({ orderBy: { key: "asc" } });
+    const analyticsEvents = await prisma.analyticsEvent.findMany({ orderBy: { createdAt: "desc" }, take: 100 });
+    const experimentAssignments = await prisma.experimentAssignment.findMany({ orderBy: { createdAt: "desc" } });
+    const notificationQueues = await prisma.notificationQueue.findMany({ orderBy: { createdAt: "desc" }, take: 50 });
+    const userCohorts = await prisma.userCohort.findMany({ orderBy: { createdAt: "desc" } });
+    const resumeFeedbacks = await prisma.resumeFeedback.findMany({ orderBy: { createdAt: "desc" } });
+    const paymentEvents = await prisma.paymentEvent.findMany({ orderBy: { createdAt: "desc" }, take: 50 });
+    const riskEvents = await prisma.riskEvent.findMany({ orderBy: { createdAt: "desc" } });
+    const systemQueues = await prisma.systemQueue.findMany({ orderBy: { createdAt: "desc" }, take: 50 });
+    const campusInsights = await prisma.campusInsight.findMany({ orderBy: { collegeName: "asc" } });
+
     return NextResponse.json({
       stats: {
         totalUsers,
@@ -401,7 +413,7 @@ export async function GET(req: NextRequest) {
           range90to100,
           range60to80
         },
-        // New SaaS command center metrics split [NEW]
+        // New SaaS command center metrics split
         mobileRatio: totalResumesBuilt > 0 ? Math.round((mobileCount / totalResumesBuilt) * 100) : 70,
         desktopRatio: totalResumesBuilt > 0 ? Math.round((desktopCount / totalResumesBuilt) * 100) : 30,
         channelsSplit: {
@@ -419,7 +431,18 @@ export async function GET(req: NextRequest) {
       waitlist: waitlistList,
       weeklyTrend,
       flashProjectLogs,
-      config
+      config,
+      // Dynamic Systems-Centric Payloads
+      featureFlags,
+      analyticsEvents,
+      experimentAssignments,
+      notificationQueues,
+      userCohorts,
+      resumeFeedbacks,
+      paymentEvents,
+      riskEvents,
+      systemQueues,
+      campusInsights
     });
   } catch (err: any) {
     console.error("Failed to query stats", err);
@@ -531,7 +554,13 @@ export async function POST(req: NextRequest) {
         isFlashOfferActive, 
         flashPrice, 
         isReferralActive, 
-        invitesRequired 
+        invitesRequired,
+        heroHeadline,
+        heroSubheadline,
+        ctaText,
+        badgeText,
+        testimonialsJson,
+        faqsJson
       } = body;
 
       try {
@@ -545,7 +574,13 @@ export async function POST(req: NextRequest) {
             isFlashOfferActive,
             flashPrice: Number(flashPrice),
             isReferralActive,
-            invitesRequired: Number(invitesRequired)
+            invitesRequired: Number(invitesRequired),
+            heroHeadline,
+            heroSubheadline,
+            ctaText,
+            badgeText,
+            testimonialsJson,
+            faqsJson
           },
           create: {
             id: "admin",
@@ -558,13 +593,43 @@ export async function POST(req: NextRequest) {
             isFlashOfferActive,
             flashPrice: Number(flashPrice),
             isReferralActive,
-            invitesRequired: Number(invitesRequired)
+            invitesRequired: Number(invitesRequired),
+            heroHeadline,
+            heroSubheadline,
+            ctaText,
+            badgeText,
+            testimonialsJson,
+            faqsJson
           }
         });
 
         return NextResponse.json({ success: true });
       } catch (err: any) {
         return NextResponse.json({ error: "Failed to save controls configuration: " + err.message }, { status: 500 });
+      }
+    }
+
+    // ACTION: TOGGLE FEATURE FLAG [NEW]
+    if (action === "toggleFeatureFlag") {
+      const isAuthorized = await verifySession();
+      if (!isAuthorized) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      const { key, enabled, payload } = body;
+      if (!key) {
+        return NextResponse.json({ error: "Feature flag key required" }, { status: 400 });
+      }
+
+      try {
+        await prisma.featureFlag.upsert({
+          where: { key },
+          update: { enabled, payload },
+          create: { key, enabled, payload }
+        });
+        return NextResponse.json({ success: true });
+      } catch (err: any) {
+        return NextResponse.json({ error: "Failed to toggle feature flag: " + err.message }, { status: 500 });
       }
     }
 

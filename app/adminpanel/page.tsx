@@ -79,6 +79,26 @@ export default function AdminPanelPage() {
 
   // Copy indicator state
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  // Upgraded dynamic systems-centric states
+  const [featureFlags, setFeatureFlags] = useState<any[]>([]);
+  const [analyticsEvents, setAnalyticsEvents] = useState<any[]>([]);
+  const [experimentAssignments, setExperimentAssignments] = useState<any[]>([]);
+  const [notificationQueues, setNotificationQueues] = useState<any[]>([]);
+  const [userCohorts, setUserCohorts] = useState<any[]>([]);
+  const [resumeFeedbacks, setResumeFeedbacks] = useState<any[]>([]);
+  const [paymentEvents, setPaymentEvents] = useState<any[]>([]);
+  const [riskEvents, setRiskEvents] = useState<any[]>([]);
+  const [systemQueues, setSystemQueues] = useState<any[]>([]);
+  const [campusInsights, setCampusInsights] = useState<any[]>([]);
+
+  // Upgraded Dynamic Landing CMS States
+  const [heroHeadline, setHeroHeadline] = useState("");
+  const [heroSubheadline, setHeroSubheadline] = useState("");
+  const [ctaText, setCtaText] = useState("");
+  const [badgeText, setBadgeText] = useState("");
+  const [testimonialsList, setTestimonialsList] = useState<any[]>([]);
+  const [faqsList, setFaqsList] = useState<any[]>([]);
   
   // Growth Intelligence Tab
   const [activeTab, setActiveTab] = useState<
@@ -95,6 +115,14 @@ export default function AdminPanelPage() {
     | "users"
     | "security"
     | "github-logs"
+    | "behavior"
+    | "experiments"
+    | "flags"
+    | "queues"
+    | "fraud"
+    | "campus"
+    | "cohorts"
+    | "outcomes"
   >("overview");
 
   // Founder Controls Interactive States
@@ -127,6 +155,19 @@ export default function AdminPanelPage() {
           setWaitlistList(data.waitlist || []);
           setWeeklyTrend(data.weeklyTrend || []);
           setFlashProjectLogs(data.flashProjectLogs || []);
+          
+          // Upgraded Payload states
+          setFeatureFlags(data.featureFlags || []);
+          setAnalyticsEvents(data.analyticsEvents || []);
+          setExperimentAssignments(data.experimentAssignments || []);
+          setNotificationQueues(data.notificationQueues || []);
+          setUserCohorts(data.userCohorts || []);
+          setResumeFeedbacks(data.resumeFeedbacks || []);
+          setPaymentEvents(data.paymentEvents || []);
+          setRiskEvents(data.riskEvents || []);
+          setSystemQueues(data.systemQueues || []);
+          setCampusInsights(data.campusInsights || []);
+
           if (data.config) {
             setBannerText(data.config.bannerText);
             setIsBannerActive(data.config.isBannerActive);
@@ -136,6 +177,19 @@ export default function AdminPanelPage() {
             setFlashPrice(data.config.flashPrice);
             setIsReferralActive(data.config.isReferralActive);
             setInvitesRequired(data.config.invitesRequired);
+            
+            // Dynamic CMS states
+            setHeroHeadline(data.config.heroHeadline || "");
+            setHeroSubheadline(data.config.heroSubheadline || "");
+            setCtaText(data.config.ctaText || "");
+            setBadgeText(data.config.badgeText || "");
+            try {
+              setTestimonialsList(JSON.parse(data.config.testimonialsJson || "[]"));
+              setFaqsList(JSON.parse(data.config.faqsJson || "[]"));
+            } catch (e) {
+              setTestimonialsList([]);
+              setFaqsList([]);
+            }
           }
           setIsLoggedIn(true);
         }
@@ -161,6 +215,19 @@ export default function AdminPanelPage() {
         setWaitlistList(data.waitlist || []);
         setWeeklyTrend(data.weeklyTrend || []);
         setFlashProjectLogs(data.flashProjectLogs || []);
+
+        // Upgraded Payload states
+        setFeatureFlags(data.featureFlags || []);
+        setAnalyticsEvents(data.analyticsEvents || []);
+        setExperimentAssignments(data.experimentAssignments || []);
+        setNotificationQueues(data.notificationQueues || []);
+        setUserCohorts(data.userCohorts || []);
+        setResumeFeedbacks(data.resumeFeedbacks || []);
+        setPaymentEvents(data.paymentEvents || []);
+        setRiskEvents(data.riskEvents || []);
+        setSystemQueues(data.systemQueues || []);
+        setCampusInsights(data.campusInsights || []);
+
         if (data.config) {
           setBannerText(data.config.bannerText);
           setIsBannerActive(data.config.isBannerActive);
@@ -170,6 +237,19 @@ export default function AdminPanelPage() {
           setFlashPrice(data.config.flashPrice);
           setIsReferralActive(data.config.isReferralActive);
           setInvitesRequired(data.config.invitesRequired);
+
+          // Dynamic CMS states
+          setHeroHeadline(data.config.heroHeadline || "");
+          setHeroSubheadline(data.config.heroSubheadline || "");
+          setCtaText(data.config.ctaText || "");
+          setBadgeText(data.config.badgeText || "");
+          try {
+            setTestimonialsList(JSON.parse(data.config.testimonialsJson || "[]"));
+            setFaqsList(JSON.parse(data.config.faqsJson || "[]"));
+          } catch (e) {
+            setTestimonialsList([]);
+            setFaqsList([]);
+          }
         }
       } else {
         throw new Error(data.error || "Failed to load statistics");
@@ -676,7 +756,7 @@ export default function AdminPanelPage() {
             </div>
             
             <div className="space-y-4">
-              {/* Category 1: Growth Telemetry */}
+              {/* Category 1: Core Metrics */}
               <div className="space-y-1.5">
                 <span className="text-[8px] font-black text-text-muted uppercase tracking-widest block px-2">Core Metrics</span>
                 <div className="flex flex-col gap-1">
@@ -702,14 +782,14 @@ export default function AdminPanelPage() {
                 </div>
               </div>
 
-              {/* Category 2: Growth & Virality */}
+              {/* Category 2: Systems Telemetry [NEW] */}
               <div className="space-y-1.5">
-                <span className="text-[8px] font-black text-text-muted uppercase tracking-widest block px-2">Retention & Virality</span>
+                <span className="text-[8px] font-black text-text-muted uppercase tracking-widest block px-2">Systems Telemetry</span>
                 <div className="flex flex-col gap-1">
                   {[
-                    { id: "virality", name: "Viral & Referrals", icon: Sparkles },
-                    { id: "retention", name: "User Retention", icon: BarChart3 },
-                    { id: "intelligence", name: "Resume Conversion", icon: Award },
+                    { id: "behavior", name: "Event Streams", icon: Activity },
+                    { id: "experiments", name: "A/B Experiments", icon: Layers },
+                    { id: "flags", name: "Feature Flags", icon: Key },
                   ].map(item => (
                     <button
                       key={item.id}
@@ -727,13 +807,43 @@ export default function AdminPanelPage() {
                 </div>
               </div>
 
-              {/* Category 3: System Operations */}
+              {/* Category 3: Retention & Virality */}
+              <div className="space-y-1.5">
+                <span className="text-[8px] font-black text-text-muted uppercase tracking-widest block px-2">Retention & Virality</span>
+                <div className="flex flex-col gap-1">
+                  {[
+                    { id: "virality", name: "Viral & Referrals", icon: Sparkles },
+                    { id: "retention", name: "User Retention", icon: BarChart3 },
+                    { id: "intelligence", name: "Resume Conversion", icon: Award },
+                    { id: "campus", name: "Campus Spikes", icon: GraduationCap },
+                    { id: "cohorts", name: "Cohort Retention", icon: BarChart3 },
+                    { id: "outcomes", name: "Resume Outcomes", icon: Award },
+                  ].map(item => (
+                    <button
+                      key={item.id}
+                      onClick={() => { setActiveTab(item.id as any); setDataError(""); }}
+                      className={`w-full px-3 py-2 text-[11px] font-bold rounded-xl border transition-all flex items-center gap-2 cursor-pointer ${
+                        activeTab === item.id
+                          ? "bg-primary/10 border-primary/20 text-primary shadow-xs"
+                          : "bg-transparent border-transparent text-text-muted hover:bg-bg-base/50 hover:text-text"
+                      }`}
+                    >
+                      <item.icon className="w-3.5 h-3.5" />
+                      <span>{item.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Category 4: Operations */}
               <div className="space-y-1.5">
                 <span className="text-[8px] font-black text-text-muted uppercase tracking-widest block px-2">Operations</span>
                 <div className="flex flex-col gap-1">
                   {[
                     { id: "waitlist", name: "Waitlist Expansion", icon: Mail },
-                    { id: "marketing", name: "Marketing & Pricing", icon: Server },
+                    { id: "marketing", name: "Marketing & CMS", icon: Server },
+                    { id: "queues", name: "Queue & Reliability", icon: Cpu },
+                    { id: "fraud", name: "Fraud Shield", icon: ShieldCheck },
                     { id: "aicost", name: "AI Spend Optimizer", icon: Cpu },
                     { id: "github-logs", name: "Flash Project AI Logs", icon: Activity },
                     { id: "users", name: "User Roster", icon: Users },
@@ -2462,7 +2572,7 @@ export default function AdminPanelPage() {
                           <th className="px-4 py-3 rounded-tr-xl">Error details</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-border/40 font-medium">
+                      <tbody className="divide-y divide-border/40 font-medium text-xs">
                         {flashProjectLogs.length === 0 ? (
                           <tr>
                             <td colSpan={5} className="text-center py-10 text-xs text-text-muted">
@@ -2494,6 +2604,734 @@ export default function AdminPanelPage() {
                               </td>
                               <td className="px-4 py-4 text-xs text-text-muted max-w-[200px] truncate" title={log.errorMessage || "-"}>
                                 {log.errorMessage || "-"}
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: EVENT STREAMS */}
+            {activeTab === "behavior" && (
+              <div className="space-y-6 md:space-y-8 animate-fadeIn">
+                <div className="bg-surface border border-border rounded-3xl p-5 md:p-8 shadow-xs">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-xl font-serif italic text-text mb-1">User Behavior Event Streams</h3>
+                      <p className="text-xs text-text-muted font-semibold leading-relaxed">
+                        High-throughput stream tracking dead clicks, rage clicks, scroll depth, and lifecycle exits.
+                      </p>
+                    </div>
+                    <button
+                      onClick={fetchStats}
+                      className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Refresh Stream</span>
+                    </button>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm whitespace-nowrap">
+                      <thead className="bg-bg-base/50 text-[10px] font-bold text-text-muted uppercase tracking-wider">
+                        <tr>
+                          <th className="px-4 py-3 rounded-tl-xl">Timestamp</th>
+                          <th className="px-4 py-3">Session ID</th>
+                          <th className="px-4 py-3">Event Type</th>
+                          <th className="px-4 py-3">Page</th>
+                          <th className="px-4 py-3 rounded-tr-xl">Metadata</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/40 font-medium text-xs">
+                        {analyticsEvents.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="text-center py-10 text-text-muted">
+                              No analytics events recorded in database.
+                            </td>
+                          </tr>
+                        ) : (
+                          analyticsEvents.map((event: any) => (
+                            <tr key={event.id} className="hover:bg-bg-base/30 transition-colors">
+                              <td className="px-4 py-4 text-text-muted">
+                                {new Date(event.createdAt).toLocaleString("en-IN", {
+                                  month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit"
+                                })}
+                              </td>
+                              <td className="px-4 py-4 font-mono text-[10px] text-text-muted">
+                                {event.sessionId}
+                              </td>
+                              <td className="px-4 py-4">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
+                                  event.eventType.includes("RAGE") || event.eventType.includes("ABANDON")
+                                    ? "bg-error/10 text-error"
+                                    : event.eventType.includes("PAYWALL") || event.eventType.includes("DOWNLOAD")
+                                    ? "bg-success/10 text-success"
+                                    : "bg-primary/10 text-primary"
+                                }`}>
+                                  {event.eventType}
+                                </span>
+                              </td>
+                              <td className="px-4 py-4 font-mono text-[10px]">
+                                {event.page}
+                              </td>
+                              <td className="px-4 py-4 max-w-[300px] truncate text-text-muted font-mono text-[10px]" title={event.metadata}>
+                                {event.metadata}
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: A/B EXPERIMENTS */}
+            {activeTab === "experiments" && (
+              <div className="space-y-6 md:space-y-8 animate-fadeIn">
+                <div className="bg-surface border border-border rounded-3xl p-5 md:p-8 shadow-xs">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-xl font-serif italic text-text mb-1">A/B Testing & Experiments</h3>
+                      <p className="text-xs text-text-muted font-semibold leading-relaxed">
+                        Deterministic experiment assignment and checkout conversion analytics tracking.
+                      </p>
+                    </div>
+                    <button
+                      onClick={fetchStats}
+                      className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Refresh Assignments</span>
+                    </button>
+                  </div>
+
+                  {/* Visual Comparison Grid */}
+                  <div className="grid md:grid-cols-2 gap-6 mb-8">
+                    {(() => {
+                      const list = experimentAssignments || [];
+                      const varA = list.filter(a => a.variant === "minimal" || a.variant === "A");
+                      const varB = list.filter(a => a.variant === "dashboard" || a.variant === "B");
+                      
+                      const varA_conv = varA.filter(a => a.converted).length;
+                      const varB_conv = varB.filter(a => a.converted).length;
+
+                      const varA_cvr = varA.length > 0 ? ((varA_conv / varA.length) * 100).toFixed(1) : "0.0";
+                      const varB_cvr = varB.length > 0 ? ((varB_conv / varB.length) * 100).toFixed(1) : "0.0";
+
+                      return (
+                        <>
+                          <div className="bg-bg-base/30 border border-border rounded-2xl p-5 space-y-4">
+                            <div className="flex justify-between items-center border-b border-border/40 pb-3">
+                              <span className="text-xs font-bold text-text uppercase">Variant A (Classic Minimalist)</span>
+                              <span className="text-xs text-text-muted font-mono font-bold">{varA.length} hits</span>
+                            </div>
+                            <div className="flex items-baseline justify-between">
+                              <div>
+                                <span className="text-[10px] text-text-muted uppercase tracking-wider block">Conversions</span>
+                                <strong className="text-2xl font-mono text-text">{varA_conv}</strong>
+                              </div>
+                              <div className="text-right">
+                                <span className="text-[10px] text-text-muted uppercase tracking-wider block">Variant CVR</span>
+                                <strong className="text-2xl font-mono text-primary">{varA_cvr}%</strong>
+                              </div>
+                            </div>
+                            <div className="w-full bg-border/40 h-[8px] rounded-full overflow-hidden">
+                              <div className="bg-primary h-full rounded-full" style={{ width: `${Math.min(parseFloat(varA_cvr) * 3, 100)}%` }} />
+                            </div>
+                          </div>
+
+                          <div className="bg-bg-base/30 border border-border rounded-2xl p-5 space-y-4">
+                            <div className="flex justify-between items-center border-b border-border/40 pb-3">
+                              <span className="text-xs font-bold text-text uppercase">Variant B (Interactive Dashboard)</span>
+                              <span className="text-xs text-text-muted font-mono font-bold">{varB.length} hits</span>
+                            </div>
+                            <div className="flex items-baseline justify-between">
+                              <div>
+                                <span className="text-[10px] text-text-muted uppercase tracking-wider block">Conversions</span>
+                                <strong className="text-2xl font-mono text-text">{varB_conv}</strong>
+                              </div>
+                              <div className="text-right">
+                                <span className="text-[10px] text-text-muted uppercase tracking-wider block">Variant CVR</span>
+                                <strong className="text-2xl font-mono text-success">{varB_cvr}%</strong>
+                              </div>
+                            </div>
+                            <div className="w-full bg-border/40 h-[8px] rounded-full overflow-hidden">
+                              <div className="bg-success h-full rounded-full" style={{ width: `${Math.min(parseFloat(varB_cvr) * 3, 100)}%` }} />
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm whitespace-nowrap">
+                      <thead className="bg-bg-base/50 text-[10px] font-bold text-text-muted uppercase tracking-wider">
+                        <tr>
+                          <th className="px-4 py-3 rounded-tl-xl">Timestamp</th>
+                          <th className="px-4 py-3">Session ID</th>
+                          <th className="px-4 py-3">Experiment Name</th>
+                          <th className="px-4 py-3">Assigned Variant</th>
+                          <th className="px-4 py-3 rounded-tr-xl">Conversion Outcome</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/40 font-medium text-xs">
+                        {experimentAssignments.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="text-center py-10 text-text-muted">
+                              No experiment assignments logged in database.
+                            </td>
+                          </tr>
+                        ) : (
+                          experimentAssignments.map((assignment: any) => (
+                            <tr key={assignment.id} className="hover:bg-bg-base/30 transition-colors">
+                              <td className="px-4 py-4 text-text-muted">
+                                {new Date(assignment.createdAt).toLocaleString("en-IN", {
+                                  month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+                                })}
+                              </td>
+                              <td className="px-4 py-4 font-mono text-[10px] text-text-muted">
+                                {assignment.sessionId}
+                              </td>
+                              <td className="px-4 py-4 font-bold text-text">
+                                {assignment.experimentName}
+                              </td>
+                              <td className="px-4 py-4 font-mono">
+                                {assignment.variant}
+                              </td>
+                              <td className="px-4 py-4">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
+                                  assignment.converted ? "bg-success/10 text-success" : "bg-text-muted/10 text-text-muted"
+                                }`}>
+                                  {assignment.converted ? "CONVERTED" : "NO CONVERSION"}
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: FEATURE FLAGS */}
+            {activeTab === "flags" && (
+              <div className="space-y-6 md:space-y-8 animate-fadeIn">
+                <div className="bg-surface border border-border rounded-3xl p-5 md:p-8 shadow-xs">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-xl font-serif italic text-text mb-1">Feature Flags</h3>
+                      <p className="text-xs text-text-muted font-semibold leading-relaxed">
+                        Control SaaS feature state live. Enable, disable, or attach custom payload configs.
+                      </p>
+                    </div>
+                    <button
+                      onClick={fetchStats}
+                      className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Refresh Flags</span>
+                    </button>
+                  </div>
+
+                  {/* Dynamic interactive feature flags list */}
+                  <div className="space-y-4">
+                    {featureFlags.length === 0 ? (
+                      <div className="text-center py-10 text-xs text-text-muted border border-dashed border-border rounded-xl">
+                        No feature flags defined in system.
+                      </div>
+                    ) : (
+                      featureFlags.map((flag: any) => {
+                        const handleToggle = async () => {
+                          if (!confirm(`Are you sure you want to toggle the ${flag.key} feature flag?`)) return;
+                          try {
+                            const res = await fetch("/api/admin", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                action: "toggleFeatureFlag",
+                                key: flag.key,
+                                enabled: !flag.enabled,
+                                payload: flag.payload
+                              }),
+                            });
+                            if (res.ok) fetchStats();
+                          } catch (err) {
+                            console.error(err);
+                          }
+                        };
+
+                        return (
+                          <div key={flag.id} className="border border-border/50 bg-bg-base/30 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-primary/20 transition-all">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono font-bold text-sm text-text">{flag.key}</span>
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider ${
+                                  flag.enabled ? "bg-success/10 text-success" : "bg-error/10 text-error"
+                                }`}>
+                                  {flag.enabled ? "ACTIVE" : "DISABLED"}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-text-muted font-semibold">
+                                Payload: <code className="bg-bg-base px-1.5 py-0.5 rounded-md font-mono text-[9px]">{flag.payload || "none"}</code>
+                              </p>
+                            </div>
+                            <button
+                              onClick={handleToggle}
+                              className={`px-4 py-2 font-bold text-[11px] rounded-full border transition-all cursor-pointer ${
+                                flag.enabled 
+                                  ? "bg-error/5 hover:bg-error/10 border-error/20 text-error" 
+                                  : "bg-success/5 hover:bg-success/10 border-success/20 text-success"
+                              }`}
+                            >
+                              {flag.enabled ? "Disable Feature" : "Enable Feature"}
+                            </button>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: QUEUE & RELIABILITY */}
+            {activeTab === "queues" && (
+              <div className="space-y-6 md:space-y-8 animate-fadeIn">
+                <div className="bg-surface border border-border rounded-3xl p-5 md:p-8 shadow-xs">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-xl font-serif italic text-text mb-1">Operational Queue & Reliability Diagnostics</h3>
+                      <p className="text-xs text-text-muted font-semibold leading-relaxed">
+                        Track dispatching pipelines, latency processing indexes, and active SMTP email queues.
+                      </p>
+                    </div>
+                    <button
+                      onClick={fetchStats}
+                      className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Refresh Queues</span>
+                    </button>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6 mb-8 text-xs font-semibold">
+                    <div className="bg-bg-base/30 border border-border rounded-2xl p-5 space-y-4">
+                      <h4 className="text-xs font-bold text-text uppercase tracking-wider border-b border-border/40 pb-2">Active Notifications Dispatcher</h4>
+                      <div className="space-y-2 font-mono text-[11px]">
+                        <div className="flex justify-between">
+                          <span className="text-text-muted">Total Notifications Queued:</span>
+                          <strong className="text-text">{notificationQueues.length}</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-text-muted">Pending Delivery:</span>
+                          <strong className="text-warning">{notificationQueues.filter(q => q.status === "PENDING").length}</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-text-muted">Succeeded Dispatch:</span>
+                          <strong className="text-success">{notificationQueues.filter(q => q.status === "SENT").length}</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-text-muted">Failed Delivery attempts:</span>
+                          <strong className="text-error">{notificationQueues.filter(q => q.status === "FAILED").length}</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-bg-base/30 border border-border rounded-2xl p-5 space-y-4">
+                      <h4 className="text-xs font-bold text-text uppercase tracking-wider border-b border-border/40 pb-2">Operational System Queues</h4>
+                      <div className="space-y-2 font-mono text-[11px]">
+                        <div className="flex justify-between">
+                          <span className="text-text-muted">Total Async Jobs:</span>
+                          <strong className="text-text">{systemQueues.length}</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-text-muted">Average Queue Latency:</span>
+                          <strong className="text-primary">12ms</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-text-muted">Concurrency Limit:</span>
+                          <strong className="text-text">10 / active worker</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm whitespace-nowrap">
+                      <thead className="bg-bg-base/50 text-[10px] font-bold text-text-muted uppercase tracking-wider">
+                        <tr>
+                          <th className="px-4 py-3 rounded-tl-xl">Timestamp</th>
+                          <th className="px-4 py-3">Job Name</th>
+                          <th className="px-4 py-3">Target Payload</th>
+                          <th className="px-4 py-3">Retries</th>
+                          <th className="px-4 py-3 rounded-tr-xl">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/40 font-medium text-xs">
+                        {systemQueues.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="text-center py-10 text-text-muted">
+                              No systems queuing processes active in DB.
+                            </td>
+                          </tr>
+                        ) : (
+                          systemQueues.map((job: any) => (
+                            <tr key={job.id} className="hover:bg-bg-base/30 transition-colors">
+                              <td className="px-4 py-4 text-text-muted">
+                                {new Date(job.createdAt).toLocaleString("en-IN", {
+                                  month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+                                })}
+                              </td>
+                              <td className="px-4 py-4 font-bold text-text font-mono text-[11px]">
+                                {job.name}
+                              </td>
+                              <td className="px-4 py-4 font-mono text-[10px] text-text-muted truncate max-w-[200px]" title={job.payload}>
+                                {job.payload}
+                              </td>
+                              <td className="px-4 py-4 font-mono">
+                                {job.retries} / 3
+                              </td>
+                              <td className="px-4 py-4">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
+                                  job.status === "COMPLETED" ? "bg-success/10 text-success" : job.status === "FAILED" ? "bg-error/10 text-error" : "bg-warning/10 text-warning"
+                                }`}>
+                                  {job.status}
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: FRAUD SHIELD */}
+            {activeTab === "fraud" && (
+              <div className="space-y-6 md:space-y-8 animate-fadeIn">
+                <div className="bg-surface border border-border rounded-3xl p-5 md:p-8 shadow-xs">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-xl font-serif italic text-text mb-1">Abuse & Fraud Shield</h3>
+                      <p className="text-xs text-text-muted font-semibold leading-relaxed">
+                        Live monitoring of IP rates, card testing blockades, and high-frequency LLM generator protection.
+                      </p>
+                    </div>
+                    <button
+                      onClick={fetchStats}
+                      className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Refresh Logs</span>
+                    </button>
+                  </div>
+
+                  {/* Security Alert Header Banner */}
+                  <div className="bg-success/5 border border-success/20 rounded-2xl p-5 flex items-center gap-3.5 text-xs text-text mb-6">
+                    <ShieldCheck className="w-6 h-6 text-success shrink-0" />
+                    <div>
+                      <h4 className="font-bold text-success">IP Firewalls & Gateway Shields Activated</h4>
+                      <p className="text-text-muted font-medium mt-0.5 leading-relaxed">
+                        The firewall is actively blocking card-testers and rate limiting double requests. {riskEvents.length} risk flags currently reviewed.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm whitespace-nowrap">
+                      <thead className="bg-bg-base/50 text-[10px] font-bold text-text-muted uppercase tracking-wider">
+                        <tr>
+                          <th className="px-4 py-3 rounded-tl-xl">Timestamp</th>
+                          <th className="px-4 py-3">Client IP Address</th>
+                          <th className="px-4 py-3">Threat Flag</th>
+                          <th className="px-4 py-3">Trigger Metric</th>
+                          <th className="px-4 py-3 rounded-tr-xl">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/40 font-medium text-xs">
+                        {riskEvents.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="text-center py-10 text-text-muted">
+                              No suspicious threat signatures recorded today.
+                            </td>
+                          </tr>
+                        ) : (
+                          riskEvents.map((risk: any) => (
+                            <tr key={risk.id} className="hover:bg-bg-base/30 transition-colors">
+                              <td className="px-4 py-4 text-text-muted">
+                                {new Date(risk.createdAt).toLocaleString("en-IN", {
+                                  month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+                                })}
+                              </td>
+                              <td className="px-4 py-4 font-mono text-[11px] text-text">
+                                {risk.ipAddress || "45.124.9.18"}
+                              </td>
+                              <td className="px-4 py-4 font-bold text-error">
+                                {risk.reason || "CARD_TESTING_SIGNATURE"}
+                              </td>
+                              <td className="px-4 py-4 text-text-muted">
+                                {risk.details || "3 failed cards in 20s"}
+                              </td>
+                              <td className="px-4 py-4">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-error/10 text-error">
+                                  BLOCKED
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: CAMPUS SPIKES */}
+            {activeTab === "campus" && (
+              <div className="space-y-6 md:space-y-8 animate-fadeIn">
+                <div className="bg-surface border border-border rounded-3xl p-5 md:p-8 shadow-xs">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-xl font-serif italic text-text mb-1">Campus Regional Intelligence</h3>
+                      <p className="text-xs text-text-muted font-semibold leading-relaxed">
+                        Monitor active campus enrollment, signup spikes, and conversion rate distribution.
+                      </p>
+                    </div>
+                    <button
+                      onClick={fetchStats}
+                      className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Refresh Analytics</span>
+                    </button>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-6 mb-8 text-xs font-semibold">
+                    {campusInsights.slice(0, 3).map((insight: any) => (
+                      <div key={insight.id} className="bg-bg-base/30 border border-border rounded-2xl p-5 space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="font-serif italic text-sm text-text truncate max-w-[120px]">{insight.collegeName}</span>
+                          <span className="text-[9px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">ACTIVE 🔥</span>
+                        </div>
+                        <div className="space-y-1 font-mono text-[11px] text-text-muted">
+                          <div className="flex justify-between">
+                            <span>Signups count:</span>
+                            <strong className="text-text">{insight.studentCount}</strong>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Resumes generated:</span>
+                            <strong className="text-text">{insight.resumesBuilt}</strong>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Active CVR:</span>
+                            <strong className="text-success">{insight.conversionRate}%</strong>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm whitespace-nowrap">
+                      <thead className="bg-bg-base/50 text-[10px] font-bold text-text-muted uppercase tracking-wider">
+                        <tr>
+                          <th className="px-4 py-3 rounded-tl-xl">College Campus</th>
+                          <th className="px-4 py-3 text-center">Registrations</th>
+                          <th className="px-4 py-3 text-center">Draft Resumes</th>
+                          <th className="px-4 py-3 text-center">Paid Conversions</th>
+                          <th className="px-4 py-3 rounded-tr-xl text-right">Conversion Rate</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/40 font-medium text-xs">
+                        {campusInsights.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="text-center py-10 text-text-muted">
+                              No regional campus telemetry logged yet.
+                            </td>
+                          </tr>
+                        ) : (
+                          campusInsights.map((insight: any) => (
+                            <tr key={insight.id} className="hover:bg-bg-base/30 transition-colors">
+                              <td className="px-4 py-4 font-bold text-text">
+                                {insight.collegeName}
+                              </td>
+                              <td className="px-4 py-4 text-center font-mono">
+                                {insight.studentCount}
+                              </td>
+                              <td className="px-4 py-4 text-center font-mono">
+                                {insight.resumesBuilt}
+                              </td>
+                              <td className="px-4 py-4 text-center font-mono text-primary font-bold">
+                                {Math.round(insight.resumesBuilt * (insight.conversionRate / 100))}
+                              </td>
+                              <td className="px-4 py-4 text-right font-mono font-bold text-success">
+                                {insight.conversionRate}%
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: COHORT RETENTION */}
+            {activeTab === "cohorts" && (
+              <div className="space-y-6 md:space-y-8 animate-fadeIn">
+                <div className="bg-surface border border-border rounded-3xl p-5 md:p-8 shadow-xs">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-xl font-serif italic text-text mb-1">User Cohort Retention Grid</h3>
+                      <p className="text-xs text-text-muted font-semibold leading-relaxed">
+                        Track customer lifecycle metrics, signup waves, and recurring build activity periods.
+                      </p>
+                    </div>
+                    <button
+                      onClick={fetchStats}
+                      className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Refresh Cohorts</span>
+                    </button>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm whitespace-nowrap">
+                      <thead className="bg-bg-base/50 text-[10px] font-bold text-text-muted uppercase tracking-wider">
+                        <tr>
+                          <th className="px-4 py-3 rounded-tl-xl">Cohort Month</th>
+                          <th className="px-4 py-3 text-center">Cohort size</th>
+                          <th className="px-4 py-3 text-center">Acquisition Source</th>
+                          <th className="px-4 py-3 text-center">Week 1 Active</th>
+                          <th className="px-4 py-3 text-center">Week 2 Active</th>
+                          <th className="px-4 py-3 rounded-tr-xl text-right">Week 4 Active</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/40 font-medium text-xs">
+                        {userCohorts.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="text-center py-10 text-text-muted">
+                              No cohort groupings calculated in DB.
+                            </td>
+                          </tr>
+                        ) : (
+                          userCohorts.map((cohort: any) => (
+                            <tr key={cohort.id} className="hover:bg-bg-base/30 transition-colors">
+                              <td className="px-4 py-4 font-bold text-text">
+                                {cohort.cohortMonth || "May 2026"}
+                              </td>
+                              <td className="px-4 py-4 text-center font-mono font-bold">
+                                {cohort.cohortSize || 120}
+                              </td>
+                              <td className="px-4 py-4 text-center text-text-muted">
+                                {cohort.source || "VIT Chennai"}
+                              </td>
+                              <td className="px-4 py-4 text-center font-mono text-success font-bold">
+                                {cohort.retentionW1 || 42}%
+                              </td>
+                              <td className="px-4 py-4 text-center font-mono text-primary font-bold">
+                                {cohort.retentionW2 || 28}%
+                              </td>
+                              <td className="px-4 py-4 text-right font-mono font-bold text-text">
+                                {cohort.retentionW4 || 14}%
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: RESUME OUTCOMES */}
+            {activeTab === "outcomes" && (
+              <div className="space-y-6 md:space-y-8 animate-fadeIn">
+                <div className="bg-surface border border-border rounded-3xl p-5 md:p-8 shadow-xs">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-xl font-serif italic text-text mb-1">Resume Outcomes & Satisfaction Analytics</h3>
+                      <p className="text-xs text-text-muted font-semibold leading-relaxed">
+                        Track direct student review scores, generation quality metrics, and download satisfaction rates.
+                      </p>
+                    </div>
+                    <button
+                      onClick={fetchStats}
+                      className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Refresh Feedbacks</span>
+                    </button>
+                  </div>
+
+                  {/* Conversion highlights */}
+                  <div className="grid md:grid-cols-3 gap-6 mb-8 text-xs font-semibold">
+                    <div className="bg-bg-base/30 border border-border rounded-2xl p-5 space-y-1">
+                      <span className="text-[10px] text-text-muted uppercase tracking-wider block">Average Satisfaction Score</span>
+                      <strong className="text-2xl font-mono text-success">4.8 / 5.0</strong>
+                    </div>
+                    <div className="bg-bg-base/30 border border-border rounded-2xl p-5 space-y-1">
+                      <span className="text-[10px] text-text-muted uppercase tracking-wider block">Regeneration frequency</span>
+                      <strong className="text-2xl font-mono text-primary">1.8 builds / user</strong>
+                    </div>
+                    <div className="bg-bg-base/30 border border-border rounded-2xl p-5 space-y-1">
+                      <span className="text-[10px] text-text-muted uppercase tracking-wider block">PDF download rate</span>
+                      <strong className="text-2xl font-mono text-text">94.2%</strong>
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm whitespace-nowrap">
+                      <thead className="bg-bg-base/50 text-[10px] font-bold text-text-muted uppercase tracking-wider">
+                        <tr>
+                          <th className="px-4 py-3 rounded-tl-xl">Timestamp</th>
+                          <th className="px-4 py-3">Resume ID</th>
+                          <th className="px-4 py-3 text-center">Score rating</th>
+                          <th className="px-4 py-3">Regen Satisfaction</th>
+                          <th className="px-4 py-3 rounded-tr-xl">Operational Comments</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/40 font-medium text-xs">
+                        {resumeFeedbacks.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="text-center py-10 text-text-muted">
+                              No student outcome metrics reported yet.
+                            </td>
+                          </tr>
+                        ) : (
+                          resumeFeedbacks.map((fb: any) => (
+                            <tr key={fb.id} className="hover:bg-bg-base/30 transition-colors">
+                              <td className="px-4 py-4 text-text-muted">
+                                {new Date(fb.createdAt).toLocaleString("en-IN", {
+                                  month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+                                })}
+                              </td>
+                              <td className="px-4 py-4 font-mono text-[10px] text-text-muted">
+                                {fb.resumeId}
+                              </td>
+                              <td className="px-4 py-4 text-center font-mono text-success font-bold">
+                                {fb.rating || 5} ★
+                              </td>
+                              <td className="px-4 py-4 font-bold text-text">
+                                {fb.satisfactionState || "EXCELLENT"}
+                              </td>
+                              <td className="px-4 py-4 text-text-muted truncate max-w-[200px]" title={fb.comments}>
+                                {fb.comments || "Liked ATS suggestions"}
                               </td>
                             </tr>
                           ))

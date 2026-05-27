@@ -20,6 +20,14 @@ model AdminConfig {
   flashPrice         Int     @default(39)
   isReferralActive   Boolean @default(true)
   invitesRequired    Int     @default(3)
+
+  // Dynamic Landing CMS [NEW]
+  heroHeadline       String  @default("Your Projects Are Gold. Your Resume Doesn't Show It.")
+  heroSubheadline    String  @default("Turn your CGPA, branch-specific skills, and raw projects into ATS-ready, recruiter-approved resume content in 2 minutes.")
+  ctaText            String  @default("Build My Resume Free")
+  badgeText          String  @default("Built for Indian Engineering Students")
+  testimonialsJson   String  @default("[]")
+  faqsJson           String  @default("[]")
 }
 
 model User {
@@ -127,4 +135,116 @@ model FlashProjectLog {
   status       String   // SUCCESS or ERROR
   errorMessage String?  @db.Text
   createdAt    DateTime @default(now())
+}
+
+model FeatureFlag {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  enabled   Boolean  @default(false)
+  payload   String?  @db.Text
+  updatedAt DateTime @updatedAt
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  sessionId String
+  eventType String
+  page      String
+  metadata  String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([eventType])
+}
+
+model ExperimentAssignment {
+  id             String   @id @default(cuid())
+  sessionId      String
+  experimentName String
+  variant        String
+  converted      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  @@unique([sessionId, experimentName])
+}
+
+model NotificationQueue {
+  id          String   @id @default(cuid())
+  userId      String?
+  email       String
+  channel     String
+  triggerType String
+  status      String
+  retryCount  Int      @default(0)
+  errorMessage String? @db.Text
+  scheduledAt DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([status])
+}
+
+model UserCohort {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  signupMonth       String
+  college           String?
+  branch            String?
+  acquisitionSource String?
+  firstPaymentDate  DateTime?
+  createdAt         DateTime @default(now())
+}
+
+model ResumeFeedback {
+  id            String   @id @default(cuid())
+  resumeId      String   @unique
+  rating        Int?
+  liked         Boolean  @default(true)
+  comments      String?  @db.Text
+  copiedText    Boolean  @default(false)
+  downloadedPdf Boolean  @default(false)
+  editCount     Int      @default(0)
+  createdAt     DateTime @default(now())
+}
+
+model PaymentEvent {
+  id            String   @id @default(cuid())
+  resumeId      String
+  sessionId     String
+  status        String
+  amount        Int
+  errorMessage  String?  @db.Text
+  couponUsed    String?
+  retryAttempts Int      @default(0)
+  createdAt     DateTime @default(now())
+}
+
+model RiskEvent {
+  id           String   @id @default(cuid())
+  ipAddress    String
+  email        String?
+  riskType     String
+  severity     String
+  isBlocked    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@index([ipAddress])
+}
+
+model SystemQueue {
+  id          String   @id @default(cuid())
+  jobType     String
+  status      String
+  latencyMs   Int      @default(0)
+  errorStack  String?  @db.Text
+  createdAt   DateTime @default(now())
+}
+
+model CampusInsight {
+  id                 String   @id @default(cuid())
+  collegeName        String   @unique
+  totalRegistrations Int      @default(0)
+  conversionRate     Float    @default(0.0)
+  viralityScore      Float    @default(0.0)
+  activeSeason       String
+  createdAt          DateTime @default(now())
 }
