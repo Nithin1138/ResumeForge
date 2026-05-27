@@ -1147,35 +1147,99 @@ export default function LandingPage() {
         </>
       )}
       
-      {/* Footer */}
-      <footer className={`mt-auto border-t px-6 py-12 text-center text-xs font-medium transition-colors duration-300 ${
+      {/* Premium Multi-Column Footer */}
+      <footer className={`mt-auto border-t px-6 py-16 transition-colors duration-300 font-sans ${
         landingVariant === "dashboard"
           ? "bg-[#0a0d0e] border-[#20292b] text-[#9f9d98]"
           : "bg-surface border-border/60 text-text-muted"
       }`}>
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <img src="/logo.png" alt="ATSLift Logo" className="w-5 h-5 object-contain logo-rotated" />
-            <span className={`font-bold text-sm tracking-tight ${landingVariant === "dashboard" ? "text-white" : "text-text"}`}>
-              ATS<span className="text-primary font-serif italic">Lift</span>
-            </span>
-            <span className="text-border">|</span>
-            <span>© {new Date().getFullYear()} ATSLift. All rights reserved.</span>
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 pb-12">
+          {/* Col 1: Brand & Purpose */}
+          <div className="md:col-span-5 space-y-4 text-left">
+            <div className="flex items-center space-x-2">
+              <img src="/logo.png" alt="ATSLift Logo" className="w-6 h-6 object-contain logo-rotated" />
+              <span className={`font-black text-base tracking-tight ${landingVariant === "dashboard" ? "text-white" : "text-text"}`}>
+                ATS<span className="text-primary font-serif italic">Lift</span>
+              </span>
+            </div>
+            <p className="text-xs leading-relaxed max-w-sm font-semibold">
+              The premium, SDE-trained optimizer engineered specifically for Indian engineering candidates to bypass automated filters and stand out in campus shortlists.
+            </p>
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-success">
+              <ShieldCheck className="w-4.5 h-4.5 text-success" />
+              <span>Razorpay Secured Gateway SSL</span>
+            </div>
           </div>
-          <div className="flex items-center space-x-4 font-bold">
-            <Link href="/ats-check" className={`transition-colors ${
-              landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"
-            }`}>
-              ATS Score
-            </Link>
-            <span className="text-border">•</span>
-            <Link href="/about" className={`transition-colors ${
-              landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"
-            }`}>
-              About
-            </Link>
-            <span className="text-border">•</span>
-            <span>One-time secure payments via Razorpay</span>
+
+          {/* Col 2: Product */}
+          <div className="md:col-span-2 space-y-3.5 text-left">
+            <span className={`text-[10px] font-black uppercase tracking-widest block ${
+              landingVariant === "dashboard" ? "text-white" : "text-text"
+            }`}>Product</span>
+            <ul className="space-y-2 text-xs font-semibold">
+              <li>
+                <Link href="/build" className={`transition-colors ${landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"}`}>
+                  Build Resume
+                </Link>
+              </li>
+              <li>
+                <Link href="/ats-check" className={`transition-colors ${landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"}`}>
+                  ATS Grader
+                </Link>
+              </li>
+              <li>
+                <span className="opacity-50 cursor-not-allowed">Premium Features</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Col 3: Resources */}
+          <div className="md:col-span-2 space-y-3.5 text-left">
+            <span className={`text-[10px] font-black uppercase tracking-widest block ${
+              landingVariant === "dashboard" ? "text-white" : "text-text"
+            }`}>Resources</span>
+            <ul className="space-y-2 text-xs font-semibold">
+              <li>
+                <Link href="/about" className={`transition-colors ${landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"}`}>
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <span className="opacity-50 cursor-not-allowed">SDE Keywords Guide</span>
+              </li>
+              <li>
+                <span className="opacity-50 cursor-not-allowed">Placement Portal Hacks</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Col 4: Legal & Contact */}
+          <div className="md:col-span-3 space-y-3.5 text-left">
+            <span className={`text-[10px] font-black uppercase tracking-widest block ${
+              landingVariant === "dashboard" ? "text-white" : "text-text"
+            }`}>Policies & Verification</span>
+            <ul className="space-y-2 text-xs font-semibold">
+              <li>
+                <span className="opacity-50 cursor-not-allowed">Privacy Policy</span>
+              </li>
+              <li>
+                <span className="opacity-50 cursor-not-allowed">Terms & Conditions</span>
+              </li>
+              <li>
+                <span className="opacity-50 cursor-not-allowed">Razorpay Payment Status</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom copyright bar */}
+        <div className={`max-w-5xl mx-auto pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-wider ${
+          landingVariant === "dashboard" ? "border-[#20292b] text-[#7a7974]" : "border-border/60 text-text-muted/80"
+        }`}>
+          <span>© {new Date().getFullYear()} ATSLift Operations. All rights reserved.</span>
+          <div className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+            <span>Razorpay Secured Gateway</span>
           </div>
         </div>
       </footer>
