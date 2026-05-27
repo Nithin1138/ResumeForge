@@ -10,12 +10,12 @@ const NATURAL_H = 1123;
 // ── URL / phone formatters (self-contained) ────────────────────────────────
 const fmtLinkedIn = (url: string) => {
   if (!url) return "";
-  let c = url.trim().replace(/^(https?:\/\/)?(www\.)?/, "").replace(/\/$/, "");
+  let c = url.trim().split(/[?#]/)[0].replace(/^(https?:\/\/)?(www\.)?/, "").replace(/\/$/, "");
   return c.startsWith("linkedin.com") ? c : `linkedin.com/in/${c}`;
 };
 const fmtGitHub = (url: string) => {
   if (!url) return "";
-  let c = url.trim().replace(/^(https?:\/\/)?(www\.)?/, "").replace(/\/$/, "");
+  let c = url.trim().split(/[?#]/)[0].replace(/^(https?:\/\/)?(www\.)?/, "").replace(/\/$/, "");
   return c.startsWith("github.com/") ? c : `github.com/${c}`;
 };
 const fmtPhone = (phone: string) => {
@@ -153,11 +153,27 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
           <div style={{ fontSize: "22pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "-0.5px", color: "#111", marginBottom: "3pt" }}>
             {p.fullName || "Your Name"}
           </div>
-          <div style={{ fontSize: "8.5pt", color: "#444", display: "flex", alignItems: "center", justifyContent: "center", gap: "5px", flexWrap: "nowrap", whiteSpace: "nowrap" }}>
-            {p.email && <span>{p.email}</span>}
-            {p.phone && <><span style={{ color: "#bbb" }}>|</span><span>{fmtPhone(p.phone)}</span></>}
-            {p.linkedin && <><span style={{ color: "#bbb" }}>|</span><span>{fmtLinkedIn(p.linkedin)}</span></>}
-            {p.github && <><span style={{ color: "#bbb" }}>|</span><span>{fmtGitHub(p.github)}</span></>}
+          <div style={{
+            fontSize: "8.5pt",
+            color: "#444",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "4px 8px",
+            flexWrap: "wrap",
+            lineHeight: 1.4
+          }}>
+            {[
+              p.email && <span key="email" style={{ whiteSpace: "nowrap" }}>{p.email}</span>,
+              p.phone && <span key="phone" style={{ whiteSpace: "nowrap" }}>{fmtPhone(p.phone)}</span>,
+              p.linkedin && <span key="linkedin" style={{ whiteSpace: "nowrap" }}>{fmtLinkedIn(p.linkedin)}</span>,
+              p.github && <span key="github" style={{ whiteSpace: "nowrap" }}>{fmtGitHub(p.github)}</span>
+            ].filter(Boolean).map((node, idx, arr) => (
+              <span key={idx} style={{ display: "inline-flex", alignItems: "center" }}>
+                {node}
+                {idx < arr.length - 1 && <span style={{ color: "#bbb", marginLeft: "8px" }}>|</span>}
+              </span>
+            ))}
           </div>
         </div>
 
