@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle, Flame, ShieldCheck, Sparkles, ChevronDown, Award, XCircle, Eye, TrendingUp } from "lucide-react";
+import { ArrowRight, CheckCircle, Flame, ShieldCheck, Sparkles, ChevronDown, Award, XCircle, Eye, TrendingUp, Check } from "lucide-react";
 import { getSession } from "next-auth/react";
 import { motion } from "framer-motion";
 
@@ -106,23 +106,35 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-bg-base text-text selection:bg-primary/20 font-sans">
+    <div className={`flex flex-col min-h-screen transition-colors duration-300 font-sans ${
+      landingVariant === "dashboard" ? "bg-[#080b0c] text-[#eae9e5] selection:bg-primary/30" : "bg-bg-base text-text selection:bg-primary/20"
+    }`}>
       {isBannerActive && (
-        <div className="w-full bg-primary/10 border-b border-primary/20 text-primary text-center py-2 px-4 text-xs font-bold font-sans flex items-center justify-center gap-2 relative z-50">
+        <div className={`w-full text-center py-2 px-4 text-xs font-bold font-sans flex items-center justify-center gap-2 relative z-50 border-b ${
+          landingVariant === "dashboard"
+            ? "bg-primary/20 border-primary/20 text-[#00e1ec]"
+            : "bg-primary/10 border-primary/20 text-primary"
+        }`}>
           <span>{bannerText}</span>
         </div>
       )}
       {/* Premium Navbar */}
-      <header className="sticky top-0 z-50 glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
+      <header className={`sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300 border-b ${
+        landingVariant === "dashboard"
+          ? "bg-[#080b0c]/85 border-[#20292b] backdrop-blur-md text-white shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
+          : "glass-panel border-border/40 text-text"
+      }`}>
         <div className="flex items-center space-x-2">
           <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
-          <span className="font-bold text-lg tracking-tight font-sans text-text">
+          <span className="font-bold text-lg tracking-tight font-sans">
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
         </div>
         
         <div className="flex items-center space-x-4">
-          <Link href="/ats-check" className="text-xs font-bold text-text-muted hover:text-primary transition-colors hidden sm:block">
+          <Link href="/ats-check" className={`text-xs font-bold transition-colors hidden sm:block ${
+            landingVariant === "dashboard" ? "text-[#9f9d98] hover:text-[#00e1ec]" : "text-text-muted hover:text-primary"
+          }`}>
             ATS Check
           </Link>
           {session ? (
@@ -130,7 +142,9 @@ export default function LandingPage() {
               Dashboard
             </Link>
           ) : (
-            <Link href="/login" className="text-xs font-bold text-text-muted hover:text-text transition-colors">
+            <Link href="/login" className={`text-xs font-bold transition-colors ${
+              landingVariant === "dashboard" ? "text-[#9f9d98] hover:text-white" : "text-text-muted hover:text-text"
+            }`}>
               Log In
             </Link>
           )}
@@ -146,23 +160,22 @@ export default function LandingPage() {
 
       {landingVariant === "dashboard" ? (
         <div className="flex-1 w-full bg-[#080b0c] text-[#eae9e5] min-h-screen py-12 flex flex-col gap-16 relative overflow-hidden font-sans">
-          {/* Futuristic ambient background glows */}
+          {/* Subtle neon glowing backdrops */}
           <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute bottom-1/3 right-10 w-[350px] h-[350px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
-          <div className="absolute top-2/3 left-10 w-[250px] h-[250px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
-          {/* ── SECTION 1: PREMIUM HERO & DESTRUCTURING HEADLINE ── */}
-          <div className="text-center space-y-5 max-w-4xl mx-auto pt-8 md:pt-14 relative z-10 px-4">
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-[10px] font-black tracking-widest text-[#00e1ec] shadow-[0_0_15px_rgba(0,225,236,0.1)] uppercase">
-              <Sparkles className="w-3.5 h-3.5 animate-pulse text-[#00e1ec]" />
-              <span>SDE Placement Intelligence Workbench</span>
+          {/* ── SECTION 1: HERO (SIMPLE WORDS) ── */}
+          <div className="text-center space-y-4 max-w-3xl mx-auto pt-8 md:pt-14 relative z-10 px-4">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/10 text-[9px] font-bold tracking-widest text-[#00e1ec] uppercase">
+              <Sparkles className="w-3.5 h-3.5 text-[#00e1ec]" />
+              <span>Campus Resume Optimizer</span>
             </div>
-            <h1 className="text-3xl md:text-6xl font-serif tracking-tight text-white leading-tight font-light">
-              Beat Campus Shortlisting. <br />
-              <span className="text-primary italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#00e1ec]">Optimize SDE Signal</span> Instantly.
+            <h1 className="text-3xl md:text-5xl font-serif tracking-tight text-white leading-tight font-light">
+              Get Your Resume Ready for <br />
+              <span className="text-primary italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#00e1ec]">Campus Placements</span>. Instantly.
             </h1>
-            <p className="text-sm md:text-base text-[#9f9d98] leading-relaxed max-w-2xl mx-auto font-medium">
-              See how our custom engineering-trained parser refactors basic student projects into high-density, quantified SDE bullet points that bypass standard screening systems.
+            <p className="text-xs md:text-sm text-[#9f9d98] leading-relaxed max-w-xl mx-auto font-medium">
+              See how our AI tool turns basic student descriptions into clean, SDE-ready resume bullets.
             </p>
           </div>
 
@@ -173,16 +186,19 @@ export default function LandingPage() {
               {/* Left Column: Mock Workbench inputs (5 cols) */}
               <div className="lg:col-span-5 bg-[#0a0d0e]/60 border border-[#20292b] rounded-2xl p-5 flex flex-col justify-between space-y-6">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-[#20292b] pb-3 flex-wrap gap-2">
-                    <span className="text-[10px] font-black text-[#00e1ec] tracking-widest uppercase">Student Workbench</span>
-                    <div className="flex gap-1.5 text-[9px] font-bold uppercase tracking-wider">
+                  <div className="flex items-center justify-between border-b border-[#20292b] pb-3 flex-wrap gap-2 text-left">
+                    <div>
+                      <span className="text-[9px] font-black text-[#00e1ec] tracking-widest uppercase block">Interactive Demo</span>
+                      <h4 className="text-xs font-bold text-white">1. Type Your Project Details</h4>
+                    </div>
+                    <div className="flex gap-1 text-[9px] font-bold uppercase tracking-wider">
                       {["details", "projects", "skills"].map((tab) => (
                         <button
                           key={tab}
                           onClick={() => setBActiveTab(tab as any)}
                           className={`px-2.5 py-1.5 rounded-md border transition-all cursor-pointer ${
                             bActiveTab === tab
-                              ? "bg-primary text-white border-primary shadow-[0_0_10px_rgba(1,105,111,0.4)]"
+                              ? "bg-primary text-white border-primary"
                               : "bg-[#111618] border-[#20292b] text-[#9f9d98] hover:border-primary/50"
                           }`}
                         >
@@ -196,19 +212,19 @@ export default function LandingPage() {
                   {bActiveTab === "details" && (
                     <div className="space-y-3.5 text-left animate-fadeIn">
                       <div className="space-y-1.5">
-                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Target SDE Role</span>
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Target Job Role</span>
                         <div className="w-full h-9 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center">
                           Software Development Engineer
                         </div>
                       </div>
                       <div className="space-y-1.5">
-                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Core Engineering Branch</span>
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Engineering Branch</span>
                         <div className="w-full h-9 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center">
-                          Computer Science & Engineering (CSE)
+                          Computer Science (CSE)
                         </div>
                       </div>
                       <div className="space-y-1.5">
-                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">CGPA / 10.0</span>
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">CGPA</span>
                         <div className="w-full h-9 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center font-mono">
                           8.32
                         </div>
@@ -220,13 +236,13 @@ export default function LandingPage() {
                   {bActiveTab === "projects" && (
                     <div className="space-y-3.5 text-left animate-fadeIn">
                       <div className="space-y-1.5">
-                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Academic Project Title</span>
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Project Title</span>
                         <div className="w-full h-9 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center">
-                          AI Customer Support Agent
+                          AI Customer Support chatbot
                         </div>
                       </div>
                       <div className="space-y-1.5">
-                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Your Project Description (What you built)</span>
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">What did you build?</span>
                         <textarea
                           readOnly
                           value="I created a chatbot using OpenAI API and Python. I set up a server in FastAPI to run queries. It helps answer standard customer support questions fast."
@@ -240,7 +256,7 @@ export default function LandingPage() {
                   {bActiveTab === "skills" && (
                     <div className="space-y-3.5 text-left animate-fadeIn">
                       <div className="space-y-2">
-                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase block">Core Programming languages</span>
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase block">Programming Languages</span>
                         <div className="flex flex-wrap gap-1.5">
                           {["Python", "TypeScript", "C++", "SQL"].map((l) => (
                             <span key={l} className="px-2 py-1 bg-[#111618] border border-[#20292b] rounded text-[10px] font-semibold text-[#eae9e5]">
@@ -250,7 +266,7 @@ export default function LandingPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase block">Frameworks & Tools</span>
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase block">Libraries & Frameworks</span>
                         <div className="flex flex-wrap gap-1.5">
                           {["FastAPI", "React.js", "Docker", "LangChain", "Git"].map((f) => (
                             <span key={f} className="px-2 py-1 bg-[#111618] border border-[#20292b] rounded text-[10px] font-semibold text-[#eae9e5]">
@@ -265,7 +281,7 @@ export default function LandingPage() {
 
                 {/* Workbench foot actions */}
                 <div className="border-t border-[#20292b] pt-4 text-left">
-                  <span className="text-[9px] font-black text-[#7a7974] uppercase tracking-wider block mb-2">Workspace Controls</span>
+                  <span className="text-[9px] font-black text-[#7a7974] uppercase tracking-wider block mb-2">Build Controls</span>
                   <Link
                     href="/build"
                     className="w-full h-11 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
@@ -281,11 +297,11 @@ export default function LandingPage() {
                 <div className="space-y-5">
                   <div className="flex items-center justify-between border-b border-[#20292b] pb-3">
                     <div className="text-left">
-                      <span className="text-[9px] font-extrabold text-success tracking-widest uppercase block">Live ATS Restructuring Preview</span>
-                      <h3 className="text-sm font-bold text-white">AI Placement Scorecard</h3>
+                      <span className="text-[9px] font-extrabold text-success tracking-widest uppercase block">Preview Score</span>
+                      <h3 className="text-sm font-bold text-white">2. Watch Your ATS Score Increase</h3>
                     </div>
                     <span className="inline-flex items-center gap-1 text-[9px] font-bold text-[#00e1ec] bg-[#00e1ec]/10 border border-[#00e1ec]/30 px-2.5 py-1 rounded-full uppercase">
-                      <Sparkles className="w-3 h-3 animate-spin" /> Interactive Demo
+                      Interactive Live Grader
                     </span>
                   </div>
 
@@ -321,7 +337,7 @@ export default function LandingPage() {
 
                     {/* Optimization checklist interactive toggles */}
                     <div className="space-y-2 text-left flex-1">
-                      <span className="text-[8.5px] font-black text-[#7a7974] uppercase tracking-widest block">Interactive Enhancements</span>
+                      <span className="text-[8.5px] font-black text-[#7a7974] uppercase tracking-widest block">Choose Enhancements</span>
                       <div className="space-y-1.5 text-xs font-semibold text-[#eae9e5]">
                         <label className="flex items-center gap-2 cursor-pointer select-none">
                           <input
@@ -330,7 +346,7 @@ export default function LandingPage() {
                             onChange={(e) => setBQuantified(e.target.checked)}
                             className="w-4 h-4 text-primary accent-primary rounded cursor-pointer shrink-0"
                           />
-                          <span>Add quantified outcomes (+15 pts)</span>
+                          <span>Add performance metrics (+15 pts)</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer select-none">
                           <input
@@ -339,7 +355,7 @@ export default function LandingPage() {
                             onChange={(e) => setBKeywords(e.target.checked)}
                             className="w-4 h-4 text-primary accent-primary rounded cursor-pointer shrink-0"
                           />
-                          <span>Inject high-signal tech stack keywords (+16 pts)</span>
+                          <span>Inject programming keywords (+16 pts)</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer select-none">
                           <input
@@ -348,7 +364,7 @@ export default function LandingPage() {
                             onChange={(e) => setBNoCanva(e.target.checked)}
                             className="w-4 h-4 text-primary accent-primary rounded cursor-pointer shrink-0"
                           />
-                          <span>Remove legacy Canva parser blocks (+20 pts)</span>
+                          <span>Clean up structure formatting (+20 pts)</span>
                         </label>
                       </div>
                     </div>
@@ -357,9 +373,9 @@ export default function LandingPage() {
                   {/* Transformed Resume preview block */}
                   <div className="space-y-2 text-left bg-[#111618]/50 border border-[#20292b] rounded-xl p-4 relative">
                     <div className="flex justify-between items-center">
-                      <span className="text-[9px] font-extrabold text-[#00e1ec] uppercase">Transformed SDE Bullet Output</span>
+                      <span className="text-[9px] font-extrabold text-[#00e1ec] uppercase">Optimized Resume Bullet Preview</span>
                       <span className="text-[9px] font-mono font-bold text-[#9f9d98] bg-[#0a0d0e] border border-[#20292b] px-1.5 py-0.5 rounded">
-                        PDF preview
+                        PDF Format
                       </span>
                     </div>
                     
@@ -367,15 +383,15 @@ export default function LandingPage() {
                     <div className="text-xs md:text-sm font-medium leading-relaxed min-h-12 flex items-center justify-start text-[#eae9e5] border border-dashed border-[#20292b] p-3 rounded-lg bg-[#0a0d0e] font-mono">
                       {bQuantified && bKeywords ? (
                         <p>
-                          • Architected an AI customer support agent using <strong className="text-[#00e1ec] font-bold">FastAPI</strong>, <strong className="text-[#00e1ec] font-bold">Python</strong>, and <strong className="text-[#00e1ec] font-bold">OpenAI GPT-4</strong> API, reducing query response latencies by <strong className="text-success underline font-bold">40%</strong> and managing 200+ active sessions.
+                          • Built an AI customer support bot using <strong className="text-[#00e1ec] font-bold">FastAPI</strong>, <strong className="text-[#00e1ec] font-bold">Python</strong>, and <strong className="text-[#00e1ec] font-bold">OpenAI GPT-4</strong> API, reducing load times by <strong className="text-success underline font-bold">40%</strong> and managing 200+ active user sessions.
                         </p>
                       ) : bQuantified ? (
                         <p>
-                          • Developed a customer support agent in Python using OpenAI API, managing queries efficiently and improving overall response latency by <strong className="text-success underline font-bold">40%</strong>.
+                          • Developed a customer support bot in Python using OpenAI API, managing queries efficiently and improving response times by <strong className="text-success underline font-bold">40%</strong>.
                         </p>
                       ) : bKeywords ? (
                         <p>
-                          • Designed an AI chatbot platform using <strong className="text-[#00e1ec] font-bold">FastAPI</strong> and <strong className="text-[#00e1ec] font-bold">OpenAI API</strong> to automate support question resolving.
+                          • Designed an AI chatbot using <strong className="text-[#00e1ec] font-bold">FastAPI</strong> and <strong className="text-[#00e1ec] font-bold">OpenAI API</strong> to automate support question resolving.
                         </p>
                       ) : (
                         <p className="text-[#7a7974] italic">
@@ -390,68 +406,151 @@ export default function LandingPage() {
                 <div className="text-left text-[10px] text-[#9f9d98] font-bold flex items-center justify-between border-t border-[#20292b] pt-4 flex-wrap gap-2">
                   <span className="flex items-center gap-1">
                     <ShieldCheck className="w-4 h-4 text-success" /> 
-                    <span>₹{price} to unlock full output</span>
+                    <span>₹{price} to unlock complete text</span>
                   </span>
-                  <span>• 3 Free AI Regenerations included</span>
-                  <span>• Direct UPI / Razorpay Pay</span>
+                  <span>• 3 Free AI Adjustments included</span>
+                  <span>• Secure payments via Razorpay</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* ── SECTION 3: WHY EXTREMELY POPULAR RESUME BUILDERS FAIL SDE ATS SCREENERS ── */}
-          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-4xl font-serif tracking-tight text-white mb-3">
-                Why Standard Resumes Fail SDE Screenings
+          {/* ── SECTION 3: HOW IT WORKS (NEW TARGETED SECTION) ── */}
+          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 text-center">
+            <div className="mb-12">
+              <h2 className="text-2xl md:text-4xl font-serif text-white mb-3">
+                How It Works
               </h2>
               <p className="text-xs md:text-sm text-[#9f9d98] max-w-xl mx-auto leading-relaxed">
-                Standard design builders like Canva block screeners using multi-column tables, hidden text vectors, and zero metric indexing.
+                Create a high-scoring, professional engineering resume in three simple steps.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6 text-left">
+              <div className="bg-[#111618]/50 border border-[#20292b] rounded-2xl p-6 space-y-3">
+                <span className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 text-[#00e1ec] font-bold flex items-center justify-center text-xs">
+                  1
+                </span>
+                <h4 className="font-bold text-sm text-white">Enter Projects & Skills</h4>
+                <p className="text-xs text-[#9f9d98] leading-relaxed">
+                  Type in your college projects, branch, and programming languages. Simple, unedited descriptions are perfect.
+                </p>
+              </div>
+
+              <div className="bg-[#111618]/50 border border-[#20292b] rounded-2xl p-6 space-y-3">
+                <span className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 text-[#00e1ec] font-bold flex items-center justify-center text-xs">
+                  2
+                </span>
+                <h4 className="font-bold text-sm text-white">AI Grader Evaluates</h4>
+                <p className="text-xs text-[#9f9d98] leading-relaxed">
+                  Our algorithm reviews your text, injects critical technical keywords, and calculates a dynamic ATS score.
+                </p>
+              </div>
+
+              <div className="bg-[#111618]/50 border border-[#20292b] rounded-2xl p-6 space-y-3">
+                <span className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 text-[#00e1ec] font-bold flex items-center justify-center text-xs">
+                  3
+                </span>
+                <h4 className="font-bold text-sm text-white">Unlock & Download</h4>
+                <p className="text-xs text-[#9f9d98] leading-relaxed">
+                  Check your free circular score. Pay a one-time fee of ₹{price} to unlock the complete optimized content.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ── SECTION 4: WHAT RECRUITERS ACTUALLY SCAN FOR (NEW TARGETED SECTION) ── */}
+          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10">
+            <div className="bg-[#111618]/50 border border-[#20292b] rounded-3xl p-6 md:p-8 space-y-6">
+              <div className="text-center md:text-left border-b border-[#20292b] pb-4">
+                <h3 className="text-xl font-serif text-white">What Engineering Recruiters Scan For</h3>
+                <p className="text-xs text-[#9f9d98] mt-1 font-semibold">
+                  Most recruiters spend less than 10 seconds reviewing a resume. Here is exactly what they seek.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+                <div className="space-y-2">
+                  <h4 className="font-bold text-sm text-[#00e1ec] flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-[#00e1ec]" /> Hard Skills
+                  </h4>
+                  <p className="text-[#9f9d98] leading-relaxed">
+                    Programming languages, framework libraries (like FastAPI, React), database configurations, and deployment tools.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-bold text-sm text-[#00e1ec] flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-[#00e1ec]" /> Quantifiable Results
+                  </h4>
+                  <p className="text-[#9f9d98] leading-relaxed">
+                    Numbers showing system speed improvements, user active sessions, or calculated percentages to demonstrate value.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-bold text-sm text-[#00e1ec] flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-[#00e1ec]" /> Simple Formatting
+                  </h4>
+                  <p className="text-[#9f9d98] leading-relaxed">
+                    Strict single-column text structures that company scanning algorithms can index with 100% compliance.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── SECTION 5: WHY CANVA / DOCX RESUMES FAIL ── */}
+          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-4xl font-serif text-white mb-3">
+                Why Standard Resumes Fail
+              </h2>
+              <p className="text-xs md:text-sm text-[#9f9d98] max-w-xl mx-auto leading-relaxed">
+                Standard design builders like Canva block screeners using multi-column tables and generic descriptions.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto font-medium">
-              {/* Canvas Resume */}
+              {/* Canva */}
               <div className="border border-[#20292b] bg-[#111618]/30 rounded-2xl p-5 relative">
                 <div className="absolute top-4 right-4 inline-block text-[9px] font-extrabold tracking-wider text-error bg-error/10 px-2.5 py-1 rounded-full uppercase">
-                  Canva / Docx Legacy
+                  Legacy Formats
                 </div>
-                <h3 className="font-bold text-xs tracking-wide text-error mb-4 uppercase">Generic Parser Output</h3>
+                <h3 className="font-bold text-xs tracking-wide text-error mb-4 uppercase">Standard Canva Formats</h3>
                 
                 <div className="space-y-4 text-left text-xs">
                   <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-[#20292b]">
-                    <span className="font-bold block text-[10px] text-[#7a7974] mb-1">PROJECT PARSING</span>
+                    <span className="font-bold block text-[10px] text-[#7a7974] mb-1">COMPLEX GRAPHICS</span>
                     <p className="text-error font-mono leading-relaxed italic">
-                      [Parser Blocked: Multi-column Table detected. Text skipped or corrupted into gibberish ASCII bytes.]
+                      [Parser Error: Tables and complex columns detect as corrupted blocks or skipped entirely by system.]
                     </p>
                   </div>
                   <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-[#20292b]">
-                    <span className="font-bold block text-[10px] text-[#7a7974] mb-1">EXPERIENCE SIGNAL</span>
+                    <span className="font-bold block text-[10px] text-[#7a7974] mb-1">GENERIC PHRASING</span>
                     <p className="text-[#eae9e5] italic">
-                      &quot;Worked at a local startup coding backend APIs in Node.js and SQL.&quot; (Zero metrics, low signal)
+                      &quot;Worked at a startup building APIs and backend queries.&quot; (Generic phrasing, no technical keywords)
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* ATSLift Optimized */}
+              {/* ATSLift */}
               <div className="border-2 border-primary bg-[#111618]/50 rounded-2xl p-5 relative shadow-[0_0_30px_rgba(1,105,111,0.2)]">
                 <div className="absolute top-4 right-4 inline-block text-[9px] font-extrabold tracking-wider text-success bg-success/10 px-2.5 py-1 rounded-full uppercase">
-                  ATSLift Refactored
+                  ATSLift Format
                 </div>
-                <h3 className="font-bold text-xs tracking-wide text-[#00e1ec] mb-4 uppercase">100% Parser Compliant</h3>
+                <h3 className="font-bold text-xs tracking-wide text-[#00e1ec] mb-4 uppercase">ATS Compliant Formats</h3>
 
                 <div className="space-y-4 text-left text-xs">
                   <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-primary/20">
-                    <span className="font-bold block text-[10px] text-primary mb-1">OPTIMIZED SYSTEM METRICS</span>
+                    <span className="font-bold block text-[10px] text-primary mb-1">quantified achievements</span>
                     <p className="text-[#eae9e5]">
-                      • Refactored relational schemas in <strong className="text-[#00e1ec] font-bold">PostgreSQL</strong> during 2-month backend internship, reducing query latencies by <strong className="text-success font-bold">35%</strong>.
+                      • Optimized relational queries in <strong className="text-[#00e1ec] font-bold">PostgreSQL</strong>, decreasing query execution latency by <strong className="text-success font-bold">35%</strong>.
                     </p>
                   </div>
                   <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-primary/20">
-                    <span className="font-bold block text-[10px] text-primary mb-1">quantified projects</span>
+                    <span className="font-bold block text-[10px] text-primary mb-1">HIGH-SIGNAL TECH STACK</span>
                     <p className="text-[#eae9e5]">
-                      • Deployed containerized microservices using <strong className="text-[#00e1ec] font-bold">Docker</strong> and <strong className="text-[#00e1ec] font-bold">FastAPI</strong>, streamlining builds for <strong className="text-success font-bold">5,000+</strong> users.
+                      • Built and containerized backend services using <strong className="text-[#00e1ec] font-bold">Docker</strong> and <strong className="text-[#00e1ec] font-bold">FastAPI</strong> for 5,000+ daily active users.
                     </p>
                   </div>
                 </div>
@@ -459,87 +558,45 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* ── SECTION 4: REAL-TIME CAMPUS TECH STACK DENSITY ── */}
-          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10">
-            <div className="bg-[#111618]/50 border border-[#20292b] rounded-3xl p-6 md:p-8 space-y-6">
-              <div className="text-center md:text-left border-b border-[#20292b] pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-serif italic text-white">Parsed Engineering Stack Density</h3>
-                  <p className="text-xs text-[#9f9d98] mt-1 font-semibold">
-                    Real-time visual density of parsed frameworks currently spike-trending across active VIT/BITS/NIT cohorts.
-                  </p>
-                </div>
-                <div className="bg-[#00e1ec]/10 border border-[#00e1ec]/20 px-3 py-1 rounded-full text-[10px] font-black uppercase text-[#00e1ec] tracking-wider shrink-0 w-fit">
-                  Campus Spike Metrics
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-xs font-semibold">
-                {[
-                  { name: "Python / PyTorch AI Stack", density: 92, status: "Very High Density 🔥", color: "bg-[#00e1ec]" },
-                  { name: "FastAPI / Node.js Backend", density: 78, status: "Active Spike 📈", color: "bg-primary" },
-                  { name: "React.js / Next.js Frontend", density: 84, status: "Stable Demand 👔", color: "bg-primary" },
-                  { name: "Docker / Kubernetes DevOps", density: 64, status: "Premium Signal ⭐", color: "bg-success" },
-                  { name: "PostgreSQL / Redis SQL Systems", density: 74, status: "Core Required 📚", color: "bg-success" },
-                  { name: "LangChain / LLM Agents", density: 56, status: "Trending Spike 🚀", color: "bg-[#00e1ec]" }
-                ].map((item, idx) => (
-                  <div key={idx} className="bg-[#0a0d0e]/60 border border-[#20292b] rounded-xl p-4 space-y-2">
-                    <div className="flex justify-between items-center text-[10px] text-[#eae9e5]">
-                      <span>{item.name}</span>
-                      <span className="font-mono">{item.density}%</span>
-                    </div>
-                    <div className="w-full bg-[#111618] h-1.5 rounded-full overflow-hidden">
-                      <div className={`${item.color} h-full rounded-full`} style={{ width: `${item.density}%` }} />
-                    </div>
-                    <div className="flex justify-between items-center text-[8.5px] font-black tracking-wider uppercase text-[#7a7974]">
-                      <span>Spike Ratio</span>
-                      <span>{item.status}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* ── SECTION 5: PREMIUM CHECKOUT OUTCOMES & RISK-FREE GUARANTEES ── */}
+          {/* ── SECTION 6: GUARANTEES & PAYWALL UNLOCK ── */}
           <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 text-center">
             <div className="bg-gradient-to-b from-[#111618]/90 to-[#0a0d0e] border border-primary/20 rounded-3xl p-8 md:p-12 space-y-8 relative overflow-hidden">
               <div className="space-y-4 max-w-2xl mx-auto">
                 <div className="inline-flex items-center gap-1.5 bg-success/15 border border-success/30 px-3 py-1.5 rounded-full text-[9px] font-extrabold uppercase text-[#10b981] tracking-widest shadow-xs mx-auto mb-2">
-                  <ShieldCheck className="w-4 h-4" /> 100% Risk Free Guarantee
+                  <ShieldCheck className="w-4 h-4" /> Compliance Guarantee
                 </div>
-                <h2 className="text-2xl md:text-4xl font-serif italic text-white leading-tight">
-                  One small payment. <br />
-                  A lifetime of placement signal return.
+                <h2 className="text-2xl md:text-4xl font-serif italic text-white leading-tight font-light">
+                  Simple payment. <br />
+                  Placement-ready resume text.
                 </h2>
                 <p className="text-xs md:text-sm text-[#9f9d98] font-medium max-w-md mx-auto leading-relaxed">
-                  Join 12,000+ engineering students who bypassed automatic CV filters. Pay ₹{price} once you preview the scorecard.
+                  Join thousands of students who bypassed automatic CV filters. Pay a one-time fee of ₹{price} once you review the score.
                 </p>
               </div>
 
               {/* standard vs premium grid */}
               <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto text-left text-xs font-semibold">
                 <div className="border border-[#20292b] bg-[#0a0d0e]/60 rounded-2xl p-5 space-y-3.5">
-                  <span className="text-[10px] font-black text-[#7a7974] tracking-widest uppercase">FREE PREVIEW TEASER</span>
+                  <span className="text-[10px] font-black text-[#7a7974] tracking-widest uppercase">Free Preview Includes</span>
                   <ul className="space-y-2 text-[#9f9d98]">
-                    <li className="flex items-center gap-2">❌ High-signal copyable PDF text</li>
-                    <li className="flex items-center gap-2">❌ Unlimited post-unlock AI variations</li>
-                    <li className="flex items-center gap-2">❌ Real-time JD Keyword Sync tools</li>
+                    <li className="flex items-center gap-2">❌ High-scoring, copyable resume bullets</li>
+                    <li className="flex items-center gap-2">❌ Tailoring tool for specific job openings</li>
+                    <li className="flex items-center gap-2">❌ Direct formatting strings export</li>
                     <li className="flex items-center gap-2">✓ Circular ATS score compatability rating</li>
-                    <li className="flex items-center gap-2">✓ Basic structural formatting checklist</li>
+                    <li className="flex items-center gap-2">✓ Basic resume structure checklist</li>
                   </ul>
                 </div>
 
                 <div className="border-2 border-primary bg-[#111618] rounded-2xl p-5 space-y-3.5 shadow-[0_0_25px_rgba(1,105,111,0.25)] relative">
                   <div className="absolute top-4 right-4 inline-block text-[8px] font-black tracking-widest text-[#00e1ec] uppercase">
-                    WINNING OPTION
+                    Recommended
                   </div>
-                  <span className="text-[10px] font-black text-[#00e1ec] tracking-widest uppercase">ATSLIFT PREMIUM UNLOCK</span>
+                  <span className="text-[10px] font-black text-[#00e1ec] tracking-widest uppercase">Premium Unlock Includes</span>
                   <ul className="space-y-2 text-[#eae9e5]">
-                    <li className="flex items-center gap-2 text-success">✓ Complete optimized, copyable PDF structures</li>
-                    <li className="flex items-center gap-2 text-success">✓ 3 AI regenerations to match specific jobs</li>
-                    <li className="flex items-center gap-2 text-success">✓ High-signal technical stacks & keywords</li>
-                    <li className="flex items-center gap-2 text-success">✓ Direct UPI Razorpay paywall checkouts</li>
+                    <li className="flex items-center gap-2 text-success">✓ Copy-ready optimized technical bullets</li>
+                    <li className="flex items-center gap-2 text-success">✓ 3 Free AI adjustments for custom job targets</li>
+                    <li className="flex items-center gap-2 text-success">✓ Industry-recognized keywords injected</li>
+                    <li className="flex items-center gap-2 text-success">✓ Strict ATS-compliant format</li>
                     <li className="flex items-center gap-2 text-success">✓ Money-back compliance guarantee</li>
                   </ul>
                 </div>
@@ -550,17 +607,17 @@ export default function LandingPage() {
                   href="/build"
                   className="w-full h-12 bg-primary hover:bg-primary/95 text-white font-bold text-sm rounded-full transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-[0_4px_15px_rgba(1,105,111,0.3)]"
                 >
-                  <span>Optimize Your Resume Now</span>
+                  <span>Build Your Optimized Resume Now</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <span className="text-[9px] font-bold text-[#7a7974] uppercase tracking-wider block mt-3">
-                  ₹{price} One-time Fee • Secure Checkout • direct email delivery
+                  ₹{price} One-time Fee • Secure Checkout • Instant Access
                 </span>
               </div>
             </div>
           </div>
 
-          {/* ── SECTION 6: SDE CAMPUS PLACEMENTS FAQS ── */}
+          {/* ── SECTION 7: CAMPUS PLACEMENTS FAQS ── */}
           <div className="max-w-3xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 text-left">
             <h3 className="text-xl md:text-2xl font-serif text-white text-center mb-8">
               Frequently Asked Questions
@@ -570,15 +627,15 @@ export default function LandingPage() {
               {[
                 {
                   q: "How does the SDE keyword optimization work?",
-                  a: "Our AI model analyzes your project summary and maps generic descriptions to high-density frameworks (like LangChain, FastAPI, Docker). This aligns your descriptions with industry recruiter demands."
+                  a: "Our AI model reviews your project descriptions and maps generic phrases to key libraries and frameworks (like LangChain, FastAPI, or Docker). This ensures your resume matches what tech recruiters seek."
                 },
                 {
-                  q: "Why should I avoid standard Canva resume designs?",
-                  a: "Many ATS systems struggle to read multi-column layouts, custom icons, or graphic blocks common in Canva templates. Our single-column, plain text output is 100% compliant with standard corporate parsers."
+                  q: "Why should I avoid Canva resume templates?",
+                  a: "Many company scanning systems struggle to parse multi-column layouts, visual charts, or complex graphical tables. Our strict, single-column plain text format is fully readable by corporate parser systems."
                 },
                 {
-                  q: "What is the ₹" + price + " fee for?",
-                  a: "The one-time fee unlocks the full, copy-pasteable optimized text, provides 3 additional free custom variations, and includes high-scoring keywords matching specific Job Descriptions."
+                  q: "What does the one-time payment unlock?",
+                  a: "The small one-time payment unlocks the complete optimized copy-ready text, provides 3 additional free custom edits to target specific jobs, and includes 100% money-back compliance coverage."
                 }
               ].map((faqItem, idx) => (
                 <div key={idx} className="border border-[#20292b] bg-[#111618]/30 rounded-2xl p-5">
@@ -1091,22 +1148,30 @@ export default function LandingPage() {
       )}
       
       {/* Footer */}
-      <footer className="mt-auto border-t border-border/60 bg-surface px-6 py-12 text-center text-xs text-text-muted font-medium">
+      <footer className={`mt-auto border-t px-6 py-12 text-center text-xs font-medium transition-colors duration-300 ${
+        landingVariant === "dashboard"
+          ? "bg-[#0a0d0e] border-[#20292b] text-[#9f9d98]"
+          : "bg-surface border-border/60 text-text-muted"
+      }`}>
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
             <img src="/logo.png" alt="ATSLift Logo" className="w-5 h-5 object-contain logo-rotated" />
-            <span className="font-bold text-sm tracking-tight text-text">
+            <span className={`font-bold text-sm tracking-tight ${landingVariant === "dashboard" ? "text-white" : "text-text"}`}>
               ATS<span className="text-primary font-serif italic">Lift</span>
             </span>
             <span className="text-border">|</span>
             <span>© {new Date().getFullYear()} ATSLift. All rights reserved.</span>
           </div>
-          <div className="flex items-center space-x-4">
-            <Link href="/ats-check" className="hover:text-primary transition-colors">
+          <div className="flex items-center space-x-4 font-bold">
+            <Link href="/ats-check" className={`transition-colors ${
+              landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"
+            }`}>
               ATS Score
             </Link>
             <span className="text-border">•</span>
-            <Link href="/about" className="hover:text-primary transition-colors">
+            <Link href="/about" className={`transition-colors ${
+              landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"
+            }`}>
               About
             </Link>
             <span className="text-border">•</span>
