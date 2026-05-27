@@ -132,6 +132,30 @@ function TagInput({
         </button>
       </div>
 
+      {/* Quick-tap scrollable pills directly below the input (Visible only on mobile for ultimate touch ease!) */}
+      <div className="md:hidden flex items-center space-x-2 overflow-x-auto py-2 hide-scrollbar">
+        <span className="text-[10px] font-black text-text-muted shrink-0 uppercase tracking-wider bg-surface px-2 py-1 rounded-sm border border-border">Popular:</span>
+        <div className="flex gap-1.5">
+          {suggestions.map((sug) => {
+            const isSelected = activeTags.includes(sug);
+            return (
+              <button
+                key={sug}
+                type="button"
+                onClick={() => handleToggleSuggestion(sug)}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold border shrink-0 transition-all cursor-pointer ${
+                  isSelected
+                    ? "bg-primary/20 border-primary text-primary"
+                    : "bg-surface border-border text-text-muted hover:text-text hover:border-primary/30"
+                }`}
+              >
+                {sug}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {error && <p className="text-xs text-error mt-1 font-semibold text-left">{error}</p>}
 
       {isOpen && filteredSuggestions.length > 0 && (
@@ -1372,9 +1396,9 @@ export default function BuildPage() {
       )}
 
       {/* Layout wrapper */}
-      <div className="flex flex-col w-full min-h-[calc(100vh-73px)] bg-bg-base">
-        {/* Universal compact horizontal stepper */}
-        <div className="w-full overflow-x-auto px-4 py-4 hide-scrollbar border-b border-border/40 bg-surface/50">
+      <div className="flex flex-col lg:flex-row w-full min-h-[calc(100vh-73px)] bg-bg-base">
+        {/* Mobile horizontal steps (hidden on large screens) */}
+        <div className="lg:hidden w-full overflow-x-auto px-4 py-4 hide-scrollbar border-b border-border/40 bg-surface/50">
           <div className="flex items-center justify-between relative min-w-[300px]">
             {/* Progress bar background line */}
             <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[2px] bg-border/60 -z-10" />
@@ -1418,19 +1442,119 @@ export default function BuildPage() {
           </div>
         </div>
 
-        {/* Main Form Content */}
-        <main className="flex-1 min-w-0 bg-bg-base flex flex-col justify-between">
-          <div className="w-full px-4 pt-6 pb-28">
-            {/* Compact Mobile Active Step indicator */}
-            <div className="mb-6 text-left">
-              <span className="text-[10px] font-extrabold text-primary tracking-widest uppercase block mb-1">Step {activeStep} of 5</span>
-              <div className="h-1.5 w-full bg-border/40 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-primary transition-all duration-300"
-                  style={{ width: `${(activeStep / 5) * 100}%` }}
-                />
+        {/* Desktop Vertical Sidebar Steps */}
+        <aside className="hidden lg:flex w-72 shrink-0 border-r border-border/40 flex-col" style={{background: "linear-gradient(180deg, #f7f6f2 0%, #f3f2ee 100%)"}}>
+          <div className="sticky top-[73px] h-[calc(100vh-73px)] flex flex-col overflow-y-auto">
+            
+            {/* Top brand area */}
+            <div className="px-8 pt-10 pb-6">
+              <p className="text-[10px] font-bold text-text-muted/60 uppercase tracking-[0.2em] mb-1">Resume Builder</p>
+              <h2 className="text-xl font-bold text-text leading-tight">Build your <span className="text-primary font-serif italic">perfect</span> resume</h2>
+
+              {/* Overall progress bar */}
+              <div className="mt-5">
+                <div className="flex justify-between items-center mb-1.5">
+                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Progress</span>
+                  <span className="text-[10px] font-bold text-primary">{Math.round(((activeStep - 1) / 4) * 100)}%</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-border/60 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
+                    style={{ width: `${Math.round(((activeStep - 1) / 4) * 100)}%` }}
+                  />
+                </div>
               </div>
             </div>
+
+            {/* Steps */}
+            <div className="flex-1 px-5 pb-8">
+              <div className="relative flex flex-col space-y-1">
+                {/* Vertical connecting line */}
+                <div className="absolute left-[27px] top-7 bottom-7 w-[1.5px] bg-border/50 -z-10" />
+
+                {[
+                  { stepNum: 1, name: "Personal Info", desc: "Basic details & branch", icon: User },
+                  { stepNum: 2, name: "Core Skills", desc: "Languages & technologies", icon: Code2 },
+                  { stepNum: 3, name: "Projects", desc: "Engineering portfolio", icon: Rocket },
+                  { stepNum: 4, name: "Experience", desc: "Internships & roles", icon: Briefcase },
+                  { stepNum: 5, name: "Optimize", desc: "ATS & job keywords", icon: Wand2 },
+                ].map((s) => {
+                  const isCompleted = activeStep > s.stepNum;
+                  const isActive = activeStep === s.stepNum;
+
+                  return (
+                    <button
+                      key={s.stepNum}
+                      onClick={() => handleStepClick(s.stepNum)}
+                      className={`relative flex items-center space-x-3.5 w-full text-left cursor-pointer border-none rounded-2xl px-3 py-3.5 transition-all duration-300 group ${
+                        isActive
+                          ? "bg-primary/8 shadow-sm"
+                          : "bg-transparent hover:bg-border/20"
+                      }`}
+                      style={isActive ? { background: "rgba(1,105,111,0.07)" } : undefined}
+                    >
+                      {/* Step circle / icon */}
+                      <div className={`w-[42px] h-[42px] rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${
+                        isCompleted
+                          ? "bg-primary shadow-sm"
+                          : isActive
+                          ? "bg-white border-2 border-primary shadow-md"
+                          : "bg-white border border-border group-hover:border-primary/40"
+                      }`}>
+                        {isCompleted
+                          ? <Check className="w-5 h-5 text-white" />
+                          : isActive
+                          ? <s.icon className="w-5 h-5 text-primary" strokeWidth={2.5} />
+                          : <span className="text-sm font-bold text-text-muted/60">{s.stepNum}</span>
+                        }
+                      </div>
+
+                      {/* Text */}
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className={`text-sm font-bold transition-colors ${
+                          isActive ? "text-primary" : isCompleted ? "text-text" : "text-text-muted"
+                        }`}>
+                          {s.name}
+                        </span>
+                        <span className={`text-[11px] font-medium mt-0.5 transition-colors ${
+                          isActive ? "text-primary/70" : "text-text-muted/60"
+                        }`}>
+                          {s.desc}
+                        </span>
+                      </div>
+
+                      {/* Active indicator dot */}
+                      {isActive && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 animate-pulse" />
+                      )}
+                      {isCompleted && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary/30 shrink-0" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Bottom tip */}
+            <div className="px-5 pb-8">
+              <div className="rounded-2xl border border-border/60 bg-white/60 p-4">
+                <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">💡 Pro Tip</p>
+                <p className="text-xs text-text-muted leading-relaxed">
+                  {activeStep === 1 && "Add your LinkedIn & GitHub links to boost ATS scores by up to 15%."}
+                  {activeStep === 2 && "List at least 4–5 core CS concepts — recruiters scan for these first."}
+                  {activeStep === 3 && "Every project needs a measurable result. Think: \"reduced load time by 40%\"."}
+                  {activeStep === 4 && "Even 1 internship listed can double your shortlisting rate."}
+                  {activeStep === 5 && "Paste the actual job description for the highest ATS match score."}
+                </p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Main Form Content */}
+        <main className="flex-1 min-w-0 bg-bg-base">
+          <div className="w-full px-8 md:px-14 lg:px-16 pt-10 pb-32">
             {activeStep === 1 && renderStep1()}
             {activeStep === 2 && renderStep2()}
             {activeStep === 3 && renderStep3()}
@@ -1439,30 +1563,51 @@ export default function BuildPage() {
           </div>
 
           {/* Sticky Footer Nav */}
-          <div className="sticky bottom-0 w-full z-30 bg-bg-base/90 backdrop-blur-md border-t border-border/40 px-4 py-4 mt-auto">
+          <div className="fixed bottom-0 left-0 right-0 lg:left-72 z-30 bg-bg-base/80 backdrop-blur-md border-t border-border/40 px-8 md:px-14 lg:px-16 py-4">
             <div className="flex justify-between items-center">
               <button
                 onClick={handlePrev}
                 disabled={activeStep === 1}
-                className="px-5 py-2.5 border border-border hover:bg-surface disabled:opacity-25 disabled:cursor-not-allowed text-xs font-bold rounded-full flex items-center space-x-2 transition-all cursor-pointer text-text"
+                className="px-5 py-2.5 border border-border hover:bg-surface disabled:opacity-25 disabled:cursor-not-allowed text-sm font-semibold rounded-full flex items-center space-x-2 transition-all cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back</span>
               </button>
 
               <div className="flex items-center space-x-4">
-                <div className="flex flex-col items-end">
-                  <div className="flex items-center space-x-1 text-[8px] font-semibold text-text-muted">
-                    {draftStatus === "saving" && <span className="animate-pulse">Saving...</span>}
-                    {draftStatus === "saved" && <span className="text-success">Saved</span>}
-                    {draftStatus === "error" && <span className="text-error">Save failed</span>}
-                    {draftStatus === "idle" && lastSaved && <span>Draft saved</span>}
+                <div className="flex flex-col items-end hidden sm:flex">
+                  <span className="text-xs text-text-muted font-bold tracking-widest uppercase mb-0.5">Step {activeStep} of 5</span>
+                  <div className="flex items-center space-x-1.5 text-[10px] font-semibold">
+                    {draftStatus === "saving" && (
+                      <span className="flex items-center space-x-1 text-text-muted animate-pulse">
+                        <Cloud className="w-3 h-3" />
+                        <span>Saving...</span>
+                      </span>
+                    )}
+                    {draftStatus === "saved" && (
+                      <span className="flex items-center space-x-1 text-success">
+                        <Cloud className="w-3 h-3" />
+                        <span>Saved</span>
+                      </span>
+                    )}
+                    {draftStatus === "error" && (
+                      <span className="flex items-center space-x-1 text-error">
+                        <CloudOff className="w-3 h-3" />
+                        <span>Save failed</span>
+                      </span>
+                    )}
+                    {draftStatus === "idle" && lastSaved && (
+                      <span className="flex items-center space-x-1 text-text-muted/60">
+                        <Check className="w-3 h-3" />
+                        <span>Draft saved locally</span>
+                      </span>
+                    )}
                   </div>
                 </div>
                 {activeStep < 5 ? (
                   <button
                     onClick={handleNext}
-                    className="px-6 py-2.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full flex items-center space-x-2 transition-all shadow-xs cursor-pointer"
+                    className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-full flex items-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer"
                   >
                     <span>Continue</span>
                     <ArrowRight className="w-4 h-4" />
@@ -1470,10 +1615,10 @@ export default function BuildPage() {
                 ) : (
                   <button
                     onClick={handleSubmit}
-                    className="px-8 py-2.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full flex items-center space-x-2 transition-all shadow-md cursor-pointer"
+                    className="px-8 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-full flex items-center space-x-2 transition-all shadow-md hover:shadow-lg cursor-pointer"
                   >
                     <Sparkles className="w-4 h-4" />
-                    <span>Generate</span>
+                    <span>Generate Resume</span>
                   </button>
                 )}
               </div>

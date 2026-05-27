@@ -73,6 +73,7 @@ export default function LandingPage() {
   const [bQuantified, setBQuantified] = useState(true);
   const [bKeywords, setBKeywords] = useState(true);
   const [bNoCanva, setBNoCanva] = useState(true);
+  const [mobileTab, setMobileTab] = useState<"input" | "grader">("input");
 
   useEffect(() => {
     getSession().then(setSession);
@@ -195,8 +196,8 @@ export default function LandingPage() {
               <p className="text-xs text-[#9f9d98]">Input your details on the left, choose enhancements, and watch your ATS compatibility score rise on the right.</p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch bg-[#111618]/90 border border-primary/20 rounded-3xl p-4 md:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
-              
+            {/* DESKTOP LAYOUT (100% UNCHANGED) */}
+            <div className="hidden md:grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch bg-[#111618]/90 border border-primary/20 rounded-3xl p-4 md:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
               {/* Left Column: Mock Workbench inputs (5 cols) */}
               <div className="lg:col-span-5 bg-[#0a0d0e]/60 border border-[#20292b] rounded-2xl p-5 flex flex-col justify-between space-y-6">
                 <div className="space-y-4">
@@ -426,6 +427,252 @@ export default function LandingPage() {
                   <span>• Secure payments via Razorpay</span>
                 </div>
               </div>
+            </div>
+
+            {/* MOBILE REDESIGNED LAYOUT (SUPER EASY TO USE - REDESIGNED 📱) */}
+            <div className="md:hidden grid grid-cols-1 gap-6 bg-[#111618]/90 border border-primary/20 rounded-3xl p-4 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+              {/* Touch-optimized Tabs */}
+              <div className="grid grid-cols-2 gap-2 bg-[#0a0d0e]/60 border border-[#20292b] p-1.5 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setMobileTab("input")}
+                  className={`py-3 text-xs font-bold rounded-lg transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
+                    mobileTab === "input"
+                      ? "bg-primary text-white"
+                      : "text-[#9f9d98] hover:text-white"
+                  }`}
+                >
+                  <span>📝 Mock Inputs</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobileTab("grader")}
+                  className={`py-3 text-xs font-bold rounded-lg transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
+                    mobileTab === "grader"
+                      ? "bg-primary text-white"
+                      : "text-[#9f9d98] hover:text-white"
+                  }`}
+                >
+                  <span>📊 Live Grader</span>
+                </button>
+              </div>
+
+              {/* View 1: Workbench Input */}
+              {mobileTab === "input" && (
+                <div className="bg-[#0a0d0e]/60 border border-[#20292b] rounded-2xl p-4 flex flex-col space-y-5 text-left animate-fadeIn">
+                  <div className="flex items-center justify-between border-b border-[#20292b] pb-3 flex-wrap gap-2">
+                    <div>
+                      <span className="text-[9px] font-black text-[#00e1ec] tracking-widest uppercase block">Mock Workbench</span>
+                      <h4 className="text-xs font-bold text-white">Fill Academic Profile</h4>
+                    </div>
+                    <div className="flex gap-1 text-[9px] font-bold uppercase tracking-wider">
+                      {["details", "projects", "skills"].map((tab) => (
+                        <button
+                          key={tab}
+                          onClick={() => setBActiveTab(tab as any)}
+                          className={`px-2 py-1 rounded transition-all cursor-pointer ${
+                            bActiveTab === tab
+                              ? "bg-primary text-white font-bold"
+                              : "bg-[#111618] border border-[#20292b] text-[#9f9d98]"
+                          }`}
+                        >
+                          {tab === "details" ? "Profile" : tab === "projects" ? "Project" : "Skills"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {bActiveTab === "details" && (
+                    <div className="space-y-3.5 text-left animate-fadeIn">
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Target Job Role</span>
+                        <div className="w-full h-10 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center">
+                          Software Development Engineer (SDE)
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Engineering Branch</span>
+                        <div className="w-full h-10 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center">
+                          Computer Science & Engineering (CSE)
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">CGPA</span>
+                        <div className="w-full h-10 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center font-mono">
+                          8.32 / 10.0
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {bActiveTab === "projects" && (
+                    <div className="space-y-3.5 text-left animate-fadeIn">
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Project Title</span>
+                        <div className="w-full h-10 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center">
+                          AI Customer Support Chatbot
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Basic Raw Project Description</span>
+                        <textarea
+                          readOnly
+                          value="I created a chatbot using OpenAI API and Python. I set up a server in FastAPI to run queries. It helps answer customer questions fast."
+                          className="w-full h-24 p-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-medium text-[#9f9d98] outline-hidden resize-none leading-relaxed"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {bActiveTab === "skills" && (
+                    <div className="space-y-3.5 text-left animate-fadeIn">
+                      <div className="space-y-2">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase block">Programming Languages</span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {["Python", "TypeScript", "C++", "SQL"].map((l) => (
+                            <span key={l} className="px-2.5 py-1.5 bg-[#111618] border border-[#20292b] rounded text-[10px] font-semibold text-[#eae9e5]">
+                              {l}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase block">Frameworks & Tools</span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {["FastAPI", "React.js", "Docker", "LangChain", "Git"].map((f) => (
+                            <span key={f} className="px-2.5 py-1.5 bg-[#111618] border border-[#20292b] rounded text-[10px] font-semibold text-[#eae9e5]">
+                              {f}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="border-t border-[#20292b] pt-4 mt-2">
+                    <button
+                      type="button"
+                      onClick={() => setMobileTab("grader")}
+                      className="w-full h-12 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-sm"
+                    >
+                      <span>Next: Check Live Score</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* View 2: Grader Outcome */}
+              {mobileTab === "grader" && (
+                <div className="bg-[#0a0d0e]/60 border border-[#20292b] rounded-2xl p-4 flex flex-col space-y-5 animate-fadeIn">
+                  <div className="flex items-center justify-between border-b border-[#20292b] pb-3 text-left">
+                    <div>
+                      <span className="text-[9px] font-extrabold text-success tracking-widest uppercase block">Live Scoring</span>
+                      <h3 className="text-xs font-bold text-white">Parser Compatibility Results</h3>
+                    </div>
+                    <span className="inline-flex items-center gap-1 text-[8px] font-bold text-[#00e1ec] bg-[#00e1ec]/10 border border-[#00e1ec]/30 px-2 py-0.5 rounded-full uppercase">
+                      Automatic Grader
+                    </span>
+                  </div>
+
+                  {/* Circular Score */}
+                  <div className="flex items-center gap-4 bg-[#111618]/70 border border-[#20292b] rounded-xl p-3.5 text-left">
+                    <div className="relative w-16 h-16 flex items-center justify-center shrink-0">
+                      <svg className="w-full h-full transform -rotate-90">
+                        <circle cx="32" cy="32" r="26" strokeWidth="4" stroke="#1d2527" fill="transparent" />
+                        <circle
+                          cx="32"
+                          cy="32"
+                          r="26"
+                          strokeWidth="4.5"
+                          stroke={
+                            (48 + (bQuantified ? 15 : 0) + (bKeywords ? 16 : 0) + (bNoCanva ? 20 : 0)) >= 85
+                              ? "#10b981"
+                              : "#f59e0b"
+                          }
+                          fill="transparent"
+                          strokeDasharray="163.3"
+                          strokeDashoffset={163.3 - (163.3 * (48 + (bQuantified ? 15 : 0) + (bKeywords ? 16 : 0) + (bNoCanva ? 20 : 0))) / 100}
+                          className="transition-all duration-500 ease-out"
+                        />
+                      </svg>
+                      <div className="absolute flex flex-col items-center">
+                        <span className="text-sm font-black font-mono leading-none text-white">
+                          {48 + (bQuantified ? 15 : 0) + (bKeywords ? 16 : 0) + (bNoCanva ? 20 : 0)}
+                        </span>
+                        <span className="text-[6.5px] font-bold text-[#9f9d98] uppercase tracking-wider mt-0.5">Score</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 text-left flex-1">
+                      <span className="text-[8px] font-black text-[#7a7974] uppercase tracking-widest block">Choose Enhancements</span>
+                      <div className="space-y-1 text-[11px] font-bold text-[#eae9e5]">
+                        <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={bQuantified}
+                            onChange={(e) => setBQuantified(e.target.checked)}
+                            className="w-3.5 h-3.5 text-primary accent-primary rounded cursor-pointer shrink-0"
+                          />
+                          <span>Add metrics (+15 pts)</span>
+                        </label>
+                        <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={bKeywords}
+                            onChange={(e) => setBKeywords(e.target.checked)}
+                            className="w-3.5 h-3.5 text-primary accent-primary rounded cursor-pointer shrink-0"
+                          />
+                          <span>Inject tech words (+16 pts)</span>
+                        </label>
+                        <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={bNoCanva}
+                            onChange={(e) => setBNoCanva(e.target.checked)}
+                            className="w-3.5 h-3.5 text-primary accent-primary rounded cursor-pointer shrink-0"
+                          />
+                          <span>ATS formatting (+20 pts)</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bullet Preview */}
+                  <div className="space-y-2 text-left bg-[#111618]/50 border border-[#20292b] rounded-xl p-3">
+                    <span className="text-[9px] font-extrabold text-[#00e1ec] uppercase block">Optimized Bullet Preview</span>
+                    <div className="text-xs font-semibold leading-relaxed p-3 rounded-lg bg-[#0a0d0e] font-mono text-[#eae9e5] border border-dashed border-[#20292b]">
+                      {bQuantified && bKeywords ? (
+                        <p>
+                          • Built an AI customer support bot using <strong className="text-[#00e1ec] font-bold">FastAPI</strong>, <strong className="text-[#00e1ec] font-bold">Python</strong>, and <strong className="text-[#00e1ec] font-bold">OpenAI GPT-4</strong> API, reducing load times by <strong className="text-success underline font-bold">40%</strong> and managing 200+ active user sessions.
+                        </p>
+                      ) : bQuantified ? (
+                        <p>
+                          • Developed a customer support bot in Python using OpenAI API, managing queries efficiently and improving response times by <strong className="text-success underline font-bold">40%</strong>.
+                        </p>
+                      ) : bKeywords ? (
+                        <p>
+                          • Designed an AI chatbot using <strong className="text-[#00e1ec] font-bold">FastAPI</strong> and <strong className="text-[#00e1ec] font-bold">OpenAI API</strong> to automate support question resolving.
+                        </p>
+                      ) : (
+                        <p className="text-[#7a7974] italic">
+                          • I created a chatbot using OpenAI API and Python to answer customer support questions.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="border-t border-[#20292b] pt-4 mt-2">
+                    <Link
+                      href="/build"
+                      className="w-full h-12 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-sm"
+                    >
+                      <span>{ctaText}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

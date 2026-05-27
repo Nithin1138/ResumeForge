@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import MobileWrapper from "./components/MobileWrapper";
 
 export const metadata: Metadata = {
   title: "ATSLift — ATS Resume Builder for Engineering Students",
@@ -31,8 +30,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased selection:bg-primary/20">
-      <body className="min-h-full bg-[#0a0d0e] text-text selection:bg-primary/20">
-        <MobileWrapper>{children}</MobileWrapper>
+      <body className="min-h-full flex flex-col bg-bg-base text-text selection:bg-primary/20">
+        {children}
       </body>
     </html>
   );

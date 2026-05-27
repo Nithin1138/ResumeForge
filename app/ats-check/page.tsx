@@ -216,7 +216,7 @@ export default function ATSCheckPage() {
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                   onClick={() => fileInputRef.current?.click()}
-                  className={`w-full bg-surface border-2 border-dashed rounded-3xl p-16 text-center cursor-pointer transition-all duration-300 ${
+                  className={`w-full bg-surface border-2 border-dashed rounded-3xl p-8 md:p-16 text-center cursor-pointer transition-all duration-300 ${
                     isDragging 
                       ? "border-primary bg-primary/5" 
                       : file 
@@ -234,15 +234,15 @@ export default function ATSCheckPage() {
                   
                   {file ? (
                     <div className="flex flex-col items-center">
-                      <FileText className="w-12 h-12 text-primary mb-4" />
-                      <p className="font-bold text-text text-xl mb-1">{file.name}</p>
-                      <p className="text-sm text-text-muted">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                      <FileText className="w-10 h-10 md:w-12 md:h-12 text-primary mb-3.5" />
+                      <p className="font-bold text-text text-base md:text-xl mb-1 truncate max-w-[250px]">{file.name}</p>
+                      <p className="text-xs md:text-sm text-text-muted">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
-                      <UploadCloud className="w-10 h-10 text-text-muted mb-4" />
-                      <p className="font-semibold text-text text-lg mb-1">Click to upload or drag and drop</p>
-                      <p className="text-sm text-text-muted">PDF format, up to 5MB</p>
+                      <UploadCloud className="w-8 h-8 md:w-10 md:h-10 text-text-muted mb-3.5" />
+                      <p className="font-bold text-text text-sm md:text-lg mb-1">Tap to select your resume PDF</p>
+                      <p className="text-xs text-text-muted">Up to 5MB, 100% private secure audit</p>
                     </div>
                   )}
                 </div>
