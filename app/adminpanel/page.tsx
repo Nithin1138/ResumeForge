@@ -2380,6 +2380,54 @@ export default function AdminPanelPage() {
                     </button>
                   </form>
                 </div>
+
+                {/* Test Mode Reset Controls */}
+                <div className="md:col-span-2 bg-surface border border-error/20 rounded-2xl p-5 md:p-8 space-y-6">
+                  <div className="border-b border-error/15 pb-4">
+                    <h3 className="text-sm font-bold text-error uppercase tracking-wider block flex items-center gap-1.5">
+                      <AlertTriangle className="w-4 h-4 text-error" />
+                      <span>Database & Telemetry Reset (Test Mode Only)</span>
+                    </h3>
+                    <p className="text-xs text-text-muted mt-1 font-semibold leading-relaxed">
+                      Reset all resumes, calculations, revenue, and gross metrics. This action is intended for test/staging mode only and will permanently clear database tables.
+                    </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <p className="text-xs text-text font-medium bg-error/5 border border-error/10 p-3.5 rounded-xl leading-relaxed">
+                      <strong>⚠️ WARNING:</strong> Clicking the button below will perform an immediate, non-reversible delete operation on all active and paid resume generation logs. Net revenue, average CGPA, and conversion tracking indexes will instantly drop to zero.
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!confirm("⚠️ DANGER ZONE: Are you absolutely sure you want to permanently clear all resumes, revenue metrics, and operational spend data? This cannot be undone.")) return;
+                        
+                        try {
+                          const res = await fetch("/api/admin", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ action: "resetStats" })
+                          });
+                          
+                          const data = await res.json();
+                          if (res.ok && data.success) {
+                            alert("✓ Telemetry metrics, revenue stats, and resume logs successfully cleared from database!");
+                            window.location.reload();
+                          } else {
+                            alert(data.error || "Failed to reset stats");
+                          }
+                        } catch (err) {
+                          alert("Failed to connect to reset endpoint.");
+                        }
+                      }}
+                      className="px-6 h-[44px] bg-error hover:bg-error/95 text-white font-bold text-xs rounded-full transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center space-x-2 cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Reset Revenue & Profit Metrics</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 

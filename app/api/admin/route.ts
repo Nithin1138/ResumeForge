@@ -636,6 +636,30 @@ export async function POST(req: NextRequest) {
         message: `Mass email announcement dispatched to ${successCount} of ${emails.length} matching subscribers successfully!`
       });
     }
+    
+    // ACTION: RESET STATS (TEST MODE)
+    if (action === "resetStats") {
+      const isAuthorized = await verifySession();
+      if (!isAuthorized) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      
+      try {
+        // Delete all resumes to reset revenue, net gross, and profit
+        await prisma.resume.deleteMany({});
+        
+        // Optionally clear flash project logs too for complete refresh
+        try {
+          if ((prisma as any).flashProjectLog) {
+            await (prisma as any).flashProjectLog.deleteMany({});
+          }
+        } catch {}
+        
+        return NextResponse.json({ success: true, message: "Telemetry operational metrics and resumes cleared successfully." });
+      } catch (err: any) {
+        return NextResponse.json({ error: "Failed to reset stats: " + err.message }, { status: 500 });
+      }
+    }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch (err: any) {
