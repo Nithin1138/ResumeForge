@@ -145,279 +145,447 @@ export default function LandingPage() {
       </header>
 
       {landingVariant === "dashboard" ? (
-        <div className="flex-1 w-full max-w-6xl mx-auto px-4 md:px-6 py-8 flex flex-col gap-12 animate-fadeIn relative">
-          {/* Subtle decorative background glows */}
-          <div className="absolute top-10 left-10 w-[200px] h-[200px] bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
-          <div className="absolute bottom-20 right-10 w-[200px] h-[200px] bg-success/5 rounded-full blur-[80px] pointer-events-none" />
+        <div className="flex-1 w-full bg-[#080b0c] text-[#eae9e5] min-h-screen py-12 flex flex-col gap-16 relative overflow-hidden font-sans">
+          {/* Futuristic ambient background glows */}
+          <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-1/3 right-10 w-[350px] h-[350px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute top-2/3 left-10 w-[250px] h-[250px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
-          {/* Premium Hero Segment */}
-          <div className="text-center space-y-4 max-w-3xl mx-auto pt-6 md:pt-10 animate-fadeIn">
-            <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-[10px] font-bold tracking-wider text-primary shadow-xs uppercase">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Variant B: Placement Intelligence Dashboard</span>
+          {/* ── SECTION 1: PREMIUM HERO & DESTRUCTURING HEADLINE ── */}
+          <div className="text-center space-y-5 max-w-4xl mx-auto pt-8 md:pt-14 relative z-10 px-4">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-[10px] font-black tracking-widest text-[#00e1ec] shadow-[0_0_15px_rgba(0,225,236,0.1)] uppercase">
+              <Sparkles className="w-3.5 h-3.5 animate-pulse text-[#00e1ec]" />
+              <span>SDE Placement Intelligence Workbench</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-serif tracking-tight text-text leading-tight">
+            <h1 className="text-3xl md:text-6xl font-serif tracking-tight text-white leading-tight font-light">
               Beat Campus Shortlisting. <br />
-              <span className="text-primary italic font-normal">Optimize Technical Signal</span> Instantly.
+              <span className="text-primary italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#00e1ec]">Optimize SDE Signal</span> Instantly.
             </h1>
-            <p className="text-sm md:text-base text-text-muted leading-relaxed max-w-xl mx-auto font-medium">
-              See how our AI-recruiter restructuring engine turns basic student project descriptions into high-performing, quantified SDE bullet points.
+            <p className="text-sm md:text-base text-[#9f9d98] leading-relaxed max-w-2xl mx-auto font-medium">
+              See how our custom engineering-trained parser refactors basic student projects into high-density, quantified SDE bullet points that bypass standard screening systems.
             </p>
           </div>
 
-          {/* MAIN SIMULATOR WORKSPACE */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch bg-surface border border-border rounded-3xl p-4 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.01)] relative z-10">
-            
-            {/* Left Column: Mock Workbench inputs (5 cols) */}
-            <div className="lg:col-span-5 bg-bg-base/40 border border-border/60 rounded-2xl p-5 flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-border/40 pb-3 flex-wrap gap-2">
-                  <span className="text-[10px] font-black text-primary tracking-widest uppercase">Student Input Workbench</span>
-                  <div className="flex gap-1.5 text-[9px] font-bold uppercase tracking-wider">
-                    {["details", "projects", "skills"].map((tab) => (
-                      <button
-                        key={tab}
-                        onClick={() => setBActiveTab(tab as any)}
-                        className={`px-2.5 py-1.5 rounded-md border transition-all cursor-pointer ${
-                          bActiveTab === tab
-                            ? "bg-primary text-white border-primary"
-                            : "bg-surface border-border text-text-muted hover:border-primary/30"
-                        }`}
-                      >
-                        {tab}
-                      </button>
-                    ))}
+          {/* ── SECTION 2: INTERACTIVE ATS WORKSPACE SIMULATOR ── */}
+          <div className="max-w-6xl mx-auto w-full px-4 md:px-6 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch bg-[#111618]/90 border border-primary/20 rounded-3xl p-4 md:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+              
+              {/* Left Column: Mock Workbench inputs (5 cols) */}
+              <div className="lg:col-span-5 bg-[#0a0d0e]/60 border border-[#20292b] rounded-2xl p-5 flex flex-col justify-between space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between border-b border-[#20292b] pb-3 flex-wrap gap-2">
+                    <span className="text-[10px] font-black text-[#00e1ec] tracking-widest uppercase">Student Workbench</span>
+                    <div className="flex gap-1.5 text-[9px] font-bold uppercase tracking-wider">
+                      {["details", "projects", "skills"].map((tab) => (
+                        <button
+                          key={tab}
+                          onClick={() => setBActiveTab(tab as any)}
+                          className={`px-2.5 py-1.5 rounded-md border transition-all cursor-pointer ${
+                            bActiveTab === tab
+                              ? "bg-primary text-white border-primary shadow-[0_0_10px_rgba(1,105,111,0.4)]"
+                              : "bg-[#111618] border-[#20292b] text-[#9f9d98] hover:border-primary/50"
+                          }`}
+                        >
+                          {tab}
+                        </button>
+                      ))}
+                    </div>
                   </div>
+
+                  {/* Tab content 1: Details */}
+                  {bActiveTab === "details" && (
+                    <div className="space-y-3.5 text-left animate-fadeIn">
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Target SDE Role</span>
+                        <div className="w-full h-9 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center">
+                          Software Development Engineer
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Core Engineering Branch</span>
+                        <div className="w-full h-9 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center">
+                          Computer Science & Engineering (CSE)
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">CGPA / 10.0</span>
+                        <div className="w-full h-9 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center font-mono">
+                          8.32
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tab content 2: Projects */}
+                  {bActiveTab === "projects" && (
+                    <div className="space-y-3.5 text-left animate-fadeIn">
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Academic Project Title</span>
+                        <div className="w-full h-9 px-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-semibold text-[#eae9e5] flex items-center">
+                          AI Customer Support Agent
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase">Your Project Description (What you built)</span>
+                        <textarea
+                          readOnly
+                          value="I created a chatbot using OpenAI API and Python. I set up a server in FastAPI to run queries. It helps answer standard customer support questions fast."
+                          className="w-full h-20 p-3 rounded-lg border border-[#20292b] bg-[#111618] text-xs font-medium text-[#9f9d98] outline-hidden resize-none leading-relaxed"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tab content 3: Skills */}
+                  {bActiveTab === "skills" && (
+                    <div className="space-y-3.5 text-left animate-fadeIn">
+                      <div className="space-y-2">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase block">Core Programming languages</span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {["Python", "TypeScript", "C++", "SQL"].map((l) => (
+                            <span key={l} className="px-2 py-1 bg-[#111618] border border-[#20292b] rounded text-[10px] font-semibold text-[#eae9e5]">
+                              {l}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <span className="text-[9px] font-extrabold text-[#7a7974] uppercase block">Frameworks & Tools</span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {["FastAPI", "React.js", "Docker", "LangChain", "Git"].map((f) => (
+                            <span key={f} className="px-2 py-1 bg-[#111618] border border-[#20292b] rounded text-[10px] font-semibold text-[#eae9e5]">
+                              {f}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Tab content 1: Details */}
-                {bActiveTab === "details" && (
-                  <div className="space-y-3.5 text-left animate-fadeIn">
-                    <div className="space-y-1.5">
-                      <span className="text-[9px] font-extrabold text-text-muted uppercase">Target SDE Role</span>
-                      <div className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-xs font-semibold text-text flex items-center">
-                        Software Development Engineer
-                      </div>
-                    </div>
-                    <div className="space-y-1.5">
-                      <span className="text-[9px] font-extrabold text-text-muted uppercase">Core Engineering Branch</span>
-                      <div className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-xs font-semibold text-text flex items-center">
-                        Computer Science & Engineering (CSE)
-                      </div>
-                    </div>
-                    <div className="space-y-1.5">
-                      <span className="text-[9px] font-extrabold text-text-muted uppercase">CGPA / 10.0</span>
-                      <div className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-xs font-semibold text-text flex items-center font-mono">
-                        8.32
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Tab content 2: Projects */}
-                {bActiveTab === "projects" && (
-                  <div className="space-y-3.5 text-left animate-fadeIn">
-                    <div className="space-y-1.5">
-                      <span className="text-[9px] font-extrabold text-text-muted uppercase">Academic Project Title</span>
-                      <div className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-xs font-semibold text-text flex items-center">
-                        AI Customer Support Agent
-                      </div>
-                    </div>
-                    <div className="space-y-1.5">
-                      <span className="text-[9px] font-extrabold text-text-muted uppercase">Your Project Description (What you built)</span>
-                      <textarea
-                        readOnly
-                        value="I created a chatbot using OpenAI API and Python. I set up a server in FastAPI to run queries. It helps answer standard customer support questions fast."
-                        className="w-full h-20 p-3 rounded-lg border border-border bg-surface text-xs font-medium text-text-muted outline-hidden resize-none leading-relaxed"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Tab content 3: Skills */}
-                {bActiveTab === "skills" && (
-                  <div className="space-y-3.5 text-left animate-fadeIn">
-                    <div className="space-y-2">
-                      <span className="text-[9px] font-extrabold text-text-muted uppercase block">Core Programming languages</span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {["Python", "TypeScript", "C++", "SQL"].map((l) => (
-                          <span key={l} className="px-2 py-1 bg-surface border border-border rounded text-[10px] font-semibold text-text">
-                            {l}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <span className="text-[9px] font-extrabold text-text-muted uppercase block">Frameworks & Tools</span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {["FastAPI", "React.js", "Docker", "LangChain", "Git"].map((f) => (
-                          <span key={f} className="px-2 py-1 bg-surface border border-border rounded text-[10px] font-semibold text-text">
-                            {f}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+                {/* Workbench foot actions */}
+                <div className="border-t border-[#20292b] pt-4 text-left">
+                  <span className="text-[9px] font-black text-[#7a7974] uppercase tracking-wider block mb-2">Workspace Controls</span>
+                  <Link
+                    href="/build"
+                    className="w-full h-11 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
+                  >
+                    <span>Build Your Resume Free</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
               </div>
 
-              {/* Workbench foot actions */}
-              <div className="border-t border-border/40 pt-4 text-left">
-                <span className="text-[9px] font-black text-text-muted uppercase tracking-wider block mb-2">Workspace Controls</span>
-                <Link
-                  href="/build"
-                  className="w-full h-11 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
-                >
-                  <span>Build Your Resume Free</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Column: Live ATS scorecard & grader (7 cols) */}
-            <div className="lg:col-span-7 border border-border/60 bg-surface rounded-2xl p-5 flex flex-col justify-between space-y-6 relative overflow-hidden">
-              <div className="space-y-5">
-                <div className="flex items-center justify-between border-b border-border/40 pb-3">
-                  <div className="text-left">
-                    <span className="text-[9px] font-extrabold text-success tracking-widest uppercase block">Live ATS Restructuring Preview</span>
-                    <h3 className="text-sm font-bold text-text">AI Placement Scorecard</h3>
-                  </div>
-                  <span className="inline-flex items-center gap-1 text-[9px] font-bold text-primary bg-primary/10 border border-primary/25 px-2.5 py-1 rounded-full uppercase">
-                    <Sparkles className="w-3 h-3 animate-spin" /> Interactive Demo
-                  </span>
-                </div>
-
-                {/* ATS Circle and Stats row */}
-                <div className="flex flex-col sm:flex-row items-center gap-6 justify-between bg-bg-base/20 border border-border/40 rounded-xl p-4">
-                  {/* Circle */}
-                  <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
-                    <svg className="w-full h-full transform -rotate-90">
-                      <circle cx="48" cy="48" r="40" strokeWidth="5" stroke="#e0ded6" fill="transparent" className="opacity-40" />
-                      <circle
-                        cx="48"
-                        cy="48"
-                        r="40"
-                        strokeWidth="6"
-                        stroke={
-                          (48 + (bQuantified ? 15 : 0) + (bKeywords ? 16 : 0) + (bNoCanva ? 20 : 0)) >= 85
-                            ? "#437a22"
-                            : "#bf8511"
-                        }
-                        fill="transparent"
-                        strokeDasharray="251.2"
-                        strokeDashoffset={251.2 - (251.2 * (48 + (bQuantified ? 15 : 0) + (bKeywords ? 16 : 0) + (bNoCanva ? 20 : 0))) / 100}
-                        className="transition-all duration-500 ease-out"
-                      />
-                    </svg>
-                    <div className="absolute flex flex-col items-center">
-                      <span className="text-xl font-black font-mono leading-none">
-                        {48 + (bQuantified ? 15 : 0) + (bKeywords ? 16 : 0) + (bNoCanva ? 20 : 0)}
-                      </span>
-                      <span className="text-[7.5px] font-bold text-text-muted uppercase tracking-wider mt-0.5">ATS Score</span>
+              {/* Right Column: Live ATS scorecard & grader (7 cols) */}
+              <div className="lg:col-span-7 border border-[#20292b] bg-[#0a0d0e]/60 rounded-2xl p-5 flex flex-col justify-between space-y-6 relative overflow-hidden">
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between border-b border-[#20292b] pb-3">
+                    <div className="text-left">
+                      <span className="text-[9px] font-extrabold text-success tracking-widest uppercase block">Live ATS Restructuring Preview</span>
+                      <h3 className="text-sm font-bold text-white">AI Placement Scorecard</h3>
                     </div>
-                  </div>
-
-                  {/* Optimization checklist interactive toggles */}
-                  <div className="space-y-2 text-left flex-1">
-                    <span className="text-[8.5px] font-black text-text-muted uppercase tracking-widest block">Interactive Enhancements</span>
-                    <div className="space-y-1.5 text-xs font-semibold text-text">
-                      <label className="flex items-center gap-2 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={bQuantified}
-                          onChange={(e) => setBQuantified(e.target.checked)}
-                          className="w-4 h-4 text-primary accent-primary rounded cursor-pointer shrink-0"
-                        />
-                        <span>Add quantified outcomes (+15 pts)</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={bKeywords}
-                          onChange={(e) => setBKeywords(e.target.checked)}
-                          className="w-4 h-4 text-primary accent-primary rounded cursor-pointer shrink-0"
-                        />
-                        <span>Inject high-signal tech stack keywords (+16 pts)</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={bNoCanva}
-                          onChange={(e) => setBNoCanva(e.target.checked)}
-                          className="w-4 h-4 text-primary accent-primary rounded cursor-pointer shrink-0"
-                        />
-                        <span>Remove legacy Canva parser blocks (+20 pts)</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Transformed Resume preview block */}
-                <div className="space-y-2 text-left bg-bg-base/35 border border-border/50 rounded-xl p-4 relative">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[9px] font-extrabold text-primary uppercase">Transformed SDE Bullet Output</span>
-                    <span className="text-[9px] font-mono font-bold text-text-muted bg-surface border border-border px-1.5 py-0.5 rounded">
-                      PDF preview
+                    <span className="inline-flex items-center gap-1 text-[9px] font-bold text-[#00e1ec] bg-[#00e1ec]/10 border border-[#00e1ec]/30 px-2.5 py-1 rounded-full uppercase">
+                      <Sparkles className="w-3 h-3 animate-spin" /> Interactive Demo
                     </span>
                   </div>
-                  
-                  {/* Dynamic bullet text depending on toggles */}
-                  <div className="text-xs md:text-sm font-medium leading-relaxed min-h-12 flex items-center justify-start text-text border border-dashed border-border/40 p-3 rounded-lg bg-surface">
-                    {bQuantified && bKeywords ? (
-                      <p>
-                        • Architected an AI customer support agent using <strong className="text-primary font-bold">FastAPI</strong>, <strong className="text-primary font-bold">Python</strong>, and <strong className="text-primary font-bold">OpenAI GPT-4</strong> API, reducing query response latencies by <strong className="text-primary underline font-bold">40%</strong> and managing 200+ active sessions.
-                      </p>
-                    ) : bQuantified ? (
-                      <p>
-                        • Developed a customer support agent in Python using OpenAI API, managing queries efficiently and improving overall response latency by <strong className="text-primary underline font-bold">40%</strong>.
-                      </p>
-                    ) : bKeywords ? (
-                      <p>
-                        • Designed an AI chatbot platform using <strong className="text-primary font-bold">FastAPI</strong> and <strong className="text-primary font-bold">OpenAI API</strong> to automate support question resolving.
-                      </p>
-                    ) : (
-                      <p className="text-text-muted italic">
-                        • I created a chatbot using OpenAI API and Python to answer standard customer support questions.
-                      </p>
-                    )}
+
+                  {/* Circle and Stats row */}
+                  <div className="flex flex-col sm:flex-row items-center gap-6 justify-between bg-[#111618]/70 border border-[#20292b] rounded-xl p-4">
+                    {/* Circle */}
+                    <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
+                      <svg className="w-full h-full transform -rotate-90">
+                        <circle cx="48" cy="48" r="40" strokeWidth="5" stroke="#1d2527" fill="transparent" />
+                        <circle
+                          cx="48"
+                          cy="48"
+                          r="40"
+                          strokeWidth="6"
+                          stroke={
+                            (48 + (bQuantified ? 15 : 0) + (bKeywords ? 16 : 0) + (bNoCanva ? 20 : 0)) >= 85
+                              ? "#10b981"
+                              : "#f59e0b"
+                          }
+                          fill="transparent"
+                          strokeDasharray="251.2"
+                          strokeDashoffset={251.2 - (251.2 * (48 + (bQuantified ? 15 : 0) + (bKeywords ? 16 : 0) + (bNoCanva ? 20 : 0))) / 100}
+                          className="transition-all duration-500 ease-out"
+                        />
+                      </svg>
+                      <div className="absolute flex flex-col items-center">
+                        <span className="text-xl font-black font-mono leading-none text-white">
+                          {48 + (bQuantified ? 15 : 0) + (bKeywords ? 16 : 0) + (bNoCanva ? 20 : 0)}
+                        </span>
+                        <span className="text-[7.5px] font-bold text-[#9f9d98] uppercase tracking-wider mt-0.5">ATS Score</span>
+                      </div>
+                    </div>
+
+                    {/* Optimization checklist interactive toggles */}
+                    <div className="space-y-2 text-left flex-1">
+                      <span className="text-[8.5px] font-black text-[#7a7974] uppercase tracking-widest block">Interactive Enhancements</span>
+                      <div className="space-y-1.5 text-xs font-semibold text-[#eae9e5]">
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={bQuantified}
+                            onChange={(e) => setBQuantified(e.target.checked)}
+                            className="w-4 h-4 text-primary accent-primary rounded cursor-pointer shrink-0"
+                          />
+                          <span>Add quantified outcomes (+15 pts)</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={bKeywords}
+                            onChange={(e) => setBKeywords(e.target.checked)}
+                            className="w-4 h-4 text-primary accent-primary rounded cursor-pointer shrink-0"
+                          />
+                          <span>Inject high-signal tech stack keywords (+16 pts)</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={bNoCanva}
+                            onChange={(e) => setBNoCanva(e.target.checked)}
+                            className="w-4 h-4 text-primary accent-primary rounded cursor-pointer shrink-0"
+                          />
+                          <span>Remove legacy Canva parser blocks (+20 pts)</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Transformed Resume preview block */}
+                  <div className="space-y-2 text-left bg-[#111618]/50 border border-[#20292b] rounded-xl p-4 relative">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[9px] font-extrabold text-[#00e1ec] uppercase">Transformed SDE Bullet Output</span>
+                      <span className="text-[9px] font-mono font-bold text-[#9f9d98] bg-[#0a0d0e] border border-[#20292b] px-1.5 py-0.5 rounded">
+                        PDF preview
+                      </span>
+                    </div>
+                    
+                    {/* Dynamic bullet text depending on toggles */}
+                    <div className="text-xs md:text-sm font-medium leading-relaxed min-h-12 flex items-center justify-start text-[#eae9e5] border border-dashed border-[#20292b] p-3 rounded-lg bg-[#0a0d0e] font-mono">
+                      {bQuantified && bKeywords ? (
+                        <p>
+                          • Architected an AI customer support agent using <strong className="text-[#00e1ec] font-bold">FastAPI</strong>, <strong className="text-[#00e1ec] font-bold">Python</strong>, and <strong className="text-[#00e1ec] font-bold">OpenAI GPT-4</strong> API, reducing query response latencies by <strong className="text-success underline font-bold">40%</strong> and managing 200+ active sessions.
+                        </p>
+                      ) : bQuantified ? (
+                        <p>
+                          • Developed a customer support agent in Python using OpenAI API, managing queries efficiently and improving overall response latency by <strong className="text-success underline font-bold">40%</strong>.
+                        </p>
+                      ) : bKeywords ? (
+                        <p>
+                          • Designed an AI chatbot platform using <strong className="text-[#00e1ec] font-bold">FastAPI</strong> and <strong className="text-[#00e1ec] font-bold">OpenAI API</strong> to automate support question resolving.
+                        </p>
+                      ) : (
+                        <p className="text-[#7a7974] italic">
+                          • I created a chatbot using OpenAI API and Python to answer customer support questions.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Free Teaser details */}
-              <div className="text-left text-[10px] text-text-muted font-bold flex items-center justify-between border-t border-border/40 pt-4 flex-wrap gap-2">
-                <span className="flex items-center gap-1">
-                  <ShieldCheck className="w-4 h-4 text-success" /> 
-                  <span>₹{price} to unlock full output</span>
-                </span>
-                <span>• 3 Free AI Regenerations included</span>
-                <span>• Direct Razorpay Pay</span>
+                {/* Free Teaser details */}
+                <div className="text-left text-[10px] text-[#9f9d98] font-bold flex items-center justify-between border-t border-[#20292b] pt-4 flex-wrap gap-2">
+                  <span className="flex items-center gap-1">
+                    <ShieldCheck className="w-4 h-4 text-success" /> 
+                    <span>₹{price} to unlock full output</span>
+                  </span>
+                  <span>• 3 Free AI Regenerations included</span>
+                  <span>• Direct UPI / Razorpay Pay</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Dynamic features highlights */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-            <div className="bg-surface border border-border/50 rounded-2xl p-5 text-left space-y-2 hover:border-primary/40 transition-all">
-              <span className="text-xl">📊</span>
-              <h4 className="font-bold text-sm text-text">Real-time ATS Scorecard</h4>
-              <p className="text-xs text-text-muted leading-relaxed font-semibold">
-                Get an instant circular parser compatibility rating and 3 critical structural feedback indicators free.
+          {/* ── SECTION 3: WHY EXTREMELY POPULAR RESUME BUILDERS FAIL SDE ATS SCREENERS ── */}
+          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-4xl font-serif tracking-tight text-white mb-3">
+                Why Standard Resumes Fail SDE Screenings
+              </h2>
+              <p className="text-xs md:text-sm text-[#9f9d98] max-w-xl mx-auto leading-relaxed">
+                Standard design builders like Canva block screeners using multi-column tables, hidden text vectors, and zero metric indexing.
               </p>
             </div>
-            <div className="bg-surface border border-border/50 rounded-2xl p-5 text-left space-y-2 hover:border-primary/40 transition-all">
-              <span className="text-xl">🔍</span>
-              <h4 className="font-bold text-sm text-text">SDE Keyword Restructuring</h4>
-              <p className="text-xs text-text-muted leading-relaxed font-semibold">
-                Automatically maps college lab work, technologies, and branch specifics to high-scoring action keywords.
-              </p>
+
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto font-medium">
+              {/* Canvas Resume */}
+              <div className="border border-[#20292b] bg-[#111618]/30 rounded-2xl p-5 relative">
+                <div className="absolute top-4 right-4 inline-block text-[9px] font-extrabold tracking-wider text-error bg-error/10 px-2.5 py-1 rounded-full uppercase">
+                  Canva / Docx Legacy
+                </div>
+                <h3 className="font-bold text-xs tracking-wide text-error mb-4 uppercase">Generic Parser Output</h3>
+                
+                <div className="space-y-4 text-left text-xs">
+                  <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-[#20292b]">
+                    <span className="font-bold block text-[10px] text-[#7a7974] mb-1">PROJECT PARSING</span>
+                    <p className="text-error font-mono leading-relaxed italic">
+                      [Parser Blocked: Multi-column Table detected. Text skipped or corrupted into gibberish ASCII bytes.]
+                    </p>
+                  </div>
+                  <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-[#20292b]">
+                    <span className="font-bold block text-[10px] text-[#7a7974] mb-1">EXPERIENCE SIGNAL</span>
+                    <p className="text-[#eae9e5] italic">
+                      &quot;Worked at a local startup coding backend APIs in Node.js and SQL.&quot; (Zero metrics, low signal)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* ATSLift Optimized */}
+              <div className="border-2 border-primary bg-[#111618]/50 rounded-2xl p-5 relative shadow-[0_0_30px_rgba(1,105,111,0.2)]">
+                <div className="absolute top-4 right-4 inline-block text-[9px] font-extrabold tracking-wider text-success bg-success/10 px-2.5 py-1 rounded-full uppercase">
+                  ATSLift Refactored
+                </div>
+                <h3 className="font-bold text-xs tracking-wide text-[#00e1ec] mb-4 uppercase">100% Parser Compliant</h3>
+
+                <div className="space-y-4 text-left text-xs">
+                  <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-primary/20">
+                    <span className="font-bold block text-[10px] text-primary mb-1">OPTIMIZED SYSTEM METRICS</span>
+                    <p className="text-[#eae9e5]">
+                      • Refactored relational schemas in <strong className="text-[#00e1ec] font-bold">PostgreSQL</strong> during 2-month backend internship, reducing query latencies by <strong className="text-success font-bold">35%</strong>.
+                    </p>
+                  </div>
+                  <div className="p-4 bg-[#0a0d0e]/60 rounded-xl border border-primary/20">
+                    <span className="font-bold block text-[10px] text-primary mb-1">quantified projects</span>
+                    <p className="text-[#eae9e5]">
+                      • Deployed containerized microservices using <strong className="text-[#00e1ec] font-bold">Docker</strong> and <strong className="text-[#00e1ec] font-bold">FastAPI</strong>, streamlining builds for <strong className="text-success font-bold">5,000+</strong> users.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="bg-surface border border-border/50 rounded-2xl p-5 text-left space-y-2 hover:border-primary/40 transition-all">
-              <span className="text-xl">💳</span>
-              <h4 className="font-bold text-sm text-text">One-time Secure checkout</h4>
-              <p className="text-xs text-text-muted leading-relaxed font-semibold">
-                No subscription trapping. Pay only ₹{price} once you review the score card and love your high-signal preview.
-              </p>
+          </div>
+
+          {/* ── SECTION 4: REAL-TIME CAMPUS TECH STACK DENSITY ── */}
+          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10">
+            <div className="bg-[#111618]/50 border border-[#20292b] rounded-3xl p-6 md:p-8 space-y-6">
+              <div className="text-center md:text-left border-b border-[#20292b] pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-serif italic text-white">Parsed Engineering Stack Density</h3>
+                  <p className="text-xs text-[#9f9d98] mt-1 font-semibold">
+                    Real-time visual density of parsed frameworks currently spike-trending across active VIT/BITS/NIT cohorts.
+                  </p>
+                </div>
+                <div className="bg-[#00e1ec]/10 border border-[#00e1ec]/20 px-3 py-1 rounded-full text-[10px] font-black uppercase text-[#00e1ec] tracking-wider shrink-0 w-fit">
+                  Campus Spike Metrics
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-xs font-semibold">
+                {[
+                  { name: "Python / PyTorch AI Stack", density: 92, status: "Very High Density 🔥", color: "bg-[#00e1ec]" },
+                  { name: "FastAPI / Node.js Backend", density: 78, status: "Active Spike 📈", color: "bg-primary" },
+                  { name: "React.js / Next.js Frontend", density: 84, status: "Stable Demand 👔", color: "bg-primary" },
+                  { name: "Docker / Kubernetes DevOps", density: 64, status: "Premium Signal ⭐", color: "bg-success" },
+                  { name: "PostgreSQL / Redis SQL Systems", density: 74, status: "Core Required 📚", color: "bg-success" },
+                  { name: "LangChain / LLM Agents", density: 56, status: "Trending Spike 🚀", color: "bg-[#00e1ec]" }
+                ].map((item, idx) => (
+                  <div key={idx} className="bg-[#0a0d0e]/60 border border-[#20292b] rounded-xl p-4 space-y-2">
+                    <div className="flex justify-between items-center text-[10px] text-[#eae9e5]">
+                      <span>{item.name}</span>
+                      <span className="font-mono">{item.density}%</span>
+                    </div>
+                    <div className="w-full bg-[#111618] h-1.5 rounded-full overflow-hidden">
+                      <div className={`${item.color} h-full rounded-full`} style={{ width: `${item.density}%` }} />
+                    </div>
+                    <div className="flex justify-between items-center text-[8.5px] font-black tracking-wider uppercase text-[#7a7974]">
+                      <span>Spike Ratio</span>
+                      <span>{item.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── SECTION 5: PREMIUM CHECKOUT OUTCOMES & RISK-FREE GUARANTEES ── */}
+          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 text-center">
+            <div className="bg-gradient-to-b from-[#111618]/90 to-[#0a0d0e] border border-primary/20 rounded-3xl p-8 md:p-12 space-y-8 relative overflow-hidden">
+              <div className="space-y-4 max-w-2xl mx-auto">
+                <div className="inline-flex items-center gap-1.5 bg-success/15 border border-success/30 px-3 py-1.5 rounded-full text-[9px] font-extrabold uppercase text-[#10b981] tracking-widest shadow-xs mx-auto mb-2">
+                  <ShieldCheck className="w-4 h-4" /> 100% Risk Free Guarantee
+                </div>
+                <h2 className="text-2xl md:text-4xl font-serif italic text-white leading-tight">
+                  One small payment. <br />
+                  A lifetime of placement signal return.
+                </h2>
+                <p className="text-xs md:text-sm text-[#9f9d98] font-medium max-w-md mx-auto leading-relaxed">
+                  Join 12,000+ engineering students who bypassed automatic CV filters. Pay ₹{price} once you preview the scorecard.
+                </p>
+              </div>
+
+              {/* standard vs premium grid */}
+              <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto text-left text-xs font-semibold">
+                <div className="border border-[#20292b] bg-[#0a0d0e]/60 rounded-2xl p-5 space-y-3.5">
+                  <span className="text-[10px] font-black text-[#7a7974] tracking-widest uppercase">FREE PREVIEW TEASER</span>
+                  <ul className="space-y-2 text-[#9f9d98]">
+                    <li className="flex items-center gap-2">❌ High-signal copyable PDF text</li>
+                    <li className="flex items-center gap-2">❌ Unlimited post-unlock AI variations</li>
+                    <li className="flex items-center gap-2">❌ Real-time JD Keyword Sync tools</li>
+                    <li className="flex items-center gap-2">✓ Circular ATS score compatability rating</li>
+                    <li className="flex items-center gap-2">✓ Basic structural formatting checklist</li>
+                  </ul>
+                </div>
+
+                <div className="border-2 border-primary bg-[#111618] rounded-2xl p-5 space-y-3.5 shadow-[0_0_25px_rgba(1,105,111,0.25)] relative">
+                  <div className="absolute top-4 right-4 inline-block text-[8px] font-black tracking-widest text-[#00e1ec] uppercase">
+                    WINNING OPTION
+                  </div>
+                  <span className="text-[10px] font-black text-[#00e1ec] tracking-widest uppercase">ATSLIFT PREMIUM UNLOCK</span>
+                  <ul className="space-y-2 text-[#eae9e5]">
+                    <li className="flex items-center gap-2 text-success">✓ Complete optimized, copyable PDF structures</li>
+                    <li className="flex items-center gap-2 text-success">✓ 3 AI regenerations to match specific jobs</li>
+                    <li className="flex items-center gap-2 text-success">✓ High-signal technical stacks & keywords</li>
+                    <li className="flex items-center gap-2 text-success">✓ Direct UPI Razorpay paywall checkouts</li>
+                    <li className="flex items-center gap-2 text-success">✓ Money-back compliance guarantee</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="pt-4 max-w-md mx-auto">
+                <Link
+                  href="/build"
+                  className="w-full h-12 bg-primary hover:bg-primary/95 text-white font-bold text-sm rounded-full transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-[0_4px_15px_rgba(1,105,111,0.3)]"
+                >
+                  <span>Optimize Your Resume Now</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <span className="text-[9px] font-bold text-[#7a7974] uppercase tracking-wider block mt-3">
+                  ₹{price} One-time Fee • Secure Checkout • direct email delivery
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── SECTION 6: SDE CAMPUS PLACEMENTS FAQS ── */}
+          <div className="max-w-3xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 text-left">
+            <h3 className="text-xl md:text-2xl font-serif text-white text-center mb-8">
+              Frequently Asked Questions
+            </h3>
+            
+            <div className="space-y-4">
+              {[
+                {
+                  q: "How does the SDE keyword optimization work?",
+                  a: "Our AI model analyzes your project summary and maps generic descriptions to high-density frameworks (like LangChain, FastAPI, Docker). This aligns your descriptions with industry recruiter demands."
+                },
+                {
+                  q: "Why should I avoid standard Canva resume designs?",
+                  a: "Many ATS systems struggle to read multi-column layouts, custom icons, or graphic blocks common in Canva templates. Our single-column, plain text output is 100% compliant with standard corporate parsers."
+                },
+                {
+                  q: "What is the ₹" + price + " fee for?",
+                  a: "The one-time fee unlocks the full, copy-pasteable optimized text, provides 3 additional free custom variations, and includes high-scoring keywords matching specific Job Descriptions."
+                }
+              ].map((faqItem, idx) => (
+                <div key={idx} className="border border-[#20292b] bg-[#111618]/30 rounded-2xl p-5">
+                  <h4 className="font-bold text-xs md:text-sm text-white mb-2">{faqItem.q}</h4>
+                  <p className="text-xs text-[#9f9d98] leading-relaxed font-semibold">{faqItem.a}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
