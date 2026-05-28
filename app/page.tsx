@@ -1467,8 +1467,8 @@ export default function LandingPage() {
               </div>
 
               {/* Column 3: ATSLift (Sleek Floating Column) */}
-              <div className="max-md:min-w-[85vw] max-md:snap-center bg-gradient-to-b from-[#ffffff] to-primary/[0.02] border-2 border-primary rounded-3xl p-6 md:p-10 shadow-[0_20px_50px_rgba(1,105,111,0.08)] relative max-md:mt-0 md:-translate-y-6 md:scale-[1.04] z-20 flex flex-col justify-between transition-all duration-300 group">
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-extrabold tracking-widest px-4 py-1.5 rounded-full uppercase shadow-md border border-white/20 whitespace-nowrap">
+              <div className="max-md:min-w-[85vw] max-md:snap-center bg-gradient-to-b from-surface to-primary/[0.02] border-2 border-primary rounded-3xl p-6 md:p-10 shadow-[0_20px_50px_rgba(1,105,111,0.08)] relative max-md:mt-0 md:-translate-y-6 md:scale-[1.04] z-20 flex flex-col justify-between transition-all duration-300 group">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-surface text-[9px] font-extrabold tracking-widest px-4 py-1.5 rounded-full uppercase shadow-md border border-white/20 whitespace-nowrap">
                   High Signal Format
                 </div>
                 <div>
