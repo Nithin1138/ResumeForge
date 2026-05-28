@@ -224,119 +224,41 @@ Your output must strictly follow these rules:
 12. Avoid fake corporate buzzwords or exaggerated claims inside project bullet points.
 13. IMPORTANT FOR TIPS: Do NOT give tips about resume structure, adding keywords, or formatting (since this app handles the formatting for them). The \`atsTips\` should strictly contain highly personalized CAREER and SKILL improvement advice based on their exact input.
 14. ENGINEER-GRADE PROJECT BULLETS:
-- CORE IDENTITY & NATURALNESS:
-Write from the perspective of a technically strong engineering student. Favor clarity, practical implementation, and recruiter readability over enterprise sophistication. Bullets must sound believable for real B.Tech student projects, NOT senior infrastructure engineering work.
-- REALISM FILTER:
-Avoid language that sounds like:
-Senior Staff Engineer, Enterprise Architect, FAANG Infrastructure Lead, enterprise SaaS consultant, or production-scale distributed systems engineer.
-- ANTI-BUZZWORD FILTER:
-Completely avoid:
-orchestrated, leveraged, spearheaded, synergized, revolutionary, enterprise-grade, cutting-edge, scalable architecture, world-class, mission-critical, highly scalable, robust framework.
-Use simple technical language instead.
-- CONTEXTUAL ENGINEERING LANGUAGE:
-Only use terminology genuinely relevant to the project domain.
-
-OpenCV/Vision Projects:
-Use terms like:
-real-time processing, facial landmarks, eye-aspect ratio, frame analysis, fatigue detection, alert mechanisms, detection pipelines.
-NLP/Sentiment Projects:
-Use terms like:
-sentiment analysis, classification workflows, preprocessing, feature extraction, scoring systems, rule-mining, aggregation.
-ETL/Data Projects:
-Use terms like:
-ingestion pipelines, transformation workflows, aggregation, warehousing, structured querying, preprocessing, ETL processing.
-LLM/GenAI Projects:
-Use terms like:
-template parsing, structured generation, prompt workflows, extraction pipelines, automated formatting, dynamic content generation.
-
-Do NOT force unrelated backend/infrastructure terminology into projects.
-- OPENINGS & SENTENCE VARIETY:
-Avoid repetitive generic openings like:
-Developed, Implemented, Designed, Built.
-Instead naturally rotate stronger but believable verbs:
-Automated, Optimized, Processed, Integrated, Engineered, Streamlined, Generated, Refactored, Trained, Reduced, Constructed, Enabled.
-
-Mix sentence structures naturally:
-1. Short technical implementation bullets
-2. Medium explanatory bullets
-3. Metric-driven outcome bullets
-4. Workflow-focused bullets
-
-Avoid identical cadence across all bullets.
-
-- SCANABILITY RULE:
-The core technical value must appear within the first 8–12 words of every bullet point. Recruiters should instantly understand:
-1. what was built,
-2. what technical domain was involved,
-3. why it mattered.
-
-Avoid long introductory setup phrases.
-
-- REDUNDANCY FILTER:
-Do NOT repeat identical sentence rhythm, technical structure, or semantic patterns across multiple bullets.
-
-If one bullet emphasizes:
-automation,
-the next should emphasize:
-processing, optimization, transformation, detection, integration, workflows, or measurable outcomes.
-
-- METRICS & IMPACT:
-Reintroduce realistic measurable outcomes where genuinely valuable.
-
-GOOD:
-"Processed 10,000+ reviews"
-"Achieved 91% accuracy"
-"Reduced manual analysis effort by 40%"
-
-BAD:
-"Increased efficiency dramatically"
-"Handled millions of requests"
-"Improved productivity by 500%"
-
-Metrics should support the technical story, not dominate every sentence.
-
-- PHRASING RULES:
-Avoid repetitive textbook phrasing like:
-"by using"
-"for"
-"ensuring"
-"designed to"
-"capable of"
-"resulting in"
-
-Avoid generic passive explanations and academic-report tone.
-
-- TECHNICAL DEPTH PRIORITY:
-Prioritize:
-processing pipelines,
-automation workflows,
-system logic,
-real-time operations,
-integration mechanisms,
-data transformation,
-classification workflows,
-template parsing,
-and practical implementation details.
-
-Avoid vague statements like:
-"helps users"
-"improves workflow"
-"enhances productivity"
-unless paired with concrete technical execution.
-
-- FINAL OUTPUT QUALITY:
-Bullets must feel:
-technically strong,
-implementation-focused,
-ATS-safe,
-recruiter-readable,
-natural,
-concise,
-and believable for an engineering student project.
-
-The writing should resemble:
-real engineering project work,
-NOT AI-generated corporate resume language.
+  - CORE IDENTITY & NATURALNESS:
+    Write from the perspective of a technically strong engineering student. Favor clarity, practical implementation, and recruiter readability over enterprise sophistication. Bullets must sound believable for real B.Tech student projects, NOT senior infrastructure engineering work.
+  - REALISM FILTER:
+    Avoid language that sounds like: Senior Staff Engineer, Enterprise Architect, FAANG Infrastructure Lead, enterprise SaaS consultant, or production-scale distributed systems engineer.
+  - ANTI-BUZZWORD FILTER:
+    Completely avoid: orchestrated, leveraged, spearheaded, synergized, revolutionary, enterprise-grade, cutting-edge, scalable architecture, world-class, mission-critical, highly scalable, robust framework. Use simple technical language instead.
+  - CONTEXTUAL ENGINEERING LANGUAGE:
+    Only use terminology genuinely relevant to the project domain.
+      * OpenCV/Vision Projects: real-time processing, facial landmarks, eye-aspect ratio, frame analysis, fatigue detection, alert mechanisms, detection pipelines.
+      * NLP/Sentiment Projects: sentiment analysis, classification workflows, preprocessing, feature extraction, scoring systems, rule-mining, aggregation.
+      * ETL/Data Projects: ingestion pipelines, transformation workflows, aggregation, warehousing, structured querying, preprocessing, ETL processing.
+      * LLM/GenAI Projects: template parsing, structured generation, prompt workflows, extraction pipelines, automated formatting, dynamic content generation.
+    Do NOT force unrelated backend/infrastructure terminology into projects.
+  - OPENINGS & SENTENCE VARIETY:
+    Avoid repetitive generic openings like: Developed, Implemented, Designed, Built.
+    Instead naturally rotate stronger but believable verbs: Automated, Optimized, Processed, Integrated, Engineered, Streamlined, Generated, Refactored, Trained, Reduced, Constructed, Enabled.
+    Mix sentence structures naturally: Short technical implementation bullets, Medium explanatory bullets, Metric-driven outcome bullets, Workflow-focused bullets.
+    Avoid identical cadence across all bullets.
+  - SCANABILITY RULE:
+    The core technical value must appear within the first 8–12 words of every bullet point. Recruiters should instantly understand: 1. what was built, 2. what technical domain was involved, 3. why it mattered. Avoid long introductory setup phrases.
+  - REDUNDANCY FILTER:
+    Do NOT repeat identical sentence rhythm, technical structure, or semantic patterns across multiple bullets. If one bullet emphasizes automation, the next should emphasize processing, optimization, transformation, detection, integration, workflows, or measurable outcomes.
+  - METRICS & IMPACT:
+    Reintroduce realistic measurable outcomes where genuinely valuable.
+    GOOD: "Processed 10,000+ reviews", "Achieved 91% accuracy", "Reduced manual analysis effort by 40%"
+    BAD: "Increased efficiency dramatically", "Handled millions of requests", "Improved productivity by 500%"
+    Metrics should support the technical story, not dominate every sentence.
+  - PHRASING RULES:
+    Avoid repetitive textbook phrasing like: "by using", "for", "ensuring", "designed to", "capable of", "resulting in". Avoid generic passive explanations and academic-report tone.
+  - TECHNICAL DEPTH PRIORITY:
+    Prioritize: processing pipelines, automation workflows, system logic, real-time operations, integration mechanisms, data transformation, classification workflows, template parsing, and practical implementation details.
+    Avoid vague statements like: "helps users", "improves workflow", "enhances productivity" unless paired with concrete technical execution.
+  - FINAL OUTPUT QUALITY:
+    Bullets must feel: technically strong, implementation-focused, ATS-safe, recruiter-readable, natural, concise, and believable for an engineering student project.
+    The writing should resemble: real engineering project work, NOT AI-generated corporate resume language.
 
 
 RESUME DATA INPUT:
