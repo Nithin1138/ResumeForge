@@ -50,11 +50,15 @@ export interface PositionOfResponsibility {
   description: string;
 }
 
+export interface AchievementInfo {
+  title: string;
+  description: string;
+}
+
+
 export interface FinalOptions {
   jobDescription: string;
   tone: "Professional & Formal" | "Modern & Concise" | "Technical & Detailed";
-  includeAchievements: boolean;
-  achievements: string;
   projectVariants: "1 version" | "3 versions";
   noProjects?: boolean;
 }
@@ -65,6 +69,7 @@ export interface ResumeFormData {
   projects: ProjectInfo[];
   internships: InternshipInfo[];
   positions: PositionOfResponsibility[];
+  achievements: AchievementInfo[];
   options: FinalOptions;
 }
 

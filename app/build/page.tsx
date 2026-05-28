@@ -247,6 +247,9 @@ export default function BuildPage() {
     addPosition,
     removePosition,
     updatePosition,
+    addAchievement,
+    removeAchievement,
+    updateAchievement,
     updateOptions,
     setFullFormData,
     resetForm,
@@ -467,6 +470,11 @@ export default function BuildPage() {
         if (!pos.title.trim()) errors[`pos_${idx}_title`] = "Title is required";
         if (!pos.organization.trim()) errors[`pos_${idx}_org`] = "Organization is required";
         if (!pos.description.trim()) errors[`pos_${idx}_desc`] = "Description is required";
+      });
+
+      formData.achievements.forEach((achieve, idx) => {
+        if (!achieve.title.trim()) errors[`achieve_${idx}_title`] = "Title is required";
+        if (!achieve.description.trim()) errors[`achieve_${idx}_desc`] = "Description is required";
       });
     }
 
@@ -1227,6 +1235,76 @@ export default function BuildPage() {
           ))}
         </div>
       </div>
+
+      {/* Achievements Section */}
+      <div className="space-y-6 border-t border-border/40 pt-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+          <div>
+            <h2 className="text-xl font-bold font-sans">Achievements (Optional)</h2>
+            <p className="text-sm text-text-muted">Feature competitive coding ranks, hackathons, or academic awards.</p>
+          </div>
+          <button
+            onClick={addAchievement}
+            disabled={formData.achievements.length >= 4}
+            className="px-4 py-2 bg-primary/10 border border-primary/20 hover:bg-primary/25 disabled:opacity-50 text-primary font-bold text-xs rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer w-full md:w-auto justify-center"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Achievement ({formData.achievements.length}/4)</span>
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          {formData.achievements.map((achieve, idx) => (
+            <div key={idx} className="border border-border bg-surface/50 rounded-2xl p-6 space-y-4 relative">
+              <div className="flex justify-between items-center pb-2 border-b border-border/30">
+                <span className="text-xs font-bold text-primary tracking-wider uppercase">Achievement #{idx + 1}</span>
+                <button
+                  onClick={() => removeAchievement(idx)}
+                  className="text-text-muted hover:text-error transition-colors p-1"
+                >
+                  <Trash2 className="w-4.5 h-4.5" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className="block text-xs font-bold mb-1">Title / Award Name *</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-xs font-semibold"
+                    placeholder="e.g. 1st Place - Smart India Hackathon"
+                    value={achieve.title}
+                    onChange={(e) => updateAchievement(idx, { title: e.target.value })}
+                  />
+                  {validationErrors[`achieve_${idx}_title`] && (
+                    <p className="text-[10px] text-error mt-0.5 font-bold">{validationErrors[`achieve_${idx}_title`]}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold mb-1">Details / Description * (Max 200 chars)</label>
+                  <textarea
+                    rows={2}
+                    maxLength={200}
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-surface focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-xs font-semibold resize-none"
+                    placeholder="e.g. Led a team of 4 to build an AI-based recruitment portal. Selected from 10,000+ teams."
+                    value={achieve.description}
+                    onChange={(e) => updateAchievement(idx, { description: e.target.value })}
+                  />
+                  <div className="flex justify-between mt-0.5">
+                    {validationErrors[`achieve_${idx}_desc`] ? (
+                      <p className="text-[10px] text-error font-bold">{validationErrors[`achieve_${idx}_desc`]}</p>
+                    ) : (
+                      <div />
+                    )}
+                    <span className="text-[10px] text-text-muted font-bold">{achieve.description.length}/200</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
@@ -1286,38 +1364,7 @@ export default function BuildPage() {
             ))}
           </div>
         </div>
-
-        {/* Achievements Section */}
-        <div className="border-t border-border/40 pt-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="block text-sm font-semibold">Include Achievements Section?</label>
-              <p className="text-xs text-text-muted">Feature competitive coding, academic ranks, or hackathons.</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={formData.options.includeAchievements}
-                onChange={(e) => updateOptions({ includeAchievements: e.target.checked })}
-              />
-              <div className="w-11 h-6 bg-border peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-            </label>
-          </div>
-
-          {formData.options.includeAchievements && (
-            <div>
-              <label className="block text-xs font-bold mb-2">List Achievements (Comma-separated or bullet list)</label>
-              <textarea
-                rows={2}
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                placeholder="e.g. Secured Global Rank 230 out of 50,000 in LeetCode Weekly, Won 1st place in Smart India Hackathon 2025"
-                value={formData.options.achievements}
-                onChange={(e) => updateOptions({ achievements: e.target.value })}
-              />
-            </div>
-          )}
-        </div>
+        {/* Old Achievements Section removed */}
 
         {/* Project Variants */}
         <div className="border-t border-border/40 pt-5">

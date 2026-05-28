@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { ResumeFormData, PersonalInfo, SkillsInfo, ProjectInfo, InternshipInfo, PositionOfResponsibility, FinalOptions } from "@/types/resume";
+import { ResumeFormData, PersonalInfo, SkillsInfo, ProjectInfo, InternshipInfo, PositionOfResponsibility, AchievementInfo, FinalOptions } from "@/types/resume";
 
 interface FormStore {
   formData: ResumeFormData;
@@ -30,6 +30,12 @@ interface FormStore {
   addPosition: () => void;
   removePosition: (index: number) => void;
   updatePosition: (index: number, position: Partial<PositionOfResponsibility>) => void;
+
+  // Achievement Repeater
+  addAchievement: () => void;
+  removeAchievement: (index: number) => void;
+  updateAchievement: (index: number, achievement: Partial<AchievementInfo>) => void;
+
 
   // Options
   updateOptions: (options: Partial<FinalOptions>) => void;
@@ -71,11 +77,10 @@ const initialFormData: ResumeFormData = {
   projects: [],
   internships: [],
   positions: [],
+  achievements: [],
   options: {
     jobDescription: "",
     tone: "Professional & Formal",
-    includeAchievements: false,
-    achievements: "",
     projectVariants: "1 version",
     noProjects: false,
   },
@@ -100,6 +105,7 @@ export const useFormStore = create<FormStore>()(
             projects: data.projects || [],
             internships: data.internships || [],
             positions: data.positions || [],
+            achievements: data.achievements || [],
             options: { ...initialFormData.options, ...(data.options || {}) },
           },
           lastSaved: Date.now(),
@@ -234,13 +240,42 @@ export const useFormStore = create<FormStore>()(
 
       updatePosition: (index, position) =>
         set((state) => {
-          const updatedPositions = [...state.formData.positions];
-          updatedPositions[index] = { ...updatedPositions[index], ...position };
+          const newPositions = [...state.formData.positions];
+          newPositions[index] = { ...newPositions[index], ...position };
           return {
-            formData: {
-              ...state.formData,
-              positions: updatedPositions,
-            },
+            formData: { ...state.formData, positions: newPositions },
+            lastSaved: Date.now(),
+          };
+        }),
+
+      // Achievement actions
+      addAchievement: () =>
+        set((state) => ({
+          formData: {
+            ...state.formData,
+            achievements: [
+              ...state.formData.achievements,
+              { title: "", description: "" },
+            ],
+          },
+          lastSaved: Date.now(),
+        })),
+
+      removeAchievement: (index) =>
+        set((state) => ({
+          formData: {
+            ...state.formData,
+            achievements: state.formData.achievements.filter((_, i) => i !== index),
+          },
+          lastSaved: Date.now(),
+        })),
+
+      updateAchievement: (index, achievement) =>
+        set((state) => {
+          const newAchievements = [...state.formData.achievements];
+          newAchievements[index] = { ...newAchievements[index], ...achievement };
+          return {
+            formData: { ...state.formData, achievements: newAchievements },
             lastSaved: Date.now(),
           };
         }),

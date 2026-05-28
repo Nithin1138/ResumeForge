@@ -13,7 +13,7 @@ const getGeminiClient = () => {
 
 // Generate realistic mock data using student's actual inputs
 const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
-  const { personal, skills, projects, internships, positions, options } = formData;
+  const { personal, skills, projects, internships, positions, achievements, options } = formData;
   
   const languagesList = skills.languages ? skills.languages.split(",").map(s => s.trim()) : ["Python", "Java", "C++"];
   const frameworksList = skills.frameworks ? skills.frameworks.split(",").map(s => s.trim()) : ["React", "FastAPI", "Next.js"];
@@ -84,8 +84,8 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
   }) : [];
 
   // Build Achievements
-  const mockAchievements = options.includeAchievements && options.achievements
-    ? options.achievements.split(",").map(a => a.trim())
+  const mockAchievements = achievements && achievements.length > 0
+    ? achievements.map(a => `${a.title}: ${a.description}`)
     : [
         "Secured top 5% rank in Smart India Hackathon among 10,000+ applicants.",
         "Solved 350+ data structures and algorithms questions on LeetCode (Max Rating: 1650)."
@@ -203,7 +203,7 @@ export async function generateGroqFallback(prompt: string, isJson: boolean = fal
 }
 
 export async function generateResumeContent(formData: ResumeFormData): Promise<FullResumeOutput> {
-  const { personal, skills, projects, internships, positions, options } = formData;
+  const { personal, skills, projects, internships, positions, achievements, options } = formData;
 
   // Build precise prompt instructions
   const prompt = `
@@ -279,7 +279,11 @@ Description: ${pos.description}
 `).join("\n")}
 
 ACHIEVEMENTS:
-${options.includeAchievements ? options.achievements : "None"}
+${achievements && achievements.length > 0 ? achievements.map((a, idx) => `
+Achievement #${idx + 1}:
+Title: ${a.title}
+Description: ${a.description}
+`).join("\n") : "None"}
 
 JOB DESCRIPTION FOR KEYWORD ALIGNMENT (if provided):
 ${options.jobDescription || "None"}
