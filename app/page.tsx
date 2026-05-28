@@ -210,18 +210,26 @@ export default function LandingPage() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="md:hidden fixed top-0 right-0 bottom-0 w-[85vw] max-w-sm z-[80] bg-surface border-l border-border/50 flex flex-col shadow-2xl"
+              className={`md:hidden fixed top-0 right-0 bottom-0 w-[85vw] max-w-sm z-[80] border-l flex flex-col shadow-2xl transition-colors duration-300 ${
+                landingVariant === "dashboard" ? "bg-[#080b0c] border-[#20292b] text-[#eae9e5]" : "bg-surface border-l border-border/50 text-text"
+              }`}
             >
-              <div className="flex items-center justify-between p-6 border-b border-border/40">
+              <div className={`flex items-center justify-between p-6 border-b ${
+                landingVariant === "dashboard" ? "border-[#20292b]" : "border-border/40"
+              }`}>
                 <div className="flex items-center space-x-2">
                   <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
-                  <span className="font-bold text-lg tracking-tight">
+                  <span className={`font-bold text-lg tracking-tight ${
+                    landingVariant === "dashboard" ? "text-white" : "text-text"
+                  }`}>
                     ATS<span className="text-primary italic">Lift</span>
                   </span>
                 </div>
                 <button 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 rounded-full bg-border/30 text-text-muted hover:text-text transition-colors"
+                  className={`p-2 rounded-full transition-colors ${
+                    landingVariant === "dashboard" ? "bg-white/5 text-[#9f9d98] hover:text-white" : "bg-border/30 text-text-muted hover:text-text"
+                  }`}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -229,28 +237,62 @@ export default function LandingPage() {
               
               <div className="flex-1 overflow-y-auto py-6 px-6 flex flex-col space-y-6">
                 <nav className="flex flex-col space-y-4">
-                  <Link href="/ats-check" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-text-muted hover:text-text flex items-center justify-between py-2 border-b border-border/30">
+                  <Link 
+                    href="/ats-check" 
+                    onClick={() => setMobileMenuOpen(false)} 
+                    className={`text-lg font-bold flex items-center justify-between py-2 border-b transition-colors ${
+                      landingVariant === "dashboard" 
+                        ? "text-[#9f9d98] hover:text-[#00e1ec] border-[#20292b]" 
+                        : "text-text-muted hover:text-text border-border/30"
+                    }`}
+                  >
                     <span>ATS Grader Demo</span>
                     <ArrowRight className="w-4 h-4 opacity-50" />
                   </Link>
-                  <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-text-muted hover:text-text flex items-center justify-between py-2 border-b border-border/30">
+                  <a 
+                    href="#faq" 
+                    onClick={() => setMobileMenuOpen(false)} 
+                    className={`text-lg font-bold flex items-center justify-between py-2 border-b transition-colors ${
+                      landingVariant === "dashboard" 
+                        ? "text-[#9f9d98] hover:text-[#00e1ec] border-[#20292b]" 
+                        : "text-text-muted hover:text-text border-border/30"
+                    }`}
+                  >
                     <span>FAQ</span>
                     <ArrowRight className="w-4 h-4 opacity-50" />
                   </a>
                   {session ? (
-                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-primary flex items-center justify-between py-2 border-b border-border/30">
+                    <Link 
+                      href="/dashboard" 
+                      onClick={() => setMobileMenuOpen(false)} 
+                      className={`text-lg font-bold flex items-center justify-between py-2 border-b transition-colors ${
+                        landingVariant === "dashboard" 
+                          ? "text-[#00e1ec] hover:text-white border-[#20292b]" 
+                          : "text-primary hover:text-primary/80 border-border/30"
+                      }`}
+                    >
                       <span>Dashboard</span>
                       <ArrowRight className="w-4 h-4 opacity-50" />
                     </Link>
                   ) : (
-                    <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-text-muted hover:text-text flex items-center justify-between py-2 border-b border-border/30">
+                    <Link 
+                      href="/login" 
+                      onClick={() => setMobileMenuOpen(false)} 
+                      className={`text-lg font-bold flex items-center justify-between py-2 border-b transition-colors ${
+                        landingVariant === "dashboard" 
+                          ? "text-[#9f9d98] hover:text-white border-[#20292b]" 
+                          : "text-text-muted hover:text-text border-border/30"
+                      }`}
+                    >
                       <span>Log In</span>
                       <ArrowRight className="w-4 h-4 opacity-50" />
                     </Link>
                   )}
                 </nav>
                 
-                <div className="mt-auto pt-6 border-t border-border/40">
+                <div className={`mt-auto pt-6 border-t ${
+                  landingVariant === "dashboard" ? "border-[#20292b]" : "border-border/40"
+                }`}>
                   <Link
                     href="/build"
                     onClick={() => setMobileMenuOpen(false)}
@@ -338,20 +380,8 @@ export default function LandingPage() {
             </div>
 
             {/* Glowing Headline */}
-            <h1 className="text-2xl md:text-6.5xl font-serif tracking-tight text-white leading-tight font-extralight max-w-4xl mx-auto drop-shadow-md">
-              {heroHeadline.includes(".") ? (
-                <>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-[#eae9e5]">{heroHeadline.split(".")[0]}.</span>
-                  <br className="hidden md:inline" />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-[#00e1ec] to-success font-normal italic drop-shadow-[0_2px_15px_rgba(0,225,236,0.25)]">
-                    {heroHeadline.split(".")[1]}
-                  </span>
-                </>
-              ) : (
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-[#eae9e5] to-[#00e1ec] font-bold">
-                  {heroHeadline}
-                </span>
-              )}
+            <h1 className="text-4xl md:text-7xl font-serif tracking-tight text-white leading-[1.08] max-w-3xl mx-auto mb-6 drop-shadow-md">
+              {heroHeadline}
             </h1>
 
             {/* Subheading */}
