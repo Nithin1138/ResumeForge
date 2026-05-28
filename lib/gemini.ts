@@ -222,7 +222,11 @@ Your output must strictly follow these rules:
 10. For the summary: mention target role in first line. Keep to 3 sentences max. ATS reads the first 100 words hard.
 11. If the tech stack is already displayed below the project title, do NOT repeat technologies inside bullet points unless absolutely necessary for explaining a specific implementation detail. Focus strictly on technical implementation, architecture, and outcomes.
 12. Avoid fake corporate buzzwords or exaggerated claims inside project bullet points.
-13. IMPORTANT FOR TIPS: Do NOT give tips about resume structure, adding keywords, or formatting (since this app handles the formatting for them). The \`atsTips\` should strictly contain highly personalized CAREER and SKILL improvement advice based on their exact input (e.g., "Since you know React, learning Next.js would boost your frontend profile", "Your projects lack backend databases, try adding PostgreSQL to your next project").
+13. IMPORTANT FOR TIPS: Do NOT give tips about resume structure, adding keywords, or formatting (since this app handles the formatting for them). The \`atsTips\` should strictly contain highly personalized CAREER and SKILL improvement advice based on their exact input.
+14. IMPROVE PROJECT BULLETS USING X-Y-Z STYLE: Rewrite project bullet points using a simplified and realistic X-Y-Z structure ("Accomplished X, measured by Y, by doing Z").
+  - Keep bullets natural, believable, and engineering-focused.
+  - Avoid fake exaggerated metrics like "Increased productivity by 500%". Use measurable technical outcomes only when realistic (e.g., "Reduced API response latency by 35% by optimizing FastAPI request handling").
+  - Keep it concise and recruiter-readable.
 
 RESUME DATA INPUT:
 Name: ${personal.fullName}

@@ -7,9 +7,10 @@ export interface PersonalInfo {
   cgpa: string;
   targetRole: string;
   phone?: string;
-  linkedin?: string;
-  github?: string;
-  hasPG?: boolean;
+  linkedin: string;
+  github: string;
+  location: string;
+  hasPG: boolean;
   pgCollegeName?: string;
   pgBranch?: string;
   pgGraduationYear?: string;

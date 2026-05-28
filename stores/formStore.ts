@@ -58,6 +58,7 @@ const initialFormData: ResumeFormData = {
     phone: "",
     linkedin: "",
     github: "",
+    location: "",
     hasPG: false,
     pgCollegeName: "",
     pgBranch: "",

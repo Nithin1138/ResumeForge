@@ -682,6 +682,17 @@ export default function BuildPage() {
           />
         </div>
 
+        <div>
+          <label className="block text-sm font-semibold mb-2">Location</label>
+          <input
+            type="text"
+            className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+            placeholder="e.g. Andhra Pradesh, India"
+            value={formData.personal.location || ""}
+            onChange={(e) => updatePersonal({ location: e.target.value })}
+          />
+        </div>
+
         <div className="md:col-span-2 border-t border-border/40 pt-4 mt-2">
           <label className="flex items-center space-x-3 cursor-pointer">
             <input

@@ -164,14 +164,23 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             lineHeight: 1.4
           }}>
             {[
+              p.location && <span key="location" style={{ whiteSpace: "nowrap" }}>{p.location}</span>,
               p.email && <span key="email" style={{ whiteSpace: "nowrap" }}>{p.email}</span>,
               p.phone && <span key="phone" style={{ whiteSpace: "nowrap" }}>{fmtPhone(p.phone)}</span>,
-              p.linkedin && <span key="linkedin" style={{ whiteSpace: "nowrap" }}>{fmtLinkedIn(p.linkedin)}</span>,
-              p.github && <span key="github" style={{ whiteSpace: "nowrap" }}>{fmtGitHub(p.github)}</span>
+              p.linkedin && (
+                <a key="linkedin" href={`https://${fmtLinkedIn(p.linkedin)}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit", whiteSpace: "nowrap" }}>
+                  LinkedIn
+                </a>
+              ),
+              p.github && (
+                <a key="github" href={`https://${fmtGitHub(p.github)}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit", whiteSpace: "nowrap" }}>
+                  GitHub
+                </a>
+              )
             ].filter(Boolean).map((node, idx, arr) => (
               <span key={idx} style={{ display: "inline-flex", alignItems: "center" }}>
                 {node}
-                {idx < arr.length - 1 && <span style={{ color: "#bbb", marginLeft: "8px" }}>|</span>}
+                {idx < arr.length - 1 && <span style={{ color: "#bbb", margin: "0 8px" }}>|</span>}
               </span>
             ))}
           </div>
@@ -225,12 +234,10 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             <div style={{ marginBottom: "13pt" }}>
               <SectionTitle>Technical Skills</SectionTitle>
               <div style={{ fontSize: "9.5pt", lineHeight: 1.5 }}>
-                {d.skills.languages?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Programming:</strong> {d.skills.languages.join(", ")}</p>}
-                {d.skills.frameworks?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Frameworks:</strong> {d.skills.frameworks.join(", ")}</p>}
+                {d.skills.languages?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Languages:</strong> {d.skills.languages.join(", ")}</p>}
+                {d.skills.frameworks?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Frameworks & Libraries:</strong> {d.skills.frameworks.join(", ")}</p>}
                 {d.skills.databases?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Databases:</strong> {d.skills.databases.join(", ")}</p>}
-                {d.skills.tools?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Tools:</strong> {d.skills.tools.join(", ")}</p>}
-                {d.skills.concepts?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Concepts:</strong> {d.skills.concepts.join(", ")}</p>}
-                {d.skills.softSkills?.length > 0 && <p style={{ margin: "0" }}><strong>Soft Skills:</strong> {d.skills.softSkills.join(", ")}</p>}
+                {d.skills.tools?.length > 0 && <p style={{ margin: "0" }}><strong>Tools & Platforms:</strong> {d.skills.tools.join(", ")}</p>}
               </div>
             </div>
           )}
@@ -241,7 +248,14 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
               <SectionTitle>Academic Projects</SectionTitle>
               {d.projects.map((proj: any, idx: number) => (
                 <div key={idx} style={{ marginBottom: idx === d.projects.length - 1 ? 0 : "10pt" }}>
-                  <div style={{ fontWeight: "bold", fontSize: "10.5pt", color: "#111" }}>{proj.title}</div>
+                  <div style={{ fontWeight: "bold", fontSize: "10.5pt", color: "#111", display: "flex", alignItems: "center", gap: "6px" }}>
+                    {proj.title}
+                    {proj.link && (
+                      <a href={proj.link.startsWith("http") ? proj.link : `https://${proj.link}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8pt", color: "#666", fontWeight: "normal" }}>
+                        [{proj.link.includes("github.com") ? "GitHub" : "Live Demo"}]
+                      </a>
+                    )}
+                  </div>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9.5pt", color: "#666", marginTop: "1.5pt" }}>
                     <span style={{ fontStyle: "italic", flex: 1 }}>{proj.techStack}</span>
                     {proj.duration && <span style={{ flexShrink: 0, whiteSpace: "nowrap" }}>{proj.duration}</span>}
