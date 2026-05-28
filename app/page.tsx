@@ -159,9 +159,45 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className={`flex flex-col min-h-screen transition-colors duration-300 font-sans ${
-      landingVariant === "dashboard" ? "dark bg-bg-base text-text selection:bg-primary/30" : "light bg-bg-base text-text selection:bg-primary/20"
-    }`}>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        html, body {
+          background-color: ${landingVariant === "dashboard" ? "#080b0c" : "#f7f6f2"} !important;
+          color: ${landingVariant === "dashboard" ? "#eae9e5" : "#28251d"} !important;
+          color-scheme: ${landingVariant === "dashboard" ? "dark" : "light"} !important;
+        }
+        
+        :root {
+          ${landingVariant === "dashboard" ? `
+            --primary: #019b9c !important;
+            --bg-base: #080b0c !important;
+            --surface: #111618 !important;
+            --text: #eae9e5 !important;
+            --text-muted: #9f9d98 !important;
+            --border: #20292b !important;
+            --success: #10b981 !important;
+            --warning: #f59e0b !important;
+            --error: #ef4444 !important;
+            --background: #080b0c !important;
+            --foreground: #eae9e5 !important;
+          ` : `
+            --primary: #01696f !important;
+            --bg-base: #f7f6f2 !important;
+            --surface: #f9f8f5 !important;
+            --text: #28251d !important;
+            --text-muted: #7a7974 !important;
+            --border: #d4d1ca !important;
+            --success: #437a22 !important;
+            --warning: #964219 !important;
+            --error: #a12c7b !important;
+            --background: #f7f6f2 !important;
+            --foreground: #28251d !important;
+          `}
+        }
+      `}} />
+      <div className={`flex flex-col min-h-screen transition-colors duration-300 font-sans ${
+        landingVariant === "dashboard" ? "bg-[#080b0c] text-[#eae9e5] selection:bg-primary/30" : "bg-bg-base text-text selection:bg-primary/20"
+      }`}>
       {isBannerActive && (
         <div className={`w-full text-center py-2 px-4 text-xs font-bold font-sans flex items-center justify-center gap-2 relative z-50 border-b ${
           landingVariant === "dashboard"
@@ -1744,5 +1780,6 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
