@@ -19,6 +19,27 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   useEffect(() => {
     setSession(getLocalSession());
 
+    // Log paywall view analytics
+    try {
+      let sid = localStorage.getItem("atslift_session_id");
+      if (!sid) {
+        sid = "session_" + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem("atslift_session_id", sid);
+      }
+      fetch("/api/analytics/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: sid,
+          eventType: "PAYWALL_VIEW",
+          page: `result_${resumeId}`,
+          metadata: { resumeId }
+        })
+      }).catch(err => console.error("Failed to log paywall view:", err));
+    } catch (e) {
+      console.error(e);
+    }
+
     const fetchConfig = async () => {
       try {
         const res = await fetch("/api/config");

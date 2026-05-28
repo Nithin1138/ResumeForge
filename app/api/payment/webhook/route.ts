@@ -54,6 +54,20 @@ export async function POST(req: NextRequest) {
         });
         console.log(`[Webhook] ✓ Resume ${resumeId} updated to PAID. Payment Status: ${updatedResume.paymentStatus}`);
 
+        // Log successful checkout unlock analytics event via webhook
+        try {
+          await prisma.analyticsEvent.create({
+            data: {
+              sessionId: updatedResume.sessionId,
+              eventType: "PAYWALL_UNLOCK",
+              page: `result_${resumeId}`,
+              metadata: JSON.stringify({ resumeId, amountPaid: updatedResume.amountPaid, source: "webhook" })
+            }
+          });
+        } catch (e) {
+          console.error("Failed to log webhook paywall unlock event:", e);
+        }
+
         // Verify the update immediately
         const verified = await prisma.resume.findUnique({
           where: { id: resumeId }

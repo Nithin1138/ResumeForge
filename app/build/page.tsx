@@ -308,6 +308,27 @@ export default function BuildPage() {
   useEffect(() => {
     const session = getLocalSession();
     setIsLoggedIn(!!session);
+
+    // Log Form Load analytics event
+    try {
+      let sid = localStorage.getItem("atslift_session_id");
+      if (!sid) {
+        sid = "session_" + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem("atslift_session_id", sid);
+      }
+      fetch("/api/analytics/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: sid,
+          eventType: "FORM_LOAD",
+          page: "build",
+          metadata: { loggedIn: !!session }
+        })
+      }).catch(err => console.error("Failed to log form load:", err));
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
   // Cloud auto-save for logged-in users (debounced, every 15s)

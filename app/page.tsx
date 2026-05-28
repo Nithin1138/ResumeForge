@@ -78,6 +78,27 @@ export default function LandingPage() {
   useEffect(() => {
     getSession().then(setSession);
     
+    // Log landing visit analytics
+    try {
+      let sid = localStorage.getItem("atslift_session_id");
+      if (!sid) {
+        sid = "session_" + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem("atslift_session_id", sid);
+      }
+      fetch("/api/analytics/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: sid,
+          eventType: "LANDING_VISIT",
+          page: "landing",
+          metadata: { userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "unknown" }
+        })
+      }).catch(err => console.error("Failed to log landing visit:", err));
+    } catch (e) {
+      console.error(e);
+    }
+
     // Fetch active config dynamically from database
     fetch("/api/config")
       .then(res => res.json())

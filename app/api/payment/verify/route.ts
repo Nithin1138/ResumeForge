@@ -27,13 +27,28 @@ export async function POST(req: NextRequest) {
 
     if (payment && payment.status === "captured") {
       // Mark as paid in our database manually (fallback for missing webhooks)
-      await prisma.resume.update({
+      const updatedResume = await prisma.resume.update({
         where: { id: resumeId },
         data: {
           paymentStatus: "PAID",
           amountPaid: typeof payment.amount === 'number' ? payment.amount : 4900,
         }
       });
+
+      // Log successful checkout unlock analytics event
+      try {
+        await prisma.analyticsEvent.create({
+          data: {
+            sessionId: updatedResume.sessionId,
+            eventType: "PAYWALL_UNLOCK",
+            page: `result_${resumeId}`,
+            metadata: JSON.stringify({ resumeId, amountPaid: updatedResume.amountPaid })
+          }
+        });
+      } catch (e) {
+        console.error("Failed to log paywall unlock event:", e);
+      }
+
       return NextResponse.json({ success: true, status: "PAID" });
     }
 

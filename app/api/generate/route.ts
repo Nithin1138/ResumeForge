@@ -59,6 +59,20 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // Log backend analytics event for step completion
+    try {
+      await prisma.analyticsEvent.create({
+        data: {
+          sessionId,
+          eventType: "FORM_COMPLETE",
+          page: "build",
+          metadata: JSON.stringify({ resumeId: resume.id, college: resume.college, branch: resume.branch })
+        }
+      });
+    } catch (e) {
+      console.error("Failed to log form completion event:", e);
+    }
+
     return NextResponse.json({ resumeId: resume.id });
   } catch (error) {
     console.error("API /api/generate POST error:", error);

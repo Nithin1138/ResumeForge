@@ -1349,11 +1349,11 @@ export default function AdminPanelPage() {
 
                   <div className="space-y-5 pt-2">
                     {[
-                      { step: "1. Unique Landing Session (Visits)", percent: 100, count: stats.totalUsers * 16 + 214, fill: "bg-primary/20", tag: "Acquisition Pool" },
-                      { step: "2. Form Wizard Loaded (Intent)", percent: 72, count: stats.totalUsers * 10, fill: "bg-primary/45", tag: "High Intent drafts" },
-                      { step: "3. Form Completion (ATS calculated)", percent: 54, count: stats.totalResumesBuilt, fill: "bg-primary/60", tag: "Completed score teasers" },
-                      { step: "4. Reached Paywall Checkout", percent: 38, count: Math.round(stats.totalPaidResumes * 1.8), fill: "bg-primary/75", tag: "Paywall views" },
-                      { step: "5. Successful Unlocks (₹49 paid)", percent: conversionRate, count: stats.totalPaidResumes, fill: "bg-primary", tag: "Net premium conversions" },
+                      { step: "1. Unique Landing Session (Visits)", percent: 100, count: stats.funnelVisits, fill: "bg-primary/20", tag: "Acquisition Pool" },
+                      { step: "2. Form Wizard Loaded (Intent)", percent: stats.funnelVisits > 0 ? Math.round((stats.funnelIntent / stats.funnelVisits) * 100) : 0, count: stats.funnelIntent, fill: "bg-primary/45", tag: "High Intent drafts" },
+                      { step: "3. Form Completion (ATS calculated)", percent: stats.funnelVisits > 0 ? Math.round((stats.funnelBuilds / stats.funnelVisits) * 100) : 0, count: stats.funnelBuilds, fill: "bg-primary/60", tag: "Completed score teasers" },
+                      { step: "4. Reached Paywall Checkout", percent: stats.funnelVisits > 0 ? Math.round((stats.funnelCheckout / stats.funnelVisits) * 100) : 0, count: stats.funnelCheckout, fill: "bg-primary/75", tag: "Paywall views" },
+                      { step: "5. Successful Unlocks (₹49 paid)", percent: stats.funnelVisits > 0 ? Math.round((stats.funnelPaid / stats.funnelVisits) * 100) : 0, count: stats.funnelPaid, fill: "bg-primary", tag: "Net premium conversions" },
                     ].map((item, idx) => (
                       <div key={idx} className="relative">
                         <div className="flex justify-between items-center mb-1 text-xs font-bold text-text-muted uppercase tracking-wider">
