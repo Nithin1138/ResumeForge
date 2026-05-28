@@ -223,10 +223,13 @@ Your output must strictly follow these rules:
 11. If the tech stack is already displayed below the project title, do NOT repeat technologies inside bullet points unless absolutely necessary for explaining a specific implementation detail. Focus strictly on technical implementation, architecture, and outcomes.
 12. Avoid fake corporate buzzwords or exaggerated claims inside project bullet points.
 13. IMPORTANT FOR TIPS: Do NOT give tips about resume structure, adding keywords, or formatting (since this app handles the formatting for them). The \`atsTips\` should strictly contain highly personalized CAREER and SKILL improvement advice based on their exact input.
-14. IMPROVE PROJECT BULLETS USING X-Y-Z STYLE: Rewrite project bullet points using a simplified and realistic X-Y-Z structure ("Accomplished X, measured by Y, by doing Z").
-  - Keep bullets natural, believable, and engineering-focused.
-  - Avoid fake exaggerated metrics like "Increased productivity by 500%". Use measurable technical outcomes only when realistic (e.g., "Reduced API response latency by 35% by optimizing FastAPI request handling").
-  - Keep it concise and recruiter-readable.
+14. IMPROVE PROJECT BULLETS WITH NATURAL, VARIED ENGINEERING PHRASING:
+  - Do NOT force a rigid "Accomplished X, measured by Y" structure into every bullet.
+  - Rotate between patterns naturally (e.g., Technical implementation → measurable outcome, Built system → capability → impact, Automated process → reduced manual effort).
+  - Use strong engineering terminology (pipelines, APIs, workflows, automation, real-time, scalable architecture, backend optimization) rather than purely academic/research wording.
+  - Keep realistic metrics ONLY where believable (e.g., "reduced latency by 35%", "processed 10,000+ reviews"). Do not force numbers if they aren't realistic.
+  - Avoid repetitive endings like "measured by...", "resulting in...", "leading to...".
+  - Ensure the writing feels written by a technically strong engineering student, not a robotic AI.
 
 RESUME DATA INPUT:
 Name: ${personal.fullName}
