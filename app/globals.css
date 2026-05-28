@@ -37,7 +37,7 @@
 
 .dark {
   /* DARK THEME (Variant B color palette) */
-  --primary: #00e1ec;
+  --primary: #019b9c; /* Muted cyan to prevent blindingly bright buttons while maintaining brand */
   --bg-base: #080b0c;
   --surface: #111618;
   --text: #eae9e5;
