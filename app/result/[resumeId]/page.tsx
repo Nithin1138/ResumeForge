@@ -15,6 +15,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [session, setSession] = useState<any>(null);
   const [price, setPrice] = useState(49);
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
 
   useEffect(() => {
     setSession(getLocalSession());
@@ -164,10 +165,19 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
       <main className="flex-1 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row">
 
         {/* ── LEFT: Fixed-height Locked Resume Preview (never scrolls) ── */}
-        <div className="w-full h-[45vh] lg:h-full lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 overflow-hidden">
+        <div className={`w-full ${showMobilePreview ? "h-[50vh]" : "h-[56px]"} lg:h-full lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 overflow-hidden transition-all duration-300`}>
           {/* Panel header */}
           <div className="flex items-center justify-between mb-3 flex-shrink-0">
-            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>
+              <button
+                type="button"
+                onClick={() => setShowMobilePreview(!showMobilePreview)}
+                className="lg:hidden text-[10px] font-bold text-primary bg-primary/10 border border-primary/25 px-2 py-0.5 rounded-md hover:bg-primary/15 transition-colors cursor-pointer"
+              >
+                {showMobilePreview ? "Hide Preview 👁️" : "Show Preview 👁️"}
+              </button>
+            </div>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-warning bg-warning/10 border border-warning/25 px-2.5 py-1 rounded-full">
               <Lock className="w-3 h-3" /> Locked
             </span>
