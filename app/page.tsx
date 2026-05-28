@@ -367,14 +367,14 @@ export default function LandingPage() {
       </header>
 
       {landingVariant === "dashboard" ? (
-        <div className="flex-1 w-full bg-[#080b0c] text-[#eae9e5] min-h-screen py-16 flex flex-col gap-20 relative overflow-hidden font-sans bg-[linear-gradient(rgba(255,255,255,0.005)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.005)_1px,transparent_1px)] bg-[size:30px_30px]">
+        <div className="flex-1 w-full bg-[#080b0c] text-[#eae9e5] min-h-screen py-12 md:py-20 flex flex-col gap-12 md:gap-20 relative overflow-hidden font-sans bg-[linear-gradient(rgba(255,255,255,0.005)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.005)_1px,transparent_1px)] bg-[size:30px_30px]">
           {/* Organic floating mesh glow blurs for maximum wow factor */}
           <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[160px] pointer-events-none animate-pulse duration-[12000ms]" />
           <div className="absolute top-[10%] right-[-100px] w-[600px] h-[600px] bg-[#00e1ec]/8 rounded-full blur-[180px] pointer-events-none animate-pulse duration-[10000ms]" />
           <div className="absolute bottom-1/4 left-[-150px] w-[500px] h-[500px] bg-emerald-500/4 rounded-full blur-[150px] pointer-events-none" />
 
           {/* ── SECTION 1: PROFESSIONAL HERO HEADER ── */}
-          <div ref={heroRef} className="text-center space-y-6 max-w-4xl mx-auto pt-6 md:pt-20 relative z-10 px-4 animate-fadeIn">
+          <div ref={heroRef} className="text-center space-y-4 md:space-y-6 max-w-4xl mx-auto pt-4 md:pt-14 relative z-10 px-4 animate-fadeIn">
             {/* Floating SDE Candidate Portal Badge */}
             <div className="inline-flex items-center space-x-2 px-4.5 py-2.5 rounded-full border border-[#00e1ec]/30 bg-[#00e1ec]/5 text-[10px] font-black tracking-widest text-[#00e1ec] uppercase shadow-[0_0_30px_rgba(0,225,236,0.15),inset_0_1px_rgba(255,255,255,0.05)] hover:border-[#00e1ec]/50 hover:bg-[#00e1ec]/10 hover:scale-105 transition-all duration-300 backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5 text-[#00e1ec] animate-spin-slow" />
@@ -382,11 +382,11 @@ export default function LandingPage() {
             </div>
 
             {/* Glowing Headline */}
-            <h1 className="text-2xl md:text-6.5xl font-serif tracking-tight text-white leading-tight font-extralight max-w-4xl mx-auto drop-shadow-md">
+            <h1 className="text-3.5xl md:text-6.5xl font-serif tracking-tight text-white leading-tight max-w-4xl mx-auto drop-shadow-md">
               {heroHeadline.includes(".") ? (
                 <>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-[#eae9e5]">{heroHeadline.split(".")[0]}.</span>{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-[#00e1ec] to-success font-normal italic drop-shadow-[0_2px_15px_rgba(0,225,236,0.25)]">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-[#eae9e5] font-light md:font-extralight">{heroHeadline.split(".")[0]}.</span>{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-[#00e1ec] to-success font-semibold md:font-normal italic drop-shadow-[0_2px_15px_rgba(0,225,236,0.25)]">
                     {heroHeadline.split(".")[1]}
                   </span>
                 </>
@@ -398,12 +398,12 @@ export default function LandingPage() {
             </h1>
 
             {/* Subheading */}
-            <p className="text-sm md:text-sm text-[#9f9d98] leading-relaxed max-w-2xl mx-auto font-semibold">
+            <p className="text-sm md:text-base text-[#9f9d98] leading-relaxed max-w-2xl mx-auto font-semibold">
               {heroSubheadline}
             </p>
 
             {/* Hero Trust Badge Stats Row */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-[#eae9e5]/80 pt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-5 text-[9px] md:text-xs font-bold uppercase tracking-widest text-[#eae9e5]/80 pt-4">
               <span className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#111618]/80 border border-[#20292b] min-h-[44px] px-4 py-2 rounded-xl sm:rounded-full shadow-[inset_0_1px_rgba(255,255,255,0.03)] hover:border-primary/30 transition-colors duration-300">
                 <Check className="w-3.5 h-3.5 text-[#00e1ec]" />
                 <span>100% SDE Optimized</span>
