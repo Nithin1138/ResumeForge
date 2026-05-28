@@ -752,10 +752,51 @@ export default function AdminPanelPage() {
 
       {/* Main Grid: Command Sidebar + Active tab panel */}
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 md:px-6 py-6 md:py-8">
+        {/* Mobile Navigation Selector (Only visible on screens below lg) */}
+        <div className="lg:hidden w-full bg-surface border border-border/50 rounded-3xl p-5 mb-6 shadow-xs">
+          <span className="text-[9px] font-extrabold tracking-widest text-primary uppercase block mb-1">Founder Engine</span>
+          <h3 className="text-sm font-serif italic text-text mb-3">SaaS Command Selector</h3>
+          
+          <select
+            value={activeTab}
+            onChange={(e) => { setActiveTab(e.target.value as any); setDataError(""); }}
+            className="w-full h-11 px-4 rounded-xl border border-border bg-bg-base/30 text-xs font-bold text-text outline-hidden focus:ring-2 focus:ring-primary/45 focus:border-transparent transition-all cursor-pointer"
+          >
+            <optgroup label="Core Metrics">
+              <option value="overview">📈 Telemetry Overview</option>
+              <option value="acquisition">🎯 Traffic Acquisition</option>
+              <option value="conversion">🔄 Conversion Funnel</option>
+              <option value="monetization">💳 Paywall & Pricing</option>
+            </optgroup>
+            <optgroup label="Systems Telemetry">
+              <option value="behavior">⚡ Event Streams</option>
+              <option value="experiments">🧪 A/B Experiments</option>
+              <option value="flags">🔑 Feature Flags</option>
+            </optgroup>
+            <optgroup label="Retention & Virality">
+              <option value="virality">✨ Viral & Referrals</option>
+              <option value="retention">📊 User Retention</option>
+              <option value="intelligence">🎓 Resume Conversion</option>
+              <option value="campus">🏫 Campus Spikes</option>
+              <option value="cohorts">📅 Cohort Retention</option>
+              <option value="outcomes">🏆 Resume Outcomes</option>
+            </optgroup>
+            <optgroup label="Operations">
+              <option value="waitlist">📬 Waitlist Expansion</option>
+              <option value="marketing">🎨 Marketing & CMS</option>
+              <option value="queues">⚙️ Queue & Reliability</option>
+              <option value="fraud">🛡️ Fraud Shield</option>
+              <option value="aicost">🤖 AI API Financials</option>
+              <option value="users">👥 User Roster</option>
+              <option value="security">🔒 Access Settings</option>
+            </optgroup>
+          </select>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
           
           {/* SaaS Growth Sidebar Menu */}
-          <div className="lg:col-span-1 bg-surface border border-border/50 rounded-3xl p-5 space-y-6 shadow-xs lg:sticky lg:top-[150px] z-30">
+          <div className="hidden lg:block lg:col-span-1 bg-surface border border-border/50 rounded-3xl p-5 space-y-6 shadow-xs lg:sticky lg:top-[150px] z-30">
             <div>
               <span className="text-[9px] font-extrabold tracking-widest text-primary uppercase block mb-1">Founder Engine</span>
               <h3 className="text-sm font-serif italic text-text">SaaS Command Center</h3>
