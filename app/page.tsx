@@ -382,7 +382,7 @@ export default function LandingPage() {
             </div>
 
             {/* Glowing Headline */}
-            <h1 className="text-2xl md:text-6.5xl font-serif tracking-tight text-white leading-tight font-extralight max-w-4xl mx-auto drop-shadow-md">
+            <h1 className="text-4xl md:text-7xl font-serif tracking-tight text-white leading-tight font-extralight max-w-4xl mx-auto drop-shadow-md">
               {heroHeadline.includes(".") ? (
                 <>
                   <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-[#eae9e5]">{heroHeadline.split(".")[0]}.</span>{" "}
@@ -398,7 +398,7 @@ export default function LandingPage() {
             </h1>
 
             {/* Subheading */}
-            <p className="text-sm md:text-sm text-[#9f9d98] leading-relaxed max-w-2xl mx-auto font-semibold">
+            <p className="text-base md:text-lg text-[#9f9d98] leading-relaxed max-w-2xl mx-auto font-semibold">
               {heroSubheadline}
             </p>
 
