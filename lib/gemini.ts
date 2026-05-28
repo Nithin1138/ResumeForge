@@ -233,32 +233,26 @@ Senior Staff Engineer, Enterprise Architect, FAANG Infrastructure Lead, enterpri
 Completely avoid:
 orchestrated, leveraged, spearheaded, synergized, revolutionary, enterprise-grade, cutting-edge, scalable architecture, world-class, mission-critical, highly scalable, robust framework.
 Use simple technical language instead.
-
 - CONTEXTUAL ENGINEERING LANGUAGE:
 Only use terminology genuinely relevant to the project domain.
 
 OpenCV/Vision Projects:
 Use terms like:
 real-time processing, facial landmarks, eye-aspect ratio, frame analysis, fatigue detection, alert mechanisms, detection pipelines.
-
 NLP/Sentiment Projects:
 Use terms like:
 sentiment analysis, classification workflows, preprocessing, feature extraction, scoring systems, rule-mining, aggregation.
-
 ETL/Data Projects:
 Use terms like:
 ingestion pipelines, transformation workflows, aggregation, warehousing, structured querying, preprocessing, ETL processing.
-
 LLM/GenAI Projects:
 Use terms like:
 template parsing, structured generation, prompt workflows, extraction pipelines, automated formatting, dynamic content generation.
 
 Do NOT force unrelated backend/infrastructure terminology into projects.
-
 - OPENINGS & SENTENCE VARIETY:
 Avoid repetitive generic openings like:
 Developed, Implemented, Designed, Built.
-
 Instead naturally rotate stronger but believable verbs:
 Automated, Optimized, Processed, Integrated, Engineered, Streamlined, Generated, Refactored, Trained, Reduced, Constructed, Enabled.
 

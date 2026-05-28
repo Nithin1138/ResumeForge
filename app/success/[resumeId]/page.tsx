@@ -92,6 +92,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [session, setSession] = useState<any>(null);
   const [liveResume, setLiveResume] = useState<any>(null);
   const [includeSummary, setIncludeSummary] = useState(false);
+  const [includeCertifications, setIncludeCertifications] = useState(true);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   
   // Custom regeneration states
@@ -435,7 +436,14 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
           </div>
           {/* Preview fills all remaining height */}
           <div className="flex-1 overflow-hidden min-h-0 print:overflow-visible">
-            <ResumePreviewPanel resume={resume} output={output} liveData={liveResume} locked={false} includeSummary={includeSummary} />
+            <ResumePreviewPanel 
+              resume={resume} 
+              output={output} 
+              locked={false} 
+              liveData={liveResume} 
+              includeSummary={includeSummary} 
+              includeCertifications={includeCertifications}
+            />
           </div>
         </div>
 
@@ -802,7 +810,7 @@ Concepts: ${output.skills.concepts.join(", ")}
         )}
 
         {/* Section: POR & Achievements */}
-        {(output.positions.length > 0 || output.achievements.length > 0) && (
+        {(output.positions.length > 0 || output.achievements.length > 0 || resume.skills?.certifications) && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:hidden">
             {output.positions.length > 0 && (
               <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs">
@@ -847,30 +855,54 @@ Concepts: ${output.skills.concepts.join(", ")}
               </div>
             )}
 
-            {output.achievements.length > 0 && (
-              <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs">
-                <h3 className="text-xs font-bold text-primary tracking-wider uppercase border-b border-border/40 pb-2 mb-4">Key Achievements</h3>
-                <ul className="list-disc pl-4 space-y-2 text-xs font-medium leading-relaxed text-text-muted">
-                  {output.achievements.map((ach: string, idx: number) => (
-                    <li 
-                      key={idx}
-                      className="outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={(e) => {
-                        setLiveResume((prev: any) => {
-                          const next = JSON.parse(JSON.stringify(prev));
-                          next.achievements[idx] = e.target.textContent || "";
-                          return next;
-                        });
-                      }}
-                    >
-                      {ach}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <div className="flex flex-col gap-6">
+              {output.achievements.length > 0 && (
+                <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs">
+                  <h3 className="text-xs font-bold text-primary tracking-wider uppercase border-b border-border/40 pb-2 mb-4">Key Achievements</h3>
+                  <ul className="list-disc pl-4 space-y-2 text-xs font-medium leading-relaxed text-text-muted">
+                    {output.achievements.map((ach: string, idx: number) => (
+                      <li 
+                        key={idx}
+                        className="outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => {
+                          setLiveResume((prev: any) => {
+                            const next = JSON.parse(JSON.stringify(prev));
+                            next.achievements[idx] = e.target.textContent || "";
+                            return next;
+                          });
+                        }}
+                      >
+                        {ach}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {resume.skills?.certifications && (
+                <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs">
+                  <h3 className="text-xs font-bold text-primary tracking-wider uppercase border-b border-border/40 pb-2 mb-4">Certifications</h3>
+                  <div className="text-xs text-text-muted leading-relaxed font-medium outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all">
+                    {resume.skills.certifications}
+                  </div>
+                  
+                  <div className="mt-5 flex items-center space-x-3 bg-bg-base p-3 rounded-lg border border-border/50">
+                    <input 
+                      type="checkbox" 
+                      id="includeCertifications" 
+                      checked={includeCertifications} 
+                      onChange={(e) => setIncludeCertifications(e.target.checked)} 
+                      className="w-4 h-4 text-primary accent-primary rounded cursor-pointer"
+                    />
+                    <label htmlFor="includeCertifications" className="text-xs font-semibold text-text cursor-pointer select-none">
+                      Include Certifications in PDF
+                    </label>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 

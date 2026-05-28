@@ -51,6 +51,7 @@ interface Props {
   locked: boolean;    // true = blur below header + show lock
   liveData?: LiveResumeData | null;  // when set, overrides output for preview
   includeSummary?: boolean; // whether to show professional summary
+  includeCertifications?: boolean; // whether to show certifications
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────
@@ -70,7 +71,7 @@ function SectionTitle({ children }: { children: string }) {
 }
 
 // ── Main component ─────────────────────────────────────────────────────────
-export default function ResumePreviewPanel({ resume, output, locked, liveData, includeSummary = false }: Props) {
+export default function ResumePreviewPanel({ resume, output, locked, liveData, includeSummary = false, includeCertifications = true }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
 
@@ -311,7 +312,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
           )}
 
           {/* Certifications */}
-          {ip?.skills?.certifications && (
+          {includeCertifications && ip?.skills?.certifications && (
             <div>
               <SectionTitle>Certifications</SectionTitle>
               <div style={{ fontSize: "9.5pt", lineHeight: 1.5 }}>{ip.skills.certifications}</div>
