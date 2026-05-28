@@ -855,8 +855,7 @@ Concepts: ${output.skills.concepts.join(", ")}
               </div>
             )}
 
-            <div className="flex flex-col gap-6">
-              {output.achievements.length > 0 && (
+            {output.achievements.length > 0 && (
                 <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs">
                   <h3 className="text-xs font-bold text-primary tracking-wider uppercase border-b border-border/40 pb-2 mb-4">Key Achievements</h3>
                   <ul className="list-disc pl-4 space-y-2 text-xs font-medium leading-relaxed text-text-muted">
@@ -902,7 +901,6 @@ Concepts: ${output.skills.concepts.join(", ")}
                   </div>
                 </div>
               )}
-            </div>
           </div>
         )}
 
