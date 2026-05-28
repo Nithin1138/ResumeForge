@@ -28,7 +28,8 @@ export async function POST(req: NextRequest) {
         projects: [{ title: "Mock Project", techStack: "React", description: "A simple web app", keyResult: "Increased speed by 10%", link: "", duration: "" }],
         internships: [],
         positions: [],
-        options: { jobDescription: "", tone: "Professional & Formal", includeAchievements: false, achievements: "", projectVariants: "1 version" }
+        achievements: [],
+        options: { jobDescription: "", tone: "Professional & Formal", projectVariants: "1 version" }
       });
     }
 
@@ -92,11 +93,15 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
       "description": ""
     }
   ],
+  "achievements": [
+    {
+      "title": "",
+      "description": ""
+    }
+  ],
   "options": {
     "jobDescription": "",
     "tone": "Professional & Formal",
-    "includeAchievements": false,
-    "achievements": "",
     "projectVariants": "1 version"
   }
 }

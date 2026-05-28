@@ -1480,7 +1480,7 @@ export default function BuildPage() {
               { stepNum: 1, name: "Info" },
               { stepNum: 2, name: "Skills" },
               { stepNum: 3, name: "Projects" },
-              { stepNum: 4, name: "Experience" },
+              { stepNum: 4, name: "Other" },
               { stepNum: 5, name: "Optimize" }
             ].map((s) => {
               const isCompleted = activeStep > s.stepNum;
@@ -1549,7 +1549,7 @@ export default function BuildPage() {
                   { stepNum: 1, name: "Personal Info", desc: "Basic details & branch", icon: User },
                   { stepNum: 2, name: "Core Skills", desc: "Languages & technologies", icon: Code2 },
                   { stepNum: 3, name: "Projects", desc: "Engineering portfolio", icon: Rocket },
-                  { stepNum: 4, name: "Experience", desc: "Internships & roles", icon: Briefcase },
+                  { stepNum: 4, name: "Other", desc: "Internships, roles, achievements", icon: Briefcase },
                   { stepNum: 5, name: "Optimize", desc: "ATS & job keywords", icon: Wand2 },
                 ].map((s) => {
                   const isCompleted = activeStep > s.stepNum;
