@@ -160,7 +160,7 @@ export default function LandingPage() {
 
   return (
     <div className={`flex flex-col min-h-screen transition-colors duration-300 font-sans ${
-      landingVariant === "dashboard" ? "bg-[#080b0c] text-[#eae9e5] selection:bg-primary/30" : "bg-bg-base text-text selection:bg-primary/20"
+      landingVariant === "dashboard" ? "dark bg-bg-base text-text selection:bg-primary/30" : "light bg-bg-base text-text selection:bg-primary/20"
     }`}>
       {isBannerActive && (
         <div className={`w-full text-center py-2 px-4 text-xs font-bold font-sans flex items-center justify-center gap-2 relative z-50 border-b ${

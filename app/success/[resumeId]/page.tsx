@@ -8,6 +8,7 @@ import confetti from "canvas-confetti";
 import { FullResumeOutput } from "@/types/resume";
 import { getLocalSession } from "@/lib/authClient";
 import ResumePreviewPanel from "@/components/ResumePreviewPanel";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 // Helper functions to format URLs for print view
 const formatLinkedIn = (url: string) => {
@@ -399,6 +400,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
             <CheckCircle2 className="w-4 h-4" />
             <span>Payment Confirmed ✓</span>
           </div>
+          <ThemeToggle />
         </div>
       </header>
 

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, Layout } from "lucide-react";
 import { LogoutButton, DeleteButton } from "@/components/DashboardActions";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -68,6 +69,7 @@ export default async function DashboardPage() {
               (user.name || session.user.email || "U").charAt(0).toUpperCase()
             )}
           </div>
+          <ThemeToggle />
           <LogoutButton />
         </div>
       </header>

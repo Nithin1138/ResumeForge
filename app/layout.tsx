@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -40,7 +39,6 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-bg-base text-text selection:bg-primary/20">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           {children}
-          <ThemeToggle />
         </ThemeProvider>
       </body>
     </html>

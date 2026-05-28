@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { 
   Users, 
   FileText, 
@@ -688,6 +689,7 @@ export default function AdminPanelPage() {
             <span className="hidden sm:inline">Growth Architect:</span>
             <span>{usernameInput || "Nithin"}</span>
           </div>
+          <ThemeToggle />
           <button
             onClick={handleLogout}
             className="p-2 md:p-2.5 rounded-full border border-border hover:bg-error/5 hover:text-error hover:border-error/25 transition-all cursor-pointer text-text-muted flex items-center justify-center"

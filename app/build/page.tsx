@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useFormStore } from "@/stores/formStore";
 import { ArrowLeft, ArrowRight, Plus, Trash2, Loader2, Sparkles, Check, ChevronDown, X, Cloud, CloudOff, RotateCcw, User, Code2, Rocket, Briefcase, Wand2, Zap } from "lucide-react";
 import { getLocalSession } from "@/lib/authClient";
-
+import { ThemeToggle } from "@/components/theme-toggle";
 // Curated popular suggestions for each skill block
 const LANGUAGES_SUGGESTIONS = ["JavaScript", "TypeScript", "Python", "Java", "C++", "C", "Go", "Rust", "SQL", "Kotlin", "Swift", "PHP"];
 const FRAMEWORKS_SUGGESTIONS = ["React", "Next.js", "Node.js", "Express", "FastAPI", "Django", "Flask", "Spring Boot", "Angular", "Vue", "Tailwind CSS", "Redux", "PyTorch", "TensorFlow"];
@@ -1384,6 +1384,7 @@ export default function BuildPage() {
               <span className="tracking-wide">{isParsing ? 'Parsing Document...' : 'Auto-Fill from Resume'}</span>
               <input type="file" accept=".pdf,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={handleAutoFillUpload} className="hidden" disabled={isParsing} />
             </label>
+            <ThemeToggle />
           </div>
         </div>
       </header>

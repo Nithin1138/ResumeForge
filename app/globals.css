@@ -19,7 +19,7 @@
   --font-mono: "JetBrains Mono", monospace;
 }
 
-:root {
+:root, .light {
   /* LIGHT THEME */
   --primary: #01696f;
   --bg-base: #f7f6f2;
