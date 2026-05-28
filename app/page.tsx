@@ -1213,7 +1213,7 @@ export default function LandingPage() {
             {/* Uniquely Designed Comparative Positioning Board */}
             <div className="bg-surface/50 border border-border/30 rounded-3xl p-2 max-w-5xl mx-auto mb-16 relative z-10 grid md:grid-cols-3 gap-2 md:gap-0 items-stretch">
               {/* Column 1: Generic Resume Builders */}
-              <div className="p-8 md:p-10 flex flex-col justify-between md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-70 hover:opacity-90">
+              <div className="p-8 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-70 hover:opacity-90">
                 <div>
                   <div className="mb-6">
                     <span className="text-[10px] font-bold text-text-muted/80 uppercase tracking-widest block mb-1">Standard Tool</span>
@@ -1245,7 +1245,7 @@ export default function LandingPage() {
               </div>
 
               {/* Column 2: AI Chatbots */}
-              <div className="p-8 md:p-10 flex flex-col justify-between md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-85 hover:opacity-100">
+              <div className="p-8 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-85 hover:opacity-100">
                 <div>
                   <div className="mb-6">
                     <span className="text-[10px] font-bold text-warning/80 uppercase tracking-widest block mb-1">Raw AI Tool</span>
@@ -1277,7 +1277,7 @@ export default function LandingPage() {
               </div>
 
               {/* Column 3: ATSLift (Sleek Floating Column) */}
-              <div className="bg-gradient-to-b from-[#ffffff] to-primary/[0.02] border-2 border-primary rounded-3xl p-8 md:p-10 shadow-[0_20px_50px_rgba(1,105,111,0.08)] relative md:-translate-y-6 md:scale-[1.04] z-20 flex flex-col justify-between transition-all duration-300 group">
+              <div className="bg-gradient-to-b from-[#ffffff] to-primary/[0.02] border-2 border-primary rounded-3xl p-8 md:p-10 shadow-[0_20px_50px_rgba(1,105,111,0.08)] relative mt-6 md:mt-0 md:-translate-y-6 md:scale-[1.04] z-20 flex flex-col justify-between transition-all duration-300 group">
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-extrabold tracking-widest px-4 py-1.5 rounded-full uppercase shadow-md border border-white/20 whitespace-nowrap">
                   High Signal Format
                 </div>
