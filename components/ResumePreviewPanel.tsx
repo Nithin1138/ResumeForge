@@ -61,7 +61,7 @@ function Divider() {
 function SectionTitle({ children }: { children: string }) {
   return (
     <>
-      <div style={{ fontSize: "10.5pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.4px", color: "#1a1a1a", marginBottom: "2pt" }}>
+      <div style={{ fontSize: "11pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.4px", color: "#1a1a1a", marginBottom: "2pt" }}>
         {children}
       </div>
       <Divider />
@@ -204,26 +204,26 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             {/* PG */}
             {d.pgEducation && (
               <div style={{ marginBottom: "6pt" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10pt", fontWeight: "bold" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: "10pt", fontWeight: "bold" }}>
                   <span style={{ flex: 1 }}>{d.pgEducation.institution}</span>
-                  <span style={{ color: "#555", fontWeight: "normal", flexShrink: 0, fontSize: "9.5pt" }}>Graduation: {d.pgEducation.year}</span>
+                  <span style={{ color: "#555", fontWeight: "normal", flexShrink: 0, fontSize: "9.5pt", textAlign: "right" }}>Graduation: {d.pgEducation.year}</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9.5pt", color: "#444", marginTop: "1pt" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: "9.5pt", color: "#444", marginTop: "1pt" }}>
                   <span style={{ flex: 1 }}>{d.pgEducation.degree}</span>
-                  <span style={{ flexShrink: 0 }}>CGPA: {d.pgEducation.cgpa}</span>
+                  <span style={{ flexShrink: 0, textAlign: "right" }}>CGPA: {d.pgEducation.cgpa}</span>
                 </div>
               </div>
             )}
             {/* UG */}
             {d.education?.institution && (
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10pt", fontWeight: "bold" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: "10pt", fontWeight: "bold" }}>
                   <span style={{ flex: 1 }}>{d.education.institution}</span>
-                  <span style={{ color: "#555", fontWeight: "normal", flexShrink: 0, fontSize: "9.5pt" }}>Graduation: {d.education.year}</span>
+                  <span style={{ color: "#555", fontWeight: "normal", flexShrink: 0, fontSize: "9.5pt", textAlign: "right" }}>Graduation: {d.education.year}</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9.5pt", color: "#444", marginTop: "1pt" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: "9.5pt", color: "#444", marginTop: "1pt" }}>
                   <span style={{ flex: 1 }}>{d.education.degree} ({ip?.personal?.branch || "Engineering"})</span>
-                  <span style={{ flexShrink: 0 }}>CGPA: {d.education.cgpa}</span>
+                  <span style={{ flexShrink: 0, textAlign: "right" }}>CGPA: {d.education.cgpa}</span>
                 </div>
               </div>
             )}
@@ -248,17 +248,19 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
               <SectionTitle>Academic Projects</SectionTitle>
               {d.projects.map((proj: any, idx: number) => (
                 <div key={idx} style={{ marginBottom: idx === d.projects.length - 1 ? 0 : "10pt" }}>
-                  <div style={{ fontWeight: "bold", fontSize: "10.5pt", color: "#111", display: "flex", alignItems: "center", gap: "6px" }}>
-                    {proj.title}
-                    {proj.link && (
-                      <a href={proj.link.startsWith("http") ? proj.link : `https://${proj.link}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8pt", color: "#666", fontWeight: "normal" }}>
-                        [{proj.link.includes("github.com") ? "GitHub" : "Live Demo"}]
-                      </a>
-                    )}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "1pt" }}>
+                    <div style={{ fontWeight: "bold", fontSize: "10pt", color: "#111", display: "flex", alignItems: "center", gap: "6px", flex: 1 }}>
+                      {proj.title}
+                      {proj.link && (
+                        <a href={proj.link.startsWith("http") ? proj.link : `https://${proj.link}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8.5pt", color: "#666", fontWeight: "normal" }}>
+                          [{proj.link.includes("github.com") ? "GitHub" : "Live Demo"}]
+                        </a>
+                      )}
+                    </div>
+                    {proj.duration && <span style={{ flexShrink: 0, whiteSpace: "nowrap", fontSize: "9.5pt", color: "#555", textAlign: "right", marginLeft: "10px" }}>{proj.duration}</span>}
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9.5pt", color: "#666", marginTop: "1.5pt" }}>
-                    <span style={{ fontStyle: "italic", flex: 1 }}>{proj.techStack}</span>
-                    {proj.duration && <span style={{ flexShrink: 0, whiteSpace: "nowrap" }}>{proj.duration}</span>}
+                  <div style={{ fontSize: "9.5pt", color: "#555", fontStyle: "italic", marginTop: "1pt" }}>
+                    {proj.techStack}
                   </div>
                   <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: "4pt 0 0 0", fontSize: "9.5pt" }}>
                     {proj.bullets?.map((b: string, bIdx: number) => (
@@ -276,9 +278,9 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
               <SectionTitle>Experience & Leadership</SectionTitle>
               {d.experience?.map((exp: any, idx: number) => (
                 <div key={idx} style={{ marginBottom: "7pt" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10pt" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: "10pt" }}>
                     <div style={{ flex: 1 }}><strong>{exp.company}</strong><span style={{ color: "#555", marginLeft: "5pt", fontSize: "9.5pt" }}>— {exp.role}</span></div>
-                    <span style={{ color: "#777", flexShrink: 0, fontSize: "9pt" }}>{exp.duration}</span>
+                    <span style={{ color: "#555", flexShrink: 0, fontSize: "9.5pt", textAlign: "right", marginLeft: "10px" }}>{exp.duration}</span>
                   </div>
                   <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: "3pt 0 0 0", fontSize: "9.5pt" }}>
                     {exp.bullets?.map((b: string, bIdx: number) => (
