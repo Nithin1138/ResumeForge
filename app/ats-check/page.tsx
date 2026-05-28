@@ -177,7 +177,7 @@ export default function ATSCheckPage() {
         </Link>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 max-w-6xl mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-12 max-w-6xl mx-auto w-full">
         
         {/* Title area (only visible when not showing results) */}
         <AnimatePresence mode="wait">
@@ -188,10 +188,10 @@ export default function ATSCheckPage() {
               exit={{ opacity: 0, height: 0, margin: 0, overflow: "hidden" }}
               className="text-center mb-12"
             >
-              <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-text mb-4">
+              <h1 className="text-3xl md:text-7xl font-serif tracking-tight text-text mb-4">
                 ATS <span className="text-primary italic">Reality Check</span>
               </h1>
-              <p className="text-text-muted text-lg max-w-xl mx-auto">
+              <p className="text-text-muted text-sm md:text-lg max-w-xl mx-auto">
                 A ruthless, automated audit of your resume structure, keyword density, and recruiter readability.
               </p>
             </motion.div>
@@ -235,7 +235,7 @@ export default function ATSCheckPage() {
                   {file ? (
                     <div className="flex flex-col items-center">
                       <FileText className="w-10 h-10 md:w-12 md:h-12 text-primary mb-3.5" />
-                      <p className="font-bold text-text text-base md:text-xl mb-1 truncate max-w-[250px]">{file.name}</p>
+                      <p className="font-bold text-text text-base md:text-xl mb-1 truncate max-w-[200px] md:max-w-[250px]">{file.name}</p>
                       <p className="text-xs md:text-sm text-text-muted">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                     </div>
                   ) : (
@@ -258,7 +258,7 @@ export default function ATSCheckPage() {
                   <button
                     onClick={handleUpload}
                     disabled={!file}
-                    className="px-10 py-4 bg-primary hover:bg-primary/90 text-white text-lg font-semibold rounded-full shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-3"
+                    className="w-full md:w-auto px-8 py-4 bg-primary hover:bg-primary/90 text-white text-lg font-semibold rounded-full shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
                   >
                     <span>Run Audit</span>
                     <ArrowRight className="w-5 h-5" />
@@ -315,7 +315,7 @@ export default function ATSCheckPage() {
                   
                   <div className="mt-6 md:mt-0 flex flex-col md:items-end">
                     <div className="flex items-baseline space-x-1">
-                      <span className="text-7xl md:text-8xl font-serif font-bold text-text leading-none tracking-tighter">
+                      <span className="text-5xl md:text-8xl font-serif font-bold text-text leading-none tracking-tighter">
                         {result.overallScore}
                       </span>
                       <span className="text-xl text-text-muted font-serif">/ 100</span>
@@ -366,13 +366,13 @@ export default function ATSCheckPage() {
                 </div>
 
                 {/* Report Footer / CTA */}
-                <div className="mt-16 bg-surface border border-border p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between text-center sm:text-left">
+                <div className="mt-16 bg-surface border border-border p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between text-center sm:text-left gap-4">
                   <div>
                     <h3 className="text-xl font-serif text-text font-bold mb-2">Need a guaranteed 95+?</h3>
                     <p className="text-text-muted text-sm">Our AI builder forces you to structure bullet points exactly how ATS engines read them.</p>
                   </div>
                   
-                  <div className="mt-6 sm:mt-0 flex items-center space-x-4 shrink-0">
+                  <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-0 md:space-x-4 shrink-0">
                     <button
                       onClick={resetState}
                       className="px-5 py-2.5 text-sm font-semibold text-text-muted hover:text-text transition-colors"

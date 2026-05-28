@@ -46,7 +46,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans">
       {/* Navbar */}
-      <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
+      <header className="glass-panel border-b border-border/40 max-md:px-4 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Link href="/" className="flex items-center justify-center">
             <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
@@ -61,7 +61,7 @@ export default async function DashboardPage() {
             <div className="text-sm font-bold text-text">{user.name || session.user.email?.split("@")[0]}</div>
             <div className="text-[10px] text-text-muted font-semibold">{session.user.email}</div>
           </div>
-          <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-sm tracking-widest overflow-hidden">
+          <div className="max-md:w-11 max-md:h-11 w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-sm tracking-widest overflow-hidden">
             {session.user.image ? (
               <img src={session.user.image} alt={user.name || "User"} className="w-full h-full object-cover" />
             ) : (
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
           </div>
           <Link
             href="/build"
-            className="px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer"
+            className="max-md:w-full max-md:min-h-[44px] px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Build New Resume</span>
@@ -96,8 +96,8 @@ export default async function DashboardPage() {
         </div>
 
         {/* Quick Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
+        <div className="max-sm:flex max-sm:overflow-x-auto max-sm:snap-x max-sm:snap-mandatory max-sm:gap-4 max-sm:-mx-4 max-sm:px-4 max-sm:pb-2 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="max-sm:min-w-[75vw] max-sm:snap-start bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Resumes Formatted</span>
               <span className="text-3xl font-black font-sans text-text">{totalBuilt}</span>
@@ -107,7 +107,7 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          <div className="bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
+          <div className="max-sm:min-w-[75vw] max-sm:snap-start bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Unlocked Portals</span>
               <span className="text-3xl font-black font-sans text-text">{totalPaid}</span>
@@ -118,7 +118,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Stat 3 */}
-          <div className="bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
+          <div className="max-sm:min-w-[75vw] max-sm:snap-start bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Average ATS Rating</span>
               <span className="text-3xl font-black font-sans text-text">{avgScore || "N/A"}{totalBuilt ? "%" : ""}</span>
@@ -177,12 +177,12 @@ export default async function DashboardPage() {
                     </div>
 
                     {/* Bottom Row: Actions */}
-                    <div className="flex items-center justify-between border-t border-border/30 mt-6 pt-4 gap-4">
+                    <div className="max-md:flex-col flex items-center justify-between border-t border-border/30 mt-6 pt-4 gap-4">
                       <DeleteButton id={resumeItem.id} />
 
                       <Link
                         href={isPaid ? `/success/${resumeItem.id}?sandbox=true` : `/result/${resumeItem.id}`}
-                        className={`px-5 py-2.5 rounded-full text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-xs ${
+                        className={`max-md:w-full max-md:min-h-[44px] px-5 py-2.5 rounded-full text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-xs ${
                           isPaid 
                             ? "bg-success text-white hover:bg-success/90" 
                             : "bg-primary text-white hover:bg-primary/90"
@@ -206,7 +206,7 @@ export default async function DashboardPage() {
               </p>
               <Link
                 href="/build"
-                className="px-6 py-3 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center space-x-1.5 cursor-pointer shadow-xs"
+                className="max-md:w-full max-md:min-h-[44px] px-6 py-3 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs"
               >
                 <Plus className="w-4 h-4" />
                 <span>Start Building Now</span>

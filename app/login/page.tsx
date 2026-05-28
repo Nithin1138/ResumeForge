@@ -250,11 +250,11 @@ function LoginContent() {
       </header>
 
       {/* Main Card container */}
-      <main className="flex-1 flex items-center justify-center p-6 relative">
+      <main className="flex-1 flex items-center justify-center p-4 md:p-6 relative">
         {/* Background glow decoration */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
 
-        <div className="bg-surface border border-border rounded-2xl max-w-md w-full p-8 shadow-xs relative z-10">
+        <div className="bg-surface border border-border rounded-2xl max-w-md w-full p-5 md:p-8 shadow-xs relative z-10">
           <div className="text-center space-y-2 mb-8">
             <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-bold text-primary uppercase">
               <Sparkles className="w-3 h-3" />
@@ -318,7 +318,8 @@ function LoginContent() {
                       <input
                         type="email"
                         required
-                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                        autoComplete="email"
+                        className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
                         placeholder="e.g. nithin.kumar@vit.edu"
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
@@ -367,7 +368,8 @@ function LoginContent() {
                         required
                         maxLength={6}
                         pattern="\d{6}"
-                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm tracking-widest font-bold"
+                        inputMode="numeric"
+                        className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm tracking-widest font-bold"
                         placeholder="123456"
                         value={otp}
                         onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
@@ -384,7 +386,8 @@ function LoginContent() {
                       <input
                         type={showNewPassword ? "text" : "password"}
                         required
-                        className="w-full pl-11 pr-12 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                        autoComplete="new-password"
+                        className="w-full pl-11 pr-12 py-3.5 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
                         placeholder="Min 6 characters"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
@@ -392,7 +395,7 @@ function LoginContent() {
                       <button
                         type="button"
                         onClick={() => setShowNewPassword(!showNewPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text cursor-pointer"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-text-muted hover:text-text cursor-pointer"
                         tabIndex={-1}
                       >
                         {showNewPassword ? (
@@ -440,7 +443,7 @@ function LoginContent() {
               <button
                 onClick={handleGoogleLogin}
                 disabled={isGoogleLoading || isLoading}
-                className="w-full py-3 border border-border hover:bg-bg-base/60 text-sm font-semibold rounded-full flex items-center justify-center space-x-2.5 transition-colors cursor-pointer disabled:opacity-50"
+                className="w-full py-3.5 border border-border hover:bg-bg-base/60 text-sm font-semibold rounded-full flex items-center justify-center space-x-2.5 transition-colors cursor-pointer disabled:opacity-50"
               >
                 {isGoogleLoading ? (
                   <Loader2 className="w-4 h-4 text-primary animate-spin" />
@@ -473,7 +476,8 @@ function LoginContent() {
                     <input
                       type="email"
                       required
-                      className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                      autoComplete="email"
+                      className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
                       placeholder="e.g. nithin.kumar@vit.edu"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -507,7 +511,8 @@ function LoginContent() {
                     <input
                       type={showPassword ? "text" : "password"}
                       required
-                      className="w-full pl-11 pr-12 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                      autoComplete="current-password"
+                      className="w-full pl-11 pr-12 py-3.5 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -515,7 +520,7 @@ function LoginContent() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text cursor-pointer"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-text-muted hover:text-text cursor-pointer"
                       tabIndex={-1}
                     >
                       {showPassword ? (

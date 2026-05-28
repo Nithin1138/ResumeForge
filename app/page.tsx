@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle, Flame, ShieldCheck, Sparkles, ChevronDown, Award, XCircle, Eye, TrendingUp, Check } from "lucide-react";
+import { ArrowRight, CheckCircle, Flame, ShieldCheck, Sparkles, ChevronDown, Award, XCircle, Eye, TrendingUp, Check, Menu, X } from "lucide-react";
 import { getSession } from "next-auth/react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -74,6 +74,9 @@ export default function LandingPage() {
   const [bKeywords, setBKeywords] = useState(true);
   const [bNoCanva, setBNoCanva] = useState(true);
   const [mobileTab, setMobileTab] = useState<"input" | "grader">("input");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showStickyCTA, setShowStickyCTA] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getSession().then(setSession);
@@ -111,7 +114,25 @@ export default function LandingPage() {
         if (data.heroSubheadline) setHeroSubheadline(data.heroSubheadline);
         if (data.ctaText) setCtaText(data.ctaText);
         if (data.badgeText) setBadgeText(data.badgeText);
+        if (data.badgeText) setBadgeText(data.badgeText);
       }).catch(err => console.error("Failed to load config", err));
+  }, []);
+
+  // Scroll listener for sticky CTA
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!heroRef.current) return;
+      // Show sticky CTA after scrolling past the hero section
+      const heroBottom = heroRef.current.getBoundingClientRect().bottom;
+      if (heroBottom < 0) {
+        setShowStickyCTA(true);
+      } else {
+        setShowStickyCTA(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const faqs = [
@@ -150,6 +171,101 @@ export default function LandingPage() {
           <span>{bannerText}</span>
         </div>
       )}
+      
+      {/* Mobile Sticky Bottom CTA */}
+      <AnimatePresence>
+        {showStickyCTA && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            className="md:hidden fixed bottom-0 left-0 right-0 z-[60] p-4 bg-surface/80 backdrop-blur-xl border-t border-border/50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
+          >
+            <Link
+              href="/build"
+              className="w-full flex items-center justify-center space-x-2 py-3.5 bg-primary text-white font-bold rounded-full shadow-lg"
+            >
+              <span>Build Resume Free</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <p className="text-center mt-2 text-[10px] font-semibold text-text-muted">Takes 2 minutes • ₹{price} one-time fee</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Full-screen Mobile Drawer Overlay */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="md:hidden fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="md:hidden fixed top-0 right-0 bottom-0 w-[85vw] max-w-sm z-[80] bg-surface border-l border-border/50 flex flex-col shadow-2xl"
+            >
+              <div className="flex items-center justify-between p-6 border-b border-border/40">
+                <div className="flex items-center space-x-2">
+                  <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
+                  <span className="font-bold text-lg tracking-tight">
+                    ATS<span className="text-primary italic">Lift</span>
+                  </span>
+                </div>
+                <button 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 rounded-full bg-border/30 text-text-muted hover:text-text transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto py-6 px-6 flex flex-col space-y-6">
+                <nav className="flex flex-col space-y-4">
+                  <Link href="/ats-check" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-text-muted hover:text-text flex items-center justify-between py-2 border-b border-border/30">
+                    <span>ATS Grader Demo</span>
+                    <ArrowRight className="w-4 h-4 opacity-50" />
+                  </Link>
+                  <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-text-muted hover:text-text flex items-center justify-between py-2 border-b border-border/30">
+                    <span>FAQ</span>
+                    <ArrowRight className="w-4 h-4 opacity-50" />
+                  </a>
+                  {session ? (
+                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-primary flex items-center justify-between py-2 border-b border-border/30">
+                      <span>Dashboard</span>
+                      <ArrowRight className="w-4 h-4 opacity-50" />
+                    </Link>
+                  ) : (
+                    <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-text-muted hover:text-text flex items-center justify-between py-2 border-b border-border/30">
+                      <span>Log In</span>
+                      <ArrowRight className="w-4 h-4 opacity-50" />
+                    </Link>
+                  )}
+                </nav>
+                
+                <div className="mt-auto pt-6 border-t border-border/40">
+                  <Link
+                    href="/build"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full flex items-center justify-center space-x-2 py-4 bg-primary text-white font-bold rounded-xl shadow-lg"
+                  >
+                    <span>Start Free Generation</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* Premium Navbar */}
       <header className={`sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300 border-b ${
         landingVariant === "dashboard"
@@ -163,7 +279,7 @@ export default function LandingPage() {
           </span>
         </div>
         
-        <div className="flex items-center space-x-4">
+        <div className="hidden md:flex items-center space-x-4">
           <Link href="/ats-check" className={`text-xs font-bold transition-colors hidden sm:block ${
             landingVariant === "dashboard" ? "text-[#9f9d98] hover:text-[#00e1ec]" : "text-text-muted hover:text-primary"
           }`}>
@@ -188,6 +304,22 @@ export default function LandingPage() {
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
+        
+        {/* Mobile Hamburger Button */}
+        <div className="md:hidden flex items-center gap-3">
+          <Link
+            href="/build"
+            className="px-4 py-2 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full shadow-sm"
+          >
+            Start Free
+          </Link>
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className={`p-2 rounded-lg ${landingVariant === "dashboard" ? "text-white bg-white/5" : "text-text bg-border/30"}`}
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
       </header>
 
       {landingVariant === "dashboard" ? (
@@ -198,7 +330,7 @@ export default function LandingPage() {
           <div className="absolute bottom-1/4 left-[-150px] w-[500px] h-[500px] bg-emerald-500/4 rounded-full blur-[150px] pointer-events-none" />
 
           {/* ── SECTION 1: PROFESSIONAL HERO HEADER ── */}
-          <div className="text-center space-y-6 max-w-4xl mx-auto pt-10 md:pt-20 relative z-10 px-4 animate-fadeIn">
+          <div ref={heroRef} className="text-center space-y-6 max-w-4xl mx-auto pt-6 md:pt-20 relative z-10 px-4 animate-fadeIn">
             {/* Floating SDE Candidate Portal Badge */}
             <div className="inline-flex items-center space-x-2 px-4.5 py-2.5 rounded-full border border-[#00e1ec]/30 bg-[#00e1ec]/5 text-[10px] font-black tracking-widest text-[#00e1ec] uppercase shadow-[0_0_30px_rgba(0,225,236,0.15),inset_0_1px_rgba(255,255,255,0.05)] hover:border-[#00e1ec]/50 hover:bg-[#00e1ec]/10 hover:scale-105 transition-all duration-300 backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5 text-[#00e1ec] animate-spin-slow" />
@@ -206,7 +338,7 @@ export default function LandingPage() {
             </div>
 
             {/* Glowing Headline */}
-            <h1 className="text-3xl md:text-6.5xl font-serif tracking-tight text-white leading-tight font-extralight max-w-4xl mx-auto drop-shadow-md">
+            <h1 className="text-2xl md:text-6.5xl font-serif tracking-tight text-white leading-tight font-extralight max-w-4xl mx-auto drop-shadow-md">
               {heroHeadline.includes(".") ? (
                 <>
                   <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-[#eae9e5]">{heroHeadline.split(".")[0]}.</span>
@@ -223,24 +355,39 @@ export default function LandingPage() {
             </h1>
 
             {/* Subheading */}
-            <p className="text-xs md:text-sm text-[#9f9d98] leading-relaxed max-w-2xl mx-auto font-semibold">
+            <p className="text-sm md:text-sm text-[#9f9d98] leading-relaxed max-w-2xl mx-auto font-semibold">
               {heroSubheadline}
             </p>
 
             {/* Hero Trust Badge Stats Row */}
-            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-[#eae9e5]/80 pt-4">
-              <span className="flex items-center gap-2 bg-[#111618]/80 border border-[#20292b] px-4 py-2 rounded-full shadow-[inset_0_1px_rgba(255,255,255,0.03)] hover:border-primary/30 transition-colors duration-300">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-[#eae9e5]/80 pt-4">
+              <span className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#111618]/80 border border-[#20292b] min-h-[44px] px-4 py-2 rounded-xl sm:rounded-full shadow-[inset_0_1px_rgba(255,255,255,0.03)] hover:border-primary/30 transition-colors duration-300">
                 <Check className="w-3.5 h-3.5 text-[#00e1ec]" />
                 <span>100% SDE Optimized</span>
               </span>
-              <span className="flex items-center gap-2 bg-[#111618]/80 border border-[#20292b] px-4 py-2 rounded-full shadow-[inset_0_1px_rgba(255,255,255,0.03)] hover:border-success/30 transition-colors duration-300">
+              <span className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#111618]/80 border border-[#20292b] min-h-[44px] px-4 py-2 rounded-xl sm:rounded-full shadow-[inset_0_1px_rgba(255,255,255,0.03)] hover:border-success/30 transition-colors duration-300">
                 <ShieldCheck className="w-3.5 h-3.5 text-success" />
                 <span>Razorpay Secured</span>
               </span>
-              <span className="flex items-center gap-2 bg-[#111618]/80 border border-[#20292b] px-4 py-2 rounded-full shadow-[inset_0_1px_rgba(255,255,255,0.03)] hover:border-warning/30 transition-colors duration-300">
+              <span className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#111618]/80 border border-[#20292b] min-h-[44px] px-4 py-2 rounded-xl sm:rounded-full shadow-[inset_0_1px_rgba(255,255,255,0.03)] hover:border-warning/30 transition-colors duration-300">
                 <Flame className="w-3.5 h-3.5 text-warning animate-pulse" />
                 <span>2-Min Generation</span>
               </span>
+            </div>
+          </div>
+          
+          {/* Mobile Social Proof Ticker */}
+          <div className="md:hidden w-full overflow-hidden border-y border-[#20292b] bg-[#111618]/60 py-3 relative z-10">
+            <div className="flex whitespace-nowrap animate-marquee">
+              <div className="flex gap-8 items-center text-[10px] font-bold text-[#eae9e5]/80 tracking-wider">
+                <span className="flex items-center gap-1.5"><Sparkles className="w-3 h-3 text-warning" /> VIT student just unlocked a resume</span>
+                <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3 text-success" /> NIT Trichy candidate scored 94 ATS</span>
+                <span className="flex items-center gap-1.5"><Flame className="w-3 h-3 text-primary" /> BITS Pilani student generated their resume</span>
+                {/* Duplicate for infinite loop illusion */}
+                <span className="flex items-center gap-1.5"><Sparkles className="w-3 h-3 text-warning" /> VIT student just unlocked a resume</span>
+                <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3 text-success" /> NIT Trichy candidate scored 94 ATS</span>
+                <span className="flex items-center gap-1.5"><Flame className="w-3 h-3 text-primary" /> BITS Pilani student generated their resume</span>
+              </div>
             </div>
           </div>
 
@@ -491,7 +638,7 @@ export default function LandingPage() {
                 <button
                   type="button"
                   onClick={() => setMobileTab("input")}
-                  className={`py-3 text-xs font-bold rounded-lg transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
+                  className={`py-3.5 text-xs font-bold rounded-lg transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
                     mobileTab === "input"
                       ? "bg-primary text-white"
                       : "text-[#9f9d98] hover:text-white"
@@ -502,7 +649,7 @@ export default function LandingPage() {
                 <button
                   type="button"
                   onClick={() => setMobileTab("grader")}
-                  className={`py-3 text-xs font-bold rounded-lg transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
+                  className={`py-3.5 text-xs font-bold rounded-lg transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
                     mobileTab === "grader"
                       ? "bg-primary text-white"
                       : "text-[#9f9d98] hover:text-white"
@@ -525,7 +672,7 @@ export default function LandingPage() {
                         <button
                           key={tab}
                           onClick={() => setBActiveTab(tab as any)}
-                          className={`px-2 py-1 rounded transition-all cursor-pointer ${
+                          className={`px-3 py-1.5 min-h-[40px] flex items-center justify-center rounded transition-all cursor-pointer ${
                             bActiveTab === tab
                               ? "bg-primary text-white font-bold"
                               : "bg-[#111618] border border-[#20292b] text-[#9f9d98]"
@@ -632,8 +779,8 @@ export default function LandingPage() {
 
                   {/* Circular Score */}
                   <div className="flex items-center gap-4 bg-[#111618]/70 border border-[#20292b] rounded-xl p-3.5 text-left">
-                    <div className="relative w-16 h-16 flex items-center justify-center shrink-0">
-                      <svg className="w-full h-full transform -rotate-90">
+                    <div className="relative w-20 h-20 flex items-center justify-center shrink-0">
+                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 64 64">
                         <circle cx="32" cy="32" r="26" strokeWidth="4" stroke="#1d2527" fill="transparent" />
                         <circle
                           cx="32"
@@ -648,44 +795,44 @@ export default function LandingPage() {
                           fill="transparent"
                           strokeDasharray="163.3"
                           strokeDashoffset={163.3 - (163.3 * (48 + (bQuantified ? 15 : 0) + (bKeywords ? 16 : 0) + (bNoCanva ? 20 : 0))) / 100}
-                          className="transition-all duration-500 ease-out"
+                          className="transition-all duration-500 ease-out score-glow"
                         />
                       </svg>
                       <div className="absolute flex flex-col items-center">
-                        <span className="text-sm font-black font-mono leading-none text-white">
+                        <span className="text-xl font-black font-mono leading-none text-white">
                           {48 + (bQuantified ? 15 : 0) + (bKeywords ? 16 : 0) + (bNoCanva ? 20 : 0)}
                         </span>
-                        <span className="text-[6.5px] font-bold text-[#9f9d98] uppercase tracking-wider mt-0.5">Score</span>
+                        <span className="text-[7px] font-bold text-[#9f9d98] uppercase tracking-wider mt-0.5">Score</span>
                       </div>
                     </div>
 
                     <div className="space-y-1 text-left flex-1">
                       <span className="text-[8px] font-black text-[#7a7974] uppercase tracking-widest block">Choose Enhancements</span>
-                      <div className="space-y-1 text-[11px] font-bold text-[#eae9e5]">
-                        <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                      <div className="space-y-1.5 text-[11px] font-bold text-[#eae9e5]">
+                        <label className="flex items-center gap-2 cursor-pointer select-none py-1 touch-feedback">
                           <input
                             type="checkbox"
                             checked={bQuantified}
                             onChange={(e) => setBQuantified(e.target.checked)}
-                            className="w-3.5 h-3.5 text-primary accent-primary rounded cursor-pointer shrink-0"
+                            className="w-5 h-5 text-primary accent-primary rounded cursor-pointer shrink-0"
                           />
                           <span>Add metrics (+15 pts)</span>
                         </label>
-                        <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                        <label className="flex items-center gap-2 cursor-pointer select-none py-1 touch-feedback">
                           <input
                             type="checkbox"
                             checked={bKeywords}
                             onChange={(e) => setBKeywords(e.target.checked)}
-                            className="w-3.5 h-3.5 text-primary accent-primary rounded cursor-pointer shrink-0"
+                            className="w-5 h-5 text-primary accent-primary rounded cursor-pointer shrink-0"
                           />
                           <span>Inject tech words (+16 pts)</span>
                         </label>
-                        <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                        <label className="flex items-center gap-2 cursor-pointer select-none py-1 touch-feedback">
                           <input
                             type="checkbox"
                             checked={bNoCanva}
                             onChange={(e) => setBNoCanva(e.target.checked)}
-                            className="w-3.5 h-3.5 text-primary accent-primary rounded cursor-pointer shrink-0"
+                            className="w-5 h-5 text-primary accent-primary rounded cursor-pointer shrink-0"
                           />
                           <span>ATS formatting (+20 pts)</span>
                         </label>
@@ -1086,7 +1233,7 @@ export default function LandingPage() {
           </section>
 
           {/* SECTION 1: Why Good Students Still Get Rejected */}
-          <section className="px-6 py-24 max-w-5xl mx-auto w-full border-b border-border/40 relative overflow-hidden">
+          <section className="px-6 py-12 md:py-24 max-w-5xl mx-auto w-full border-b border-border/40 relative overflow-hidden">
             {/* Decorative subtle background glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/2 rounded-full blur-[100px] pointer-events-none" />
 
@@ -1199,7 +1346,7 @@ export default function LandingPage() {
           </section>
 
           {/* SECTION 2: Competitive Positioning */}
-          <section className="px-6 py-24 max-w-5xl mx-auto w-full border-b border-border/40 relative overflow-hidden">
+          <section className="px-6 py-12 md:py-24 max-w-5xl mx-auto w-full border-b border-border/40 relative overflow-hidden">
             {/* Centered Heading & Subtitle */}
             <div className="text-center mb-16 relative z-10">
               <h2 className="text-3xl md:text-5xl font-serif tracking-tight text-text mb-4">
@@ -1213,7 +1360,7 @@ export default function LandingPage() {
             {/* Uniquely Designed Comparative Positioning Board */}
             <div className="bg-surface/50 border border-border/30 rounded-3xl p-2 max-w-5xl mx-auto mb-16 relative z-10 grid md:grid-cols-3 gap-2 md:gap-0 items-stretch">
               {/* Column 1: Generic Resume Builders */}
-              <div className="p-8 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-70 hover:opacity-90">
+              <div className="p-6 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-70 hover:opacity-90">
                 <div>
                   <div className="mb-6">
                     <span className="text-[10px] font-bold text-text-muted/80 uppercase tracking-widest block mb-1">Standard Tool</span>
@@ -1245,7 +1392,7 @@ export default function LandingPage() {
               </div>
 
               {/* Column 2: AI Chatbots */}
-              <div className="p-8 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-85 hover:opacity-100">
+              <div className="p-6 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-85 hover:opacity-100">
                 <div>
                   <div className="mb-6">
                     <span className="text-[10px] font-bold text-warning/80 uppercase tracking-widest block mb-1">Raw AI Tool</span>
@@ -1277,7 +1424,7 @@ export default function LandingPage() {
               </div>
 
               {/* Column 3: ATSLift (Sleek Floating Column) */}
-              <div className="bg-gradient-to-b from-[#ffffff] to-primary/[0.02] border-2 border-primary rounded-3xl p-8 md:p-10 shadow-[0_20px_50px_rgba(1,105,111,0.08)] relative mt-6 md:mt-0 md:-translate-y-6 md:scale-[1.04] z-20 flex flex-col justify-between transition-all duration-300 group">
+              <div className="bg-gradient-to-b from-[#ffffff] to-primary/[0.02] border-2 border-primary rounded-3xl p-6 md:p-10 shadow-[0_20px_50px_rgba(1,105,111,0.08)] relative mt-6 md:mt-0 md:-translate-y-6 md:scale-[1.04] z-20 flex flex-col justify-between transition-all duration-300 group">
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-extrabold tracking-widest px-4 py-1.5 rounded-full uppercase shadow-md border border-white/20 whitespace-nowrap">
                   High Signal Format
                 </div>
@@ -1336,7 +1483,7 @@ export default function LandingPage() {
           </section>
 
           {/* How it works */}
-          <section className="px-6 py-20 max-w-5xl mx-auto w-full">
+          <section className="px-6 py-12 md:py-20 max-w-5xl mx-auto w-full">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-serif tracking-tight mb-3">How ATSLift Works</h2>
               <p className="text-text-muted text-sm md:text-base max-w-md mx-auto">
@@ -1397,7 +1544,7 @@ export default function LandingPage() {
           </section>
 
           {/* FAQs */}
-          <section className="px-6 py-20 bg-surface/30 border-t border-border/50">
+          <section className="px-6 py-12 md:py-20 bg-surface/30 border-t border-border/50">
             <div className="max-w-3xl mx-auto">
               <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-serif tracking-tight mb-3">Frequently Asked Questions</h2>
@@ -1437,7 +1584,7 @@ export default function LandingPage() {
           </section>
 
           {/* Final CTA */}
-          <section className="px-6 py-24 text-center max-w-4xl mx-auto flex flex-col items-center">
+          <section className="px-6 py-16 md:py-24 text-center max-w-4xl mx-auto flex flex-col items-center">
             <h2 className="text-3xl md:text-6xl font-serif tracking-tight text-text mb-6 leading-tight">
               Ready to beat the <span className="italic text-primary font-normal">Placement Portal</span>?
             </h2>
@@ -1458,7 +1605,7 @@ export default function LandingPage() {
       )}
       
       {/* Premium Multi-Column Footer */}
-      <footer className={`mt-auto border-t px-6 py-16 transition-colors duration-300 font-sans ${
+      <footer className={`mt-auto border-t px-6 py-10 md:py-16 transition-colors duration-300 font-sans ${
         landingVariant === "dashboard"
           ? "bg-[#0a0d0e] border-[#20292b] text-[#9f9d98]"
           : "bg-surface border-border/60 text-text-muted"

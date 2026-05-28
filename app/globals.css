@@ -76,6 +76,137 @@ body {
   transform: rotate(45deg);
 }
 
+/* ═══════════════════════════════════════════════
+   MOBILE UX OPTIMIZATIONS
+   ═══════════════════════════════════════════════ */
+
+/* Remove tap highlight on mobile for native feel */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scroll globally */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Prevent iOS input zoom (inputs < 16px trigger zoom) */
+@media (max-width: 767px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* Hide scrollbar on mobile for native app feel */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Touch-friendly focus states */
+@media (pointer: coarse) {
+  :focus-visible {
+    outline: 3px solid rgba(1, 105, 111, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+/* ─── Sticky CTA Slide-Up Animation ─── */
+@keyframes slideUpCTA {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up-cta {
+  animation: slideUpCTA 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ─── Scroll-Driven Fade-In Reveal ─── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ─── Marquee Ticker Animation ─── */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover,
+.animate-marquee:active {
+  animation-play-state: paused;
+}
+
+/* ─── Skeleton Loading Shimmer ─── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(1, 105, 111, 0.06) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* ─── Mobile Touch Feedback ─── */
+.touch-feedback:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}
+
+/* ─── Animated Score Count-Up (used with JS) ─── */
+@keyframes scoreGlow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0)); }
+  50% { filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.4)); }
+}
+
+.score-glow {
+  animation: scoreGlow 2s ease-in-out infinite;
+}
+
+/* ─── Performance: GPU Compositing Hints ─── */
+.will-change-transform {
+  will-change: transform;
+}
+
+/* ─── Content Visibility for Below-Fold Sections ─── */
+.content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
 /* Strict Print Settings */
 @page {
   size: A4;

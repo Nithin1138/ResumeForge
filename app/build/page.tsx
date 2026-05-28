@@ -615,6 +615,7 @@ export default function BuildPage() {
             className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
             value={formData.personal.graduationYear}
             onChange={(e) => updatePersonal({ graduationYear: e.target.value })}
+            inputMode="numeric"
           >
             <option value="">Select year</option>
             <option value="2024">2024</option>
@@ -631,6 +632,7 @@ export default function BuildPage() {
           <input
             type="number"
             step="0.01"
+            inputMode="decimal"
             className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
             placeholder="e.g. 8.76"
             value={formData.personal.cgpa}
@@ -642,7 +644,7 @@ export default function BuildPage() {
         <div>
           <label className="block text-sm font-semibold mb-2">Phone Number</label>
           <input
-            type="text"
+            type="tel"
             className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
             placeholder="e.g. +91 98765 43210"
             value={formData.personal.phone || ""}
@@ -653,7 +655,7 @@ export default function BuildPage() {
         <div>
           <label className="block text-sm font-semibold mb-2">LinkedIn Profile Link</label>
           <input
-            type="text"
+            type="url"
             className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
             placeholder="e.g. linkedin.com/in/username"
             value={formData.personal.linkedin || ""}
@@ -664,7 +666,7 @@ export default function BuildPage() {
         <div>
           <label className="block text-sm font-semibold mb-2">GitHub Profile Link</label>
           <input
-            type="text"
+            type="url"
             className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
             placeholder="e.g. github.com/username"
             value={formData.personal.github || ""}
@@ -750,6 +752,7 @@ export default function BuildPage() {
                 className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm font-medium"
                 value={formData.personal.pgGraduationYear || ""}
                 onChange={(e) => updatePersonal({ pgGraduationYear: e.target.value })}
+                inputMode="numeric"
               >
                 <option value="">Select year</option>
                 <option value="2024">2024</option>
@@ -767,6 +770,7 @@ export default function BuildPage() {
               <input
                 type="number"
                 step="0.01"
+                inputMode="decimal"
                 className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
                 placeholder="e.g. 9.12"
                 value={formData.personal.pgCgpa || ""}
@@ -1038,7 +1042,7 @@ export default function BuildPage() {
     <div className="space-y-8">
       {/* Internships Header */}
       <div className="space-y-6">
-        <div className="border-b border-border/60 pb-4 flex justify-between items-end">
+        <div className="border-b border-border/60 pb-4 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
           <div>
             <h2 className="text-xl font-bold font-sans">Work Experience / Internships (Optional)</h2>
             <p className="text-sm text-text-muted">Add up to 3 technical internships. Skip if you don&apos;t have any.</p>
@@ -1046,7 +1050,7 @@ export default function BuildPage() {
           <button
             onClick={addInternship}
             disabled={formData.internships.length >= 3}
-            className="px-4 py-2 bg-primary/10 border border-primary/20 hover:bg-primary/25 disabled:opacity-50 text-primary font-bold text-xs rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer"
+            className="px-4 py-2 bg-primary/10 border border-primary/20 hover:bg-primary/25 disabled:opacity-50 text-primary font-bold text-xs rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer w-full md:w-auto justify-center"
           >
             <Plus className="w-4 h-4" />
             <span>Add Internship ({formData.internships.length}/3)</span>
@@ -1147,7 +1151,7 @@ export default function BuildPage() {
 
       {/* Positions of Responsibility Header */}
       <div className="space-y-6 border-t border-border/40 pt-6">
-        <div className="flex justify-between items-end">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
           <div>
             <h2 className="text-xl font-bold font-sans">Positions of Responsibility (Optional)</h2>
             <p className="text-sm text-text-muted">Club roles, leadership in university chapters (max 2).</p>
@@ -1155,7 +1159,7 @@ export default function BuildPage() {
           <button
             onClick={addPosition}
             disabled={formData.positions.length >= 2}
-            className="px-4 py-2 bg-primary/10 border border-primary/20 hover:bg-primary/25 disabled:opacity-50 text-primary font-bold text-xs rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer"
+            className="px-4 py-2 bg-primary/10 border border-primary/20 hover:bg-primary/25 disabled:opacity-50 text-primary font-bold text-xs rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer w-full md:w-auto justify-center"
           >
             <Plus className="w-4 h-4" />
             <span>Add POR ({formData.positions.length}/2)</span>
@@ -1437,7 +1441,7 @@ export default function BuildPage() {
                 <button
                   key={s.stepNum}
                   onClick={() => handleStepClick(s.stepNum)}
-                  className="flex flex-col items-center space-y-1 bg-transparent border-0 cursor-pointer focus:outline-hidden group"
+                  className="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] p-2 bg-transparent border-0 cursor-pointer focus:outline-hidden group"
                 >
                   <div
                     className={`w-7 h-7 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all duration-300 ${
@@ -1575,7 +1579,7 @@ export default function BuildPage() {
 
         {/* Main Form Content */}
         <main className="flex-1 min-w-0 bg-bg-base">
-          <div className="w-full px-8 md:px-14 lg:px-16 pt-10 pb-32">
+          <div className="w-full px-4 md:px-14 lg:px-16 pt-8 md:pt-10 pb-32">
             {activeStep === 1 && renderStep1()}
             {activeStep === 2 && renderStep2()}
             {activeStep === 3 && renderStep3()}
@@ -1584,12 +1588,12 @@ export default function BuildPage() {
           </div>
 
           {/* Sticky Footer Nav */}
-          <div className="fixed bottom-0 left-0 right-0 lg:left-72 z-30 bg-bg-base/80 backdrop-blur-md border-t border-border/40 px-8 md:px-14 lg:px-16 py-4">
+          <div className="fixed bottom-0 left-0 right-0 lg:left-72 z-30 bg-bg-base/80 backdrop-blur-md border-t border-border/40 px-4 md:px-14 lg:px-16 py-4">
             <div className="flex justify-between items-center">
               <button
                 onClick={handlePrev}
                 disabled={activeStep === 1}
-                className="px-5 py-2.5 border border-border hover:bg-surface disabled:opacity-25 disabled:cursor-not-allowed text-sm font-semibold rounded-full flex items-center space-x-2 transition-all cursor-pointer"
+                className="px-5 py-3 md:py-2.5 border border-border hover:bg-surface disabled:opacity-25 disabled:cursor-not-allowed text-sm font-semibold rounded-full flex items-center space-x-2 transition-all cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back</span>
@@ -1628,7 +1632,7 @@ export default function BuildPage() {
                 {activeStep < 5 ? (
                   <button
                     onClick={handleNext}
-                    className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-full flex items-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer"
+                    className="px-6 py-3 md:py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-full flex items-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer"
                   >
                     <span>Continue</span>
                     <ArrowRight className="w-4 h-4" />
@@ -1636,7 +1640,7 @@ export default function BuildPage() {
                 ) : (
                   <button
                     onClick={handleSubmit}
-                    className="px-8 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-full flex items-center space-x-2 transition-all shadow-md hover:shadow-lg cursor-pointer"
+                    className="px-8 py-3 md:py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-full flex items-center space-x-2 transition-all shadow-md hover:shadow-lg cursor-pointer"
                   >
                     <Sparkles className="w-4 h-4" />
                     <span>Generate Resume</span>
