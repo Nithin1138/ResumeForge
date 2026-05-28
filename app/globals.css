@@ -4,15 +4,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #01696f;
-  --color-bg-base: #f7f6f2;
-  --color-surface: #f9f8f5;
-  --color-text: #28251d;
-  --color-text-muted: #7a7974;
-  --color-border: #d4d1ca;
-  --color-success: #437a22;
-  --color-warning: #964219;
-  --color-error: #a12c7b;
+  --color-primary: var(--primary);
+  --color-bg-base: var(--bg-base);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
 
   --font-serif: "Instrument Serif", Georgia, serif;
   --font-sans: "Satoshi", "Inter", system-ui, -apple-system, sans-serif;
@@ -20,8 +20,35 @@
 }
 
 :root {
-  --background: #f7f6f2;
-  --foreground: #28251d;
+  /* LIGHT THEME */
+  --primary: #01696f;
+  --bg-base: #f7f6f2;
+  --surface: #f9f8f5;
+  --text: #28251d;
+  --text-muted: #7a7974;
+  --border: #d4d1ca;
+  --success: #437a22;
+  --warning: #964219;
+  --error: #a12c7b;
+  
+  --background: var(--bg-base);
+  --foreground: var(--text);
+}
+
+.dark {
+  /* DARK THEME (Variant B color palette) */
+  --primary: #00e1ec;
+  --bg-base: #080b0c;
+  --surface: #111618;
+  --text: #eae9e5;
+  --text-muted: #9f9d98;
+  --border: #20292b;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  
+  --background: var(--bg-base);
+  --foreground: var(--text);
 }
 
 /* Base custom styles to provide a highly premium feel */

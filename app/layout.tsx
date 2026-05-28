@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 0.85,
 };
-
 
 export const metadata: Metadata = {
   title: "ATSLift — ATS Resume Builder for Engineering Students",
@@ -35,10 +36,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased selection:bg-primary/20">
+    <html lang="en" className="h-full antialiased selection:bg-primary/20" suppressHydrationWarning>
       <body className="min-h-full flex flex-col bg-bg-base text-text selection:bg-primary/20">
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          {children}
+          <ThemeToggle />
+        </ThemeProvider>
       </body>
     </html>
   );
 }
+
