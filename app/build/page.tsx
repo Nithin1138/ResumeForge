@@ -1468,7 +1468,7 @@ export default function BuildPage() {
         </div>
 
         {/* Desktop Vertical Sidebar Steps */}
-        <aside className="hidden lg:flex w-72 shrink-0 border-r border-border/40 flex-col" style={{background: "linear-gradient(180deg, #f7f6f2 0%, #f3f2ee 100%)"}}>
+        <aside className="hidden lg:flex w-72 shrink-0 border-r border-border/40 flex-col bg-bg-base">
           <div className="sticky top-[73px] h-[calc(100vh-73px)] flex flex-col overflow-y-auto">
             
             {/* Top brand area */}
@@ -1523,8 +1523,8 @@ export default function BuildPage() {
                         isCompleted
                           ? "bg-primary shadow-sm"
                           : isActive
-                          ? "bg-white border-2 border-primary shadow-md"
-                          : "bg-white border border-border group-hover:border-primary/40"
+                          ? "bg-surface border-2 border-primary shadow-md"
+                          : "bg-surface border border-border group-hover:border-primary/40"
                       }`}>
                         {isCompleted
                           ? <Check className="w-5 h-5 text-white" />
@@ -1563,7 +1563,7 @@ export default function BuildPage() {
 
             {/* Bottom tip */}
             <div className="px-5 pb-8">
-              <div className="rounded-2xl border border-border/60 bg-white/60 p-4">
+              <div className="rounded-2xl border border-border/60 bg-surface/60 p-4">
                 <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">💡 Pro Tip</p>
                 <p className="text-xs text-text-muted leading-relaxed">
                   {activeStep === 1 && "Add your LinkedIn & GitHub links to boost ATS scores by up to 15%."}

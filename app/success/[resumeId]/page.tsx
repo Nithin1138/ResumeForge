@@ -534,7 +534,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
             </div>
           </div>
           <p 
-            className="text-sm font-medium leading-relaxed outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded p-1.5 -m-1.5 transition-all"
+            className="text-sm font-medium leading-relaxed outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1.5 -m-1.5 transition-all"
             contentEditable 
             suppressContentEditableWarning 
             onBlur={(e) => setLiveResume((prev: any) => ({ ...prev, summary: e.target.textContent || "" }))}
@@ -616,7 +616,7 @@ Concepts: ${output.skills.concepts.join(", ")}
                   <div className="text-left">
                     <span className="text-[9px] font-bold text-primary tracking-wider uppercase block">Project #{idx + 1}</span>
                     <h4 
-                      className="font-bold text-base text-text outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1"
+                      className="font-bold text-base text-text outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1"
                       contentEditable 
                       suppressContentEditableWarning
                       onBlur={(e) => {
@@ -676,7 +676,7 @@ Concepts: ${output.skills.concepts.join(", ")}
                     {proj.bullets.map((bulletText: string, bIdx: number) => (
                       <li 
                         key={bIdx}
-                        className="outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
+                        className="outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
                         contentEditable
                         suppressContentEditableWarning
                         onBlur={(e) => {
@@ -714,7 +714,7 @@ Concepts: ${output.skills.concepts.join(", ")}
                     <div className="text-left">
                       <span className="text-[9px] font-bold text-primary tracking-wider uppercase block">{exp.duration}</span>
                       <h4 
-                        className="font-bold text-base text-text outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1"
+                        className="font-bold text-base text-text outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1"
                         contentEditable
                         suppressContentEditableWarning
                         onBlur={(e) => {
@@ -760,7 +760,7 @@ Concepts: ${output.skills.concepts.join(", ")}
 
                   <div className="space-y-3">
                     <div 
-                      className="text-[10px] font-bold text-primary uppercase outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1 inline-block"
+                      className="text-[10px] font-bold text-primary uppercase outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1 inline-block"
                       contentEditable
                       suppressContentEditableWarning
                       onBlur={(e) => {
@@ -777,7 +777,7 @@ Concepts: ${output.skills.concepts.join(", ")}
                       {exp.bullets.map((bulletText: string, bIdx: number) => (
                         <li 
                           key={bIdx}
-                          className="outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
+                          className="outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
                           contentEditable
                           suppressContentEditableWarning
                           onBlur={(e) => {
@@ -810,7 +810,7 @@ Concepts: ${output.skills.concepts.join(", ")}
                     <div key={idx} className="space-y-1">
                       <div className="flex justify-between items-baseline">
                         <span 
-                          className="text-xs font-bold outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1"
+                          className="text-xs font-bold outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1"
                           contentEditable
                           suppressContentEditableWarning
                           onBlur={(e) => {
@@ -826,7 +826,7 @@ Concepts: ${output.skills.concepts.join(", ")}
                         <span className="text-[9px] font-bold text-text-muted">{pos.organization}</span>
                       </div>
                       <p 
-                        className="text-xs text-text-muted leading-relaxed font-medium outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1"
+                        className="text-xs text-text-muted leading-relaxed font-medium outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1"
                         contentEditable
                         suppressContentEditableWarning
                         onBlur={(e) => {
@@ -852,7 +852,7 @@ Concepts: ${output.skills.concepts.join(", ")}
                   {output.achievements.map((ach: string, idx: number) => (
                     <li 
                       key={idx}
-                      className="outline-none focus:bg-white focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
+                      className="outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
                       contentEditable
                       suppressContentEditableWarning
                       onBlur={(e) => {
