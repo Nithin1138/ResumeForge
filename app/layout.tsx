@@ -1,5 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 0.85,
+};
+
 
 export const metadata: Metadata = {
   title: "ATSLift — ATS Resume Builder for Engineering Students",
