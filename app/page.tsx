@@ -1177,9 +1177,9 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              <div className="max-md:flex max-md:overflow-x-auto max-md:snap-x max-md:snap-mandatory max-md:gap-4 max-md:-mx-6 max-md:px-6 max-md:pb-6 grid md:grid-cols-2 gap-8 max-w-4xl mx-auto [scrollbar-width:none]">
                 {/* Left Card: Input */}
-                <div className="border border-border bg-bg-base/60 rounded-2xl p-4 md:p-6 relative">
+                <div className="max-md:min-w-[85vw] max-md:snap-center border border-border bg-bg-base/60 rounded-2xl p-4 md:p-6 relative">
                   <div className="md:absolute static mb-4 md:mb-0 md:top-4 md:right-4 inline-block text-xs font-bold tracking-wider text-text-muted bg-border/40 px-2.5 py-1 rounded-full uppercase">
                     What you write
                   </div>
@@ -1203,7 +1203,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Right Card: Output */}
-                <div className="border-2 border-primary bg-surface rounded-2xl p-4 md:p-6 relative shadow-md glow-primary">
+                <div className="max-md:min-w-[85vw] max-md:snap-center border-2 border-primary bg-surface rounded-2xl p-4 md:p-6 relative shadow-md glow-primary">
                   <div className="md:absolute static mb-4 md:mb-0 md:top-4 md:right-4 inline-flex items-center space-x-1.5 bg-success/15 border border-success/30 px-2.5 py-1 rounded-full">
                     <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
                     <span className="text-[10px] font-extrabold tracking-wider text-success uppercase">ATS Score: 94/100</span>
@@ -1358,9 +1358,9 @@ export default function LandingPage() {
             </div>
 
             {/* Uniquely Designed Comparative Positioning Board */}
-            <div className="bg-surface/50 border border-border/30 rounded-3xl p-2 max-w-5xl mx-auto mb-16 relative z-10 grid md:grid-cols-3 gap-2 md:gap-0 items-stretch">
+            <div className="max-md:flex max-md:overflow-x-auto max-md:snap-x max-md:snap-mandatory max-md:gap-4 max-md:-mx-6 max-md:px-6 max-md:pb-6 bg-surface/50 border border-border/30 rounded-3xl p-2 max-w-5xl mx-auto mb-16 relative z-10 grid md:grid-cols-3 md:gap-0 items-stretch [scrollbar-width:none]">
               {/* Column 1: Generic Resume Builders */}
-              <div className="p-6 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-70 hover:opacity-90">
+              <div className="max-md:min-w-[85vw] max-md:snap-center max-md:rounded-2xl max-md:border p-6 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-70 hover:opacity-90">
                 <div>
                   <div className="mb-6">
                     <span className="text-[10px] font-bold text-text-muted/80 uppercase tracking-widest block mb-1">Standard Tool</span>
@@ -1392,7 +1392,7 @@ export default function LandingPage() {
               </div>
 
               {/* Column 2: AI Chatbots */}
-              <div className="p-6 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-85 hover:opacity-100">
+              <div className="max-md:min-w-[85vw] max-md:snap-center max-md:rounded-2xl max-md:border p-6 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-border/20 bg-transparent transition-all duration-300 opacity-85 hover:opacity-100">
                 <div>
                   <div className="mb-6">
                     <span className="text-[10px] font-bold text-warning/80 uppercase tracking-widest block mb-1">Raw AI Tool</span>
@@ -1424,7 +1424,7 @@ export default function LandingPage() {
               </div>
 
               {/* Column 3: ATSLift (Sleek Floating Column) */}
-              <div className="bg-gradient-to-b from-[#ffffff] to-primary/[0.02] border-2 border-primary rounded-3xl p-6 md:p-10 shadow-[0_20px_50px_rgba(1,105,111,0.08)] relative mt-6 md:mt-0 md:-translate-y-6 md:scale-[1.04] z-20 flex flex-col justify-between transition-all duration-300 group">
+              <div className="max-md:min-w-[85vw] max-md:snap-center bg-gradient-to-b from-[#ffffff] to-primary/[0.02] border-2 border-primary rounded-3xl p-6 md:p-10 shadow-[0_20px_50px_rgba(1,105,111,0.08)] relative max-md:mt-0 md:-translate-y-6 md:scale-[1.04] z-20 flex flex-col justify-between transition-all duration-300 group">
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-extrabold tracking-widest px-4 py-1.5 rounded-full uppercase shadow-md border border-white/20 whitespace-nowrap">
                   High Signal Format
                 </div>

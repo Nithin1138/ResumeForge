@@ -88,7 +88,7 @@ export default async function DashboardPage() {
           </div>
           <Link
             href="/build"
-            className="max-md:w-full max-md:min-h-[44px] px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer"
+            className="max-md:hidden px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Build New Resume</span>
@@ -134,7 +134,7 @@ export default async function DashboardPage() {
           <h2 className="text-xs font-bold text-text-muted tracking-wider uppercase border-b border-border/40 pb-2">Your Saved Resumes</h2>
 
           {resumes.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
               {resumes.map((resumeItem) => {
                 const isPaid = resumeItem.paymentStatus === "PAID";
                 let atsScore = 85;
@@ -149,7 +149,7 @@ export default async function DashboardPage() {
                 return (
                   <div
                     key={resumeItem.id}
-                    className="bg-surface border border-border rounded-2xl p-6 flex flex-col justify-between hover:border-primary/55 transition-all duration-300 shadow-xs group"
+                    className="bg-surface border border-border rounded-2xl p-4 md:p-6 flex flex-col justify-between hover:border-primary/55 transition-all duration-300 shadow-xs group"
                   >
                     <div className="space-y-4">
                       {/* Top Row: Date & Status Badge */}
@@ -165,24 +165,24 @@ export default async function DashboardPage() {
                       </div>
 
                       {/* Main Data: Target Role */}
-                      <div className="space-y-1 text-left">
-                        <h3 className="font-bold text-lg text-text group-hover:text-primary transition-colors">{resumeItem.targetRole}</h3>
-                        <p className="text-xs text-text-muted leading-relaxed font-semibold">
+                      <div className="space-y-1 text-left mt-2 md:mt-0">
+                        <h3 className="font-bold text-base md:text-lg text-text group-hover:text-primary transition-colors line-clamp-1">{resumeItem.targetRole}</h3>
+                        <p className="max-md:hidden text-xs text-text-muted leading-relaxed font-semibold">
                           College: {resumeItem.college}
                         </p>
-                        <p className="text-xs text-text-muted leading-relaxed font-semibold">
+                        <p className="max-md:hidden text-xs text-text-muted leading-relaxed font-semibold">
                           Academics: B.Tech (CGPA: {resumeItem.cgpa})
                         </p>
                       </div>
                     </div>
 
                     {/* Bottom Row: Actions */}
-                    <div className="max-md:flex-col flex items-center justify-between border-t border-border/30 mt-6 pt-4 gap-4">
+                    <div className="flex flex-row items-center justify-between border-t border-border/30 mt-4 md:mt-6 pt-3 md:pt-4 gap-4">
                       <DeleteButton id={resumeItem.id} />
 
                       <Link
                         href={isPaid ? `/success/${resumeItem.id}?sandbox=true` : `/result/${resumeItem.id}`}
-                        className={`max-md:w-full max-md:min-h-[44px] px-5 py-2.5 rounded-full text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-xs ${
+                        className={`flex-1 min-h-[44px] px-5 py-2.5 rounded-full text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-xs ${
                           isPaid 
                             ? "bg-success text-white hover:bg-success/90" 
                             : "bg-primary text-white hover:bg-primary/90"
@@ -215,6 +215,14 @@ export default async function DashboardPage() {
           )}
         </div>
       </main>
+
+      {/* Mobile FAB */}
+      <Link
+        href="/build"
+        className="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(1,105,111,0.4)] z-50 hover:scale-105 active:scale-95 transition-transform"
+      >
+        <Plus className="w-6 h-6" />
+      </Link>
     </div>
   );
 }
