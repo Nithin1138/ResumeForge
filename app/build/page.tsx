@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, Plus, Trash2, Loader2, Sparkles, Check, ChevronD
 import { getLocalSession } from "@/lib/authClient";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BRANCH_SKILL_CONFIGS, DEFAULT_BRANCH_CONFIG } from "@/lib/branchConfig";
+import { NORMALIZATION_MAP } from "@/lib/skillsEngine";
 
 // Curated popular suggestions for each skill block
 const SOFT_SKILLS_SUGGESTIONS = ["Technical Writing", "Public Speaking", "Team Collaboration", "Agile Methodology", "Problem Solving", "Leadership", "Time Management", "Critical Thinking"];
@@ -38,9 +39,17 @@ function TagInput({
   const activeTags = value ? value.split(",").map(t => t.trim()).filter(Boolean) : [];
 
   const handleAddTag = (tag: string) => {
-    const trimmed = tag.trim();
+    let trimmed = tag.trim();
     if (!trimmed) return;
-    if (activeTags.includes(trimmed)) return;
+    
+    // Normalize if possible
+    const lower = trimmed.toLowerCase();
+    if (NORMALIZATION_MAP[lower]) {
+      trimmed = NORMALIZATION_MAP[lower];
+    }
+
+    // Case-insensitive inclusion check
+    if (activeTags.some(t => t.toLowerCase() === trimmed.toLowerCase())) return;
 
     const newTags = [...activeTags, trimmed];
     onChange(newTags.join(", "));
@@ -62,15 +71,22 @@ function TagInput({
   };
 
   const handleToggleSuggestion = (sug: string) => {
-    if (activeTags.includes(sug)) {
-      handleRemoveTag(sug);
+    const normalizedSug = NORMALIZATION_MAP[sug.toLowerCase()] || sug.trim();
+    const existingIndex = activeTags.findIndex(t => t.toLowerCase() === normalizedSug.toLowerCase());
+    
+    if (existingIndex !== -1) {
+      handleRemoveTag(activeTags[existingIndex]);
     } else {
       handleAddTag(sug);
     }
   };
 
   const filteredSuggestions = suggestions.filter(
-    sug => !activeTags.includes(sug) && sug.toLowerCase().includes(inputValue.toLowerCase())
+    sug => {
+      const normalizedSug = NORMALIZATION_MAP[sug.toLowerCase()] || sug.trim();
+      const isActive = activeTags.some(t => t.toLowerCase() === normalizedSug.toLowerCase());
+      return !isActive && sug.toLowerCase().includes(inputValue.toLowerCase());
+    }
   );
 
   return (

@@ -41,7 +41,7 @@ export const MASTER_CATEGORIES: Record<string, { label: string, limit: number, i
 
 type CategoryKey = keyof typeof MASTER_CATEGORIES;
 
-const NORMALIZATION_MAP: Record<string, string> = {
+export const NORMALIZATION_MAP: Record<string, string> = {
   // Languages
   "js": "JavaScript", "javascript": "JavaScript", "ts": "TypeScript", "typescript": "TypeScript",
   "py": "Python", "python": "Python", "c++": "C++", "cpp": "C++", "c#": "C#", "csharp": "C#",
