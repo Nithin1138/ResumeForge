@@ -89,8 +89,15 @@ export interface FullResumeOutput {
     frameworks: string[];
     tools: string[];
     databases: string[];
-    concepts: string[];
+    aiAndData?: string[];
+    csConcepts?: string[];
+    concepts?: string[];     // backward compat alias for csConcepts
     softSkills?: string[];
+    cloudAndDevops?: string[];
+    cybersecurity?: string[];
+    embeddedSystems?: string[];
+    dataEngineering?: string[];
+    engineeringSoftware?: string[];
   };
   education: {
     degree: string;

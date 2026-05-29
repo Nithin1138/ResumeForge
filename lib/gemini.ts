@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { ResumeFormData, FullResumeOutput } from "@/types/resume";
+import { generateTechnicalSkills } from "@/lib/skillsEngine";
 
 // Initialize the Google Gen AI client
 const getGeminiClient = () => {
@@ -15,12 +16,15 @@ const getGeminiClient = () => {
 const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
   const { personal, skills, projects, internships, positions, achievements, options } = formData;
 
-  const languagesList = skills.languages ? skills.languages.split(",").map(s => s.trim()) : ["Python", "Java", "C++"];
-  const frameworksList = skills.frameworks ? skills.frameworks.split(",").map(s => s.trim()) : ["React", "FastAPI", "Next.js"];
-  const toolsList = skills.tools ? skills.tools.split(",").map(s => s.trim()) : ["Git", "Docker", "AWS"];
-  const databasesList = skills.databases ? skills.databases.split(",").map(s => s.trim()) : ["MySQL", "PostgreSQL", "MongoDB"];
-  const conceptsList = skills.concepts ? skills.concepts.split(",").map(s => s.trim()) : ["REST APIs", "OOPs", "DSA"];
-  const softSkillsList = skills.softSkills ? skills.softSkills.split(",").map(s => s.trim()) : ["Communication", "Problem Solving", "Teamwork"];
+  // Use the skills engine for deterministic, validated output
+  const processedSkills = generateTechnicalSkills(formData);
+  const languagesList = processedSkills.languages.length > 0 ? processedSkills.languages : ["Python", "Java", "C++"];
+  const frameworksList = processedSkills.frameworks.length > 0 ? processedSkills.frameworks : ["React", "FastAPI", "Next.js"];
+  const toolsList = processedSkills.tools.length > 0 ? processedSkills.tools : ["Git", "Docker", "AWS"];
+  const databasesList = processedSkills.databases.length > 0 ? processedSkills.databases : ["MySQL", "PostgreSQL", "MongoDB"];
+  const aiAndDataList = processedSkills.aiAndData;
+  const csConceptsList = processedSkills.csConcepts.length > 0 ? processedSkills.csConcepts : ["Data Structures & Algorithms", "Object-Oriented Programming", "DBMS"];
+  const softSkillsList = skills.softSkills ? skills.softSkills.split(",").map(s => s.trim()).filter(Boolean) : [];
 
   const collegeName = personal.collegeName || "Vellore Institute of Technology";
   const branchName = personal.branch || "CSE";
@@ -100,7 +104,9 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
       frameworks: frameworksList,
       tools: toolsList,
       databases: databasesList,
-      concepts: conceptsList,
+      aiAndData: aiAndDataList,
+      csConcepts: csConceptsList,
+      concepts: csConceptsList, // backward compat alias
       softSkills: softSkillsList
     },
     education: {
@@ -204,6 +210,10 @@ export async function generateGroqFallback(prompt: string, isJson: boolean = fal
 
 export async function generateResumeContent(formData: ResumeFormData): Promise<FullResumeOutput> {
   const { personal, skills, projects, internships, positions, achievements, options } = formData;
+
+  // ── Run deterministic skills engine BEFORE LLM call ──────────────────
+  const processedSkills = generateTechnicalSkills(formData);
+  console.log("🔧 Skills Engine Output:", JSON.stringify(processedSkills, null, 2));
 
   // Build precise prompt instructions
   const prompt = `
@@ -410,7 +420,19 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
       try {
         console.log("No Gemini API key available, but Groq key is present. Using Groq directly for resume generation.");
         const groqResponse = await generateGroqFallback(prompt, true);
-        return JSON.parse(groqResponse.trim()) as FullResumeOutput;
+        const groqResult = JSON.parse(groqResponse.trim()) as FullResumeOutput;
+        // Override AI-generated skills with engine output
+        groqResult.skills = {
+          ...groqResult.skills,
+          languages: processedSkills.languages,
+          frameworks: processedSkills.frameworks,
+          tools: processedSkills.tools,
+          databases: processedSkills.databases,
+          aiAndData: processedSkills.aiAndData,
+          csConcepts: processedSkills.csConcepts,
+          concepts: processedSkills.csConcepts, // backward compat
+        };
+        return groqResult;
       } catch (groqError) {
         console.error("Groq direct call failed:", groqError);
       }
@@ -434,12 +456,36 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
       throw new Error("Empty response from Gemini API");
     }
 
-    return JSON.parse(responseText.trim()) as FullResumeOutput;
+    const geminiResult = JSON.parse(responseText.trim()) as FullResumeOutput;
+    // Override AI-generated skills with engine output
+    geminiResult.skills = {
+      ...geminiResult.skills,
+      languages: processedSkills.languages,
+      frameworks: processedSkills.frameworks,
+      tools: processedSkills.tools,
+      databases: processedSkills.databases,
+      aiAndData: processedSkills.aiAndData,
+      csConcepts: processedSkills.csConcepts,
+      concepts: processedSkills.csConcepts, // backward compat
+    };
+    return geminiResult;
   } catch (error) {
     console.error("Error communicating with Gemini API, trying Groq fallback:", error);
     try {
       const groqResponse = await generateGroqFallback(prompt, true);
-      return JSON.parse(groqResponse.trim()) as FullResumeOutput;
+      const groqFallbackResult = JSON.parse(groqResponse.trim()) as FullResumeOutput;
+      // Override AI-generated skills with engine output
+      groqFallbackResult.skills = {
+        ...groqFallbackResult.skills,
+        languages: processedSkills.languages,
+        frameworks: processedSkills.frameworks,
+        tools: processedSkills.tools,
+        databases: processedSkills.databases,
+        aiAndData: processedSkills.aiAndData,
+        csConcepts: processedSkills.csConcepts,
+        concepts: processedSkills.csConcepts, // backward compat
+      };
+      return groqFallbackResult;
     } catch (groqError) {
       console.error("Groq fallback failed as well, using mock response:", groqError);
       return generateMockResume(formData);

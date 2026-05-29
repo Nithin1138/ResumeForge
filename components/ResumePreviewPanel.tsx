@@ -34,6 +34,8 @@ export interface LiveResumeData {
     frameworks: string[];
     databases: string[];
     tools: string[];
+    aiAndData: string[];
+    csConcepts: string[];
     concepts: string[];
     softSkills: string[];
   };
@@ -238,7 +240,9 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
                 {d.skills.languages?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Languages:</strong> {d.skills.languages.join(", ")}</p>}
                 {d.skills.frameworks?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Frameworks & Libraries:</strong> {d.skills.frameworks.join(", ")}</p>}
                 {d.skills.databases?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Databases:</strong> {d.skills.databases.join(", ")}</p>}
-                {d.skills.tools?.length > 0 && <p style={{ margin: "0" }}><strong>Tools & Platforms:</strong> {d.skills.tools.join(", ")}</p>}
+                {d.skills.tools?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Tools & Technologies:</strong> {d.skills.tools.join(", ")}</p>}
+                {d.skills.aiAndData?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Artificial Intelligence & Data:</strong> {d.skills.aiAndData.join(", ")}</p>}
+                {(d.skills.csConcepts?.length > 0 || d.skills.concepts?.length > 0) && <p style={{ margin: "0" }}><strong>Core CS Concepts:</strong> {(d.skills.csConcepts?.length > 0 ? d.skills.csConcepts : d.skills.concepts).join(", ")}</p>}
               </div>
             </div>
           )}

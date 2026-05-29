@@ -350,9 +350,9 @@ ${output.summary}
 TECHNICAL SKILLS
 - Languages: ${output.skills.languages.join(", ")}
 - Frameworks & Libraries: ${output.skills.frameworks.join(", ")}
-- Tools & Platforms: ${output.skills.tools.join(", ")}
+- Tools & Technologies: ${output.skills.tools.join(", ")}
 - Databases: ${output.skills.databases.join(", ")}
-- Core Concepts: ${output.skills.concepts.join(", ")}
+${(output.skills.aiAndData && output.skills.aiAndData.length > 0) ? `- Artificial Intelligence & Data: ${output.skills.aiAndData.join(", ")}\n` : ""}- Core CS Concepts: ${(output.skills.csConcepts && output.skills.csConcepts.length > 0 ? output.skills.csConcepts : output.skills.concepts).join(", ")}
 ${output.skills.softSkills && output.skills.softSkills.length > 0 ? `- Soft Skills: ${output.skills.softSkills.join(", ")}\n` : ""}
 
 PROJECTS
@@ -577,7 +577,7 @@ Languages: ${output.skills.languages.join(", ")}
 Frameworks: ${output.skills.frameworks.join(", ")}
 Tools: ${output.skills.tools.join(", ")}
 Databases: ${output.skills.databases.join(", ")}
-Concepts: ${output.skills.concepts.join(", ")}
+${(output.skills.aiAndData && output.skills.aiAndData.length > 0) ? `Artificial Intelligence & Data: ${output.skills.aiAndData.join(", ")}\n` : ""}Core CS Concepts: ${(output.skills.csConcepts && output.skills.csConcepts.length > 0 ? output.skills.csConcepts : output.skills.concepts).join(", ")}
                 `.trim();
                 copyToClipboard(skillsText, "skills");
               }}
@@ -592,9 +592,10 @@ Concepts: ${output.skills.concepts.join(", ")}
             {[
               { title: "Programming Languages", data: output.skills.languages },
               { title: "Frameworks & Libraries", data: output.skills.frameworks },
-              { title: "Databases & Storage", data: output.skills.databases },
-              { title: "Tools & Architectures", data: output.skills.tools },
-              { title: "Core CS Concepts", data: output.skills.concepts }
+              { title: "Databases", data: output.skills.databases },
+              { title: "Tools & Technologies", data: output.skills.tools },
+              ...(output.skills.aiAndData && output.skills.aiAndData.length > 0 ? [{ title: "Artificial Intelligence & Data", data: output.skills.aiAndData }] : []),
+              { title: "Core CS Concepts", data: (output.skills.csConcepts && output.skills.csConcepts.length > 0 ? output.skills.csConcepts : output.skills.concepts) }
             ].map((cat, idx) => (
               <div key={idx} className="space-y-2">
                 <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{cat.title}</span>
