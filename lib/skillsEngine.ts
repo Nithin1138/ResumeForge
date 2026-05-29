@@ -1,40 +1,46 @@
 import { ResumeFormData } from "@/types/resume";
 
-// ── Output type ────────────────────────────────────────────────────────────
-export interface ProcessedSkills {
-  languages: string[];
-  frameworks: string[];
-  databases: string[];
-  tools: string[];
-  csConcepts: string[];
-  aiAndData: string[];
-  cloudAndDevops: string[];
-  cybersecurity: string[];
-  embeddedSystems: string[];
-  dataEngineering: string[];
-  engineeringSoftware: string[];
+export interface SkillCategoryOutput {
+  category: string;
+  skills: string[];
 }
 
-type CategoryKey = keyof ProcessedSkills;
+export const MASTER_CATEGORIES: Record<string, { label: string, limit: number, isDynamic: boolean }> = {
+  languages: { label: "Programming Languages", limit: 6, isDynamic: false },
+  frameworks: { label: "Frameworks & Libraries", limit: 8, isDynamic: false },
+  databases: { label: "Databases", limit: 4, isDynamic: false },
+  tools: { label: "Tools & Platforms", limit: 8, isDynamic: false },
+  csConcepts: { label: "Core CS Concepts", limit: 6, isDynamic: false },
+  aiAndData: { label: "AI & Data Technologies", limit: 5, isDynamic: true },
+  cloudAndDevops: { label: "Cloud & DevOps", limit: 6, isDynamic: true },
+  cybersecurity: { label: "Cybersecurity", limit: 5, isDynamic: true },
+  embeddedSystems: { label: "Embedded Systems", limit: 6, isDynamic: true },
+  dataEngineering: { label: "Data Engineering", limit: 5, isDynamic: true },
+  engineeringSoftware: { label: "Engineering Software", limit: 6, isDynamic: true },
+  manufacturingConcepts: { label: "Manufacturing Concepts", limit: 5, isDynamic: true },
+  simulationTools: { label: "Simulation Tools", limit: 5, isDynamic: true },
+  designSoftware: { label: "Design Software", limit: 6, isDynamic: true },
+  structuralAnalysis: { label: "Structural Analysis", limit: 5, isDynamic: true },
+  constructionTechnologies: { label: "Construction Technologies", limit: 5, isDynamic: true },
+  projectManagement: { label: "Project Management", limit: 5, isDynamic: true },
+  processEngineering: { label: "Process Engineering Tools", limit: 6, isDynamic: true },
+  simulationSoftware: { label: "Simulation Software", limit: 5, isDynamic: true },
+  industrialOperations: { label: "Industrial Operations", limit: 5, isDynamic: true },
+  bioinformaticsTools: { label: "Bioinformatics Tools", limit: 6, isDynamic: true },
+  laboratoryTechniques: { label: "Laboratory Techniques", limit: 5, isDynamic: true },
+  researchMethods: { label: "Research Methods", limit: 5, isDynamic: true },
+  aerodynamics: { label: "Aerodynamics", limit: 5, isDynamic: true },
+  propulsionSystems: { label: "Propulsion Systems", limit: 5, isDynamic: true },
+  electronicsTools: { label: "Electronics Tools", limit: 6, isDynamic: true },
+  communicationSystems: { label: "Communication Systems", limit: 5, isDynamic: true },
+  hardwareConcepts: { label: "VLSI & Hardware Concepts", limit: 5, isDynamic: true },
+  electricalSoftware: { label: "Electrical Software", limit: 6, isDynamic: true },
+  powerSystems: { label: "Power Systems", limit: 5, isDynamic: true },
+  controlSystems: { label: "Control Systems", limit: 5, isDynamic: true },
+};
 
-const DYNAMIC_CATEGORIES: CategoryKey[] = [
-  "aiAndData",
-  "cloudAndDevops",
-  "cybersecurity",
-  "embeddedSystems",
-  "dataEngineering",
-  "engineeringSoftware",
-];
+type CategoryKey = keyof typeof MASTER_CATEGORIES;
 
-const CORE_CATEGORIES: CategoryKey[] = [
-  "languages",
-  "frameworks",
-  "databases",
-  "tools",
-  "csConcepts",
-];
-
-// ── 1. Normalization Map ───────────────────────────────────────────────────
 const NORMALIZATION_MAP: Record<string, string> = {
   // Languages
   "js": "JavaScript", "javascript": "JavaScript", "ts": "TypeScript", "typescript": "TypeScript",
@@ -128,7 +134,6 @@ const NORMALIZATION_MAP: Record<string, string> = {
   "cloud computing": "Cloud Computing", "microservices": "Microservices"
 };
 
-// ── 2. Soft Skills Blacklist ───────────────────────────────────────────────
 const SOFT_SKILLS_BLACKLIST = new Set([
   "teamwork", "team work", "hardworking", "hard working", "communication", "leadership",
   "punctuality", "dedication", "creativity", "adaptability", "time management",
@@ -142,7 +147,6 @@ const SOFT_SKILLS_BLACKLIST = new Set([
   "responsible", "proactive", "innovative",
 ]);
 
-// ── 3. Project Intelligence Patterns ───────────────────────────────────────
 interface TechPattern {
   patterns: string[];
   skills: string[];
@@ -157,7 +161,7 @@ const PROJECT_TECH_PATTERNS: TechPattern[] = [
   { patterns: ["deep learning", "neural network", "cnn", "pytorch", "tensorflow", "keras"], skills: ["Deep Learning", "Neural Networks"], category: "aiAndData" },
   { patterns: ["llm", "large language model", "gpt", "openai", "prompt engineering", "langchain"], skills: ["Generative AI", "LLMs"], category: "aiAndData" },
   { patterns: ["data analysis", "data visualization", "pandas", "numpy", "matplotlib", "seaborn"], skills: ["Data Analysis", "Data Visualization"], category: "aiAndData" },
-
+  
   // Data Engineering
   { patterns: ["etl", "data pipeline", "data warehouse", "airflow", "spark", "apache spark", "hadoop"], skills: ["ETL Pipelines", "Data Warehousing"], category: "dataEngineering" },
 
@@ -204,7 +208,6 @@ const PROJECT_TECH_PATTERNS: TechPattern[] = [
   { patterns: ["c++", "cpp"], skills: ["C++"], category: "languages" },
 ];
 
-// ── 4. Category Routing ────────────────────────────────────────────────────
 const SKILL_TO_CATEGORY: Record<string, CategoryKey> = {
   "Python": "languages", "Java": "languages", "C++": "languages", "C": "languages",
   "C#": "languages", "JavaScript": "languages", "TypeScript": "languages", "Go": "languages",
@@ -248,21 +251,6 @@ const SKILL_TO_CATEGORY: Record<string, CategoryKey> = {
   "Computer Networks": "csConcepts", "Software Engineering": "csConcepts",
 };
 
-// ── 5. Category Limits ─────────────────────────────────────────────────────
-const CATEGORY_LIMITS: Record<CategoryKey, number> = {
-  languages: 6,
-  frameworks: 8,
-  databases: 4,
-  tools: 8,
-  csConcepts: 6,
-  aiAndData: 5,
-  cloudAndDevops: 6,
-  cybersecurity: 5,
-  embeddedSystems: 6,
-  dataEngineering: 5,
-  engineeringSoftware: 6,
-};
-
 function normalizeSkill(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return "";
@@ -279,7 +267,7 @@ function isSoftSkill(skill: string): boolean {
   return SOFT_SKILLS_BLACKLIST.has(skill.toLowerCase());
 }
 
-function extractFromText(text: string, results: Map<CategoryKey, Set<string>>, frequencyMap: Map<string, number>): void {
+function extractFromText(text: string, results: Map<string, Set<string>>, frequencyMap: Map<string, number>): void {
   if (!text || !text.trim()) return;
   const lower = text.toLowerCase();
   for (const pattern of PROJECT_TECH_PATTERNS) {
@@ -299,71 +287,50 @@ function extractFromText(text: string, results: Map<CategoryKey, Set<string>>, f
   }
 }
 
-function getCategoryForSkill(skill: string): CategoryKey | null {
-  return SKILL_TO_CATEGORY[skill] || null;
-}
-
-// Map branches to ordered category priorities
-function getBranchPriorities(branch: string | undefined): CategoryKey[] {
-  if (!branch) return [];
-  const b = branch.toLowerCase();
-  if (b.includes("cs") || b.includes("computer") || b.includes("it") || b.includes("software") || b.includes("information")) {
-    return ["languages", "frameworks", "databases", "csConcepts", "cloudAndDevops", "tools"];
-  }
-  if (b.includes("ai") || b.includes("data") || b.includes("machine learning")) {
-    return ["aiAndData", "languages", "databases", "dataEngineering", "frameworks", "tools"];
-  }
-  if (b.includes("ece") || b.includes("electronics") || b.includes("communication")) {
-    return ["embeddedSystems", "languages", "csConcepts", "tools"];
-  }
-  if (b.includes("eee") || b.includes("electrical")) {
-    return ["embeddedSystems", "engineeringSoftware", "tools"];
-  }
-  if (b.includes("mech")) {
-    return ["engineeringSoftware", "languages", "tools"];
-  }
-  if (b.includes("civil")) {
-    return ["engineeringSoftware", "tools"];
-  }
-  if (b.includes("chem")) {
-    return ["engineeringSoftware", "tools"];
-  }
-  return [];
-}
-
-export function generateTechnicalSkills(formData: ResumeFormData): ProcessedSkills {
-  const { skills, projects, internships, personal } = formData;
+export function generateTechnicalSkills(formData: ResumeFormData): SkillCategoryOutput[] {
+  const { skills, projects, internships } = formData;
   const frequencyMap = new Map<string, number>();
 
-  // 1. Initialize raw categories
-  const rawCategories: Record<CategoryKey, string[]> = {
-    languages: parseAndNormalize(skills.languages),
-    frameworks: parseAndNormalize(skills.frameworks),
-    databases: parseAndNormalize(skills.databases),
-    tools: parseAndNormalize(skills.tools),
-    csConcepts: parseAndNormalize(skills.concepts),
-    aiAndData: [], cloudAndDevops: [], cybersecurity: [],
-    embeddedSystems: [], dataEngineering: [], engineeringSoftware: []
-  };
+  // 1. Initialize parsed categories from form data
+  const rawCategories: Record<string, string[]> = {};
+  for (const catId of Object.keys(MASTER_CATEGORIES)) {
+    rawCategories[catId] = [];
+  }
+
+  // Populate from formData.skills.categories (if user inputted anything)
+  if (skills.categories) {
+    for (const [catId, csv] of Object.entries(skills.categories)) {
+      if (MASTER_CATEGORIES[catId]) {
+        rawCategories[catId] = parseAndNormalize(csv);
+      }
+    }
+  }
+
+  // Fallbacks for backward compatibility if older data doesn't use categories map
+  // (Assuming skills object might have languages, frameworks from old state)
+  const legacyKeys = ["languages", "frameworks", "databases", "tools", "concepts"];
+  for (const key of legacyKeys) {
+    const val = (skills as any)[key];
+    if (val && typeof val === "string") {
+      const id = key === "concepts" ? "csConcepts" : key;
+      rawCategories[id] = [...(rawCategories[id] || []), ...parseAndNormalize(val)];
+    }
+  }
 
   // Add frequency for user selections
-  for (const cat of Object.keys(rawCategories) as CategoryKey[]) {
+  for (const cat of Object.keys(rawCategories)) {
     for (const skill of rawCategories[cat]) {
       frequencyMap.set(skill, (frequencyMap.get(skill) || 0) + 1);
     }
   }
 
   // 2. Remove soft skills
-  for (const cat of Object.keys(rawCategories) as CategoryKey[]) {
+  for (const cat of Object.keys(rawCategories)) {
     rawCategories[cat] = rawCategories[cat].filter((s) => !isSoftSkill(s));
   }
 
-  // 3-5. Extract from projects, internships, certs
-  const extractedSkills = new Map<CategoryKey, Set<string>>();
-  for (const cat of Object.keys(rawCategories) as CategoryKey[]) {
-    extractedSkills.set(cat, new Set());
-  }
-
+  // 3. Extract from projects, internships, certs
+  const extractedSkills = new Map<string, Set<string>>();
   if (projects?.length) {
     for (const proj of projects) {
       extractFromText([proj.title, proj.techStack, proj.description, proj.keyResult].join(" "), extractedSkills, frequencyMap);
@@ -378,36 +345,38 @@ export function generateTechnicalSkills(formData: ResumeFormData): ProcessedSkil
     extractFromText(skills.certifications, extractedSkills, frequencyMap);
   }
 
-  // 6. Merge
+  // 4. Merge
   for (const [cat, skillSet] of extractedSkills.entries()) {
     for (const skill of skillSet) {
-      if (!rawCategories[cat].includes(skill)) rawCategories[cat].push(skill);
+      if (!rawCategories[cat].includes(skill)) {
+        rawCategories[cat].push(skill);
+      }
     }
   }
 
-  // 7. Re-categorize correctly
-  const finalCategories: Record<CategoryKey, Set<string>> = {
-    languages: new Set(), frameworks: new Set(), databases: new Set(), tools: new Set(), csConcepts: new Set(),
-    aiAndData: new Set(), cloudAndDevops: new Set(), cybersecurity: new Set(),
-    embeddedSystems: new Set(), dataEngineering: new Set(), engineeringSoftware: new Set()
-  };
+  // 5. Re-categorize correctly
+  const finalCategories: Record<string, Set<string>> = {};
+  for (const catId of Object.keys(MASTER_CATEGORIES)) {
+    finalCategories[catId] = new Set();
+  }
 
-  for (const cat of Object.keys(rawCategories) as CategoryKey[]) {
+  for (const cat of Object.keys(rawCategories)) {
     for (const skill of rawCategories[cat]) {
-      const correctCat = getCategoryForSkill(skill) || cat;
-      finalCategories[correctCat].add(skill);
+      const correctCat = SKILL_TO_CATEGORY[skill] || cat;
+      if (finalCategories[correctCat]) {
+        finalCategories[correctCat].add(skill);
+      } else {
+        // Fallback if category doesn't exist
+        finalCategories["tools"].add(skill);
+      }
     }
   }
 
-  // 8. Deduplicate and sort
-  const sortedCategories: Record<CategoryKey, string[]> = {
-    languages: [], frameworks: [], databases: [], tools: [], csConcepts: [],
-    aiAndData: [], cloudAndDevops: [], cybersecurity: [],
-    embeddedSystems: [], dataEngineering: [], engineeringSoftware: []
-  };
-
+  // 6. Deduplicate, Sort and Map to Arrays
+  const sortedCategories: Record<string, string[]> = {};
   const seen = new Set<string>();
-  for (const cat of Object.keys(finalCategories) as CategoryKey[]) {
+
+  for (const cat of Object.keys(finalCategories)) {
     const arr = Array.from(finalCategories[cat]).sort((a, b) => {
       const freqA = frequencyMap.get(a) || 0;
       const freqB = frequencyMap.get(b) || 0;
@@ -415,6 +384,7 @@ export function generateTechnicalSkills(formData: ResumeFormData): ProcessedSkil
       return a.localeCompare(b);
     });
     
+    sortedCategories[cat] = [];
     for (const skill of arr) {
       if (!seen.has(skill)) {
         seen.add(skill);
@@ -423,49 +393,40 @@ export function generateTechnicalSkills(formData: ResumeFormData): ProcessedSkil
     }
   }
 
-  // 9. Apply dynamic category thresholds (merge into Tools if < 2)
-  for (const cat of DYNAMIC_CATEGORIES) {
-    if (sortedCategories[cat].length > 0 && sortedCategories[cat].length < 2) {
-      sortedCategories.tools.push(...sortedCategories[cat]);
-      sortedCategories[cat] = [];
+  // 7. Apply dynamic category thresholds (merge into Tools if < 2)
+  for (const [catId, config] of Object.entries(MASTER_CATEGORIES)) {
+    if (config.isDynamic && sortedCategories[catId].length > 0 && sortedCategories[catId].length < 2) {
+      sortedCategories["tools"].push(...sortedCategories[catId]);
+      sortedCategories[catId] = [];
     }
   }
 
   // Dedupe tools after merge
-  sortedCategories.tools = Array.from(new Set(sortedCategories.tools));
+  sortedCategories["tools"] = Array.from(new Set(sortedCategories["tools"]));
 
-  // 10. Branch-aware category limiting (Max 6 non-empty categories)
-  const nonEmptyCats = (Object.keys(sortedCategories) as CategoryKey[]).filter(c => sortedCategories[c].length > 0);
-  if (nonEmptyCats.length > 6) {
-    const branchPriority = getBranchPriorities(personal?.branch);
-    
-    // Determine which categories to keep
-    // Default core order as fallback
-    const priorityOrder = [...branchPriority, ...CORE_CATEGORIES, ...DYNAMIC_CATEGORIES];
-    const orderedNonEmpty = Array.from(new Set(priorityOrder)).filter(c => nonEmptyCats.includes(c));
-    
-    const categoriesToKeep = new Set(orderedNonEmpty.slice(0, 6));
-    const categoriesToDrop = orderedNonEmpty.slice(6);
-    
-    // Merge dropped categories into Tools (if Tools is kept, otherwise drop completely)
-    for (const cat of categoriesToDrop) {
-      if (categoriesToKeep.has("tools")) {
-        sortedCategories.tools.push(...sortedCategories[cat]);
-      }
-      sortedCategories[cat] = [];
-    }
-  }
-  
-  // Dedupe tools again just in case
-  sortedCategories.tools = Array.from(new Set(sortedCategories.tools));
+  // 8. Build final output array
+  // To keep ATS clean, we only output categories that have skills, and limit them.
+  const output: SkillCategoryOutput[] = [];
 
-  // 11. Trim to limits
-  for (const cat of Object.keys(sortedCategories) as CategoryKey[]) {
-    const limit = CATEGORY_LIMITS[cat];
-    if (sortedCategories[cat].length > limit) {
-      sortedCategories[cat] = sortedCategories[cat].slice(0, limit);
+  for (const [catId, skillsArr] of Object.entries(sortedCategories)) {
+    if (skillsArr.length > 0) {
+      const config = MASTER_CATEGORIES[catId];
+      // Trim to limits
+      const trimmedSkills = skillsArr.slice(0, config.limit);
+      output.push({
+        category: config.label,
+        skills: trimmedSkills
+      });
     }
   }
 
-  return sortedCategories;
+  // Append soft skills if present
+  if (skills.softSkills) {
+    const soft = skills.softSkills.split(",").map(s => s.trim()).filter(Boolean);
+    if (soft.length > 0) {
+      output.push({ category: "Soft Skills", skills: soft });
+    }
+  }
+
+  return output;
 }

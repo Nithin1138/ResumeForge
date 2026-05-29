@@ -7,12 +7,9 @@ import { useFormStore } from "@/stores/formStore";
 import { ArrowLeft, ArrowRight, Plus, Trash2, Loader2, Sparkles, Check, ChevronDown, X, Cloud, CloudOff, RotateCcw, User, Code2, Rocket, Briefcase, Wand2, Zap } from "lucide-react";
 import { getLocalSession } from "@/lib/authClient";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { BRANCH_SKILL_CONFIGS, DEFAULT_BRANCH_CONFIG } from "@/lib/branchConfig";
+
 // Curated popular suggestions for each skill block
-const LANGUAGES_SUGGESTIONS = ["JavaScript", "TypeScript", "Python", "Java", "C++", "C", "Go", "Rust", "SQL", "Kotlin", "Swift", "PHP"];
-const FRAMEWORKS_SUGGESTIONS = ["React", "Next.js", "Node.js", "Express", "FastAPI", "Django", "Flask", "Spring Boot", "Angular", "Vue", "Tailwind CSS", "Redux", "PyTorch", "TensorFlow"];
-const DATABASES_SUGGESTIONS = ["PostgreSQL", "MongoDB", "MySQL", "Redis", "SQLite", "DynamoDB", "Firebase", "Cassandra", "SQL Server"];
-const TOOLS_SUGGESTIONS = ["Git", "Docker", "AWS", "Google Cloud (GCP)", "Kubernetes", "Figma", "Postman", "Linux", "Vercel", "GitHub Actions", "Jira"];
-const CONCEPTS_SUGGESTIONS = ["Data Structures & Algorithms (DSA)", "Object-Oriented Programming (OOPs)", "Database Management Systems (DBMS)", "Operating Systems (OS)", "Computer Networks", "System Design", "REST APIs", "Machine Learning", "Cloud Computing", "Web Development", "Cybersecurity", "DevOps"];
 const SOFT_SKILLS_SUGGESTIONS = ["Technical Writing", "Public Speaking", "Team Collaboration", "Agile Methodology", "Problem Solving", "Leadership", "Time Management", "Critical Thinking"];
 const CERTIFICATIONS_SUGGESTIONS = ["AWS Certified Cloud Practitioner", "Google Cloud Digital Leader", "Oracle Java Certified", "NPTEL Algorithms", "Coursera Deep Learning", "Microsoft Azure Fundamentals"];
 
@@ -437,8 +434,12 @@ export default function BuildPage() {
     }
 
     if (step === 2) {
-      if (!formData.skills.languages.trim()) errors.languages = "At least one programming language is required";
-      if (!formData.skills.concepts.trim()) errors.concepts = "At least one core computer science concept is required";
+      const config = BRANCH_SKILL_CONFIGS[formData.personal.branch] || DEFAULT_BRANCH_CONFIG;
+      config.forEach(cat => {
+        if (cat.required && !formData.skills.categories?.[cat.id]?.trim()) {
+          errors[`category_${cat.id}`] = `At least one item is required for ${cat.label}`;
+        }
+      });
     }
 
     if (step === 3) {
@@ -612,6 +613,9 @@ export default function BuildPage() {
             <option value="IT">Information Technology (IT)</option>
             <option value="Mechanical">Mechanical Engineering</option>
             <option value="Civil">Civil Engineering</option>
+            <option value="Chemical">Chemical Engineering</option>
+            <option value="Biotechnology">Biotechnology</option>
+            <option value="Aerospace">Aerospace Engineering</option>
             <option value="Other">Other Branch</option>
           </select>
           {validationErrors.branch && <p className="text-xs text-error mt-1 font-semibold">{validationErrors.branch}</p>}
@@ -812,49 +816,21 @@ export default function BuildPage() {
       </div>
 
       <div className="space-y-6">
-        <TagInput
-          label="Programming Languages"
-          value={formData.skills.languages}
-          onChange={(val) => updateSkills({ languages: val })}
-          suggestions={LANGUAGES_SUGGESTIONS}
-          placeholder="e.g. Python, Java, C++, TypeScript, SQL"
-          error={validationErrors.languages}
-          required
-        />
-
-        <TagInput
-          label="Frameworks & Libraries"
-          value={formData.skills.frameworks}
-          onChange={(val) => updateSkills({ frameworks: val })}
-          suggestions={FRAMEWORKS_SUGGESTIONS}
-          placeholder="e.g. React, Next.js, Node.js, FastAPI, Spring Boot"
-        />
-
-        <TagInput
-          label="Databases"
-          value={formData.skills.databases}
-          onChange={(val) => updateSkills({ databases: val })}
-          suggestions={DATABASES_SUGGESTIONS}
-          placeholder="e.g. PostgreSQL, MongoDB, MySQL, Redis"
-        />
-
-        <TagInput
-          label="Tools & Platforms"
-          value={formData.skills.tools}
-          onChange={(val) => updateSkills({ tools: val })}
-          suggestions={TOOLS_SUGGESTIONS}
-          placeholder="e.g. Git, Docker, AWS, Google Cloud, Figma, Postman"
-        />
-
-        <TagInput
-          label="CS Concepts / Domains"
-          value={formData.skills.concepts}
-          onChange={(val) => updateSkills({ concepts: val })}
-          suggestions={CONCEPTS_SUGGESTIONS}
-          placeholder="e.g. Machine Learning, REST APIs, Object-Oriented Programming (OOPs), DSA"
-          error={validationErrors.concepts}
-          required
-        />
+        {(() => {
+          const config = BRANCH_SKILL_CONFIGS[formData.personal.branch] || DEFAULT_BRANCH_CONFIG;
+          return config.map((cat) => (
+            <TagInput
+              key={cat.id}
+              label={cat.label}
+              value={formData.skills.categories?.[cat.id] || ""}
+              onChange={(val) => updateSkills({ categories: { ...(formData.skills.categories || {}), [cat.id]: val } })}
+              suggestions={cat.suggestions}
+              placeholder={cat.placeholder}
+              error={validationErrors[`category_${cat.id}`]}
+              required={cat.required}
+            />
+          ));
+        })()}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <TagInput

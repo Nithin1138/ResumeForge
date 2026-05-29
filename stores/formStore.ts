@@ -67,11 +67,7 @@ const initialFormData: ResumeFormData = {
     pgDegreeName: "",
   },
   skills: {
-    languages: "",
-    frameworks: "",
-    tools: "",
-    databases: "",
-    concepts: "",
+    categories: {},
     softSkills: "",
     certifications: "",
   },

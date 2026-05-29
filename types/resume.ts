@@ -19,11 +19,7 @@ export interface PersonalInfo {
 }
 
 export interface SkillsInfo {
-  languages: string;
-  frameworks: string;
-  tools: string;
-  databases: string;
-  concepts: string;
+  categories: Record<string, string>;
   softSkills: string;
   certifications: string;
 }
@@ -85,20 +81,9 @@ export interface FreeTierPreview {
 export interface FullResumeOutput {
   summary: string;
   skills: {
-    languages: string[];
-    frameworks: string[];
-    tools: string[];
-    databases: string[];
-    aiAndData?: string[];
-    csConcepts?: string[];
-    concepts?: string[];     // backward compat alias for csConcepts
-    softSkills?: string[];
-    cloudAndDevops?: string[];
-    cybersecurity?: string[];
-    embeddedSystems?: string[];
-    dataEngineering?: string[];
-    engineeringSoftware?: string[];
-  };
+    category: string;
+    skills: string[];
+  }[];
   education: {
     degree: string;
     institution: string;

@@ -348,12 +348,7 @@ PROFESSIONAL SUMMARY
 ${output.summary}
 
 TECHNICAL SKILLS
-- Languages: ${output.skills.languages.join(", ")}
-- Frameworks & Libraries: ${output.skills.frameworks.join(", ")}
-- Tools & Technologies: ${output.skills.tools.join(", ")}
-- Databases: ${output.skills.databases.join(", ")}
-${(output.skills.cloudAndDevops && output.skills.cloudAndDevops.length > 0) ? `- Cloud & DevOps: ${output.skills.cloudAndDevops.join(", ")}\n` : ""}${(output.skills.cybersecurity && output.skills.cybersecurity.length > 0) ? `- Cybersecurity: ${output.skills.cybersecurity.join(", ")}\n` : ""}${(output.skills.embeddedSystems && output.skills.embeddedSystems.length > 0) ? `- Embedded Systems: ${output.skills.embeddedSystems.join(", ")}\n` : ""}${(output.skills.dataEngineering && output.skills.dataEngineering.length > 0) ? `- Data Engineering: ${output.skills.dataEngineering.join(", ")}\n` : ""}${(output.skills.engineeringSoftware && output.skills.engineeringSoftware.length > 0) ? `- Engineering Software: ${output.skills.engineeringSoftware.join(", ")}\n` : ""}${(output.skills.aiAndData && output.skills.aiAndData.length > 0) ? `- Artificial Intelligence & Data: ${output.skills.aiAndData.join(", ")}\n` : ""}- Core Concepts: ${((output.skills.csConcepts && output.skills.csConcepts.length > 0 ? output.skills.csConcepts : output.skills.concepts) || []).join(", ")}
-${output.skills.softSkills && output.skills.softSkills.length > 0 ? `- Soft Skills: ${output.skills.softSkills.join(", ")}\n` : ""}
+${output.skills.map(s => `- ${s.category}: ${s.skills.join(", ")}`).join("\n")}
 
 PROJECTS
 ${output.projects.map(proj => `
@@ -572,13 +567,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
             <h3 className="text-xs font-bold text-primary tracking-wider uppercase">Technical Core Skills</h3>
             <button
               onClick={() => {
-                const skillsText = `
-Languages: ${output.skills.languages.join(", ")}
-Frameworks: ${output.skills.frameworks.join(", ")}
-Tools: ${output.skills.tools.join(", ")}
-Databases: ${output.skills.databases.join(", ")}
-${(output.skills.cloudAndDevops && output.skills.cloudAndDevops.length > 0) ? `Cloud & DevOps: ${output.skills.cloudAndDevops.join(", ")}\n` : ""}${(output.skills.cybersecurity && output.skills.cybersecurity.length > 0) ? `Cybersecurity: ${output.skills.cybersecurity.join(", ")}\n` : ""}${(output.skills.embeddedSystems && output.skills.embeddedSystems.length > 0) ? `Embedded Systems: ${output.skills.embeddedSystems.join(", ")}\n` : ""}${(output.skills.dataEngineering && output.skills.dataEngineering.length > 0) ? `Data Engineering: ${output.skills.dataEngineering.join(", ")}\n` : ""}${(output.skills.engineeringSoftware && output.skills.engineeringSoftware.length > 0) ? `Engineering Software: ${output.skills.engineeringSoftware.join(", ")}\n` : ""}${(output.skills.aiAndData && output.skills.aiAndData.length > 0) ? `Artificial Intelligence & Data: ${output.skills.aiAndData.join(", ")}\n` : ""}Core Concepts: ${((output.skills.csConcepts && output.skills.csConcepts.length > 0 ? output.skills.csConcepts : output.skills.concepts) || []).join(", ")}
-                `.trim();
+                const skillsText = output.skills.map(s => `${s.category}: ${s.skills.join(", ")}`).join("\n");
                 copyToClipboard(skillsText, "skills");
               }}
               className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
@@ -589,23 +578,11 @@ ${(output.skills.cloudAndDevops && output.skills.cloudAndDevops.length > 0) ? `C
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              { title: "Programming Languages", data: output.skills.languages },
-              { title: "Frameworks & Libraries", data: output.skills.frameworks },
-              { title: "Databases", data: output.skills.databases },
-              { title: "Tools & Technologies", data: output.skills.tools },
-              ...(output.skills.cloudAndDevops && output.skills.cloudAndDevops.length > 0 ? [{ title: "Cloud & DevOps", data: output.skills.cloudAndDevops }] : []),
-              ...(output.skills.cybersecurity && output.skills.cybersecurity.length > 0 ? [{ title: "Cybersecurity", data: output.skills.cybersecurity }] : []),
-              ...(output.skills.embeddedSystems && output.skills.embeddedSystems.length > 0 ? [{ title: "Embedded Systems", data: output.skills.embeddedSystems }] : []),
-              ...(output.skills.dataEngineering && output.skills.dataEngineering.length > 0 ? [{ title: "Data Engineering", data: output.skills.dataEngineering }] : []),
-              ...(output.skills.engineeringSoftware && output.skills.engineeringSoftware.length > 0 ? [{ title: "Engineering Software", data: output.skills.engineeringSoftware }] : []),
-              ...(output.skills.aiAndData && output.skills.aiAndData.length > 0 ? [{ title: "Artificial Intelligence & Data", data: output.skills.aiAndData }] : []),
-              { title: "Core Concepts", data: ((output.skills.csConcepts && output.skills.csConcepts.length > 0 ? output.skills.csConcepts : output.skills.concepts) || []) }
-            ].map((cat, idx) => (
+            {output.skills.map((cat, idx) => (
               <div key={idx} className="space-y-2">
-                <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{cat.title}</span>
+                <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{cat.category}</span>
                 <div className="flex flex-wrap gap-2">
-                  {cat.data.map((skillName, sIdx) => (
+                  {cat.skills.map((skillName, sIdx) => (
                     <span key={sIdx} className="text-xs bg-bg-base border border-border px-2.5 py-1 rounded-md font-bold text-text">
                       {skillName}
                     </span>

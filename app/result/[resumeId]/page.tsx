@@ -269,11 +269,11 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
             
             <div className="space-y-3">
               <div>
-                <span className="text-[10px] font-extrabold text-primary uppercase block mb-1.5">Programming Languages</span>
+                <span className="text-[10px] font-extrabold text-primary uppercase block mb-1.5">{output.skills[0]?.category || "Core Skills"}</span>
                 <div className="flex flex-wrap gap-2">
-                  {(output.skills.languages || []).map((lang, idx) => (
+                  {(output.skills[0]?.skills || []).map((skill, idx) => (
                     <span key={idx} className="text-xs bg-bg-base border border-border/80 px-2.5 py-1 rounded-md font-semibold text-text">
-                      {lang}
+                      {skill}
                     </span>
                   ))}
                 </div>

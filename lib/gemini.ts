@@ -18,13 +18,14 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
 
   // Use the skills engine for deterministic, validated output
   const processedSkills = generateTechnicalSkills(formData);
-  const languagesList = processedSkills.languages.length > 0 ? processedSkills.languages : ["Python", "Java", "C++"];
-  const frameworksList = processedSkills.frameworks.length > 0 ? processedSkills.frameworks : ["React", "FastAPI", "Next.js"];
-  const toolsList = processedSkills.tools.length > 0 ? processedSkills.tools : ["Git", "Docker", "AWS"];
-  const databasesList = processedSkills.databases.length > 0 ? processedSkills.databases : ["MySQL", "PostgreSQL", "MongoDB"];
-  const aiAndDataList = processedSkills.aiAndData;
-  const csConceptsList = processedSkills.csConcepts.length > 0 ? processedSkills.csConcepts : ["Data Structures & Algorithms", "Object-Oriented Programming", "DBMS"];
-  const softSkillsList = skills.softSkills ? skills.softSkills.split(",").map(s => s.trim()).filter(Boolean) : [];
+  const findSkills = (label: string) => processedSkills.find(c => c.category === label)?.skills || [];
+  
+  const languagesList = findSkills("Programming Languages");
+  const frameworksList = findSkills("Frameworks & Libraries");
+  const toolsList = findSkills("Tools & Platforms");
+  const databasesList = findSkills("Databases");
+  const aiAndDataList = findSkills("AI & Data Technologies");
+  const csConceptsList = findSkills("Core CS Concepts");
 
   const collegeName = personal.collegeName || "Vellore Institute of Technology";
   const branchName = personal.branch || "CSE";
@@ -99,21 +100,12 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
 
   return {
     summary: `Motivated B.Tech student in ${branchName} at ${collegeName} (CGPA: ${cgpaValue}/10.0), specializing in ${targetRole}. Proven record of engineering high-impact projects using ${languagesList.slice(0, 3).join(", ")}. Passionate about building scalable systems, applying optimal data structures, and deploying cloud-native web services.`,
-    skills: {
-      languages: languagesList,
-      frameworks: frameworksList,
-      tools: toolsList,
-      databases: databasesList,
-      aiAndData: aiAndDataList,
-      csConcepts: csConceptsList,
-      concepts: csConceptsList, // backward compat alias
-      softSkills: softSkillsList,
-      cloudAndDevops: [],
-      cybersecurity: [],
-      embeddedSystems: [],
-      dataEngineering: [],
-      engineeringSoftware: []
-    },
+    skills: processedSkills.length > 0 ? processedSkills : [
+      { category: "Programming Languages", skills: ["Python", "Java", "C++"] },
+      { category: "Frameworks & Libraries", skills: ["React", "Next.js", "Express"] },
+      { category: "Tools & Platforms", skills: ["Git", "Docker", "AWS"] },
+      { category: "Databases", skills: ["MySQL", "PostgreSQL"] }
+    ],
     education: {
       degree: `B.Tech in ${branchName === "CSE" ? "Computer Science and Engineering" : branchName === "ECE" ? "Electronics and Communication Engineering" : "Engineering"}`,
       institution: collegeName,
@@ -293,12 +285,7 @@ PG CGPA: ${personal.pgCgpa}
 ` : ""}
 
 SKILLS:
-Languages: ${skills.languages}
-Frameworks: ${skills.frameworks}
-Tools: ${skills.tools}
-Databases: ${skills.databases}
-Concepts: ${skills.concepts}
-Soft Skills: ${skills.softSkills || "None"}
+${processedSkills.map(c => `${c.category}: ${c.skills.join(", ")}`).join("\n")}
 Certifications: ${skills.certifications || "None"}
 
 PROJECTS:
@@ -345,14 +332,16 @@ TONE PREFERENCE: ${options.tone}
 OUTPUT FORMAT (return ONLY this JSON, no other text):
 {
   "summary": "3-sentence professional summary string here",
-  "skills": {
-    "languages": ["Python", "Java"],
-    "frameworks": ["React", "FastAPI"],
-    "tools": ["Git", "Docker"],
-    "databases": ["MySQL", "MongoDB"],
-    "concepts": ["REST APIs", "OOPS", "Machine Learning"],
-    "softSkills": ["Problem Solving", "Team Leadership"]
-  },
+  "skills": [
+    {
+      "category": "Programming Languages",
+      "skills": ["Python", "JavaScript"]
+    },
+    {
+      "category": "Frameworks",
+      "skills": ["React", "FastAPI"]
+    }
+  ],
   "education": {
     "degree": "B.Tech in Computer Science and Engineering",
     "institution": "${personal.collegeName}",
@@ -427,16 +416,7 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
         const groqResponse = await generateGroqFallback(prompt, true);
         const groqResult = JSON.parse(groqResponse.trim()) as FullResumeOutput;
         // Override AI-generated skills with engine output
-        groqResult.skills = {
-          ...groqResult.skills,
-          languages: processedSkills.languages,
-          frameworks: processedSkills.frameworks,
-          tools: processedSkills.tools,
-          databases: processedSkills.databases,
-          aiAndData: processedSkills.aiAndData,
-          csConcepts: processedSkills.csConcepts,
-          concepts: processedSkills.csConcepts, // backward compat
-        };
+        groqResult.skills = processedSkills;
         return groqResult;
       } catch (groqError) {
         console.error("Groq direct call failed:", groqError);
@@ -463,21 +443,7 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
 
     const geminiResult = JSON.parse(responseText.trim()) as FullResumeOutput;
     // Override AI-generated skills with engine output
-    geminiResult.skills = {
-      ...geminiResult.skills,
-      languages: processedSkills.languages,
-      frameworks: processedSkills.frameworks,
-      tools: processedSkills.tools,
-      databases: processedSkills.databases,
-      aiAndData: processedSkills.aiAndData,
-      csConcepts: processedSkills.csConcepts,
-      concepts: processedSkills.csConcepts, // backward compat
-      cloudAndDevops: processedSkills.cloudAndDevops,
-      cybersecurity: processedSkills.cybersecurity,
-      embeddedSystems: processedSkills.embeddedSystems,
-      dataEngineering: processedSkills.dataEngineering,
-      engineeringSoftware: processedSkills.engineeringSoftware,
-    };
+    geminiResult.skills = processedSkills;
     return geminiResult;
   } catch (error) {
     console.error("Error communicating with Gemini API, trying Groq fallback:", error);
@@ -485,21 +451,7 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
       const groqResponse = await generateGroqFallback(prompt, true);
       const groqFallbackResult = JSON.parse(groqResponse.trim()) as FullResumeOutput;
       // Override AI-generated skills with engine output
-      groqFallbackResult.skills = {
-        ...groqFallbackResult.skills,
-        languages: processedSkills.languages,
-        frameworks: processedSkills.frameworks,
-        tools: processedSkills.tools,
-        databases: processedSkills.databases,
-        aiAndData: processedSkills.aiAndData,
-        csConcepts: processedSkills.csConcepts,
-        concepts: processedSkills.csConcepts, // backward compat
-        cloudAndDevops: processedSkills.cloudAndDevops,
-        cybersecurity: processedSkills.cybersecurity,
-        embeddedSystems: processedSkills.embeddedSystems,
-        dataEngineering: processedSkills.dataEngineering,
-        engineeringSoftware: processedSkills.engineeringSoftware,
-      };
+      groqFallbackResult.skills = processedSkills;
       return groqFallbackResult;
     } catch (groqError) {
       console.error("Groq fallback failed as well, using mock response:", groqError);

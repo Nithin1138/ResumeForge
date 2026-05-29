@@ -29,16 +29,7 @@ const fmtPhone = (phone: string) => {
 // ── Live-editable data shape ───────────────────────────────────────────────
 export interface LiveResumeData {
   summary: string;
-  skills: {
-    languages: string[];
-    frameworks: string[];
-    databases: string[];
-    tools: string[];
-    aiAndData: string[];
-    csConcepts: string[];
-    concepts: string[];
-    softSkills: string[];
-  };
+  skills: Array<{ category: string; skills: string[] }>;
   projects: Array<{ title: string; techStack: string; duration: string; bullets: string[] }>;
   experience: Array<{ company: string; role: string; duration: string; bullets: string[] }>;
   positions: Array<{ title: string; organization: string; bullet: string }>;
@@ -96,7 +87,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
   // Merge liveData over raw output
   const d = {
     summary: liveData?.summary ?? output?.summary ?? "",
-    skills: liveData?.skills ?? output?.skills ?? {},
+    skills: liveData?.skills ?? output?.skills ?? [],
     projects: liveData?.projects ?? output?.projects ?? [],
     experience: liveData?.experience ?? output?.experience ?? [],
     positions: liveData?.positions ?? output?.positions ?? [],
@@ -233,21 +224,15 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
           </div>
 
           {/* Technical Skills */}
-          {d.skills && Object.values(d.skills).some((arr: any) => arr?.length > 0) && (
+          {d.skills && Array.isArray(d.skills) && d.skills.length > 0 && (
             <div style={{ marginBottom: "13pt" }}>
               <SectionTitle>Technical Skills</SectionTitle>
               <div style={{ fontSize: "9.5pt", lineHeight: 1.5 }}>
-                {d.skills.languages?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Languages:</strong> {d.skills.languages.join(", ")}</p>}
-                {d.skills.frameworks?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Frameworks & Libraries:</strong> {d.skills.frameworks.join(", ")}</p>}
-                {d.skills.databases?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Databases:</strong> {d.skills.databases.join(", ")}</p>}
-                {d.skills.tools?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Tools & Technologies:</strong> {d.skills.tools.join(", ")}</p>}
-                {d.skills.cloudAndDevops?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Cloud & DevOps:</strong> {d.skills.cloudAndDevops.join(", ")}</p>}
-                {d.skills.cybersecurity?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Cybersecurity:</strong> {d.skills.cybersecurity.join(", ")}</p>}
-                {d.skills.embeddedSystems?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Embedded Systems:</strong> {d.skills.embeddedSystems.join(", ")}</p>}
-                {d.skills.dataEngineering?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Data Engineering:</strong> {d.skills.dataEngineering.join(", ")}</p>}
-                {d.skills.engineeringSoftware?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Engineering Software:</strong> {d.skills.engineeringSoftware.join(", ")}</p>}
-                {d.skills.aiAndData?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Artificial Intelligence & Data:</strong> {d.skills.aiAndData.join(", ")}</p>}
-                {(d.skills.csConcepts?.length > 0 || d.skills.concepts?.length > 0) && <p style={{ margin: "0" }}><strong>Core Concepts:</strong> {(d.skills.csConcepts?.length > 0 ? d.skills.csConcepts : d.skills.concepts).join(", ")}</p>}
+                {d.skills.map((s: { category: string; skills: string[] }, i: number) => (
+                  <p key={i} style={{ margin: i === d.skills.length - 1 ? "0" : "0 0 3pt 0" }}>
+                    <strong>{s.category}:</strong> {s.skills.join(", ")}
+                  </p>
+                ))}
               </div>
             </div>
           )}
