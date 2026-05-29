@@ -594,10 +594,11 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
         </div>
 
         {/* Section: Academic Projects */}
-        <div className="space-y-4 print:hidden">
-          <div className="border-b border-border/40 pb-2">
-            <h3 className="text-xs font-bold text-text-muted tracking-wider uppercase">ATS Project Bullet Points</h3>
-          </div>
+        {output.projects && output.projects.length > 0 && (
+          <div className="space-y-4 print:hidden">
+            <div className="border-b border-border/40 pb-2">
+              <h3 className="text-xs font-bold text-text-muted tracking-wider uppercase">ATS Project Bullet Points</h3>
+            </div>
 
           {output.projects.map((proj, idx) => {
             const blockId = `proj_${idx}`;
@@ -689,6 +690,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
             );
           })}
         </div>
+        )}
 
         {/* Section: Experience (If added) */}
         {output.experience.length > 0 && (
@@ -793,7 +795,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
         )}
 
         {/* Section: POR & Achievements */}
-        {(output.positions.length > 0 || output.achievements.length > 0 || resume.skills?.certifications) && (
+        {(output.positions.length > 0 || output.achievements.length > 0 || resume.inputData.skills?.certifications) && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:hidden">
             {output.positions.length > 0 && (
               <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs">
@@ -863,11 +865,11 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
                 </div>
               )}
 
-              {resume.skills?.certifications && (
+              {resume.inputData.skills?.certifications && (
                 <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs">
                   <h3 className="text-xs font-bold text-primary tracking-wider uppercase border-b border-border/40 pb-2 mb-4">Certifications</h3>
                   <div className="text-xs text-text-muted leading-relaxed font-medium outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all">
-                    {resume.skills.certifications}
+                    {resume.inputData.skills.certifications}
                   </div>
                   
                   <div className="mt-5 flex items-center space-x-3 bg-bg-base p-3 rounded-lg border border-border/50">
