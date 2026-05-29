@@ -88,7 +88,7 @@ export const NORMALIZATION_MAP: Record<string, string> = {
   "swagger": "Swagger", "websockets": "WebSockets", "websocket": "WebSockets",
 
   // AI & Data
-  "ml": "Machine Learning", "machine learning": "Machine Learning",
+  "ml": "Machine Learning", "machine learning": "Machine Learning", "machine learning basics": "Machine Learning",
   "ai": "Artificial Intelligence", "artificial intelligence": "Artificial Intelligence",
   "dl": "Deep Learning", "deep learning": "Deep Learning",
   "nlp": "Natural Language Processing", "natural language processing": "Natural Language Processing",

@@ -38,6 +38,16 @@ function TagInput({
 
   const activeTags = value ? value.split(",").map(t => t.trim()).filter(Boolean) : [];
 
+  const uniqueActiveTags: string[] = [];
+  const seenNormalized = new Set<string>();
+  for (const tag of activeTags) {
+    const normalized = NORMALIZATION_MAP[tag.toLowerCase()] || tag.trim();
+    if (!seenNormalized.has(normalized.toLowerCase())) {
+      seenNormalized.add(normalized.toLowerCase());
+      uniqueActiveTags.push(normalized);
+    }
+  }
+
   const handleAddTag = (tag: string) => {
     let trimmed = tag.trim();
     if (!trimmed) return;
@@ -48,16 +58,16 @@ function TagInput({
       trimmed = NORMALIZATION_MAP[lower];
     }
 
-    // Case-insensitive inclusion check
-    if (activeTags.some(t => t.toLowerCase() === trimmed.toLowerCase())) return;
+    // Case-insensitive and semantic inclusion check
+    if (seenNormalized.has(trimmed.toLowerCase())) return;
 
-    const newTags = [...activeTags, trimmed];
+    const newTags = [...uniqueActiveTags, trimmed];
     onChange(newTags.join(", "));
     setInputValue("");
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    const newTags = activeTags.filter(t => t !== tagToRemove);
+    const newTags = uniqueActiveTags.filter(t => t !== tagToRemove);
     onChange(newTags.join(", "));
   };
 
@@ -65,17 +75,20 @@ function TagInput({
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
       handleAddTag(inputValue);
-    } else if (e.key === "Backspace" && !inputValue && activeTags.length > 0) {
-      handleRemoveTag(activeTags[activeTags.length - 1]);
+    } else if (e.key === "Backspace" && !inputValue && uniqueActiveTags.length > 0) {
+      handleRemoveTag(uniqueActiveTags[uniqueActiveTags.length - 1]);
     }
   };
 
   const handleToggleSuggestion = (sug: string) => {
     const normalizedSug = NORMALIZATION_MAP[sug.toLowerCase()] || sug.trim();
-    const existingIndex = activeTags.findIndex(t => t.toLowerCase() === normalizedSug.toLowerCase());
     
-    if (existingIndex !== -1) {
-      handleRemoveTag(activeTags[existingIndex]);
+    if (seenNormalized.has(normalizedSug.toLowerCase())) {
+      // Find the exact string we kept in uniqueActiveTags to remove it
+      const existing = uniqueActiveTags.find(t => t.toLowerCase() === normalizedSug.toLowerCase());
+      if (existing) {
+        handleRemoveTag(existing);
+      }
     } else {
       handleAddTag(sug);
     }
@@ -84,8 +97,7 @@ function TagInput({
   const filteredSuggestions = suggestions.filter(
     sug => {
       const normalizedSug = NORMALIZATION_MAP[sug.toLowerCase()] || sug.trim();
-      const isActive = activeTags.some(t => t.toLowerCase() === normalizedSug.toLowerCase());
-      return !isActive && sug.toLowerCase().includes(inputValue.toLowerCase());
+      return !seenNormalized.has(normalizedSug.toLowerCase()) && sug.toLowerCase().includes(inputValue.toLowerCase());
     }
   );
 
@@ -101,7 +113,7 @@ function TagInput({
         }`}
         onClick={() => setIsOpen(true)}
       >
-        {activeTags.map((tag) => (
+        {uniqueActiveTags.map((tag) => (
           <span 
             key={tag} 
             className="inline-flex items-center space-x-1.5 px-3 py-1 bg-primary/10 border border-primary/20 text-primary font-bold text-xs rounded-full"
