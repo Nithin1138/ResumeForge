@@ -352,7 +352,7 @@ TECHNICAL SKILLS
 - Frameworks & Libraries: ${output.skills.frameworks.join(", ")}
 - Tools & Technologies: ${output.skills.tools.join(", ")}
 - Databases: ${output.skills.databases.join(", ")}
-${(output.skills.aiAndData && output.skills.aiAndData.length > 0) ? `- Artificial Intelligence & Data: ${output.skills.aiAndData.join(", ")}\n` : ""}- Core CS Concepts: ${(output.skills.csConcepts && output.skills.csConcepts.length > 0 ? output.skills.csConcepts : output.skills.concepts).join(", ")}
+${(output.skills.cloudAndDevops && output.skills.cloudAndDevops.length > 0) ? `- Cloud & DevOps: ${output.skills.cloudAndDevops.join(", ")}\n` : ""}${(output.skills.cybersecurity && output.skills.cybersecurity.length > 0) ? `- Cybersecurity: ${output.skills.cybersecurity.join(", ")}\n` : ""}${(output.skills.embeddedSystems && output.skills.embeddedSystems.length > 0) ? `- Embedded Systems: ${output.skills.embeddedSystems.join(", ")}\n` : ""}${(output.skills.dataEngineering && output.skills.dataEngineering.length > 0) ? `- Data Engineering: ${output.skills.dataEngineering.join(", ")}\n` : ""}${(output.skills.engineeringSoftware && output.skills.engineeringSoftware.length > 0) ? `- Engineering Software: ${output.skills.engineeringSoftware.join(", ")}\n` : ""}${(output.skills.aiAndData && output.skills.aiAndData.length > 0) ? `- Artificial Intelligence & Data: ${output.skills.aiAndData.join(", ")}\n` : ""}- Core Concepts: ${((output.skills.csConcepts && output.skills.csConcepts.length > 0 ? output.skills.csConcepts : output.skills.concepts) || []).join(", ")}
 ${output.skills.softSkills && output.skills.softSkills.length > 0 ? `- Soft Skills: ${output.skills.softSkills.join(", ")}\n` : ""}
 
 PROJECTS
@@ -577,7 +577,7 @@ Languages: ${output.skills.languages.join(", ")}
 Frameworks: ${output.skills.frameworks.join(", ")}
 Tools: ${output.skills.tools.join(", ")}
 Databases: ${output.skills.databases.join(", ")}
-${(output.skills.aiAndData && output.skills.aiAndData.length > 0) ? `Artificial Intelligence & Data: ${output.skills.aiAndData.join(", ")}\n` : ""}Core CS Concepts: ${(output.skills.csConcepts && output.skills.csConcepts.length > 0 ? output.skills.csConcepts : output.skills.concepts).join(", ")}
+${(output.skills.cloudAndDevops && output.skills.cloudAndDevops.length > 0) ? `Cloud & DevOps: ${output.skills.cloudAndDevops.join(", ")}\n` : ""}${(output.skills.cybersecurity && output.skills.cybersecurity.length > 0) ? `Cybersecurity: ${output.skills.cybersecurity.join(", ")}\n` : ""}${(output.skills.embeddedSystems && output.skills.embeddedSystems.length > 0) ? `Embedded Systems: ${output.skills.embeddedSystems.join(", ")}\n` : ""}${(output.skills.dataEngineering && output.skills.dataEngineering.length > 0) ? `Data Engineering: ${output.skills.dataEngineering.join(", ")}\n` : ""}${(output.skills.engineeringSoftware && output.skills.engineeringSoftware.length > 0) ? `Engineering Software: ${output.skills.engineeringSoftware.join(", ")}\n` : ""}${(output.skills.aiAndData && output.skills.aiAndData.length > 0) ? `Artificial Intelligence & Data: ${output.skills.aiAndData.join(", ")}\n` : ""}Core Concepts: ${((output.skills.csConcepts && output.skills.csConcepts.length > 0 ? output.skills.csConcepts : output.skills.concepts) || []).join(", ")}
                 `.trim();
                 copyToClipboard(skillsText, "skills");
               }}
@@ -594,8 +594,13 @@ ${(output.skills.aiAndData && output.skills.aiAndData.length > 0) ? `Artificial 
               { title: "Frameworks & Libraries", data: output.skills.frameworks },
               { title: "Databases", data: output.skills.databases },
               { title: "Tools & Technologies", data: output.skills.tools },
+              ...(output.skills.cloudAndDevops && output.skills.cloudAndDevops.length > 0 ? [{ title: "Cloud & DevOps", data: output.skills.cloudAndDevops }] : []),
+              ...(output.skills.cybersecurity && output.skills.cybersecurity.length > 0 ? [{ title: "Cybersecurity", data: output.skills.cybersecurity }] : []),
+              ...(output.skills.embeddedSystems && output.skills.embeddedSystems.length > 0 ? [{ title: "Embedded Systems", data: output.skills.embeddedSystems }] : []),
+              ...(output.skills.dataEngineering && output.skills.dataEngineering.length > 0 ? [{ title: "Data Engineering", data: output.skills.dataEngineering }] : []),
+              ...(output.skills.engineeringSoftware && output.skills.engineeringSoftware.length > 0 ? [{ title: "Engineering Software", data: output.skills.engineeringSoftware }] : []),
               ...(output.skills.aiAndData && output.skills.aiAndData.length > 0 ? [{ title: "Artificial Intelligence & Data", data: output.skills.aiAndData }] : []),
-              { title: "Core CS Concepts", data: (output.skills.csConcepts && output.skills.csConcepts.length > 0 ? output.skills.csConcepts : output.skills.concepts) }
+              { title: "Core Concepts", data: ((output.skills.csConcepts && output.skills.csConcepts.length > 0 ? output.skills.csConcepts : output.skills.concepts) || []) }
             ].map((cat, idx) => (
               <div key={idx} className="space-y-2">
                 <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{cat.title}</span>

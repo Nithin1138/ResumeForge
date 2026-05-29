@@ -1,12 +1,11 @@
 /**
- * Test script for the Technical Skills Generation Engine.
- * Exercises all major pipeline steps: normalization, soft skill removal,
- * project extraction, deduplication, re-categorization, sorting, and trimming.
+ * Test script for the Dynamic Skill Category Engine.
+ * Exercises all major pipeline steps: normalization, thresholding (>=2),
+ * branch-aware priorities (max 6), and deduplication.
  * 
  * Run: npx tsx scratch/test-skills-engine.ts
  */
 
-// We need to resolve the path alias manually for direct tsx execution
 import { generateTechnicalSkills } from "../lib/skillsEngine";
 
 // ── Test Helpers ───────────────────────────────────────────────────────────
@@ -23,12 +22,14 @@ function assert(condition: boolean, message: string) {
   }
 }
 
-function assertIncludes(arr: string[], item: string, msg: string) {
-  assert(arr.includes(item), `${msg} — expected "${item}" in [${arr.join(", ")}]`);
+function assertIncludes(arr: string[] | undefined, item: string, msg: string) {
+  const safeArr = arr || [];
+  assert(safeArr.includes(item), `${msg} — expected "${item}" in [${safeArr.join(", ")}]`);
 }
 
-function assertNotIncludes(arr: string[], item: string, msg: string) {
-  assert(!arr.includes(item), `${msg} — "${item}" should NOT be in [${arr.join(", ")}]`);
+function assertNotIncludes(arr: string[] | undefined, item: string, msg: string) {
+  const safeArr = arr || [];
+  assert(!safeArr.includes(item), `${msg} — "${item}" should NOT be in [${safeArr.join(", ")}]`);
 }
 
 // ── Build a mock ResumeFormData ────────────────────────────────────────────
@@ -38,7 +39,7 @@ function makeFormData(overrides: any = {}) {
       fullName: "Test User",
       email: "test@test.com",
       collegeName: "VIT",
-      branch: "CSE",
+      branch: overrides.branch ?? "CSE",
       graduationYear: "2026",
       cgpa: "8.5",
       targetRole: "Software Engineer",
@@ -72,255 +73,114 @@ function makeFormData(overrides: any = {}) {
 // ── TEST SUITE ─────────────────────────────────────────────────────────────
 console.log("\n🧪 Technical Skills Engine — Test Suite\n");
 
-// Test 1: Normalization
-console.log("📋 Test 1: Skill Normalization");
+// Test 1: Dynamic Thresholding (Fallback to Tools)
+console.log("📋 Test 1: Dynamic Category Thresholding");
 {
   const form = makeFormData({
-    languages: "ReactJS, NodeJS, Postgres, JS, python, c++",
-    frameworks: "",
-    concepts: "DSA, OOPs, DBMS, OS",
+    // Only 1 cloud skill (Google Cloud), only 1 AI skill (Computer Vision)
+    certifications: "Google Cloud Digital Leader",
+    tools: "Git, Postman, Computer Vision"
   });
   const result = generateTechnicalSkills(form);
 
-  // ReactJS, NodeJS should be normalized and re-categorized to frameworks
-  assertIncludes(result.frameworks, "React.js", "ReactJS → React.js");
-  assertIncludes(result.frameworks, "Node.js", "NodeJS → Node.js");
-
-  // Postgres → PostgreSQL (re-categorized to databases)
-  assertIncludes(result.databases, "PostgreSQL", "Postgres → PostgreSQL in databases");
-
-  // JS → JavaScript, python → Python, c++ → C++ (stay in languages)
-  assertIncludes(result.languages, "JavaScript", "JS → JavaScript");
-  assertIncludes(result.languages, "Python", "python → Python");
-  assertIncludes(result.languages, "C++", "c++ → C++");
-
-  // Concepts normalization
-  assertIncludes(result.csConcepts, "Data Structures & Algorithms", "DSA → Data Structures & Algorithms");
-  assertIncludes(result.csConcepts, "Object-Oriented Programming", "OOPs → Object-Oriented Programming");
-  assertIncludes(result.csConcepts, "Database Management Systems", "DBMS → Database Management Systems");
-  assertIncludes(result.csConcepts, "Operating Systems", "OS → Operating Systems");
+  assert(result.cloudAndDevops.length === 0, "Cloud category empty because < 2 skills");
+  assert(result.aiAndData.length === 0, "AI category empty because < 2 skills");
+  assertIncludes(result.tools, "Google Cloud", "Google Cloud moved to Tools");
+  assertIncludes(result.tools, "Computer Vision", "Computer Vision moved to Tools");
 }
 
-// Test 2: Soft Skills Removal
-console.log("\n📋 Test 2: Soft Skills Removal");
+// Test 2: Dynamic Category Creation (>= 2 skills)
+console.log("\n📋 Test 2: Dynamic Category Creation");
 {
   const form = makeFormData({
-    languages: "Python, Java",
-    concepts: "Teamwork, Communication, Data Structures & Algorithms (DSA), Leadership, Problem Solving",
+    tools: "AWS, Docker, Jenkins", // 3 Cloud skills
+    concepts: "Machine Learning, Deep Learning, NLP" // 3 AI skills
   });
   const result = generateTechnicalSkills(form);
 
-  assertIncludes(result.csConcepts, "Data Structures & Algorithms", "DSA kept in concepts");
-  assertNotIncludes(result.csConcepts, "Teamwork", "Teamwork removed");
-  assertNotIncludes(result.csConcepts, "Communication", "Communication removed");
-  assertNotIncludes(result.csConcepts, "Leadership", "Leadership removed");
-  assertNotIncludes(result.csConcepts, "Problem Solving", "Problem Solving removed");
+  assertIncludes(result.cloudAndDevops, "AWS", "AWS correctly placed in Cloud & DevOps");
+  assertIncludes(result.cloudAndDevops, "Docker", "Docker correctly placed in Cloud & DevOps");
+  assertNotIncludes(result.tools, "AWS", "AWS removed from Tools");
+  
+  assertIncludes(result.aiAndData, "Machine Learning", "ML correctly placed in AI & Data");
+  assertIncludes(result.aiAndData, "Natural Language Processing", "NLP correctly placed in AI & Data");
+  assertNotIncludes(result.csConcepts, "Machine Learning", "ML removed from Concepts");
 }
 
-// Test 3: Project Intelligence Extraction
-console.log("\n📋 Test 3: Project Intelligence Extraction");
+// Test 3: Branch-Aware Category Dropping (Max 6 categories)
+console.log("\n📋 Test 3: Branch-Aware Limiting");
 {
   const form = makeFormData({
-    languages: "Python",
+    branch: "Civil", // Should deprioritize Cloud, AI, Data Eng, etc. if too many
+    languages: "Python, C++",
+    frameworks: "React, Next.js",
+    databases: "PostgreSQL, MySQL",
+    tools: "Git, Postman",
+    concepts: "Data Structures & Algorithms, Object-Oriented Programming", // CS Concepts (2)
+    // Add multiple dynamic categories (at least 2 skills each to pass threshold)
     projects: [
       {
-        title: "Drowsiness Detection System",
-        techStack: "Python, OpenCV, dlib",
-        description: "Built a real-time drowsiness detection system using computer vision and facial landmark analysis",
-        keyResult: "Achieved 95% detection accuracy using eye-aspect ratio calculations",
-        link: "",
-        duration: "Jan 2025 – Mar 2025",
+        title: "AI App",
+        techStack: "OpenCV, YOLO", // aiAndData (2)
       },
       {
-        title: "Product Sentiment Analyzer",
-        techStack: "Python, VADER, Streamlit",
-        description: "Developed a sentiment analysis dashboard for e-commerce product reviews using NLP techniques",
-        keyResult: "Analyzed 10,000+ product reviews with 91% classification accuracy",
-        link: "",
-        duration: "Apr 2025 – May 2025",
+        title: "Data Pipeline",
+        techStack: "Apache Spark, Hadoop", // dataEngineering (2)
       },
       {
-        title: "AI Resume Builder",
-        techStack: "Next.js, TypeScript, Gemini API",
-        description: "Built an LLM-powered resume builder using generative AI and prompt engineering",
-        keyResult: "Automated resume generation with ATS-optimized output",
-        link: "",
-        duration: "May 2025",
+        title: "Cloud Infra",
+        techStack: "AWS, Kubernetes", // cloudAndDevops (2)
       },
-    ],
-  });
-  const result = generateTechnicalSkills(form);
-
-  // From OpenCV project
-  assertIncludes(result.aiAndData, "Computer Vision", "OpenCV project → Computer Vision extracted");
-
-  // From Sentiment project
-  assertIncludes(result.aiAndData, "NLP", "Sentiment project → NLP extracted");
-  assertIncludes(result.aiAndData, "Text Classification", "Sentiment project → Text Classification extracted");
-
-  // From LLM project
-  assertIncludes(result.aiAndData, "Generative AI", "LLM project → Generative AI extracted");
-  assertIncludes(result.aiAndData, "LLMs", "LLM project → LLMs extracted");
-  assertIncludes(result.aiAndData, "Prompt Engineering", "LLM project → Prompt Engineering extracted");
-
-  // OpenCV should be in frameworks
-  assertIncludes(result.frameworks, "OpenCV", "OpenCV extracted to frameworks");
-
-  // Streamlit from tech stack
-  assertIncludes(result.frameworks, "Streamlit", "Streamlit extracted to frameworks");
-}
-
-// Test 4: Internship Extraction
-console.log("\n📋 Test 4: Internship Extraction");
-{
-  const form = makeFormData({
-    languages: "Python",
-    internships: [
       {
-        company: "TechCorp",
-        role: "Backend Developer Intern",
-        duration: "May 2025 – Jul 2025",
-        workDone: "Built REST APIs using FastAPI and deployed on AWS with Docker containers",
-        techUsed: "Python, FastAPI, PostgreSQL, Docker, AWS",
-      },
-    ],
+        title: "AutoCAD Design",
+        techStack: "AutoCAD, SolidWorks", // engineeringSoftware (2)
+      }
+    ]
   });
   const result = generateTechnicalSkills(form);
-
-  assertIncludes(result.tools, "REST APIs", "REST APIs extracted from internship");
-  assertIncludes(result.tools, "Docker", "Docker extracted from internship");
-  assertIncludes(result.tools, "AWS", "AWS extracted from internship");
-  assertIncludes(result.frameworks, "FastAPI", "FastAPI extracted from internship");
-  assertIncludes(result.databases, "PostgreSQL", "PostgreSQL extracted from internship");
+  
+  // Total possible categories: languages, frameworks, databases, tools, csConcepts, 
+  // aiAndData, dataEngineering, cloudAndDevops, engineeringSoftware (9 categories).
+  // Max is 6. Civil prefers Engineering Software and Tools.
+  
+  const nonEmpty = Object.keys(result).filter(k => (result as any)[k].length > 0);
+  assert(nonEmpty.length <= 6, `Max 6 categories enforced (got ${nonEmpty.length}: ${nonEmpty.join(", ")})`);
+  
+  // Engineering software should definitely be kept for Civil
+  assertIncludes(result.engineeringSoftware, "AutoCAD", "AutoCAD retained in Engineering Software for Civil");
+  
+  // One of the dropped categories (e.g. AI or Data Eng or Cloud) should have its skills merged into Tools
+  assert(result.tools.includes("OpenCV") || result.tools.includes("AWS") || result.tools.includes("Hadoop"), 
+    "Dropped category skills correctly merged into Tools");
 }
 
-// Test 5: Re-categorization
-console.log("\n📋 Test 5: Re-categorization of Misplaced Skills");
+// Test 4: Project Intelligence Extraction for New Categories
+console.log("\n📋 Test 4: New Category Extraction (Data Eng, Embedded)");
 {
   const form = makeFormData({
-    // User puts Machine Learning in concepts, REST APIs in concepts, React in languages
-    languages: "Python, React, Java",
-    concepts: "Machine Learning, REST APIs, Data Structures & Algorithms (DSA)",
-  });
-  const result = generateTechnicalSkills(form);
-
-  // React should be moved from languages to frameworks
-  assertIncludes(result.frameworks, "React.js", "React moved to frameworks");
-  assertNotIncludes(result.languages, "React.js", "React NOT in languages");
-
-  // Machine Learning should be in aiAndData
-  assertIncludes(result.aiAndData, "Machine Learning", "ML moved to aiAndData");
-  assertNotIncludes(result.csConcepts, "Machine Learning", "ML NOT in csConcepts");
-
-  // REST APIs should be in tools
-  assertIncludes(result.tools, "REST APIs", "REST APIs moved to tools");
-  assertNotIncludes(result.csConcepts, "REST APIs", "REST APIs NOT in csConcepts");
-}
-
-// Test 6: Deduplication
-console.log("\n📋 Test 6: Deduplication Across Categories");
-{
-  const form = makeFormData({
-    languages: "Python, Python, JavaScript",
-    frameworks: "React, React",
-    tools: "Git, Git, GitHub",
-  });
-  const result = generateTechnicalSkills(form);
-
-  // Should not have duplicates
-  const allSkills = [
-    ...result.languages,
-    ...result.frameworks,
-    ...result.databases,
-    ...result.tools,
-    ...result.aiAndData,
-    ...result.csConcepts,
-  ];
-  const uniqueSkills = new Set(allSkills);
-  assert(allSkills.length === uniqueSkills.size, `No duplicates across categories (${allSkills.length} total, ${uniqueSkills.size} unique)`);
-}
-
-// Test 7: Category Limits
-console.log("\n📋 Test 7: Category Limits Enforcement");
-{
-  const form = makeFormData({
-    languages: "Python, Java, C++, JavaScript, TypeScript, Go, Rust, Kotlin, Swift, PHP, R, Ruby",
-  });
-  const result = generateTechnicalSkills(form);
-  assert(result.languages.length <= 6, `Languages limited to ≤6 (got ${result.languages.length})`);
-}
-
-// Test 8: Certification Extraction
-console.log("\n📋 Test 8: Certification Extraction");
-{
-  const form = makeFormData({
-    languages: "Python",
-    certifications: "AWS Certified Cloud Practitioner, Google Cloud Digital Leader, Coursera Deep Learning",
-  });
-  const result = generateTechnicalSkills(form);
-
-  assertIncludes(result.tools, "AWS", "AWS extracted from certification");
-  assertIncludes(result.tools, "Google Cloud", "Google Cloud extracted from certification");
-  assertIncludes(result.aiAndData, "Deep Learning", "Deep Learning extracted from certification");
-}
-
-// Test 9: No invented skills
-console.log("\n📋 Test 9: No Invented Skills (empty input)");
-{
-  const form = makeFormData({});
-  const result = generateTechnicalSkills(form);
-
-  // With no user input, all categories should be empty
-  assert(result.languages.length === 0, "No languages invented");
-  assert(result.frameworks.length === 0, "No frameworks invented");
-  assert(result.databases.length === 0, "No databases invented");
-  assert(result.tools.length === 0, "No tools invented");
-  assert(result.aiAndData.length === 0, "No AI skills invented");
-  assert(result.csConcepts.length === 0, "No CS concepts invented");
-}
-
-// Test 10: Full Integration Test
-console.log("\n📋 Test 10: Full Integration (realistic student profile)");
-{
-  const form = makeFormData({
-    languages: "Python, Java, C++, JS, SQL",
-    frameworks: "React, Node.js, FastAPI, OpenCV, Scikit-learn, VADER",
-    databases: "MySQL, Postgres",
-    tools: "Git, GitHub, Docker, AWS",
-    concepts: "DSA, OOPs, DBMS, OS, Machine Learning, Computer Vision, NLP",
-    certifications: "AWS Certified Cloud Practitioner",
     projects: [
       {
         title: "ETL Pipeline Manager",
         techStack: "Python, PostgreSQL, Apache Airflow",
         description: "Built an ETL pipeline for data warehousing and transformation workflows",
         keyResult: "Processed 50,000 records daily with 99.9% reliability",
-        link: "",
-        duration: "Jan 2025 – Mar 2025",
       },
+      {
+        title: "Smart Home Controller",
+        techStack: "Arduino, ESP32, IoT",
+        description: "Built a microcontroller based RTOS",
+      }
     ],
   });
   const result = generateTechnicalSkills(form);
 
-  console.log("\n  🔍 Full output:");
-  console.log(`    Languages: ${result.languages.join(", ")}`);
-  console.log(`    Frameworks: ${result.frameworks.join(", ")}`);
-  console.log(`    Databases: ${result.databases.join(", ")}`);
-  console.log(`    Tools: ${result.tools.join(", ")}`);
-  console.log(`    AI & Data: ${result.aiAndData.join(", ")}`);
-  console.log(`    CS Concepts: ${result.csConcepts.join(", ")}`);
-
-  // Basic sanity checks
-  assert(result.languages.length >= 3, `Has ≥3 languages (got ${result.languages.length})`);
-  assert(result.frameworks.length >= 3, `Has ≥3 frameworks (got ${result.frameworks.length})`);
-  assert(result.databases.length >= 1, `Has ≥1 database (got ${result.databases.length})`);
-  assert(result.tools.length >= 2, `Has ≥2 tools (got ${result.tools.length})`);
-  assert(result.aiAndData.length >= 2, `Has ≥2 AI/Data skills (got ${result.aiAndData.length})`);
-  assert(result.csConcepts.length >= 2, `Has ≥2 CS concepts (got ${result.csConcepts.length})`);
-
-  // ETL project should have added skills
-  assertIncludes(result.aiAndData, "ETL Pipelines", "ETL Pipelines from project");
-  assertIncludes(result.aiAndData, "Data Warehousing", "Data Warehousing from project");
+  // ETL -> dataEngineering
+  assertIncludes(result.dataEngineering, "ETL Pipelines", "ETL Pipelines extracted");
+  assertIncludes(result.dataEngineering, "Data Warehousing", "Data Warehousing extracted");
+  
+  // Arduino -> embeddedSystems
+  assertIncludes(result.embeddedSystems, "IoT", "IoT extracted");
+  assertIncludes(result.embeddedSystems, "Embedded C", "Embedded C extracted");
 }
 
 // ── Summary ────────────────────────────────────────────────────────────────

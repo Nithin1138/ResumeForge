@@ -241,8 +241,13 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
                 {d.skills.frameworks?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Frameworks & Libraries:</strong> {d.skills.frameworks.join(", ")}</p>}
                 {d.skills.databases?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Databases:</strong> {d.skills.databases.join(", ")}</p>}
                 {d.skills.tools?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Tools & Technologies:</strong> {d.skills.tools.join(", ")}</p>}
+                {d.skills.cloudAndDevops?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Cloud & DevOps:</strong> {d.skills.cloudAndDevops.join(", ")}</p>}
+                {d.skills.cybersecurity?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Cybersecurity:</strong> {d.skills.cybersecurity.join(", ")}</p>}
+                {d.skills.embeddedSystems?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Embedded Systems:</strong> {d.skills.embeddedSystems.join(", ")}</p>}
+                {d.skills.dataEngineering?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Data Engineering:</strong> {d.skills.dataEngineering.join(", ")}</p>}
+                {d.skills.engineeringSoftware?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Engineering Software:</strong> {d.skills.engineeringSoftware.join(", ")}</p>}
                 {d.skills.aiAndData?.length > 0 && <p style={{ margin: "0 0 3pt 0" }}><strong>Artificial Intelligence & Data:</strong> {d.skills.aiAndData.join(", ")}</p>}
-                {(d.skills.csConcepts?.length > 0 || d.skills.concepts?.length > 0) && <p style={{ margin: "0" }}><strong>Core CS Concepts:</strong> {(d.skills.csConcepts?.length > 0 ? d.skills.csConcepts : d.skills.concepts).join(", ")}</p>}
+                {(d.skills.csConcepts?.length > 0 || d.skills.concepts?.length > 0) && <p style={{ margin: "0" }}><strong>Core Concepts:</strong> {(d.skills.csConcepts?.length > 0 ? d.skills.csConcepts : d.skills.concepts).join(", ")}</p>}
               </div>
             </div>
           )}

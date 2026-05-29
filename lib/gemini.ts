@@ -107,7 +107,12 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
       aiAndData: aiAndDataList,
       csConcepts: csConceptsList,
       concepts: csConceptsList, // backward compat alias
-      softSkills: softSkillsList
+      softSkills: softSkillsList,
+      cloudAndDevops: [],
+      cybersecurity: [],
+      embeddedSystems: [],
+      dataEngineering: [],
+      engineeringSoftware: []
     },
     education: {
       degree: `B.Tech in ${branchName === "CSE" ? "Computer Science and Engineering" : branchName === "ECE" ? "Electronics and Communication Engineering" : "Engineering"}`,
@@ -467,6 +472,11 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
       aiAndData: processedSkills.aiAndData,
       csConcepts: processedSkills.csConcepts,
       concepts: processedSkills.csConcepts, // backward compat
+      cloudAndDevops: processedSkills.cloudAndDevops,
+      cybersecurity: processedSkills.cybersecurity,
+      embeddedSystems: processedSkills.embeddedSystems,
+      dataEngineering: processedSkills.dataEngineering,
+      engineeringSoftware: processedSkills.engineeringSoftware,
     };
     return geminiResult;
   } catch (error) {
@@ -484,6 +494,11 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
         aiAndData: processedSkills.aiAndData,
         csConcepts: processedSkills.csConcepts,
         concepts: processedSkills.csConcepts, // backward compat
+        cloudAndDevops: processedSkills.cloudAndDevops,
+        cybersecurity: processedSkills.cybersecurity,
+        embeddedSystems: processedSkills.embeddedSystems,
+        dataEngineering: processedSkills.dataEngineering,
+        engineeringSoftware: processedSkills.engineeringSoftware,
       };
       return groqFallbackResult;
     } catch (groqError) {
