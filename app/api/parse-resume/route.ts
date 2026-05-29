@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     if (!apiKey || apiKey === "mock" || apiKey === "xxx") {
       return NextResponse.json({
         personal: { fullName: "Mock User", email: "mock@example.com", collegeName: "Mock University", branch: "Computer Science", graduationYear: "2025", cgpa: "8.5", targetRole: "Software Engineer", phone: "1234567890", linkedin: "", github: "", location: "", hasPG: false, pgCollegeName: "", pgBranch: "", pgGraduationYear: "", pgCgpa: "", pgDegreeName: "" },
-        skills: { languages: "Python, JavaScript", frameworks: "React, Node.js", tools: "Git, Docker", databases: "MySQL", concepts: "OOP", softSkills: "Communication", certifications: "" },
+        skills: { categories: { languages: "Python, JavaScript", frameworks: "React, Node.js", tools: "Git, Docker", databases: "MySQL", csConcepts: "OOP" }, softSkills: "Communication", certifications: "" },
         projects: [{ title: "Mock Project", techStack: "React", description: "A simple web app", keyResult: "Increased speed by 10%", link: "", duration: "" }],
         internships: [],
         positions: [],
@@ -60,11 +60,20 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
     "pgDegreeName": ""
   },
   "skills": {
-    "languages": "",
-    "frameworks": "",
-    "tools": "",
-    "databases": "",
-    "concepts": "",
+    "categories": {
+      "languages": "",
+      "frameworks": "",
+      "tools": "",
+      "databases": "",
+      "csConcepts": "",
+      "aiAndData": "",
+      "embeddedSystems": "",
+      "engineeringSoftware": "",
+      "designSoftware": "",
+      "processEngineering": "",
+      "bioinformaticsTools": "",
+      "aerodynamics": ""
+    },
     "softSkills": "",
     "certifications": ""
   },
