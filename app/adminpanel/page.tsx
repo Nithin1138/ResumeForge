@@ -795,137 +795,77 @@ export default function AdminPanelPage() {
           </select>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+        <div className="flex flex-col gap-8 items-start w-full">
           
-          {/* SaaS Growth Sidebar Menu */}
-          <div className="hidden lg:block lg:col-span-1 bg-surface border border-border/50 rounded-3xl p-5 space-y-6 shadow-xs lg:sticky lg:top-[150px] z-30">
-            <div>
-              <span className="text-[9px] font-extrabold tracking-widest text-primary uppercase block mb-1">Founder Engine</span>
-              <h3 className="text-sm font-serif italic text-text">SaaS Command Center</h3>
-            </div>
-            
-            <div className="space-y-4">
-              {/* Category 1: Core Metrics */}
-              <div className="space-y-1.5">
-                <span className="text-[8px] font-black text-text-muted uppercase tracking-widest block px-2">Core Metrics</span>
-                <div className="flex flex-col gap-1">
-                  {[
-                    { id: "overview", name: "Telemetry Overview", icon: Activity },
-                    { id: "acquisition", name: "Traffic Acquisition", icon: TrendingUp },
-                    { id: "conversion", name: "Conversion Funnel", icon: Layers },
-                    { id: "monetization", name: "Paywall & Pricing", icon: CreditCard },
-                  ].map(item => (
-                    <button
-                      key={item.id}
-                      onClick={() => { setActiveTab(item.id as any); setDataError(""); }}
-                      className={`w-full px-3 py-2 text-[11px] font-bold rounded-xl border transition-all flex items-center gap-2 cursor-pointer ${
-                        activeTab === item.id
-                          ? "bg-primary/10 border-primary/20 text-primary shadow-xs"
-                          : "bg-transparent border-transparent text-text-muted hover:bg-bg-base/50 hover:text-text"
-                      }`}
-                    >
-                      <item.icon className="w-3.5 h-3.5" />
-                      <span>{item.name}</span>
-                    </button>
-                  ))}
-                </div>
+          {/* Bento Command Center Grid */}
+          <div className="w-full mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <span className="text-[9px] font-extrabold tracking-widest text-primary uppercase block mb-1">Founder Engine</span>
+                <h3 className="text-xl font-serif italic text-text">SaaS Command Center</h3>
               </div>
-
-              {/* Category 2: Systems Telemetry [NEW] */}
-              <div className="space-y-1.5">
-                <span className="text-[8px] font-black text-text-muted uppercase tracking-widest block px-2">Systems Telemetry</span>
-                <div className="flex flex-col gap-1">
-                  {[
-                    { id: "behavior", name: "Event Streams", icon: Activity },
-                    { id: "experiments", name: "A/B Experiments", icon: Layers },
-                    { id: "flags", name: "Feature Flags", icon: Key },
-                  ].map(item => (
-                    <button
-                      key={item.id}
-                      onClick={() => { setActiveTab(item.id as any); setDataError(""); }}
-                      className={`w-full px-3 py-2 text-[11px] font-bold rounded-xl border transition-all flex items-center gap-2 cursor-pointer ${
-                        activeTab === item.id
-                          ? "bg-primary/10 border-primary/20 text-primary shadow-xs"
-                          : "bg-transparent border-transparent text-text-muted hover:bg-bg-base/50 hover:text-text"
-                      }`}
-                    >
-                      <item.icon className="w-3.5 h-3.5" />
-                      <span>{item.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Category 3: Retention & Virality */}
-              <div className="space-y-1.5">
-                <span className="text-[8px] font-black text-text-muted uppercase tracking-widest block px-2">Retention & Virality</span>
-                <div className="flex flex-col gap-1">
-                  {[
-                    { id: "virality", name: "Viral & Referrals", icon: Sparkles },
-                    { id: "retention", name: "User Retention", icon: BarChart3 },
-                    { id: "intelligence", name: "Resume Conversion", icon: Award },
-                    { id: "campus", name: "Campus Spikes", icon: GraduationCap },
-                    { id: "cohorts", name: "Cohort Retention", icon: BarChart3 },
-                    { id: "outcomes", name: "Resume Outcomes", icon: Award },
-                  ].map(item => (
-                    <button
-                      key={item.id}
-                      onClick={() => { setActiveTab(item.id as any); setDataError(""); }}
-                      className={`w-full px-3 py-2 text-[11px] font-bold rounded-xl border transition-all flex items-center gap-2 cursor-pointer ${
-                        activeTab === item.id
-                          ? "bg-primary/10 border-primary/20 text-primary shadow-xs"
-                          : "bg-transparent border-transparent text-text-muted hover:bg-bg-base/50 hover:text-text"
-                      }`}
-                    >
-                      <item.icon className="w-3.5 h-3.5" />
-                      <span>{item.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Category 4: Operations */}
-              <div className="space-y-1.5">
-                <span className="text-[8px] font-black text-text-muted uppercase tracking-widest block px-2">Operations</span>
-                <div className="flex flex-col gap-1">
-                  {[
-                    { id: "waitlist", name: "Waitlist Expansion", icon: Mail },
-                    { id: "marketing", name: "Marketing & CMS", icon: Server },
-                    { id: "queues", name: "Queue & Reliability", icon: Cpu },
-                    { id: "fraud", name: "Fraud Shield", icon: ShieldCheck },
-                    { id: "aicost", name: "AI Spend Optimizer", icon: Cpu },
-                    { id: "github-logs", name: "Flash Project AI Logs", icon: Activity },
-                    { id: "users", name: "User Roster", icon: Users },
-                    { id: "security", name: "Access Settings", icon: Lock },
-                  ].map(item => (
-                    <button
-                      key={item.id}
-                      onClick={() => { setActiveTab(item.id as any); setDataError(""); }}
-                      className={`w-full px-3 py-2 text-[11px] font-bold rounded-xl border transition-all flex items-center gap-2 cursor-pointer ${
-                        activeTab === item.id
-                          ? "bg-primary/10 border-primary/20 text-primary shadow-xs"
-                          : "bg-transparent border-transparent text-text-muted hover:bg-bg-base/50 hover:text-text"
-                      }`}
-                    >
-                      <item.icon className="w-3.5 h-3.5" />
-                      <span>{item.name}</span>
-                    </button>
-                  ))}
-                </div>
+              <div className="flex items-center gap-2 bg-surface border border-border/50 px-3 py-1.5 rounded-full shadow-xs">
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <span className="text-[10px] font-black tracking-widest text-text-muted uppercase">System Online</span>
               </div>
             </div>
 
-            <div className="border-t border-border/40 pt-4 flex items-center justify-between text-[9px] text-text-muted font-black uppercase tracking-widest px-2">
-              <span>Telemetry State</span>
-              <div className="flex items-center gap-1 text-primary">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                <span>ONLINE</span>
-              </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+              {[
+                { id: "overview", name: "Overview", icon: Activity, group: "Metrics", color: "text-primary", bg: "bg-primary/10" },
+                { id: "acquisition", name: "Acquisition", icon: TrendingUp, group: "Metrics", color: "text-success", bg: "bg-success/10" },
+                { id: "conversion", name: "Funnel", icon: Layers, group: "Metrics", color: "text-warning", bg: "bg-warning/10" },
+                { id: "monetization", name: "Revenue", icon: CreditCard, group: "Metrics", color: "text-primary", bg: "bg-primary/10" },
+                
+                { id: "virality", name: "Virality", icon: Sparkles, group: "Growth", color: "text-text", bg: "bg-text/5" },
+                { id: "retention", name: "Retention", icon: BarChart3, group: "Growth", color: "text-text", bg: "bg-text/5" },
+                { id: "intelligence", name: "Conversion", icon: Award, group: "Growth", color: "text-text", bg: "bg-text/5" },
+                { id: "outcomes", name: "Outcomes", icon: Award, group: "Growth", color: "text-text", bg: "bg-text/5" },
+                { id: "campus", name: "Campus", icon: GraduationCap, group: "Growth", color: "text-text", bg: "bg-text/5" },
+                { id: "cohorts", name: "Cohorts", icon: BarChart3, group: "Growth", color: "text-text", bg: "bg-text/5" },
+                
+                { id: "waitlist", name: "Waitlist", icon: Mail, group: "Ops", color: "text-text", bg: "bg-text/5" },
+                { id: "users", name: "Users", icon: Users, group: "Ops", color: "text-text", bg: "bg-text/5" },
+                { id: "marketing", name: "CMS", icon: Server, group: "Ops", color: "text-text", bg: "bg-text/5" },
+                { id: "aicost", name: "AI Spend", icon: Cpu, group: "Ops", color: "text-text", bg: "bg-text/5" },
+                
+                { id: "behavior", name: "Events", icon: Activity, group: "Sys", color: "text-text", bg: "bg-text/5" },
+                { id: "experiments", name: "A/B Tests", icon: Layers, group: "Sys", color: "text-text", bg: "bg-text/5" },
+                { id: "flags", name: "Flags", icon: Key, group: "Sys", color: "text-text", bg: "bg-text/5" },
+                { id: "queues", name: "Queues", icon: Cpu, group: "Sys", color: "text-text", bg: "bg-text/5" },
+                { id: "github-logs", name: "AI Logs", icon: Activity, group: "Sys", color: "text-text", bg: "bg-text/5" },
+                { id: "fraud", name: "Fraud", icon: ShieldCheck, group: "Sec", color: "text-text", bg: "bg-text/5" },
+                { id: "security", name: "Security", icon: Lock, group: "Sec", color: "text-text", bg: "bg-text/5" }
+              ].map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => { setActiveTab(item.id as any); setDataError(""); }}
+                  className={`relative p-4 rounded-2xl border transition-all flex flex-col items-start gap-3 cursor-pointer overflow-hidden group ${
+                    activeTab === item.id
+                      ? "bg-surface border-primary/40 shadow-[0_0_15px_rgba(var(--primary),0.15)] ring-1 ring-primary/20"
+                      : "bg-surface/50 border-border/50 hover:bg-surface hover:border-border hover:shadow-xs"
+                  }`}
+                >
+                  {/* Background gradient on active */}
+                  {activeTab === item.id && (
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-100" />
+                  )}
+                  
+                  <div className={`p-2.5 rounded-xl ${item.bg} ${item.color} group-hover:scale-110 transition-transform`}>
+                    <item.icon className="w-4 h-4" />
+                  </div>
+                  
+                  <div className="text-left w-full relative z-10">
+                    <span className="text-[8px] font-black text-text-muted/60 uppercase tracking-widest block mb-0.5">{item.group}</span>
+                    <span className={`text-xs font-bold ${activeTab === item.id ? 'text-primary' : 'text-text'} truncate w-full block`}>{item.name}</span>
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
 
           {/* Active Viewport Panel */}
-          <div className="lg:col-span-3 min-w-0">
+          <div className="w-full min-w-0">
             {dataError && (
               <div className="p-4 bg-error/5 border border-error/15 text-error rounded-2xl text-xs font-bold text-center mb-6">
                 {dataError}
