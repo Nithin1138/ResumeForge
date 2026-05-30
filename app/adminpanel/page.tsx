@@ -43,8 +43,11 @@ import {
   Sparkle,
   ArrowUpRight,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  Menu,
+  X
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminPanelPage() {
   const router = useRouter();
@@ -143,6 +146,40 @@ export default function AdminPanelPage() {
   const [broadcastBody, setBroadcastBody] = useState("Hi student,\n\nPlacement season is active across campuses! We have updated our AI engines with brand new high-impact tech stack keywords. Generate your resume now to optimize your scan rate.\n\nBest,\nATSLift Operations Team");
   const [isBroadcasting, setIsBroadcasting] = useState(false);
   const [broadcastSuccess, setBroadcastSuccess] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const TABS = [
+    { id: "overview", name: "Overview", icon: Activity, group: "Metrics", color: "text-primary", bg: "bg-primary/10" },
+    { id: "acquisition", name: "Acquisition", icon: TrendingUp, group: "Metrics", color: "text-success", bg: "bg-success/10" },
+    { id: "conversion", name: "Funnel", icon: Layers, group: "Metrics", color: "text-warning", bg: "bg-warning/10" },
+    { id: "monetization", name: "Revenue", icon: CreditCard, group: "Metrics", color: "text-primary", bg: "bg-primary/10" },
+    
+    { id: "virality", name: "Virality", icon: Sparkles, group: "Growth", color: "text-text", bg: "bg-text/5" },
+    { id: "retention", name: "Retention", icon: BarChart3, group: "Growth", color: "text-text", bg: "bg-text/5" },
+    { id: "intelligence", name: "Conversion", icon: Award, group: "Growth", color: "text-text", bg: "bg-text/5" },
+    { id: "outcomes", name: "Outcomes", icon: Award, group: "Growth", color: "text-text", bg: "bg-text/5" },
+    { id: "campus", name: "Campus", icon: GraduationCap, group: "Growth", color: "text-text", bg: "bg-text/5" },
+    { id: "cohorts", name: "Cohorts", icon: BarChart3, group: "Growth", color: "text-text", bg: "bg-text/5" },
+    
+    { id: "waitlist", name: "Waitlist", icon: Mail, group: "Ops", color: "text-text", bg: "bg-text/5" },
+    { id: "users", name: "Users", icon: Users, group: "Ops", color: "text-text", bg: "bg-text/5" },
+    { id: "marketing", name: "CMS", icon: Server, group: "Ops", color: "text-text", bg: "bg-text/5" },
+    { id: "aicost", name: "AI Spend", icon: Cpu, group: "Ops", color: "text-text", bg: "bg-text/5" },
+    
+    { id: "behavior", name: "Events", icon: Activity, group: "Sys", color: "text-text", bg: "bg-text/5" },
+    { id: "experiments", name: "A/B Tests", icon: Layers, group: "Sys", color: "text-text", bg: "bg-text/5" },
+    { id: "flags", name: "Flags", icon: Key, group: "Sys", color: "text-text", bg: "bg-text/5" },
+    { id: "queues", name: "Queues", icon: Cpu, group: "Sys", color: "text-text", bg: "bg-text/5" },
+    { id: "github-logs", name: "AI Logs", icon: Activity, group: "Sys", color: "text-text", bg: "bg-text/5" },
+    { id: "fraud", name: "Fraud", icon: ShieldCheck, group: "Sec", color: "text-text", bg: "bg-text/5" },
+    { id: "security", name: "Security", icon: Lock, group: "Sec", color: "text-text", bg: "bg-text/5" }
+  ];
+
+  const groupedTabs = TABS.reduce((acc, tab) => {
+    if (!acc[tab.group]) acc[tab.group] = [];
+    acc[tab.group].push(tab);
+    return acc;
+  }, {} as Record<string, typeof TABS>);
 
   // Authentication check on load
   useEffect(() => {
@@ -671,260 +708,197 @@ export default function AdminPanelPage() {
 
   // RENDER: Dashboard view
   return (
-    <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans">
-      {/* Top Navbar */}
-      <header className="sticky top-0 z-50 glass-panel border-b border-border/45 px-4 md:px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Link href="/" className="cursor-pointer">
+    <div className="min-h-screen bg-bg-base text-text flex font-sans overflow-hidden">
+      {/* Sidebar Navigation */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-border/40 bg-surface/80 backdrop-blur-xl flex flex-col h-screen transform transition-transform duration-300 md:relative md:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex items-center justify-between p-6 border-b border-border/40 shrink-0">
+          <Link href="/" className="flex items-center space-x-3 cursor-pointer">
             <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
+            <span className="font-bold text-lg tracking-tight text-text">
+              ATSLift<span className="text-primary font-medium font-serif italic ml-1">Command</span>
+            </span>
           </Link>
-          <span className="font-bold text-base md:text-lg tracking-tight text-text">
-            ATSLift<span className="text-primary font-medium font-serif italic ml-1">CommandCenter</span>
-          </span>
-        </div>
-        
-        <div className="flex items-center space-x-2 md:space-x-4">
-          <div className="flex items-center space-x-1.5 bg-primary/10 border border-primary/20 px-2.5 py-1.5 rounded-full text-[10px] md:text-xs font-bold text-primary">
-            <UserCheck className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden sm:inline">Growth Architect:</span>
-            <span>{usernameInput || "Nithin"}</span>
-          </div>
-          <ThemeToggle />
-          <button
-            onClick={handleLogout}
-            className="p-2 md:p-2.5 rounded-full border border-border hover:bg-error/5 hover:text-error hover:border-error/25 transition-all cursor-pointer text-text-muted flex items-center justify-center"
-            title="Log Out"
-          >
-            <LogOut className="w-4 h-4" />
+          <button className="md:hidden p-2 text-text-muted hover:text-text transition-colors" onClick={() => setMobileMenuOpen(false)}>
+            <X className="w-5 h-5" />
           </button>
         </div>
-      </header>
+        
+        <div className="flex-1 overflow-y-auto p-4 space-y-6 no-scrollbar">
+          {Object.entries(groupedTabs).map(([group, tabs]) => (
+            <div key={group}>
+              <h4 className="text-[10px] font-extrabold tracking-widest text-text-muted/60 uppercase mb-3 px-3">{group}</h4>
+              <nav className="space-y-1">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => { setActiveTab(tab.id as any); setDataError(""); setMobileMenuOpen(false); }}
+                    className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all relative overflow-hidden ${
+                      activeTab === tab.id
+                        ? "bg-primary/10 text-primary font-bold shadow-[0_0_15px_rgba(var(--primary),0.05)] ring-1 ring-primary/20"
+                        : "text-text-muted hover:bg-surface hover:text-text font-medium"
+                    }`}
+                  >
+                    <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? tab.color : "text-text-muted"} relative z-10`} />
+                    <span className="text-xs relative z-10">{tab.name}</span>
+                    {activeTab === tab.id && (
+                      <motion.div layoutId="activeTabIndicator" className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full" />
+                    )}
+                  </button>
+                ))}
+              </nav>
+            </div>
+          ))}
+        </div>
+        
+        <div className="p-4 border-t border-border/40 shrink-0">
+          <div className="flex items-center space-x-3 px-3 py-3 bg-surface/50 rounded-2xl border border-border/50">
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs uppercase shrink-0">
+              {usernameInput.substring(0,2) || "AL"}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Architect</div>
+              <div className="text-xs font-bold text-text truncate">{usernameInput || "Admin"}</div>
+            </div>
+            <button onClick={handleLogout} className="p-1.5 text-text-muted hover:text-error hover:bg-error/10 rounded-lg transition-colors shrink-0">
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </aside>
 
-      {/* ── MODULE 1: REAL-TIME GROWTH STICKY TOP TELEMETRY BAR ── */}
-      <div className="sticky top-[73px] z-40 bg-surface/90 backdrop-blur-md border-b border-border/40 py-3.5 px-4 md:px-6 shadow-xs overflow-x-auto">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-8 whitespace-nowrap min-w-max text-xs">
-          <div className="flex items-center gap-1.5 shrink-0">
-            <span className="w-2 h-2 rounded-full bg-success animate-ping" />
-            <span className="font-extrabold tracking-widest text-[9px] uppercase text-text-muted">Live Growth Telemetry:</span>
+      {/* Mobile overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 md:hidden" onClick={() => setMobileMenuOpen(false)} />
+      )}
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
+        {/* Top Header */}
+        <header className="h-[73px] border-b border-border/40 bg-surface/30 backdrop-blur-md flex items-center justify-between px-4 md:px-6 shrink-0 z-30 relative">
+          <div className="flex items-center space-x-4">
+            <button className="md:hidden p-2 -ml-2 text-text-muted hover:text-text transition-colors" onClick={() => setMobileMenuOpen(true)}>
+              <Menu className="w-6 h-6" />
+            </button>
+            <div className="hidden sm:flex items-center gap-1.5 bg-success/10 border border-success/20 px-2.5 py-1.5 rounded-full text-[10px] font-bold text-success">
+              <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+              <span>System Online</span>
+            </div>
           </div>
           
-          <div className="flex items-center space-x-6 text-[11px] font-semibold text-text-muted">
-            <div className="flex items-center space-x-1.5">
-              <span>Visitors Today:</span>
+          <div className="flex flex-1 mx-4 md:mx-8 items-center space-x-6 text-[11px] font-semibold text-text-muted overflow-x-auto no-scrollbar">
+            <div className="flex items-center space-x-1.5 shrink-0">
+              <span>Visitors:</span>
               <strong className="text-text font-mono font-bold">{stats ? stats.totalUsers * 4 + 112 : "420"}</strong>
             </div>
-            <span className="text-border">|</span>
-            <div className="flex items-center space-x-1.5">
-              <span>Active WAU:</span>
-              <strong className="text-text font-mono font-bold">{stats ? stats.activeUsers : "42"}</strong>
-            </div>
-            <span className="text-border">|</span>
-            <div className="flex items-center space-x-1.5">
-              <span>Revenue Today:</span>
+            <span className="text-border shrink-0">|</span>
+            <div className="flex items-center space-x-1.5 shrink-0">
+              <span>Revenue:</span>
               <strong className="text-primary font-mono font-bold">₹{stats ? (stats.totalPaidResumes * 49 * 0.12).toFixed(0) : "147"}</strong>
             </div>
-            <span className="text-border">|</span>
-            <div className="flex items-center space-x-1.5">
+            <span className="text-border shrink-0">|</span>
+            <div className="flex items-center space-x-1.5 shrink-0">
               <span>Conversion:</span>
               <strong className="text-success font-mono font-bold">{conversionRate}%</strong>
             </div>
-            <span className="text-border">|</span>
-            <div className="flex items-center space-x-1.5">
-              <span>Waitlist Today:</span>
+            <span className="text-border shrink-0">|</span>
+            <div className="flex items-center space-x-1.5 shrink-0">
+              <span>Waitlist:</span>
               <strong className="text-warning font-mono font-bold">+{stats ? Math.round(stats.waitlistCount * 0.1) : "3"}</strong>
             </div>
-            <span className="text-border">|</span>
-            <div className="flex items-center space-x-1.5">
-              <span>Viral Shares:</span>
-              <strong className="text-text font-mono font-bold">{stats ? Math.round(stats.totalPaidResumes * 3.4) : "24"}</strong>
-            </div>
-            <span className="text-border">|</span>
-            <div className="flex items-center space-x-1.5 text-error">
-              <span>AI Operational Cost:</span>
-              <strong className="font-mono font-bold">₹{stats ? (stats.totalResumesBuilt * 0.10).toFixed(1) : "14.5"}</strong>
-            </div>
-            <span className="text-border">|</span>
-            <div className="flex items-center space-x-1.5 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full text-primary">
-              <span>Net Profit WTD:</span>
-              <strong className="font-mono font-bold">₹{stats ? stats.netProfit : "980"}</strong>
-            </div>
           </div>
-        </div>
-      </div>
-
-      {/* Main Grid: Command Sidebar + Active tab panel */}
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 md:px-6 py-6 md:py-8">
-        {/* Mobile Navigation Selector (Only visible on screens below lg) */}
-        <div className="lg:hidden w-full bg-surface border border-border/50 rounded-3xl p-5 mb-6 shadow-xs">
-          <span className="text-[9px] font-extrabold tracking-widest text-primary uppercase block mb-1">Founder Engine</span>
-          <h3 className="text-sm font-serif italic text-text mb-3">SaaS Command Selector</h3>
           
-          <select
-            value={activeTab}
-            onChange={(e) => { setActiveTab(e.target.value as any); setDataError(""); }}
-            className="w-full h-11 px-4 rounded-xl border border-border bg-bg-base/30 text-xs font-bold text-text outline-hidden focus:ring-2 focus:ring-primary/45 focus:border-transparent transition-all cursor-pointer"
-          >
-            <optgroup label="Core Metrics">
-              <option value="overview">📈 Telemetry Overview</option>
-              <option value="acquisition">🎯 Traffic Acquisition</option>
-              <option value="conversion">🔄 Conversion Funnel</option>
-              <option value="monetization">💳 Paywall & Pricing</option>
-            </optgroup>
-            <optgroup label="Systems Telemetry">
-              <option value="behavior">⚡ Event Streams</option>
-              <option value="experiments">🧪 A/B Experiments</option>
-              <option value="flags">🔑 Feature Flags</option>
-            </optgroup>
-            <optgroup label="Retention & Virality">
-              <option value="virality">✨ Viral & Referrals</option>
-              <option value="retention">📊 User Retention</option>
-              <option value="intelligence">🎓 Resume Conversion</option>
-              <option value="campus">🏫 Campus Spikes</option>
-              <option value="cohorts">📅 Cohort Retention</option>
-              <option value="outcomes">🏆 Resume Outcomes</option>
-            </optgroup>
-            <optgroup label="Operations">
-              <option value="waitlist">📬 Waitlist Expansion</option>
-              <option value="marketing">🎨 Marketing & CMS</option>
-              <option value="queues">⚙️ Queue & Reliability</option>
-              <option value="fraud">🛡️ Fraud Shield</option>
-              <option value="aicost">🤖 AI API Financials</option>
-              <option value="users">👥 User Roster</option>
-              <option value="security">🔒 Access Settings</option>
-            </optgroup>
-          </select>
-        </div>
+          <div className="flex items-center space-x-3 shrink-0">
+            <ThemeToggle />
+          </div>
+        </header>
 
-        <div className="flex flex-col gap-8 items-start w-full">
+        {/* Scrollable Main Area */}
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-10 relative z-10 w-full no-scrollbar">
+          {/* Decorative background blur */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[400px] bg-primary/5 rounded-full blur-[120px] pointer-events-none -z-10" />
           
-          {/* Bento Command Center Grid */}
-          <div className="w-full mb-8">
-            <div className="flex items-center justify-between mb-4">
+          <div className="max-w-5xl mx-auto w-full">
+            <div className="mb-8 flex items-center justify-between">
               <div>
-                <span className="text-[9px] font-extrabold tracking-widest text-primary uppercase block mb-1">Founder Engine</span>
-                <h3 className="text-xl font-serif italic text-text">SaaS Command Center</h3>
-              </div>
-              <div className="flex items-center gap-2 bg-surface border border-border/50 px-3 py-1.5 rounded-full shadow-xs">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-[10px] font-black tracking-widest text-text-muted uppercase">System Online</span>
+                <h1 className="text-2xl md:text-3xl font-serif italic text-text capitalize">
+                  {activeTab.replace('-', ' ')}
+                </h1>
+                <span className="text-[10px] font-extrabold tracking-widest text-primary uppercase mt-1 block">Live Telemetry Dashboard</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-              {[
-                { id: "overview", name: "Overview", icon: Activity, group: "Metrics", color: "text-primary", bg: "bg-primary/10" },
-                { id: "acquisition", name: "Acquisition", icon: TrendingUp, group: "Metrics", color: "text-success", bg: "bg-success/10" },
-                { id: "conversion", name: "Funnel", icon: Layers, group: "Metrics", color: "text-warning", bg: "bg-warning/10" },
-                { id: "monetization", name: "Revenue", icon: CreditCard, group: "Metrics", color: "text-primary", bg: "bg-primary/10" },
-                
-                { id: "virality", name: "Virality", icon: Sparkles, group: "Growth", color: "text-text", bg: "bg-text/5" },
-                { id: "retention", name: "Retention", icon: BarChart3, group: "Growth", color: "text-text", bg: "bg-text/5" },
-                { id: "intelligence", name: "Conversion", icon: Award, group: "Growth", color: "text-text", bg: "bg-text/5" },
-                { id: "outcomes", name: "Outcomes", icon: Award, group: "Growth", color: "text-text", bg: "bg-text/5" },
-                { id: "campus", name: "Campus", icon: GraduationCap, group: "Growth", color: "text-text", bg: "bg-text/5" },
-                { id: "cohorts", name: "Cohorts", icon: BarChart3, group: "Growth", color: "text-text", bg: "bg-text/5" },
-                
-                { id: "waitlist", name: "Waitlist", icon: Mail, group: "Ops", color: "text-text", bg: "bg-text/5" },
-                { id: "users", name: "Users", icon: Users, group: "Ops", color: "text-text", bg: "bg-text/5" },
-                { id: "marketing", name: "CMS", icon: Server, group: "Ops", color: "text-text", bg: "bg-text/5" },
-                { id: "aicost", name: "AI Spend", icon: Cpu, group: "Ops", color: "text-text", bg: "bg-text/5" },
-                
-                { id: "behavior", name: "Events", icon: Activity, group: "Sys", color: "text-text", bg: "bg-text/5" },
-                { id: "experiments", name: "A/B Tests", icon: Layers, group: "Sys", color: "text-text", bg: "bg-text/5" },
-                { id: "flags", name: "Flags", icon: Key, group: "Sys", color: "text-text", bg: "bg-text/5" },
-                { id: "queues", name: "Queues", icon: Cpu, group: "Sys", color: "text-text", bg: "bg-text/5" },
-                { id: "github-logs", name: "AI Logs", icon: Activity, group: "Sys", color: "text-text", bg: "bg-text/5" },
-                { id: "fraud", name: "Fraud", icon: ShieldCheck, group: "Sec", color: "text-text", bg: "bg-text/5" },
-                { id: "security", name: "Security", icon: Lock, group: "Sec", color: "text-text", bg: "bg-text/5" }
-              ].map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => { setActiveTab(item.id as any); setDataError(""); }}
-                  className={`relative p-4 rounded-2xl border transition-all flex flex-col items-start gap-3 cursor-pointer overflow-hidden group ${
-                    activeTab === item.id
-                      ? "bg-surface border-primary/40 shadow-[0_0_15px_rgba(var(--primary),0.15)] ring-1 ring-primary/20"
-                      : "bg-surface/50 border-border/50 hover:bg-surface hover:border-border hover:shadow-xs"
-                  }`}
-                >
-                  {/* Background gradient on active */}
-                  {activeTab === item.id && (
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-100" />
-                  )}
-                  
-                  <div className={`p-2.5 rounded-xl ${item.bg} ${item.color} group-hover:scale-110 transition-transform`}>
-                    <item.icon className="w-4 h-4" />
+            {/* Active Viewport Panel */}
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="w-full min-w-0 pb-20"
+              >
+                {dataError && (
+                  <div className="p-4 bg-error/5 border border-error/15 text-error rounded-2xl text-xs font-bold text-center mb-6">
+                    {dataError}
                   </div>
-                  
-                  <div className="text-left w-full relative z-10">
-                    <span className="text-[8px] font-black text-text-muted/60 uppercase tracking-widest block mb-0.5">{item.group}</span>
-                    <span className={`text-xs font-bold ${activeTab === item.id ? 'text-primary' : 'text-text'} truncate w-full block`}>{item.name}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Active Viewport Panel */}
-          <div className="w-full min-w-0">
-            {dataError && (
-              <div className="p-4 bg-error/5 border border-error/15 text-error rounded-2xl text-xs font-bold text-center mb-6">
-                {dataError}
-              </div>
-            )}
+                )}
 
             {/* TAB CONTENT: 1. TELEMETRY OVERVIEW */}
             {activeTab === "overview" && stats && (
               <div className="space-y-6 md:space-y-8 animate-fadeIn">
-                {/* Scorecard grids */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                  <div className="bg-surface border border-border/50 rounded-2xl p-5 flex flex-col justify-between shadow-xs hover:border-primary/30 transition-all">
-                    <div className="flex items-center justify-between mb-4">
+                  <div className="bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-5 flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(var(--primary),0.1)] hover:border-primary/30 transition-all duration-300 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    <div className="flex items-center justify-between mb-4 relative z-10">
                       <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Total Users</span>
-                      <div className="p-2 rounded-xl bg-primary/5 text-primary">
+                      <div className="p-2 rounded-xl bg-primary/10 text-primary group-hover:scale-110 transition-transform duration-300">
                         <Users className="w-4.5 h-4.5" />
                       </div>
                     </div>
-                    <div>
-                      <h3 className="text-2xl md:text-3xl font-black font-mono leading-none mb-1">{stats.totalUsers}</h3>
+                    <div className="relative z-10">
+                      <h3 className="text-3xl md:text-4xl font-black font-mono leading-none mb-1 text-text">{stats.totalUsers}</h3>
                       <span className="text-[9px] text-text-muted font-bold block uppercase tracking-wider">Registered Pool</span>
                     </div>
                   </div>
 
-                  <div className="bg-surface border border-border/50 rounded-2xl p-5 flex flex-col justify-between shadow-xs hover:border-primary/30 transition-all">
-                    <div className="flex items-center justify-between mb-4">
+                  <div className="bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-5 flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(var(--text),0.1)] hover:border-text-muted/30 transition-all duration-300 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-text/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    <div className="flex items-center justify-between mb-4 relative z-10">
                       <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Resumes Built</span>
-                      <div className="p-2 rounded-xl bg-text/5 text-text-muted">
+                      <div className="p-2 rounded-xl bg-text/5 text-text-muted group-hover:scale-110 transition-transform duration-300">
                         <FileText className="w-4.5 h-4.5" />
                       </div>
                     </div>
-                    <div>
-                      <h3 className="text-2xl md:text-3xl font-black font-mono leading-none mb-1">{stats.totalResumesBuilt}</h3>
+                    <div className="relative z-10">
+                      <h3 className="text-3xl md:text-4xl font-black font-mono leading-none mb-1 text-text">{stats.totalResumesBuilt}</h3>
                       <span className="text-[9px] text-text-muted font-bold block uppercase tracking-wider">Total Drafts</span>
                     </div>
                   </div>
 
-                  <div className="bg-surface border border-border/50 rounded-2xl p-5 flex flex-col justify-between shadow-xs hover:border-primary/30 transition-all">
-                    <div className="flex items-center justify-between mb-4">
+                  <div className="bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-5 flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(var(--success),0.15)] hover:border-success/30 transition-all duration-300 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-success/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    <div className="flex items-center justify-between mb-4 relative z-10">
                       <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Paid checkouts</span>
-                      <div className="p-2 rounded-xl bg-success/10 text-success">
+                      <div className="p-2 rounded-xl bg-success/10 text-success group-hover:scale-110 transition-transform duration-300">
                         <CreditCard className="w-4.5 h-4.5 animate-pulse" />
                       </div>
                     </div>
-                    <div>
-                      <h3 className="text-2xl md:text-3xl font-black font-mono leading-none mb-1">{stats.totalPaidResumes}</h3>
+                    <div className="relative z-10">
+                      <h3 className="text-3xl md:text-4xl font-black font-mono leading-none mb-1 text-success">{stats.totalPaidResumes}</h3>
                       <span className="text-[9px] text-text-muted font-bold block uppercase tracking-wider">Checkout rate: {conversionRate}%</span>
                     </div>
                   </div>
 
-                  <div className="bg-surface border border-border/50 rounded-2xl p-5 flex flex-col justify-between shadow-xs hover:border-primary/30 transition-all">
-                    <div className="flex items-center justify-between mb-4">
+                  <div className="bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-5 flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(var(--warning),0.1)] hover:border-warning/30 transition-all duration-300 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-warning/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    <div className="flex items-center justify-between mb-4 relative z-10">
                       <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Waitlist Roster</span>
-                      <div className="p-2 rounded-xl bg-warning/10 text-warning">
+                      <div className="p-2 rounded-xl bg-warning/10 text-warning group-hover:scale-110 transition-transform duration-300">
                         <Mail className="w-4.5 h-4.5" />
                       </div>
                     </div>
-                    <div>
-                      <h3 className="text-2xl md:text-3xl font-black font-mono leading-none mb-1">{stats.waitlistCount}</h3>
+                    <div className="relative z-10">
+                      <h3 className="text-3xl md:text-4xl font-black font-mono leading-none mb-1 text-warning">{stats.waitlistCount}</h3>
                       <span className="text-[9px] text-text-muted font-bold block uppercase tracking-wider">Waitlist Subscriptions</span>
                     </div>
                   </div>
@@ -3428,26 +3402,23 @@ export default function AdminPanelPage() {
                 </div>
               </div>
             )}
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="mt-auto border-t border-border/40 bg-surface px-4 md:px-6 py-6 md:py-8 text-center text-xs text-text-muted font-medium">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <img src="/logo.png" alt="ATSLift Logo" className="w-5 h-5 object-contain logo-rotated" />
-            <span className="font-bold text-sm tracking-tight text-text">
-              ATSLift<span className="text-primary font-serif italic ml-0.5">CommandCenter</span>
-            </span>
-            <span className="text-border">|</span>
-            <span>© {new Date().getFullYear()} Operations Dashboard. All rights reserved.</span>
-          </div>
-          <div>
-            <span>100% Secure Telemetries Engine</span>
-          </div>
-        </div>
-      </footer>
+          
+          {/* Footer */}
+          <footer className="mt-20 border-t border-border/40 px-4 md:px-6 py-6 md:py-8 text-center text-[10px] text-text-muted font-bold tracking-widest uppercase">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center space-x-2">
+                <span>© {new Date().getFullYear()} Operations Dashboard</span>
+              </div>
+              <div>
+                <span>100% Secure Telemetries Engine</span>
+              </div>
+            </div>
+          </footer>
+        </main>
+      </div>
     </div>
   );
 }
