@@ -54,12 +54,12 @@ function Divider() {
 
 function SectionTitle({ children }: { children: string }) {
   return (
-    <>
+    <div style={{ pageBreakAfter: "avoid", breakAfter: "avoid" }}>
       <div style={{ fontSize: "11pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.4px", color: "#1a1a1a", marginBottom: "2pt" }}>
         {children}
       </div>
       <Divider />
-    </>
+    </div>
   );
 }
 
@@ -193,7 +193,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
           )}
 
           {/* Education */}
-          <div style={{ marginBottom: "13pt" }}>
+          <div style={{ marginBottom: "13pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
             <SectionTitle>Education</SectionTitle>
             {/* PG */}
             {d.pgEducation && (
@@ -225,7 +225,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
 
           {/* Technical Skills */}
           {d.skills && Array.isArray(d.skills) && d.skills.length > 0 && (
-            <div style={{ marginBottom: "13pt" }}>
+            <div style={{ marginBottom: "13pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
               <SectionTitle>Technical Skills</SectionTitle>
               <div style={{ fontSize: "9.5pt", lineHeight: 1.5 }}>
                 {d.skills.map((s: { category: string; skills: string[] }, i: number) => (
@@ -242,7 +242,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             <div style={{ marginBottom: "13pt" }}>
               <SectionTitle>Academic Projects</SectionTitle>
               {d.projects.map((proj: any, idx: number) => (
-                <div key={idx} style={{ marginBottom: idx === d.projects.length - 1 ? 0 : "10pt" }}>
+                <div key={idx} style={{ marginBottom: idx === d.projects.length - 1 ? 0 : "10pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "1pt" }}>
                     <div style={{ fontWeight: "bold", fontSize: "10pt", color: "#111", display: "flex", alignItems: "center", gap: "6px", flex: 1 }}>
                       {proj.title}
@@ -272,7 +272,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             <div style={{ marginBottom: "13pt" }}>
               <SectionTitle>Experience & Leadership</SectionTitle>
               {d.experience?.map((exp: any, idx: number) => (
-                <div key={idx} style={{ marginBottom: "7pt" }}>
+                <div key={idx} style={{ marginBottom: "7pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: "10pt" }}>
                     <div style={{ flex: 1 }}><strong>{exp.company}</strong><span style={{ color: "#555", marginLeft: "5pt", fontSize: "9.5pt" }}>— {exp.role}</span></div>
                     <span style={{ color: "#555", flexShrink: 0, fontSize: "9.5pt", textAlign: "right", marginLeft: "10px" }}>{exp.duration}</span>
@@ -285,7 +285,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
                 </div>
               ))}
               {d.positions?.map((pos: any, idx: number) => (
-                <div key={idx} style={{ marginBottom: "5pt" }}>
+                <div key={idx} style={{ marginBottom: "5pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                   <div style={{ fontSize: "10pt" }}><strong>{pos.title}</strong><span style={{ color: "#555", marginLeft: "5pt", fontSize: "9.5pt" }}>({pos.organization})</span></div>
                   <p style={{ fontSize: "9.5pt", margin: "2pt 0 0 14px", lineHeight: 1.35 }}>• {pos.bullet}</p>
                 </div>
@@ -295,7 +295,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
 
           {/* Key Achievements */}
           {d.achievements?.length > 0 && (
-            <div style={{ marginBottom: "13pt" }}>
+            <div style={{ marginBottom: "13pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
               <SectionTitle>Key Achievements</SectionTitle>
               <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: 0, fontSize: "9.5pt" }}>
                 {d.achievements.map((ach: string, idx: number) => (
@@ -307,7 +307,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
 
           {/* Certifications */}
           {includeCertifications && ip?.skills?.certifications && (
-            <div>
+            <div style={{ pageBreakInside: "avoid", breakInside: "avoid" }}>
               <SectionTitle>Certifications</SectionTitle>
               <div style={{ fontSize: "9.5pt", lineHeight: 1.5 }}>{ip.skills.certifications}</div>
             </div>
