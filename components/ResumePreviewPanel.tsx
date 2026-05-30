@@ -138,12 +138,15 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
           fontSize: "10.5pt",
           lineHeight: 1.35,
           color: "#222",
-          padding: "64px 72px",
           boxSizing: "border-box",
         }}
       >
-        {/* ── HEADER (always clear) ── */}
-        <div style={{ textAlign: "center", marginBottom: "13pt" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", borderSpacing: 0 }}>
+          <thead style={{ display: "table-header-group" }}>
+            <tr>
+              <td style={{ paddingTop: "64px", paddingLeft: "72px", paddingRight: "72px", paddingBottom: "13pt", border: "none" }}>
+                {/* ── HEADER (repeated on every page) ── */}
+                <div style={{ textAlign: "center" }}>
           <div style={{ fontSize: "22pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "-0.5px", color: "#111", marginBottom: "3pt" }}>
             {p.fullName || "Your Name"}
           </div>
@@ -179,7 +182,17 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             ))}
           </div>
         </div>
-
+              </td>
+            </tr>
+          </thead>
+          <tfoot style={{ display: "table-footer-group" }}>
+            <tr>
+              <td style={{ height: "64px", padding: 0, border: "none" }}></td>
+            </tr>
+          </tfoot>
+          <tbody>
+            <tr>
+              <td style={{ paddingLeft: "72px", paddingRight: "72px", paddingBottom: "0", border: "none", verticalAlign: "top" }}>
         {/* ── BODY (blurred when locked) ── */}
         <div style={locked ? { filter: "blur(4px)", userSelect: "none", pointerEvents: "none" } : {}}>
 
@@ -313,6 +326,10 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             </div>
           )}
         </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
         {/* ── LOCK OVERLAY (only when locked) ── */}
         {locked && (
