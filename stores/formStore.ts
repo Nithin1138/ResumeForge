@@ -297,6 +297,18 @@ export const useFormStore = create<FormStore>()(
         activeStep: state.activeStep,
         lastSaved: state.lastSaved,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state && state.lastSaved) {
+          // Expiration time set to 2 hours (in milliseconds)
+          const EXPIRATION_TIME = 2 * 60 * 60 * 1000;
+          if (Date.now() - state.lastSaved > EXPIRATION_TIME) {
+            // Data is expired, reset to initial state
+            setTimeout(() => {
+              state.resetForm();
+            }, 0);
+          }
+        }
+      },
     }
   )
 );

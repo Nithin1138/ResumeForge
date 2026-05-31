@@ -29,12 +29,14 @@ export function DeleteButton({ id }: { id: string }) {
       });
       if (res.ok) {
         router.refresh();
+        // Keep the spinner spinning until the component unmounts naturally via refresh
+        return;
       }
     } catch (error) {
       console.error("Delete failed:", error);
-    } finally {
-      setIsDeleting(false);
     }
+    // Only reset if it failed
+    setIsDeleting(false);
   };
 
   return (

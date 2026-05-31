@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export async function GET(
   req: NextRequest,
@@ -63,6 +64,8 @@ export async function DELETE(
     await prisma.resume.delete({
       where: { id },
     });
+
+    revalidatePath("/dashboard");
 
     return NextResponse.json({ success: true, message: "Resume deleted successfully." });
   } catch (error) {

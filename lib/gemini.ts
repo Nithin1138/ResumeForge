@@ -230,7 +230,19 @@ Your output must strictly follow these rules:
 11. If the tech stack is already displayed below the project title, do NOT repeat technologies inside bullet points unless absolutely necessary for explaining a specific implementation detail. Focus strictly on technical implementation, architecture, and outcomes.
 12. Avoid fake corporate buzzwords or exaggerated claims inside project bullet points.
 13. IMPORTANT FOR TIPS: Do NOT give tips about resume structure, adding keywords, or formatting (since this app handles the formatting for them). The \`atsTips\` should strictly contain highly personalized CAREER and SKILL improvement advice based on their exact input.
-14. ENGINEER-GRADE PROJECT BULLETS:
+14. TONE ADAPTATION: Adapt your writing style precisely to the TONE PREFERENCE specified by the user.
+15. PROJECT VARIANTS: If PROJECT VARIANTS PREFERENCE is "3 versions for different roles", for EACH project, you MUST provide 3 distinct versions of the bullets tailored to different roles (e.g., Software Engineer, Data Analyst, Product Manager) inside a "variants" array. The standard "bullets" array must still have the primary version.
+16. ATS SCORE ENGINE v2.0:
+    Calculate the ATS score deterministically using fixed weighted categories. DO NOT GUESS.
+    - Category 1: Keyword Match & Role Alignment (30 Points). Evaluate required tech, domain terms. 0-10 weak, 11-20 moderate, 21-30 strong.
+    - Category 2: ATS Compatibility (25 Points). Our app formats this perfectly, so default to 23-25 unless data is severely lacking.
+    - Category 3: Technical Strength (15 Points). Evaluate skill quality, complexity. 0-5 weak, 6-10 average, 11-15 strong.
+    - Category 4: Project Quality & Impact (15 Points). Evaluate metrics, complexity. 0-5 weak, 6-10 moderate, 11-15 strong.
+    - Category 5: Recruiter Readability (10 Points). Evaluate bullet structure, action verbs. 0-3 poor, 4-7 average, 8-10 excellent.
+    - Category 6: Experience & Credibility (5 Points). Evaluate internships, achievements. 0-2 weak, 3-4 moderate, 5 strong.
+    ANTI-INFLATION RULES: Never assign >95 or <40. No projects/internships = 40-60. Strong projects/metrics = 80-95.
+    Output the exact breakdown.
+17. ENGINEER-GRADE PROJECT BULLETS:
   - CORE IDENTITY & NATURALNESS:
     Write from the perspective of a technically strong engineering student. Favor clarity, practical implementation, and recruiter readability over enterprise sophistication. Bullets must sound believable for real B.Tech student projects, NOT senior infrastructure engineering work.
   - REALISM FILTER:
@@ -328,6 +340,7 @@ JOB DESCRIPTION FOR KEYWORD ALIGNMENT (if provided):
 ${options.jobDescription || "None"}
 
 TONE PREFERENCE: ${options.tone}
+PROJECT VARIANTS PREFERENCE: ${options.projectVariants || "1 version"}
 
 OUTPUT FORMAT (return ONLY this JSON, no other text):
 {
@@ -362,6 +375,11 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
         "Bullet point 1 with strong action verb",
         "Bullet point 2 with outcome or feature"
       ],
+      "variants": [
+        { "role": "Frontend Engineer", "bullets": ["Frontend focused bullet 1", "Frontend focused bullet 2"] },
+        { "role": "Backend Engineer", "bullets": ["Backend focused bullet 1", "Backend focused bullet 2"] },
+        { "role": "Fullstack Engineer", "bullets": ["Fullstack focused bullet 1", "Fullstack focused bullet 2"] }
+      ],
       "duration": "Jan 2025 – Mar 2025",
       "link": "https://github.com/..."
     }
@@ -388,15 +406,27 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
     "Achievement bullet 1",
     "Achievement bullet 2"
   ],
-  "atsScore": 65, // Must be calculated dynamically (strictly between 40 and 95) based entirely on the actual strength of bullet points, missing keywords, and lack of metrics. Do NOT show partiality. Give low scores (40-60) if the input is weak. DO NOT hardcode this value.
-  "atsFeedbackCategory": "NEEDS IMPROVEMENT", // A 1-3 word short category (e.g. EXCELLENT STRUCTURE, NEEDS METRICS, POOR KEYWORDS) based on the resume's true state.
-  "atsFeedbackSummary": "Your resume lacks quantifiable metrics in your project descriptions and fails to hit key industry keywords. You need to focus on results over responsibilities to pass modern ATS filters.", // A 1-3 sentence summary of the exact flaws or strengths in the user's input data. Be brutally honest.
-  "atsTips": [ // IMPORTANT: DO NOT give generic advice about resume structure, formatting, or keywords (we build the resume for them). Instead, give highly personalized CAREER & SKILL tips based on their actual background. What next project should they do? What certification fits their skills? What gap exists in their tech stack?
-    "Tip 1: Since you have strong Python skills, consider completing an AWS certification to strengthen your cloud deployment profile.",
-    "Tip 2: Your projects focus heavily on frontend React; try building a full-stack project using Node.js to show backend competency.",
-    "Tip 3: You have great academic scores, try contributing to open-source projects in the Data Science space to stand out."
+  "atsScore": 84,
+  "breakdown": {
+    "keywordMatch": 24,
+    "atsCompatibility": 23,
+    "technicalStrength": 12,
+    "projectQuality": 13,
+    "recruiterReadability": 8,
+    "experienceCredibility": 4
+  },
+  "strengths": [
+    "Strong use of modern frameworks like React and FastAPI.",
+    "Clear impact metrics in project descriptions."
   ],
-  "keywordsAdded": ["REST API", "Machine Learning", "Data Analysis"],
+  "weaknesses": [
+    "Lacks cloud deployment keywords (e.g., AWS, Docker).",
+    "Missing professional internship experience."
+  ],
+  "improvements": [
+    "Add a project demonstrating backend cloud deployment.",
+    "Quantify your contribution in the college club role."
+  ],
   "freeTierPreview": {
     "summary": "First sentence of summary only...",
     "firstProject": {

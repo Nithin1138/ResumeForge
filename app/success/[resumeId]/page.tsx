@@ -94,6 +94,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [includeSummary, setIncludeSummary] = useState(false);
   const [includeCertifications, setIncludeCertifications] = useState(true);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
+  const [activeProjectVariants, setActiveProjectVariants] = useState<Record<number, number>>({});
   
   // Custom regeneration states
   const [customTone, setCustomTone] = useState<string>("Professional & Formal");
@@ -665,6 +666,60 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
                       </>
                     )}
                   </div>
+
+                  {proj.variants && proj.variants.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border/30">
+                      <span className="text-[10px] font-bold text-text-muted uppercase">Tailor for:</span>
+                      {proj.variants.map((variant: any, vIdx: number) => {
+                        const isActive = activeProjectVariants[idx] === vIdx;
+                        return (
+                          <button
+                            key={vIdx}
+                            onClick={() => {
+                              setActiveProjectVariants(prev => ({ ...prev, [idx]: vIdx }));
+                              setLiveResume((prev: any) => {
+                                const next = JSON.parse(JSON.stringify(prev));
+                                next.projects[idx].bullets = [...variant.bullets];
+                                return next;
+                              });
+                            }}
+                            className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                              isActive 
+                                ? "bg-primary text-white shadow-xs" 
+                                : "bg-surface border border-border text-text-muted hover:bg-border/30 hover:text-text"
+                            }`}
+                          >
+                            {variant.role}
+                          </button>
+                        );
+                      })}
+                      <button
+                        onClick={() => {
+                          setActiveProjectVariants(prev => {
+                            const next = { ...prev };
+                            delete next[idx];
+                            return next;
+                          });
+                          // Revert to original generated primary bullets (we need to pull from resume.outputFull)
+                          setLiveResume((prev: any) => {
+                            const next = JSON.parse(JSON.stringify(prev));
+                            const originalOutput = resume.outputFull ? (typeof resume.outputFull === 'string' ? JSON.parse(resume.outputFull) : resume.outputFull) : null;
+                            if (originalOutput && originalOutput.projects[idx]) {
+                              next.projects[idx].bullets = [...originalOutput.projects[idx].bullets];
+                            }
+                            return next;
+                          });
+                        }}
+                        className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                          activeProjectVariants[idx] === undefined
+                            ? "bg-text text-bg-base shadow-xs"
+                            : "bg-surface border border-border text-text-muted hover:bg-border/30 hover:text-text"
+                        }`}
+                      >
+                        Standard
+                      </button>
+                    </div>
+                  )}
 
                   <ul className="list-disc pl-5 space-y-2 text-sm font-medium leading-relaxed">
                     {proj.bullets.map((bulletText: string, bIdx: number) => (

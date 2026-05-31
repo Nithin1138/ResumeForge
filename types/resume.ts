@@ -100,6 +100,10 @@ export interface FullResumeOutput {
     title: string;
     techStack: string;
     bullets: string[];
+    variants?: {
+      role: string;
+      bullets: string[];
+    }[];
     duration?: string;
     link?: string;
   }[];
@@ -116,9 +120,16 @@ export interface FullResumeOutput {
   }[];
   achievements: string[];
   atsScore: number;
-  atsFeedbackCategory?: string;
-  atsFeedbackSummary?: string;
-  atsTips: string[];
-  keywordsAdded: string[];
+  breakdown: {
+    keywordMatch: number;
+    atsCompatibility: number;
+    technicalStrength: number;
+    projectQuality: number;
+    recruiterReadability: number;
+    experienceCredibility: number;
+  };
+  strengths: string[];
+  weaknesses: string[];
+  improvements: string[];
   freeTierPreview: FreeTierPreview;
 }
