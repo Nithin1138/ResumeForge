@@ -917,15 +917,15 @@ export default function AdminPanelPage() {
 
                     <div className="space-y-4">
                       <div className="flex justify-between items-center text-sm font-medium">
-                        <span className="text-text-muted">Gross Payment Revenue</span>
+                        <span className="text-text-muted">Gross Payment Revenue (Resume @ ₹49)</span>
                         <span className="font-mono font-bold text-text">₹{stats.totalRevenue}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm font-medium">
-                        <span className="text-text-muted">Razorpay Gateway Fees (2.36%)</span>
+                        <span className="text-text-muted">Razorpay Gateway Fees (2.36% per txn)</span>
                         <span className="font-mono font-bold text-warning">- ₹{stats.razorpayFees}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm font-medium">
-                        <span className="text-text-muted">Estimated Gemini API Spends (₹0.50/gen)</span>
+                        <span className="text-text-muted">Estimated Gemini API Spends (₹0.10/gen)</span>
                         <span className="font-mono font-bold text-error">- ₹{stats.apiCost}</span>
                       </div>
                     </div>
