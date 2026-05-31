@@ -138,6 +138,10 @@ export default function AdminPanelPage() {
   const [flashPrice, setFlashPrice] = useState(39);
   const [isReferralActive, setIsReferralActive] = useState(true);
   const [invitesRequired, setInvitesRequired] = useState(3);
+  
+  // Simulator states
+  const [simPrice, setSimPrice] = useState(49);
+  const [simSales, setSimSales] = useState(100);
   const [controlSuccessMessage, setControlSuccessMessage] = useState<string | null>(null);
 
   // Email Broadcast Creator States
@@ -984,6 +988,73 @@ export default function AdminPanelPage() {
 
                     <div className="bg-bg-base border border-border/60 rounded-xl p-3 text-[10px] text-text-muted font-semibold leading-relaxed text-center mt-6">
                       🚀 Average operational earnings is <strong className="text-text">₹{stats.totalPaidResumes > 0 ? Math.round(stats.netProfit / stats.totalPaidResumes) : 0}</strong> net profit per paid resume generated.
+                    </div>
+                  </div>
+                </div>
+
+                {/* Profitability Simulator */}
+                <div className="bg-surface border border-border rounded-2xl p-5 md:p-8 space-y-6">
+                  <div className="border-b border-border/40 pb-4">
+                    <h3 className="text-sm font-bold text-text-muted uppercase tracking-wider block">Profitability Simulator</h3>
+                    <p className="text-xs text-text-muted mt-1 font-semibold leading-relaxed">
+                      Adjust pricing and sales volume to simulate cost of sales, gateway expenses, and projected net profit margins.
+                    </p>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex justify-between mb-2">
+                          <span>Simulated Price (₹)</span>
+                          <span className="text-primary font-mono">₹{simPrice}</span>
+                        </label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="500"
+                          step="1"
+                          value={simPrice}
+                          onChange={(e) => setSimPrice(Number(e.target.value))}
+                          className="w-full accent-primary h-2 bg-border/40 rounded-lg appearance-none cursor-pointer"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex justify-between mb-2">
+                          <span>Target Sales Volume</span>
+                          <span className="text-primary font-mono">{simSales} Resumes</span>
+                        </label>
+                        <input
+                          type="range"
+                          min="1"
+                          max="10000"
+                          step="10"
+                          value={simSales}
+                          onChange={(e) => setSimSales(Number(e.target.value))}
+                          className="w-full accent-primary h-2 bg-border/40 rounded-lg appearance-none cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="bg-bg-base border border-border/60 rounded-xl p-5 space-y-4">
+                      <div className="flex justify-between items-center text-sm font-medium">
+                        <span className="text-text-muted">Simulated Gross Revenue</span>
+                        <span className="font-mono font-bold text-text">₹{simPrice * simSales}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm font-medium">
+                        <span className="text-text-muted">Gateway Fees (2.36%)</span>
+                        <span className="font-mono font-bold text-warning">- ₹{Math.round((simPrice * simSales) * 0.0236)}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm font-medium">
+                        <span className="text-text-muted">API Costs (₹0.10/gen)</span>
+                        <span className="font-mono font-bold text-error">- ₹{Math.round(simSales * 0.10)}</span>
+                      </div>
+                      <div className="border-t border-border/40 pt-3 flex justify-between items-center text-base">
+                        <span className="text-text font-bold">Projected Net Profit</span>
+                        <span className="font-mono font-bold text-success">
+                          ₹{Math.round((simPrice * simSales) - ((simPrice * simSales) * 0.0236) - (simSales * 0.10))}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
