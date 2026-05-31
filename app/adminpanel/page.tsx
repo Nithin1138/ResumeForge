@@ -142,6 +142,7 @@ export default function AdminPanelPage() {
   // Simulator states
   const [simPrice, setSimPrice] = useState(49);
   const [simSales, setSimSales] = useState(100);
+  const [simApiCost, setSimApiCost] = useState(0.10);
   const [controlSuccessMessage, setControlSuccessMessage] = useState<string | null>(null);
 
   // Email Broadcast Creator States
@@ -1034,25 +1035,40 @@ export default function AdminPanelPage() {
                           className="w-full accent-primary h-2 bg-border/40 rounded-lg appearance-none cursor-pointer"
                         />
                       </div>
+                      <div>
+                        <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex justify-between mb-2">
+                          <span>Simulated API Cost per Resume (₹)</span>
+                          <span className="text-primary font-mono">₹{simApiCost.toFixed(2)}</span>
+                        </label>
+                        <input
+                          type="range"
+                          min="0.01"
+                          max="2.00"
+                          step="0.01"
+                          value={simApiCost}
+                          onChange={(e) => setSimApiCost(Number(e.target.value))}
+                          className="w-full accent-primary h-2 bg-border/40 rounded-lg appearance-none cursor-pointer"
+                        />
+                      </div>
                     </div>
                     
                     <div className="bg-bg-base border border-border/60 rounded-xl p-5 space-y-4">
                       <div className="flex justify-between items-center text-sm font-medium">
                         <span className="text-text-muted">Simulated Gross Revenue</span>
-                        <span className="font-mono font-bold text-text">₹{simPrice * simSales}</span>
+                        <span className="font-mono font-bold text-text">₹{Math.round(simPrice * simSales)}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm font-medium">
                         <span className="text-text-muted">Gateway Fees (2.36%)</span>
                         <span className="font-mono font-bold text-warning">- ₹{Math.round((simPrice * simSales) * 0.0236)}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm font-medium">
-                        <span className="text-text-muted">API Costs (₹0.10/gen)</span>
-                        <span className="font-mono font-bold text-error">- ₹{Math.round(simSales * 0.10)}</span>
+                        <span className="text-text-muted">API Costs (₹{simApiCost.toFixed(2)}/gen)</span>
+                        <span className="font-mono font-bold text-error">- ₹{Math.round(simSales * simApiCost)}</span>
                       </div>
                       <div className="border-t border-border/40 pt-3 flex justify-between items-center text-base">
                         <span className="text-text font-bold">Projected Net Profit</span>
                         <span className="font-mono font-bold text-success">
-                          ₹{Math.round((simPrice * simSales) - ((simPrice * simSales) * 0.0236) - (simSales * 0.10))}
+                          ₹{Math.round((simPrice * simSales) - ((simPrice * simSales) * 0.0236) - (simSales * simApiCost))}
                         </span>
                       </div>
                     </div>
