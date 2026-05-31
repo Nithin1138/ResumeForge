@@ -118,14 +118,26 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
     positions: mockPositions,
     achievements: mockAchievements,
     atsScore: 89,
-    atsFeedbackCategory: "EXCELLENT STRUCTURE",
-    atsFeedbackSummary: `We parsed your ${branchName}-specific skills and CGPA metrics. Your resume already scores higher than 85% of other applicants based on its initial structure.`,
-    atsTips: [
-      "Tip 1: Double-check that all project links (e.g. GitHub) resolve to active repositories to build recruiter trust.",
-      "Tip 2: Your skills category for programming languages is strong, consider adding certification badges for your cloud tools.",
-      "Tip 3: Good quantification of results. Make sure to describe the database schemas under the experience bullets in the final Word doc."
+    breakdown: {
+      keywordMatch: 28,
+      atsCompatibility: 24,
+      technicalStrength: 14,
+      projectQuality: 13,
+      recruiterReadability: 8,
+      experienceCredibility: 2
+    },
+    strengths: [
+      "Excellent technical skills categorization",
+      "Strong academic standing with documented CGPA"
     ],
-    keywordsAdded: ["FastAPI", "Object-Oriented Programming", "REST API", "Schema Indexing"],
+    weaknesses: [
+      "Missing live URLs for project verification"
+    ],
+    improvements: [
+      "Double-check that all project links (e.g. GitHub) resolve to active repositories to build recruiter trust.",
+      "Your skills category for programming languages is strong, consider adding certification badges for your cloud tools.",
+      "Good quantification of results. Make sure to describe the database schemas under the experience bullets in the final Word doc."
+    ],
     freeTierPreview: {
       summary: `Motivated B.Tech student in ${branchName} at ${collegeName} (CGPA: ${cgpaValue}/10.0), specializing in ${targetRole}.`,
       firstProject: {

@@ -459,12 +459,9 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
           {/* ATS Score Header Card */}
           <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:justify-between gap-6 shadow-xs print:hidden">
             <div className="text-center md:text-left space-y-2 max-w-md">
-              <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-success/15 border border-success/30 text-xs font-bold text-success uppercase">
-                <span>Excellent Structure</span>
-              </div>
-              <h1 className="text-xl md:text-2xl font-bold font-sans">ATS Match Score</h1>
+              <h1 className="text-2xl md:text-3xl font-bold font-sans">ATSLift Score Engine v2.0</h1>
               <p className="text-sm text-text-muted leading-relaxed font-medium">
-                We parsed your branch-specific skills and CGPA metrics. Your resume already scores higher than <strong className="text-text">85% of other applicants</strong>.
+                We have completed a deterministic, category-based evaluation of your resume's technical strength, keyword alignment, and recruiter readability.
               </p>
             </div>
 
@@ -482,26 +479,85 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
                     stroke="#437a22"
                     fill="transparent"
                     strokeDasharray="301.6"
-                    strokeDashoffset={301.6 - (301.6 * (output.atsScore || 87)) / 100}
+                    strokeDashoffset={301.6 - (301.6 * (output.atsScore || 84)) / 100}
                     className="transition-all duration-1000 ease-out"
                   />
                 </svg>
                 <div className="absolute flex flex-col items-center">
-                  <span className="text-2xl font-black font-mono leading-none">{output.atsScore || 87}</span>
+                  <span className="text-2xl font-black font-mono leading-none">{output.atsScore || 84}</span>
                   <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider mt-0.5">ATS Score</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* ATS Improvement Tips Box */}
+          {/* Detailed Score Breakdown */}
+          {output.breakdown && (
+            <div className="bg-surface border border-border rounded-2xl p-6 space-y-4 print:hidden">
+              <h2 className="font-bold text-base text-text">Category Breakdown</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="p-3 bg-bg-base rounded-xl border border-border/50">
+                  <div className="text-xs text-text-muted font-semibold mb-1">Keyword Match</div>
+                  <div className="text-lg font-bold text-primary">{output.breakdown.keywordMatch}/30</div>
+                </div>
+                <div className="p-3 bg-bg-base rounded-xl border border-border/50">
+                  <div className="text-xs text-text-muted font-semibold mb-1">ATS Compatibility</div>
+                  <div className="text-lg font-bold text-primary">{output.breakdown.atsCompatibility}/25</div>
+                </div>
+                <div className="p-3 bg-bg-base rounded-xl border border-border/50">
+                  <div className="text-xs text-text-muted font-semibold mb-1">Technical Strength</div>
+                  <div className="text-lg font-bold text-primary">{output.breakdown.technicalStrength}/15</div>
+                </div>
+                <div className="p-3 bg-bg-base rounded-xl border border-border/50">
+                  <div className="text-xs text-text-muted font-semibold mb-1">Project Quality</div>
+                  <div className="text-lg font-bold text-primary">{output.breakdown.projectQuality}/15</div>
+                </div>
+                <div className="p-3 bg-bg-base rounded-xl border border-border/50">
+                  <div className="text-xs text-text-muted font-semibold mb-1">Readability</div>
+                  <div className="text-lg font-bold text-primary">{output.breakdown.recruiterReadability}/10</div>
+                </div>
+                <div className="p-3 bg-bg-base rounded-xl border border-border/50">
+                  <div className="text-xs text-text-muted font-semibold mb-1">Credibility</div>
+                  <div className="text-lg font-bold text-primary">{output.breakdown.experienceCredibility}/5</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Strengths, Weaknesses, Improvements */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:hidden">
+            <div className="bg-success/5 border border-success/20 rounded-2xl p-6 space-y-3">
+              <div className="flex items-center space-x-2 text-success">
+                <CheckCircle2 className="w-5 h-5" />
+                <h2 className="font-bold text-base">Key Strengths</h2>
+              </div>
+              <ul className="space-y-2 list-disc pl-5 text-sm text-text font-medium">
+                {(output.strengths || []).map((item, idx) => (
+                  <li key={idx}>{item}</li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className="bg-warning/5 border border-warning/20 rounded-2xl p-6 space-y-3">
+              <div className="flex items-center space-x-2 text-warning">
+                <AlertTriangle className="w-5 h-5" />
+                <h2 className="font-bold text-base">Weaknesses</h2>
+              </div>
+              <ul className="space-y-2 list-disc pl-5 text-sm text-text font-medium">
+                {(output.weaknesses || []).map((item, idx) => (
+                  <li key={idx}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
           <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 space-y-4 print:hidden">
-            <div className="flex items-center space-x-2">
-              <Zap className="w-5 h-5 text-primary" />
-              <h2 className="font-bold text-base text-primary">ATS Improvement Tips (Included Free)</h2>
+            <div className="flex items-center space-x-2 text-primary">
+              <Zap className="w-5 h-5" />
+              <h2 className="font-bold text-base">ATS Improvement Tips (Included Free)</h2>
             </div>
             <ul className="space-y-3">
-              {(output.atsTips || []).map((tip: string, idx: number) => (
+              {(output.improvements || []).map((tip: string, idx: number) => (
                 <li key={idx} className="flex items-start space-x-2.5 text-xs text-text font-medium leading-relaxed">
                   <span className="w-5 h-5 rounded-full bg-primary/10 border border-primary/25 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
                     {idx + 1}
