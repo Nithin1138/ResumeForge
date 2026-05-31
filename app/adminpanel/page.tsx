@@ -904,56 +904,6 @@ export default function AdminPanelPage() {
                   </div>
                 </div>
 
-                {/* Demographics */}
-                <div className="bg-surface border border-border rounded-2xl p-5 md:p-8 space-y-6">
-                  <div className="border-b border-border/40 pb-4">
-                    <div className="inline-flex items-center gap-1.5 bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-full text-[9px] font-extrabold tracking-widest text-primary uppercase mb-2">
-                      <Sparkle className="w-3 h-3 text-primary" /> Target Audiences
-                    </div>
-                    <h3 className="text-sm md:text-base font-serif italic text-text">Student Demographics Insights</h3>
-                    <p className="text-xs text-text-muted mt-1 font-semibold leading-relaxed">
-                      Parsed directly from student forms to understand placement targets.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-semibold text-text-muted">
-                    <div className="border border-border/50 bg-bg-base/30 rounded-xl p-4 flex items-start space-x-3">
-                      <Award className="w-4.5 h-4.5 text-primary shrink-0 mt-0.5" />
-                      <div>
-                        <span className="text-[9px] uppercase tracking-wider block mb-0.5">Average CGPA</span>
-                        <strong className="text-base text-text font-black font-mono">{averageCgpa}</strong>
-                        <span className="text-[9px] font-bold block uppercase tracking-widest mt-1 text-text-muted/60">Out of 10</span>
-                      </div>
-                    </div>
-
-                    <div className="border border-border/50 bg-bg-base/30 rounded-xl p-4 flex items-start space-x-3">
-                      <Briefcase className="w-4.5 h-4.5 text-warning shrink-0 mt-0.5" />
-                      <div>
-                        <span className="text-[9px] uppercase tracking-wider block mb-0.5">Top Target Job</span>
-                        <strong className="text-xs text-text block font-bold truncate max-w-[120px]" title={stats.topTargetRole}>{stats.topTargetRole}</strong>
-                        <span className="text-[9px] font-bold block uppercase tracking-widest mt-1 text-text-muted/60">Placement Focus</span>
-                      </div>
-                    </div>
-
-                    <div className="border border-border/50 bg-bg-base/30 rounded-xl p-4 flex items-start space-x-3">
-                      <BookOpen className="w-4.5 h-4.5 text-primary shrink-0 mt-0.5" />
-                      <div>
-                        <span className="text-[9px] uppercase tracking-wider block mb-0.5">Top Branch</span>
-                        <strong className="text-xs text-text block font-bold truncate max-w-[120px]" title={stats.topBranch}>{stats.topBranch}</strong>
-                        <span className="text-[9px] font-bold block uppercase tracking-widest mt-1 text-text-muted/60">Branch Distribution</span>
-                      </div>
-                    </div>
-
-                    <div className="border border-border/50 bg-bg-base/30 rounded-xl p-4 flex items-start space-x-3">
-                      <GraduationCap className="w-4.5 h-4.5 text-success shrink-0 mt-0.5" />
-                      <div>
-                        <span className="text-[9px] uppercase tracking-wider block mb-0.5">Top College</span>
-                        <strong className="text-xs text-text block font-bold truncate max-w-[120px]" title={stats.topCollege}>{stats.topCollege}</strong>
-                        <span className="text-[9px] font-bold block uppercase tracking-widest mt-1 text-text-muted/60">Demographic Core</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
                 {/* Financial breakdown */}
                 <div className="grid md:grid-cols-3 gap-6 items-stretch">
@@ -1089,6 +1039,57 @@ export default function AdminPanelPage() {
                     <div className="flex items-center gap-1.5">
                       <div className="w-3 h-3 bg-primary rounded-xs" />
                       <span>Net Operational Profit</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Demographics */}
+                <div className="bg-surface border border-border rounded-2xl p-5 md:p-8 space-y-6">
+                  <div className="border-b border-border/40 pb-4">
+                    <div className="inline-flex items-center gap-1.5 bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-full text-[9px] font-extrabold tracking-widest text-primary uppercase mb-2">
+                      <Sparkle className="w-3 h-3 text-primary" /> Target Audiences
+                    </div>
+                    <h3 className="text-sm md:text-base font-serif italic text-text">Student Demographics Insights</h3>
+                    <p className="text-xs text-text-muted mt-1 font-semibold leading-relaxed">
+                      Parsed directly from student forms to understand placement targets.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-semibold text-text-muted">
+                    <div className="border border-border/50 bg-bg-base/30 rounded-xl p-4 flex items-start space-x-3">
+                      <Award className="w-4.5 h-4.5 text-primary shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-[9px] uppercase tracking-wider block mb-0.5">Average CGPA</span>
+                        <strong className="text-base text-text font-black font-mono">{averageCgpa}</strong>
+                        <span className="text-[9px] font-bold block uppercase tracking-widest mt-1 text-text-muted/60">Out of 10</span>
+                      </div>
+                    </div>
+
+                    <div className="border border-border/50 bg-bg-base/30 rounded-xl p-4 flex items-start space-x-3">
+                      <Briefcase className="w-4.5 h-4.5 text-warning shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-[9px] uppercase tracking-wider block mb-0.5">Top Target Job</span>
+                        <strong className="text-xs text-text block font-bold truncate max-w-[120px]" title={stats.topTargetRole}>{stats.topTargetRole}</strong>
+                        <span className="text-[9px] font-bold block uppercase tracking-widest mt-1 text-text-muted/60">Placement Focus</span>
+                      </div>
+                    </div>
+
+                    <div className="border border-border/50 bg-bg-base/30 rounded-xl p-4 flex items-start space-x-3">
+                      <BookOpen className="w-4.5 h-4.5 text-primary shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-[9px] uppercase tracking-wider block mb-0.5">Top Branch</span>
+                        <strong className="text-xs text-text block font-bold truncate max-w-[120px]" title={stats.topBranch}>{stats.topBranch}</strong>
+                        <span className="text-[9px] font-bold block uppercase tracking-widest mt-1 text-text-muted/60">Branch Distribution</span>
+                      </div>
+                    </div>
+
+                    <div className="border border-border/50 bg-bg-base/30 rounded-xl p-4 flex items-start space-x-3">
+                      <GraduationCap className="w-4.5 h-4.5 text-success shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-[9px] uppercase tracking-wider block mb-0.5">Top College</span>
+                        <strong className="text-xs text-text block font-bold truncate max-w-[120px]" title={stats.topCollege}>{stats.topCollege}</strong>
+                        <span className="text-[9px] font-bold block uppercase tracking-widest mt-1 text-text-muted/60">Demographic Core</span>
+                      </div>
                     </div>
                   </div>
                 </div>
