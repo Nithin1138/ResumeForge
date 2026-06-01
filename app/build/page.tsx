@@ -1411,17 +1411,17 @@ export default function BuildPage() {
               {(() => {
                 const branch = formData.personal.branch;
                 const suggestions: Record<string, string[]> = {
-                  "CSE": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Mobile App Developer"],
-                  "IT": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Cloud Engineer"],
-                  "AI & DS": ["Data Scientist", "Machine Learning Engineer", "AI Researcher", "Data Analyst", "Data Engineer"],
-                  "Cyber Security": ["Security Analyst", "Penetration Tester", "Security Engineer", "Ethical Hacker", "Information Security Consultant"],
-                  "ECE": ["Embedded Software Engineer", "VLSI Design Engineer", "Hardware Engineer", "Network Engineer", "Systems Engineer", "Software Engineer"],
-                  "EEE": ["Electrical Engineer", "Power Systems Engineer", "Control Systems Engineer", "Electronics Engineer", "Software Engineer"],
-                  "Mechanical": ["Mechanical Engineer", "Design Engineer", "Manufacturing Engineer", "Thermal Engineer", "Automotive Engineer"],
-                  "Civil": ["Civil Engineer", "Structural Engineer", "Construction Manager", "Geotechnical Engineer"],
-                  "Chemical": ["Chemical Engineer", "Process Engineer", "Process Design Engineer", "Production Engineer"],
-                  "Biotechnology": ["Biotechnologist", "Bioinformatics Scientist", "Research Associate", "Clinical Research Associate"],
-                  "Aerospace": ["Aerospace Engineer", "Aerodynamics Engineer", "Propulsion Engineer", "Avionics Engineer"],
+                  "CSE": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Mobile App Developer", "Cloud Engineer", "Site Reliability Engineer (SRE)", "Machine Learning Engineer", "Security Engineer", "QA Engineer", "Database Administrator", "Product Manager", "Business Analyst", "UX/UI Designer"],
+                  "IT": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Cloud Engineer", "Network Engineer", "IT Consultant", "Systems Analyst", "Database Administrator", "Information Security Analyst", "Cloud Architect", "QA Engineer", "Scrum Master", "Product Manager"],
+                  "AI & DS": ["Data Scientist", "Machine Learning Engineer", "AI Researcher", "Data Analyst", "Data Engineer", "NLP Engineer", "Computer Vision Engineer", "MLOps Engineer", "Business Intelligence Analyst", "Big Data Engineer", "AI Product Manager", "Deep Learning Engineer", "Robotics Engineer"],
+                  "Cyber Security": ["Security Analyst", "Penetration Tester", "Security Engineer", "Ethical Hacker", "Information Security Consultant", "Cyber Security Architect", "Incident Responder", "Cloud Security Engineer", "SOC Analyst", "Cryptographer", "Forensics Investigator", "Vulnerability Assessor", "IAM Engineer"],
+                  "ECE": ["Embedded Software Engineer", "VLSI Design Engineer", "Hardware Engineer", "Network Engineer", "Systems Engineer", "Software Engineer", "Telecommunications Engineer", "RF Engineer", "IoT Engineer", "FPGA Engineer", "Application Engineer", "Hardware Verification Engineer", "Field Engineer", "Firmware Engineer"],
+                  "EEE": ["Electrical Engineer", "Power Systems Engineer", "Control Systems Engineer", "Electronics Engineer", "Software Engineer", "Renewable Energy Engineer", "Grid Engineer", "Automation Engineer", "Instrumentation Engineer", "Test Engineer", "Project Engineer", "Robotics Engineer", "Design Engineer"],
+                  "Mechanical": ["Mechanical Engineer", "Design Engineer", "Manufacturing Engineer", "Thermal Engineer", "Automotive Engineer", "HVAC Engineer", "CAD Designer", "Production Engineer", "Quality Engineer", "Supply Chain Analyst", "Robotics Engineer", "Mechatronics Engineer", "Piping Engineer", "Aerospace Engineer"],
+                  "Civil": ["Civil Engineer", "Structural Engineer", "Construction Manager", "Geotechnical Engineer", "Transportation Engineer", "Environmental Engineer", "Urban Planner", "Water Resources Engineer", "Surveying Engineer", "Site Engineer", "CAD Technician", "Estimator", "BIM Engineer"],
+                  "Chemical": ["Chemical Engineer", "Process Engineer", "Process Design Engineer", "Production Engineer", "R&D Engineer", "Quality Control Engineer", "Plant Engineer", "Biochemical Engineer", "Materials Engineer", "Safety Engineer", "Petrochemical Engineer", "Energy Engineer"],
+                  "Biotechnology": ["Biotechnologist", "Bioinformatics Scientist", "Research Associate", "Clinical Research Associate", "Biomedical Engineer", "Bioprocess Engineer", "Geneticist", "Pharmaceutical Engineer", "Quality Assurance Specialist", "Data Analyst", "Microbiologist", "Regulatory Affairs Specialist"],
+                  "Aerospace": ["Aerospace Engineer", "Aerodynamics Engineer", "Propulsion Engineer", "Avionics Engineer", "Flight Test Engineer", "Spacecraft Engineer", "Systems Engineer", "Stress Engineer", "Materials Engineer", "Aircraft Designer", "Quality Engineer", "UAV Engineer"],
                 };
                 const rolesList = suggestions[branch] || ["Software Engineer", "Data Analyst", "Product Manager", "Business Analyst", "System Analyst", "Consultant"];
                 const currentRoles = formData.options.targetRoles || ["", "", ""];
