@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { Lock, ShieldCheck, CheckCircle2, ArrowRight, Award, Zap, AlertCircle, Loader2 } from "lucide-react";
+import { Lock, ShieldCheck, CheckCircle2, ArrowRight, ArrowLeft, Award, Zap, AlertCircle, Loader2 } from "lucide-react";
 import { FullResumeOutput } from "@/types/resume";
 import { calculateDynamicMetrics } from "@/lib/atsScoring";
 import { getLocalSession } from "@/lib/authClient";
@@ -212,6 +212,8 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
         {/* ── RIGHT: Only this column scrolls ── */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-36 flex flex-col gap-6">
         
+        {!isVerificationModalOpen && (
+          <>
         {/* Global Role Switcher (Dynamic Metrics) */}
         {output.variantMetrics && output.variantMetrics.length > 0 && (
           <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex flex-wrap items-center gap-3 shadow-xs">
@@ -451,16 +453,20 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
             </div>
           </div>
           </div>
+          </>
+          )}
+
+          {isVerificationModalOpen && (
+            <AIVerificationSection 
+              handlePayment={handlePayment} 
+              isProcessingPayment={isProcessingPayment} 
+            />
+          )}
+
         </div>
       </main>
 
-      {/* Verification Modal Portal */}
-      <AIVerificationSection 
-        isOpen={isVerificationModalOpen}
-        onClose={() => setVerificationModalOpen(false)}
-        handlePayment={handlePayment} 
-        isProcessingPayment={isProcessingPayment} 
-      />
+
 
       {/* STICKY BOTTOM CHECKOUT / PAYMENT CARD */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-surface/85 backdrop-blur-md border-t border-border p-4 shadow-xl">
@@ -502,17 +508,27 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
             </button>
             
             {/* AI Verification Button (Renders on the left on desktop, bottom on mobile) */}
-            <button 
-              onClick={() => setVerificationModalOpen(true)}
-              className="px-5 py-3 sm:py-3.5 bg-surface border border-border hover:bg-border/60 text-text text-[11px] sm:text-xs font-bold rounded-full transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-xs group cursor-pointer"
-            >
-              <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
-              <span>
-                <span className="text-text-muted font-medium mr-1.5 hidden sm:inline">Don't trust the score?</span>
-                <span className="text-text-muted font-medium mr-1.5 sm:hidden">Not sure?</span>
-                <span className="underline underline-offset-2 decoration-border group-hover:decoration-text-muted">Verify with AI</span>
-              </span>
-            </button>
+            {isVerificationModalOpen ? (
+              <button 
+                onClick={() => setVerificationModalOpen(false)}
+                className="px-5 py-3 sm:py-3.5 bg-surface border border-border hover:bg-border/60 text-text text-[11px] sm:text-xs font-bold rounded-full transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-xs group cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4 text-text-muted group-hover:-translate-x-1 transition-transform shrink-0" />
+                <span>Back to ATS Score</span>
+              </button>
+            ) : (
+              <button 
+                onClick={() => setVerificationModalOpen(true)}
+                className="px-5 py-3 sm:py-3.5 bg-surface border border-border hover:bg-border/60 text-text text-[11px] sm:text-xs font-bold rounded-full transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-xs group cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
+                <span>
+                  <span className="text-text-muted font-medium mr-1.5 hidden sm:inline">Don't trust the score?</span>
+                  <span className="text-text-muted font-medium mr-1.5 sm:hidden">Not sure?</span>
+                  <span className="underline underline-offset-2 decoration-border group-hover:decoration-text-muted">Verify with AI</span>
+                </span>
+              </button>
+            )}
           </div>
         </div>
       </div>
