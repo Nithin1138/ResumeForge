@@ -1,9 +1,10 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { Lock, ShieldCheck, CheckCircle2, ArrowRight, Award, Zap, AlertCircle, Loader2 } from "lucide-react";
 import { FullResumeOutput } from "@/types/resume";
+import { calculateDynamicMetrics } from "@/lib/atsScoring";
 import { getLocalSession } from "@/lib/authClient";
 import ResumePreviewPanel from "@/components/ResumePreviewPanel";
 
@@ -129,21 +130,17 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
 
   const output: FullResumeOutput = resume.outputFull;
   
-  const activeMetrics = output.variantMetrics?.[activeRoleIndex];
-  
-  const fallbackStrengths = ["Strong foundational knowledge in the selected domain.", "Solid problem-solving abilities.", "Good academic track record."];
-  const fallbackWeaknesses = ["Could quantify achievements with more specific metrics.", "Consider adding more industry-standard keywords.", "Ensure bullet points focus on impact rather than responsibilities."];
-  const fallbackImprovements = ["Add relevant keywords from target job descriptions.", "Quantify results where possible.", "Tailor project descriptions to highlight skills required."];
+  // Calculate fully dynamic scores on the client in real-time
+  const dynamicMetrics = useMemo(() => {
+    const roleName = output.variantMetrics?.[activeRoleIndex]?.role || resume.inputData.personal.targetRole;
+    return calculateDynamicMetrics(output, roleName);
+  }, [output, activeRoleIndex, resume.inputData.personal.targetRole]);
 
-  const getValidArray = (arr: any, fallback: string[]) => {
-    return Array.isArray(arr) && arr.length > 0 ? arr : fallback;
-  };
-
-  const displayAtsScore = activeMetrics?.atsScore || output.atsScore || 84;
-  const displayBreakdown = activeMetrics?.breakdown || output.breakdown;
-  const displayStrengths = getValidArray(activeMetrics?.strengths, getValidArray(output.strengths, fallbackStrengths));
-  const displayWeaknesses = getValidArray(activeMetrics?.weaknesses, getValidArray(output.weaknesses, fallbackWeaknesses));
-  const displayImprovements = getValidArray(activeMetrics?.improvements, getValidArray(output.improvements, fallbackImprovements));
+  const displayAtsScore = dynamicMetrics.atsScore;
+  const displayBreakdown = dynamicMetrics.breakdown;
+  const displayStrengths = dynamicMetrics.strengths;
+  const displayWeaknesses = dynamicMetrics.weaknesses;
+  const displayImprovements = dynamicMetrics.improvements;
 
   const freePreview = output.freeTierPreview || {
     summary: output.summary.split(".")[0] + ".",
