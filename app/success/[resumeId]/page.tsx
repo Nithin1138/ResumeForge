@@ -353,9 +353,10 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
 
   const displayAtsScore = dynamicMetrics?.atsScore || 84;
   const displayBreakdown = dynamicMetrics?.breakdown || output!.breakdown;
-  const displayStrengths = dynamicMetrics?.strengths || [];
-  const displayWeaknesses = dynamicMetrics?.weaknesses || [];
-  const displayImprovements = dynamicMetrics?.improvements || [];
+  const activeVariant = output?.variantMetrics?.[activeRoleIndex];
+  const displayStrengths = activeVariant?.strengths?.length ? activeVariant.strengths : (output?.strengths?.length ? output.strengths : dynamicMetrics?.strengths || []);
+  const displayWeaknesses = activeVariant?.weaknesses?.length ? activeVariant.weaknesses : (output?.weaknesses?.length ? output.weaknesses : dynamicMetrics?.weaknesses || []);
+  const displayImprovements = activeVariant?.improvements?.length ? activeVariant.improvements : (output?.improvements?.length ? output.improvements : dynamicMetrics?.improvements || []);
 
   // Format the full plain-text version ready for clean Copy All operations
   const fullPlainTextContent = `
