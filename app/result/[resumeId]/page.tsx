@@ -246,16 +246,16 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
           <div className="text-center md:text-left space-y-2 max-w-md">
             <div className="flex flex-col sm:flex-row items-center md:items-start sm:items-center gap-3">
               <h1 className="text-2xl md:text-3xl font-bold font-sans">ATSLift Score Engine</h1>
-              <div className="flex bg-primary/10 rounded-full p-1 border border-primary/20 mt-1 sm:mt-0">
+              <div className="flex bg-primary/10 rounded-full p-1 border border-primary/20 mt-1 sm:mt-0 w-max shrink-0">
                 <button 
                   onClick={() => setScoreMode("resume")} 
-                  className={`text-[10px] font-bold uppercase px-3 py-1 rounded-full transition-all ${scoreMode === "resume" ? "bg-primary text-white" : "text-primary hover:bg-primary/5 cursor-pointer"}`}
+                  className={`text-[10px] font-bold uppercase px-4 py-1.5 rounded-full transition-all duration-300 whitespace-nowrap cursor-pointer ${scoreMode === "resume" ? "bg-primary text-white shadow-sm" : "text-primary hover:bg-primary/10"}`}
                 >
                   Resume
                 </button>
                 <button 
                   onClick={() => setScoreMode("role")} 
-                  className={`text-[10px] font-bold uppercase px-3 py-1 rounded-full transition-all ${scoreMode === "role" ? "bg-primary text-white" : "text-primary hover:bg-primary/5 cursor-pointer"}`}
+                  className={`text-[10px] font-bold uppercase px-4 py-1.5 rounded-full transition-all duration-300 whitespace-nowrap cursor-pointer ${scoreMode === "role" ? "bg-primary text-white shadow-sm" : "text-primary hover:bg-primary/10"}`}
                 >
                   Job Role
                 </button>
