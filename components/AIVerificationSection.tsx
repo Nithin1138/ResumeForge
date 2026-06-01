@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
-import { Copy, Check, FileText, ArrowRight, ShieldCheck, Zap, LineChart, Cpu, MessageSquare } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Copy, Check, FileText, ArrowRight, ShieldCheck, Zap, LineChart, Cpu, MessageSquare, X } from "lucide-react";
 
 interface Props {
+  isOpen: boolean;
+  onClose: () => void;
   handlePayment: () => void;
   isProcessingPayment: boolean;
 }
 
-export default function AIVerificationSection({ handlePayment, isProcessingPayment }: Props) {
+export default function AIVerificationSection({ isOpen, onClose, handlePayment, isProcessingPayment }: Props) {
   const [copied, setCopied] = useState(false);
 
   const promptText = `Analyze this resume for ATS compatibility.
@@ -37,8 +39,31 @@ Resume:
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Prevent body scroll when open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
   return (
-    <section className="mt-12 mb-8 w-full border-t border-border pt-10">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-surface/80 backdrop-blur-md overflow-y-auto" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="bg-bg-base border border-border rounded-2xl w-full max-w-5xl shadow-2xl relative my-auto mt-20 mb-20 md:my-auto animate-in fade-in zoom-in-95 duration-200">
+        <button 
+          onClick={onClose} 
+          className="absolute top-4 right-4 p-2.5 rounded-full hover:bg-surface text-text-muted transition-colors z-10 bg-bg-base/80 backdrop-blur-md border border-border/50 shadow-sm"
+        >
+          <X className="w-5 h-5" />
+        </button>
+        <div className="p-6 md:p-10 max-h-[85vh] overflow-y-auto custom-scrollbar">
+          <section className="w-full">
       <div className="text-center mb-12">
         <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
           <ShieldCheck className="w-4 h-4" />
@@ -236,5 +261,8 @@ Resume:
         </div>
       </div>
     </section>
+        </div>
+      </div>
+    </div>
   );
 }

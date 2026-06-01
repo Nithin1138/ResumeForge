@@ -19,6 +19,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const [price, setPrice] = useState(49);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [activeRoleIndex, setActiveRoleIndex] = useState(0);
+  const [isVerificationModalOpen, setVerificationModalOpen] = useState(false);
 
   const parsedOutput = resume?.outputFull 
     ? (typeof resume.outputFull === "string" ? JSON.parse(resume.outputFull) : resume.outputFull)
@@ -341,11 +342,23 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
           </ul>
         </div>
 
-        {/* Independent AI Verification Section */}
-        <AIVerificationSection 
-          handlePayment={handlePayment} 
-          isProcessingPayment={isProcessingPayment} 
-        />
+        {/* Independent AI Verification Prompt Box */}
+        <div className="bg-bg-base border border-border rounded-xl p-5 text-center shadow-sm">
+          <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>Transparency Feature</span>
+          </div>
+          <h3 className="font-black text-text mb-2 text-sm">Don't trust our ATS Score?</h3>
+          <p className="text-xs text-text-muted mb-4 font-medium px-2 leading-relaxed">
+            We don't ask you to trust a hidden algorithm. Verify the improvement yourself using independent AI analysis.
+          </p>
+          <button 
+            onClick={() => setVerificationModalOpen(true)} 
+            className="px-5 py-2.5 bg-surface border border-border hover:bg-border/40 hover:text-primary rounded-lg text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 mx-auto"
+          >
+            Verify Score with AI <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
 
         {/* Dynamic Free Previews & Locked Cards */}
         <div className="space-y-6">
@@ -455,10 +468,17 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
               </p>
             </div>
           </div>
+          </div>
         </div>
-        </div>
-        
       </main>
+
+      {/* Verification Modal Portal */}
+      <AIVerificationSection 
+        isOpen={isVerificationModalOpen}
+        onClose={() => setVerificationModalOpen(false)}
+        handlePayment={handlePayment} 
+        isProcessingPayment={isProcessingPayment} 
+      />
 
       {/* STICKY BOTTOM CHECKOUT / PAYMENT CARD */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-surface/85 backdrop-blur-md border-t border-border p-4 shadow-xl">
