@@ -678,7 +678,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                         const nextLive = JSON.parse(JSON.stringify(liveResume));
                         const originalOutput = resume.outputFull ? (typeof resume.outputFull === 'string' ? JSON.parse(resume.outputFull) : resume.outputFull) : null;
                         
-                        output.projects.forEach((_: any, idx: number) => {
+                        (output.projects || []).forEach((_: any, idx: number) => {
                           newActive[idx] = vIdx;
                           if (originalOutput && originalOutput.projects[idx] && originalOutput.projects[idx].variants[vIdx]) {
                             nextLive.projects[idx].bullets = [...originalOutput.projects[idx].variants[vIdx].bullets];
@@ -705,7 +705,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                     setActiveProjectVariants({});
                     const nextLive = JSON.parse(JSON.stringify(liveResume));
                     const originalOutput = resume.outputFull ? (typeof resume.outputFull === 'string' ? JSON.parse(resume.outputFull) : resume.outputFull) : null;
-                    output.projects.forEach((_: any, idx: number) => {
+                    (output.projects || []).forEach((_: any, idx: number) => {
                       if (originalOutput && originalOutput.projects[idx]) {
                         nextLive.projects[idx].bullets = [...originalOutput.projects[idx].bullets];
                       }
@@ -723,9 +723,9 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
               </div>
             )}
 
-          {output.projects.map((proj, idx) => {
+          {(output.projects || []).map((proj, idx) => {
             const blockId = `proj_${idx}`;
-            const projText = `${proj.title} (${proj.techStack})\n${proj.bullets.map(b => `- ${b}`).join("\n")}`;
+            const projText = `${proj.title} (${proj.techStack})\n${(proj.bullets || []).map(b => `- ${b}`).join("\n")}`;
 
             return (
               <div key={idx} className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs">
@@ -752,7 +752,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                       onClick={() => handleRegenerateSection(
                         blockId, 
                         `Project Bullet Points for ${proj.title}`, 
-                        proj.bullets.join("\n"), 
+                        (proj.bullets || []).join("\n"), 
                         (newText) => {
                           setLiveResume((prev: any) => {
                             const next = JSON.parse(JSON.stringify(prev));
@@ -789,10 +789,10 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                     )}
                   </div>
 
-                  {proj.variants && proj.variants.length > 0 && (
+                  {(proj.variants || []).length > 0 && (
                     <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border/30">
                       <span className="text-[10px] font-bold text-text-muted uppercase">Tailor for:</span>
-                      {proj.variants.map((variant: any, vIdx: number) => {
+                      {(proj.variants || []).map((variant: any, vIdx: number) => {
                         const isActive = activeProjectVariants[idx] === vIdx;
                         return (
                           <button
@@ -844,7 +844,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                   )}
 
                   <ul className="list-disc pl-5 space-y-2 text-sm font-medium leading-relaxed">
-                    {proj.bullets.map((bulletText: string, bIdx: number) => (
+                    {(proj.bullets || []).map((bulletText: string, bIdx: number) => (
                       <li 
                         key={bIdx}
                         className="outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"

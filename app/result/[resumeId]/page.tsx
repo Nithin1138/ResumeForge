@@ -407,7 +407,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
               {/* Locked Project Cards */}
               {(output.projects || []).length > 1 && (
                 <div className="border border-dashed border-border/60 bg-bg-base/10 rounded-xl p-4 opacity-40 blur-[2.5px] select-none">
-                  <h4 className="font-bold text-sm text-text-muted">{output.projects[1].title}</h4>
+                  <h4 className="font-bold text-sm text-text-muted">{(output.projects || [])[1]?.title || "Project Title"}</h4>
                   <p className="text-xs mt-1">Locked project bullets optimized for placements...</p>
                 </div>
               )}
