@@ -341,6 +341,12 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
           </ul>
         </div>
 
+        {/* Independent AI Verification Section */}
+        <AIVerificationSection 
+          handlePayment={handlePayment} 
+          isProcessingPayment={isProcessingPayment} 
+        />
+
         {/* Dynamic Free Previews & Locked Cards */}
         <div className="space-y-6">
           {/* Summary Preview Card */}
@@ -452,11 +458,6 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
         </div>
         </div>
         
-        {/* Independent AI Verification Section */}
-        <AIVerificationSection 
-          handlePayment={handlePayment} 
-          isProcessingPayment={isProcessingPayment} 
-        />
       </main>
 
       {/* STICKY BOTTOM CHECKOUT / PAYMENT CARD */}

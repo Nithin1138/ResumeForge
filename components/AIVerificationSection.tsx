@@ -38,7 +38,7 @@ Resume:
   };
 
   return (
-    <section className="mt-20 mb-8 max-w-5xl mx-auto w-full px-4 lg:px-0">
+    <section className="mt-12 mb-8 w-full border-t border-border pt-10">
       <div className="text-center mb-12">
         <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
           <ShieldCheck className="w-4 h-4" />
@@ -51,7 +51,7 @@ Resume:
       </div>
 
       {/* Comparison Visual */}
-      <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-16 relative">
+      <div className="flex flex-col items-center justify-center gap-4 mb-12 relative">
         {/* Before Card */}
         <div className="glass-panel border border-border p-6 rounded-2xl flex-1 w-full max-w-sm relative group overflow-hidden">
           <div className="absolute top-0 right-0 p-3">
@@ -74,15 +74,15 @@ Resume:
         </div>
 
         {/* Center Arrow / Connector */}
-        <div className="flex flex-col items-center justify-center z-10 hidden md:flex">
+        <div className="flex items-center justify-center z-10 hidden">
           <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
             <ArrowRight className="w-6 h-6" />
           </div>
         </div>
         
         {/* Mobile Arrow */}
-        <div className="flex md:hidden items-center justify-center my-[-16px] z-10 relative">
-          <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg border-4 border-bg-base">
+        <div className="flex items-center justify-center my-[-10px] z-10 relative">
+          <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-md border-4 border-bg-base">
             <ArrowRight className="w-5 h-5 rotate-90" />
           </div>
         </div>
@@ -114,7 +114,7 @@ Resume:
       </p>
 
       {/* Trust & Verification Steps */}
-      <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 mb-16 shadow-xs">
+      <div className="bg-surface border border-border rounded-2xl p-6 mb-12 shadow-xs">
         <div className="text-center mb-10">
           <h3 className="text-xl md:text-2xl font-black text-text mb-2">Why ATSLift?</h3>
           <p className="text-sm text-text-muted font-medium max-w-xl mx-auto">
@@ -123,36 +123,34 @@ Resume:
         </div>
 
         {/* Horizontal Timeline */}
-        <div className="flex flex-col md:flex-row justify-between items-start relative mb-12">
-          {/* Desktop connecting line */}
-          <div className="hidden md:block absolute top-6 left-[10%] right-[10%] h-0.5 bg-border z-0"></div>
+        <div className="flex flex-col justify-between items-start relative mb-10 space-y-6">
           
-          <div className="relative z-10 flex flex-row md:flex-col items-center text-left md:text-center w-full md:w-1/5 mb-6 md:mb-0 gap-4 md:gap-2">
-            <div className="w-12 h-12 rounded-full bg-bg-base border-2 border-border flex items-center justify-center font-bold text-text shrink-0">1</div>
+          <div className="relative z-10 flex flex-row items-center text-left w-full gap-4">
+            <div className="w-10 h-10 rounded-full bg-bg-base border-2 border-border flex items-center justify-center font-bold text-text shrink-0">1</div>
             <div>
               <p className="text-xs font-bold text-text">Copy Current Resume</p>
             </div>
           </div>
-          <div className="relative z-10 flex flex-row md:flex-col items-center text-left md:text-center w-full md:w-1/5 mb-6 md:mb-0 gap-4 md:gap-2">
-            <div className="w-12 h-12 rounded-full bg-bg-base border-2 border-border flex items-center justify-center font-bold text-text shrink-0">2</div>
+          <div className="relative z-10 flex flex-row items-center text-left w-full gap-4">
+            <div className="w-10 h-10 rounded-full bg-bg-base border-2 border-border flex items-center justify-center font-bold text-text shrink-0">2</div>
             <div>
               <p className="text-xs font-bold text-text">Analyze Using AI</p>
             </div>
           </div>
-          <div className="relative z-10 flex flex-row md:flex-col items-center text-left md:text-center w-full md:w-1/5 mb-6 md:mb-0 gap-4 md:gap-2">
-            <div className="w-12 h-12 rounded-full bg-primary/10 border-2 border-primary/50 text-primary flex items-center justify-center font-bold shrink-0 shadow-sm shadow-primary/10">3</div>
+          <div className="relative z-10 flex flex-row items-center text-left w-full gap-4">
+            <div className="w-10 h-10 rounded-full bg-primary/10 border-2 border-primary/50 text-primary flex items-center justify-center font-bold shrink-0 shadow-sm shadow-primary/10">3</div>
             <div>
               <p className="text-xs font-bold text-primary">Unlock ATSLift Resume</p>
             </div>
           </div>
-          <div className="relative z-10 flex flex-row md:flex-col items-center text-left md:text-center w-full md:w-1/5 mb-6 md:mb-0 gap-4 md:gap-2">
-            <div className="w-12 h-12 rounded-full bg-bg-base border-2 border-border flex items-center justify-center font-bold text-text shrink-0">4</div>
+          <div className="relative z-10 flex flex-row items-center text-left w-full gap-4">
+            <div className="w-10 h-10 rounded-full bg-bg-base border-2 border-border flex items-center justify-center font-bold text-text shrink-0">4</div>
             <div>
               <p className="text-xs font-bold text-text">Evaluate Again</p>
             </div>
           </div>
-          <div className="relative z-10 flex flex-row md:flex-col items-center text-left md:text-center w-full md:w-1/5 gap-4 md:gap-2">
-            <div className="w-12 h-12 rounded-full bg-bg-base border-2 border-border flex items-center justify-center font-bold text-text shrink-0">5</div>
+          <div className="relative z-10 flex flex-row items-center text-left w-full gap-4">
+            <div className="w-10 h-10 rounded-full bg-bg-base border-2 border-border flex items-center justify-center font-bold text-text shrink-0">5</div>
             <div>
               <p className="text-xs font-bold text-text">Compare Results</p>
             </div>
@@ -175,8 +173,8 @@ Resume:
       </div>
 
       {/* Copy Prompt Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-20 items-center">
-        <div className="flex flex-col justify-center order-2 lg:order-1">
+      <div className="flex flex-col gap-6 mb-16 items-center">
+        <div className="flex flex-col justify-center">
           <h3 className="text-2xl font-black text-text mb-3">ATS Evaluation Prompt</h3>
           <p className="text-sm text-text-muted font-medium mb-8 leading-relaxed">
             Copy this exact prompt and paste it into your favorite AI along with your resume text. 
@@ -195,7 +193,7 @@ Resume:
           </div>
         </div>
         
-        <div className="glass-panel border border-border rounded-2xl overflow-hidden shadow-sm flex flex-col h-full order-1 lg:order-2">
+        <div className="glass-panel w-full border border-border rounded-2xl overflow-hidden shadow-sm flex flex-col h-full">
           <div className="bg-surface border-b border-border/60 px-5 py-4 flex justify-between items-center">
             <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Prompt Preview</span>
             <button 
