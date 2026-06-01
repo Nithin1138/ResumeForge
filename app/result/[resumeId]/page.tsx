@@ -19,12 +19,14 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [activeRoleIndex, setActiveRoleIndex] = useState(0);
 
+  const output = (resume?.outputFull || {}) as FullResumeOutput;
+  
   // Calculate fully dynamic scores on the client in real-time
   const dynamicMetrics = useMemo(() => {
-    const output = resume?.outputFull;
-    const roleName = output?.variantMetrics?.[activeRoleIndex]?.role || resume?.inputData?.personal?.targetRole || "";
+    if (!output) return null;
+    const roleName = output.variantMetrics?.[activeRoleIndex]?.role || resume?.inputData?.personal?.targetRole;
     return calculateDynamicMetrics(output, roleName);
-  }, [resume, activeRoleIndex]);
+  }, [output, activeRoleIndex, resume?.inputData?.personal?.targetRole]);
 
   useEffect(() => {
     setSession(getLocalSession());
@@ -135,21 +137,17 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
     return null;
   }
 
-  const output: FullResumeOutput = resume.outputFull;
-  
+  const displayAtsScore = dynamicMetrics?.atsScore || 84;
+  const displayBreakdown = dynamicMetrics?.breakdown || output!.breakdown;
+  const displayStrengths = dynamicMetrics?.strengths || [];
+  const displayWeaknesses = dynamicMetrics?.weaknesses || [];
+  const displayImprovements = dynamicMetrics?.improvements || [];
 
-
-  const displayAtsScore = dynamicMetrics.atsScore;
-  const displayBreakdown = dynamicMetrics.breakdown;
-  const displayStrengths = dynamicMetrics.strengths;
-  const displayWeaknesses = dynamicMetrics.weaknesses;
-  const displayImprovements = dynamicMetrics.improvements;
-
-  const freePreview = output.freeTierPreview || {
-    summary: output.summary.split(".")[0] + ".",
+  const freePreview = output!.freeTierPreview || {
+    summary: output!.summary.split(".")[0] + ".",
     firstProject: {
-      title: output.projects?.[0]?.title || "Academic Project",
-      bullet: output.projects?.[0]?.bullets?.[0] || "Optimized core features of the system."
+      title: output!.projects?.[0]?.title || "Academic Project",
+      bullet: output!.projects?.[0]?.bullets?.[0] || "Optimized core features of the system."
     }
   };
 

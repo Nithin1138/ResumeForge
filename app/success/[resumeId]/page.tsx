@@ -97,18 +97,18 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [activeProjectVariants, setActiveProjectVariants] = useState<Record<number, number>>({});
   
-  // Custom regeneration states
   const [customTone, setCustomTone] = useState<string>("Professional & Formal");
   const [customJD, setCustomJD] = useState<string>("");
 
-  const activeRoleIndex = activeProjectVariants[0] || 0;
-
+  const output = (liveResume || resume?.outputFull || {}) as FullResumeOutput;
+  const activeRoleIndex = activeProjectVariants?.[0] || 0;
+  
   // Calculate fully dynamic scores on the client in real-time
   const dynamicMetrics = useMemo(() => {
-    const output = liveResume || resume?.outputFull;
-    const roleName = output?.variantMetrics?.[activeRoleIndex]?.role || resume?.inputData?.personal?.targetRole || "";
+    if (!output) return null;
+    const roleName = output.variantMetrics?.[activeRoleIndex]?.role || resume?.inputData?.personal?.targetRole;
     return calculateDynamicMetrics(output, roleName);
-  }, [liveResume, resume, activeProjectVariants]);
+  }, [output, activeRoleIndex, resume?.inputData?.personal?.targetRole]);
   useEffect(() => {
     setSession(getLocalSession());
 
@@ -346,15 +346,11 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
     );
   }
 
-  const output: FullResumeOutput = liveResume || resume.outputFull;
-  
-
-
-  const displayAtsScore = dynamicMetrics.atsScore;
-  const displayBreakdown = dynamicMetrics.breakdown;
-  const displayStrengths = dynamicMetrics.strengths;
-  const displayWeaknesses = dynamicMetrics.weaknesses;
-  const displayImprovements = dynamicMetrics.improvements;
+  const displayAtsScore = dynamicMetrics?.atsScore || 84;
+  const displayBreakdown = dynamicMetrics?.breakdown || output!.breakdown;
+  const displayStrengths = dynamicMetrics?.strengths || [];
+  const displayWeaknesses = dynamicMetrics?.weaknesses || [];
+  const displayImprovements = dynamicMetrics?.improvements || [];
 
   // Format the full plain-text version ready for clean Copy All operations
   const fullPlainTextContent = `
