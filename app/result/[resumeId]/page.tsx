@@ -481,10 +481,10 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
             </div>
           </div>
 
-          <div className="flex flex-col items-center sm:items-end gap-2 w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
             <button 
               onClick={() => setVerificationModalOpen(true)}
-              className="text-[11px] font-bold text-text-muted hover:text-text transition-colors flex items-center gap-1 cursor-pointer order-2 sm:order-1 mt-1 sm:mt-0"
+              className="text-[11px] font-bold text-text-muted hover:text-text transition-colors flex items-center gap-1 cursor-pointer order-2 sm:order-1"
             >
               Don't trust the ATS score? <span className="underline underline-offset-2 decoration-border hover:decoration-text-muted">Verify it with AI</span>
             </button>
