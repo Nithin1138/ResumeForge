@@ -1408,11 +1408,34 @@ export default function BuildPage() {
           {formData.options.projectVariants === "3 versions" && (
             <div className="mt-4 p-4 bg-primary/5 rounded-xl border border-primary/20 space-y-3">
               <label className="block text-xs font-bold text-primary">Specify the 3 target roles to tailor for:</label>
+              
+              <datalist id="target-roles-suggestions">
+                {(() => {
+                  const branch = formData.personal.branch;
+                  const suggestions: Record<string, string[]> = {
+                    "CSE": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Mobile App Developer"],
+                    "IT": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Cloud Engineer"],
+                    "AI & DS": ["Data Scientist", "Machine Learning Engineer", "AI Researcher", "Data Analyst", "Data Engineer"],
+                    "Cyber Security": ["Security Analyst", "Penetration Tester", "Security Engineer", "Ethical Hacker", "Information Security Consultant"],
+                    "ECE": ["Embedded Software Engineer", "VLSI Design Engineer", "Hardware Engineer", "Network Engineer", "Systems Engineer", "Software Engineer"],
+                    "EEE": ["Electrical Engineer", "Power Systems Engineer", "Control Systems Engineer", "Electronics Engineer", "Software Engineer"],
+                    "Mechanical": ["Mechanical Engineer", "Design Engineer", "Manufacturing Engineer", "Thermal Engineer", "Automotive Engineer"],
+                    "Civil": ["Civil Engineer", "Structural Engineer", "Construction Manager", "Geotechnical Engineer"],
+                    "Chemical": ["Chemical Engineer", "Process Engineer", "Process Design Engineer", "Production Engineer"],
+                    "Biotechnology": ["Biotechnologist", "Bioinformatics Scientist", "Research Associate", "Clinical Research Associate"],
+                    "Aerospace": ["Aerospace Engineer", "Aerodynamics Engineer", "Propulsion Engineer", "Avionics Engineer"],
+                  };
+                  const rolesList = suggestions[branch] || ["Software Engineer", "Data Analyst", "Product Manager", "Business Analyst"];
+                  return rolesList.map(role => <option key={role} value={role} />);
+                })()}
+              </datalist>
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {[0, 1, 2].map((i) => (
                   <input
                     key={i}
                     type="text"
+                    list="target-roles-suggestions"
                     placeholder={`Role ${i + 1} (e.g. Frontend)`}
                     className="w-full px-3 py-2 border border-border/50 rounded-lg bg-bg-base focus:ring-1 focus:ring-primary focus:border-transparent outline-none text-xs font-medium"
                     value={formData.options.targetRoles?.[i] || ""}
