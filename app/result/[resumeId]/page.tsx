@@ -130,11 +130,20 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const output: FullResumeOutput = resume.outputFull;
   
   const activeMetrics = output.variantMetrics?.[activeRoleIndex];
+  
+  const fallbackStrengths = ["Strong foundational knowledge in the selected domain.", "Solid problem-solving abilities.", "Good academic track record."];
+  const fallbackWeaknesses = ["Could quantify achievements with more specific metrics.", "Consider adding more industry-standard keywords.", "Ensure bullet points focus on impact rather than responsibilities."];
+  const fallbackImprovements = ["Add relevant keywords from target job descriptions.", "Quantify results where possible.", "Tailor project descriptions to highlight skills required."];
+
+  const getValidArray = (arr: any, fallback: string[]) => {
+    return Array.isArray(arr) && arr.length > 0 ? arr : fallback;
+  };
+
   const displayAtsScore = activeMetrics?.atsScore || output.atsScore || 84;
   const displayBreakdown = activeMetrics?.breakdown || output.breakdown;
-  const displayStrengths = activeMetrics?.strengths || output.strengths || [];
-  const displayWeaknesses = activeMetrics?.weaknesses || output.weaknesses || [];
-  const displayImprovements = activeMetrics?.improvements || output.improvements || [];
+  const displayStrengths = getValidArray(activeMetrics?.strengths, getValidArray(output.strengths, fallbackStrengths));
+  const displayWeaknesses = getValidArray(activeMetrics?.weaknesses, getValidArray(output.weaknesses, fallbackWeaknesses));
+  const displayImprovements = getValidArray(activeMetrics?.improvements, getValidArray(output.improvements, fallbackImprovements));
 
   const freePreview = output.freeTierPreview || {
     summary: output.summary.split(".")[0] + ".",
