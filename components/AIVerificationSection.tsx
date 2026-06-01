@@ -50,72 +50,13 @@ Resume:
         </p>
       </div>
 
-      {/* Comparison Visual */}
-      <div className="flex flex-col md:flex-row items-stretch justify-center gap-6 mb-12 relative">
-        {/* Before Card */}
-        <div className="glass-panel border border-border p-6 rounded-2xl flex-1 w-full max-w-sm relative group overflow-hidden">
-          <div className="absolute top-0 right-0 p-3">
-            <span className="text-[10px] font-bold bg-error/10 text-error border border-error/20 px-2 py-1 rounded-md uppercase tracking-wide">Current Resume Analysis</span>
-          </div>
-          <div className="w-12 h-12 bg-bg-base border border-border rounded-xl flex items-center justify-center mb-4 text-text-muted">
-            <FileText className="w-6 h-6" />
-          </div>
-          <h3 className="text-lg font-black text-text mb-3">Before ATSLift</h3>
-          <ul className="space-y-3 text-sm text-text-muted font-medium">
-            <li className="flex items-center gap-3"><span className="w-5 h-5 rounded-full bg-bg-base border border-border flex items-center justify-center text-[10px] font-bold shrink-0">1</span> Take your existing resume</li>
-            <li className="flex items-center gap-3"><span className="w-5 h-5 rounded-full bg-bg-base border border-border flex items-center justify-center text-[10px] font-bold shrink-0">2</span> Open any AI assistant</li>
-            <li className="flex items-center gap-3"><span className="w-5 h-5 rounded-full bg-bg-base border border-border flex items-center justify-center text-[10px] font-bold shrink-0">3</span> Paste the ATS Evaluation Prompt</li>
-            <li className="flex items-center gap-3"><span className="w-5 h-5 rounded-full bg-bg-base border border-border flex items-center justify-center text-[10px] font-bold shrink-0">4</span> Save the analysis</li>
-          </ul>
-          <div className="mt-6 pt-4 border-t border-border/50 text-center">
-            <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider mb-1">Example ATS Score</p>
-            <p className="text-3xl font-black text-text opacity-70">72</p>
-          </div>
-        </div>
 
-        {/* Center Arrow / Connector */}
-        <div className="hidden md:flex items-center justify-center z-10 -mx-3">
-          <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg border-[3px] border-surface z-20">
-            <ArrowRight className="w-6 h-6 animate-pulse" />
-          </div>
-        </div>
-        
-        {/* Mobile Arrow */}
-        <div className="md:hidden flex items-center justify-center my-[-20px] z-10 relative">
-          <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-md border-4 border-bg-base">
-            <ArrowRight className="w-5 h-5 rotate-90" />
-          </div>
-        </div>
 
-        {/* After Card */}
-        <div className="bg-gradient-to-b from-primary/15 to-transparent border-2 border-primary/30 p-6 rounded-2xl flex-1 w-full max-w-sm relative shadow-2xl shadow-primary/10 overflow-hidden group">
-          <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <div className="absolute top-0 right-0 p-3">
-            <span className="text-[10px] font-bold bg-success/20 text-success border border-success/30 px-2 py-1 rounded-md uppercase tracking-wide shadow-sm">Optimized Resume Analysis</span>
-          </div>
-          <div className="w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-primary/30">
-            <LineChart className="w-6 h-6" />
-          </div>
-          <h3 className="text-lg font-black text-text mb-3">After ATSLift</h3>
-          <ul className="space-y-3 text-sm text-text-muted font-medium relative z-10">
-            <li className="flex items-center gap-3"><span className="w-5 h-5 rounded-full bg-surface border border-primary/30 text-primary flex items-center justify-center text-[10px] font-bold shrink-0">1</span> Unlock your ATSLift resume</li>
-            <li className="flex items-center gap-3"><span className="w-5 h-5 rounded-full bg-surface border border-primary/30 text-primary flex items-center justify-center text-[10px] font-bold shrink-0">2</span> Use the same AI assistant</li>
-            <li className="flex items-center gap-3"><span className="w-5 h-5 rounded-full bg-surface border border-primary/30 text-primary flex items-center justify-center text-[10px] font-bold shrink-0">3</span> Paste the ATS Evaluation Prompt</li>
-            <li className="flex items-center gap-3"><span className="w-5 h-5 rounded-full bg-surface border border-primary/30 text-primary flex items-center justify-center text-[10px] font-bold shrink-0">4</span> Compare the results</li>
-          </ul>
-          <div className="mt-6 pt-4 border-t border-primary/20 text-center relative z-10">
-            <p className="text-[10px] text-primary font-bold uppercase tracking-wider mb-1">Example ATS Score</p>
-            <p className="text-4xl font-black text-primary drop-shadow-sm">87</p>
-          </div>
-        </div>
-      </div>
-      
-      <p className="text-center text-[10px] text-text-muted uppercase font-bold tracking-wider mb-16">
-        Disclaimer: Example only. Actual scores depend on resume quality and evaluation method.
-      </p>
+      {/* Trust & Verification Steps (Now Main Hero Box) */}
+      <div className="bg-gradient-to-br from-surface to-primary/5 border-2 border-primary/20 rounded-3xl p-8 md:p-12 mb-12 shadow-xl relative overflow-hidden group">
+        {/* Subtle background glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-1/2 bg-primary/10 blur-[80px] rounded-full pointer-events-none transition-opacity opacity-50 group-hover:opacity-100"></div>
 
-      {/* Trust & Verification Steps */}
-      <div className="bg-surface border border-border rounded-2xl p-6 mb-12 shadow-xs">
         <div className="text-center mb-10">
           <h3 className="text-xl md:text-2xl font-black text-text mb-2">Why ATSLift?</h3>
           <p className="text-sm text-text-muted font-medium max-w-xl mx-auto">
