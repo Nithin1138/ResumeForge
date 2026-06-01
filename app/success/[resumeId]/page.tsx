@@ -100,6 +100,15 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   // Custom regeneration states
   const [customTone, setCustomTone] = useState<string>("Professional & Formal");
   const [customJD, setCustomJD] = useState<string>("");
+
+  const activeRoleIndex = activeProjectVariants[0] || 0;
+
+  // Calculate fully dynamic scores on the client in real-time
+  const dynamicMetrics = useMemo(() => {
+    const output = liveResume || resume?.outputFull;
+    const roleName = output?.variantMetrics?.[activeRoleIndex]?.role || resume?.inputData?.personal?.targetRole || "";
+    return calculateDynamicMetrics(output, roleName);
+  }, [liveResume, resume, activeProjectVariants]);
   useEffect(() => {
     setSession(getLocalSession());
 
@@ -339,13 +348,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
 
   const output: FullResumeOutput = liveResume || resume.outputFull;
   
-  const activeRoleIndex = activeProjectVariants[0] || 0;
-  
-  // Calculate fully dynamic scores on the client in real-time
-  const dynamicMetrics = useMemo(() => {
-    const roleName = output.variantMetrics?.[activeRoleIndex]?.role || resume.inputData.personal.targetRole;
-    return calculateDynamicMetrics(output, roleName);
-  }, [output, activeRoleIndex, resume.inputData.personal.targetRole]);
+
 
   const displayAtsScore = dynamicMetrics.atsScore;
   const displayBreakdown = dynamicMetrics.breakdown;

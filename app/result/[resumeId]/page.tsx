@@ -19,6 +19,13 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [activeRoleIndex, setActiveRoleIndex] = useState(0);
 
+  // Calculate fully dynamic scores on the client in real-time
+  const dynamicMetrics = useMemo(() => {
+    const output = resume?.outputFull;
+    const roleName = output?.variantMetrics?.[activeRoleIndex]?.role || resume?.inputData?.personal?.targetRole || "";
+    return calculateDynamicMetrics(output, roleName);
+  }, [resume, activeRoleIndex]);
+
   useEffect(() => {
     setSession(getLocalSession());
 
@@ -130,11 +137,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
 
   const output: FullResumeOutput = resume.outputFull;
   
-  // Calculate fully dynamic scores on the client in real-time
-  const dynamicMetrics = useMemo(() => {
-    const roleName = output.variantMetrics?.[activeRoleIndex]?.role || resume.inputData.personal.targetRole;
-    return calculateDynamicMetrics(output, roleName);
-  }, [output, activeRoleIndex, resume.inputData.personal.targetRole]);
+
 
   const displayAtsScore = dynamicMetrics.atsScore;
   const displayBreakdown = dynamicMetrics.breakdown;
