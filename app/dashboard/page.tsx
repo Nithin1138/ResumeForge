@@ -24,7 +24,7 @@ export default async function DashboardPage() {
   });
 
   if (!user) {
-    redirect("/login");
+    redirect("/login?error=SessionExpired");
   }
 
   const resumes = user.resumes;

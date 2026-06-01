@@ -4,7 +4,7 @@ import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, ArrowRight, Mail, Sparkles, Lock, Eye, EyeOff } from "lucide-react";
-import { signIn, getSession } from "next-auth/react";
+import { signIn, getSession, signOut } from "next-auth/react";
 
 function LoginContent() {
   const router = useRouter();
@@ -12,12 +12,17 @@ function LoginContent() {
   
   
   useEffect(() => {
-    getSession().then(session => {
-      if (session) {
-        router.push("/dashboard");
-      }
-    });
-  }, [router]);
+    if (searchParams.get("error") === "SessionExpired") {
+      // Clear invalid session silently to break the redirect loop
+      signOut({ redirect: false });
+    } else {
+      getSession().then(session => {
+        if (session) {
+          router.push("/dashboard");
+        }
+      });
+    }
+  }, [router, searchParams]);
 // Standard Login States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,7 +46,7 @@ function LoginContent() {
     if (searchParams.get("verifyRequest") === "true") {
       setIsVerifyRequest(true);
     }
-    if (searchParams.get("error")) {
+    if (searchParams.get("error") && searchParams.get("error") !== "SessionExpired") {
       setError("Authentication failed. Please try again.");
     }
   }, [searchParams]);
