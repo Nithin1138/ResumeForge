@@ -16,7 +16,7 @@ export interface CalculatedMetrics {
 }
 
 export function calculateDynamicMetrics(
-  resume: FullResumeOutput,
+  resume: FullResumeOutput | null | undefined,
   targetRole: string
 ): CalculatedMetrics {
   let keywordMatch = 0;
@@ -30,11 +30,21 @@ export function calculateDynamicMetrics(
   const weaknesses: string[] = [];
   const improvements: string[] = [];
 
-  const rawText = JSON.stringify(resume).toLowerCase();
+  // Safely parse resume if it happens to be a string
+  let parsedResume: any = resume || {};
+  if (typeof parsedResume === "string") {
+    try {
+      parsedResume = JSON.parse(parsedResume);
+    } catch(e) {
+      parsedResume = {};
+    }
+  }
+
+  const rawText = (JSON.stringify(parsedResume) || "").toLowerCase();
   const roleLower = (targetRole || "software engineer").toLowerCase();
 
   // 1. ATS Compatibility (Max 25)
-  if (resume.summary && resume.summary.trim().length > 30) {
+  if (parsedResume.summary && typeof parsedResume.summary === "string" && parsedResume.summary.trim().length > 30) {
     atsCompatibility += 10;
     strengths.push("Professional summary is present and adequately detailed.");
   } else {
@@ -42,14 +52,14 @@ export function calculateDynamicMetrics(
     improvements.push("Add a compelling 2-3 sentence professional summary highlighting your top skills.");
   }
 
-  if (resume.projects && resume.projects.length > 0) {
+  if (parsedResume.projects && Array.isArray(parsedResume.projects) && parsedResume.projects.length > 0) {
     atsCompatibility += 10;
   } else {
     weaknesses.push("No projects found.");
     improvements.push("Add at least 1-2 relevant projects to demonstrate practical experience.");
   }
 
-  if (resume.skills && resume.skills.length > 0) {
+  if (parsedResume.skills && Array.isArray(parsedResume.skills) && parsedResume.skills.length > 0) {
     atsCompatibility += 5;
   } else {
     weaknesses.push("Skills section is missing.");
@@ -69,7 +79,7 @@ export function calculateDynamicMetrics(
     keywordMatch = 15;
   }
   
-  if (resume.summary && resume.summary.toLowerCase().includes(roleLower)) {
+  if (parsedResume.summary && typeof parsedResume.summary === "string" && parsedResume.summary.toLowerCase().includes(roleLower)) {
     keywordMatch = Math.min(30, keywordMatch + 10);
   } else {
     keywordMatch = Math.min(30, keywordMatch + 5);
@@ -83,8 +93,8 @@ export function calculateDynamicMetrics(
 
   // 3. Technical Strength (Max 15)
   let totalSkills = 0;
-  (resume.skills || []).forEach(cat => {
-    totalSkills += (cat.skills || []).length;
+  (parsedResume.skills || []).forEach((cat: any) => {
+    totalSkills += (cat?.skills || []).length;
   });
   
   if (totalSkills > 15) {
@@ -99,7 +109,7 @@ export function calculateDynamicMetrics(
   }
 
   // 4. Project Quality (Max 15)
-  const numProjects = (resume.projects || []).length;
+  const numProjects = (parsedResume.projects || []).length;
   if (numProjects >= 2) {
     projectQuality += 10;
   } else if (numProjects === 1) {
@@ -107,8 +117,8 @@ export function calculateDynamicMetrics(
   }
 
   let totalBullets = 0;
-  (resume.projects || []).forEach(p => {
-    totalBullets += (p.bullets || []).length;
+  (parsedResume.projects || []).forEach((p: any) => {
+    totalBullets += (p?.bullets || []).length;
   });
 
   if (numProjects > 0 && (totalBullets / numProjects) >= 3) {
@@ -122,8 +132,10 @@ export function calculateDynamicMetrics(
   let avgBulletLength = 0;
   if (totalBullets > 0) {
     let charCount = 0;
-    (resume.projects || []).forEach(p => {
-      (p.bullets || []).forEach(b => charCount += b.length);
+    (parsedResume.projects || []).forEach((p: any) => {
+      (p?.bullets || []).forEach((b: string) => {
+        if (typeof b === "string") charCount += b.length;
+      });
     });
     avgBulletLength = charCount / totalBullets;
   }
@@ -139,7 +151,7 @@ export function calculateDynamicMetrics(
   }
 
   // 6. Experience Credibility (Max 5)
-  if (resume.experience && resume.experience.length > 0) {
+  if (parsedResume.experience && Array.isArray(parsedResume.experience) && parsedResume.experience.length > 0) {
     experienceCredibility = 5;
     strengths.push("Professional experience section adds strong credibility.");
   } else {
