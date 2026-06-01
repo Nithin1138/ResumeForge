@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
 
     // Default configuration fallback
     return NextResponse.json({
-      bannerText: "🚀 Placement Season Hack: Get 20% off unlocked copyable resume formats today only!",
+      bannerText: "🔥 Placement Season: Use our ATS-friendly templates to get noticed.",
       isBannerActive: true,
       dynamicPrice: 49,
       landingVariant: "minimal",
@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
   } catch (error: any) {
     console.error("Failed to query public config:", error);
     return NextResponse.json({
-      bannerText: "🚀 Placement Season Hack: Get 20% off unlocked copyable resume formats today only!",
+      bannerText: "🔥 Placement Season: Use our ATS-friendly templates to get noticed.",
       isBannerActive: true,
       dynamicPrice: 49,
       landingVariant: "minimal",

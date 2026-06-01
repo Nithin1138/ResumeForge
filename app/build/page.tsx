@@ -216,7 +216,10 @@ function TagInput({
 }
 
 export default function BuildPage() {
-
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const [isParsing, setIsParsing] = useState(false);
   const handleAutoFillUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -726,7 +729,7 @@ export default function BuildPage() {
         </div>
 
         <div className="md:col-span-2 border-t border-border/40 pt-4 mt-2">
-          <label className="flex items-center space-x-3 cursor-pointer">
+          <label className="flex items-center space-x-3 cursor-pointer w-max">
             <input
               type="checkbox"
               className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25"
@@ -744,7 +747,7 @@ export default function BuildPage() {
                 });
               }}
             />
-            <span className="text-sm font-semibold text-text">Do you have a Post Graduation (PG) degree?</span>
+            <span className="text-sm font-semibold text-text">Add Post Graduation (PG) details <span className="text-text-muted font-normal text-xs">(Optional)</span></span>
           </label>
         </div>
 
@@ -1405,6 +1408,15 @@ export default function BuildPage() {
       </div>
     </div>
   );
+
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen bg-bg-base flex flex-col items-center justify-center font-sans">
+        <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
+        <p className="text-text-muted font-semibold animate-pulse">Loading workspace...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans">

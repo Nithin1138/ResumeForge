@@ -209,60 +209,108 @@ export default function ATSCheckPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
-                className="w-full max-w-3xl mx-auto flex flex-col items-center"
+                className="w-full max-w-5xl mx-auto"
               >
-                <div
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`w-full bg-surface border-2 border-dashed rounded-3xl p-8 md:p-16 text-center cursor-pointer transition-all duration-300 ${
-                    isDragging 
-                      ? "border-primary bg-primary/5" 
-                      : file 
-                      ? "border-primary/40 bg-surface shadow-sm" 
-                      : "border-border hover:border-primary/50 hover:bg-primary/5"
-                  }`}
-                >
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileSelect}
-                    accept=".pdf,application/pdf"
-                    className="hidden"
-                  />
-                  
-                  {file ? (
-                    <div className="flex flex-col items-center">
-                      <FileText className="w-10 h-10 md:w-12 md:h-12 text-primary mb-3.5" />
-                      <p className="font-bold text-text text-base md:text-xl mb-1 truncate max-w-[200px] md:max-w-[250px]">{file.name}</p>
-                      <p className="text-xs md:text-sm text-text-muted">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 w-full items-start">
+                  {/* Left Column: Upload Area */}
+                  <div className="flex flex-col items-center w-full">
+                    <div
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`w-full bg-surface border-2 border-dashed rounded-3xl p-8 md:p-16 text-center cursor-pointer transition-all duration-300 ${
+                        isDragging 
+                          ? "border-primary bg-primary/5" 
+                          : file 
+                          ? "border-primary/40 bg-surface shadow-sm" 
+                          : "border-border hover:border-primary/50 hover:bg-primary/5"
+                      }`}
+                    >
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileSelect}
+                        accept=".pdf,application/pdf"
+                        className="hidden"
+                      />
+                      
+                      {file ? (
+                        <div className="flex flex-col items-center">
+                          <FileText className="w-10 h-10 md:w-12 md:h-12 text-primary mb-3.5" />
+                          <p className="font-bold text-text text-base md:text-xl mb-1 truncate max-w-[200px] md:max-w-[250px]">{file.name}</p>
+                          <p className="text-xs md:text-sm text-text-muted">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center">
+                          <UploadCloud className="w-8 h-8 md:w-10 md:h-10 text-text-muted mb-3.5" />
+                          <p className="font-bold text-text text-sm md:text-lg mb-1">Tap to select your resume PDF</p>
+                          <p className="text-xs text-text-muted">Max size: 5MB</p>
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <div className="flex flex-col items-center">
-                      <UploadCloud className="w-8 h-8 md:w-10 md:h-10 text-text-muted mb-3.5" />
-                      <p className="font-bold text-text text-sm md:text-lg mb-1">Tap to select your resume PDF</p>
-                      <p className="text-xs text-text-muted">Up to 5MB, 100% private secure audit</p>
-                    </div>
-                  )}
-                </div>
 
-                {error && (
-                  <div className="mt-6 p-4 rounded-xl bg-error/5 border border-error/20 flex items-center space-x-3 text-error w-full">
-                    <AlertCircle className="w-5 h-5 shrink-0" />
-                    <span className="text-sm font-medium">{error}</span>
+                    <div className="mt-4 flex items-start space-x-2 text-left bg-surface/50 border border-border p-3 rounded-xl w-full">
+                      <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
+                      <p className="text-xs text-text-muted leading-relaxed">
+                        <strong className="text-text">100% Private Audit:</strong> Your PDF is processed entirely in-memory and is <strong>never stored</strong> or sent to third-party databases.
+                      </p>
+                    </div>
+
+                    {error && (
+                      <div className="mt-6 p-4 rounded-xl bg-error/5 border border-error/20 flex items-center space-x-3 text-error w-full">
+                        <AlertCircle className="w-5 h-5 shrink-0" />
+                        <span className="text-sm font-medium">{error}</span>
+                      </div>
+                    )}
+
+                    <div className="mt-8 w-full">
+                      <button
+                        onClick={handleUpload}
+                        disabled={!file}
+                        className="w-full px-8 py-4 bg-primary hover:bg-primary/90 text-white text-lg font-semibold rounded-full shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
+                      >
+                        <span>Run Audit</span>
+                        <ArrowRight className="w-5 h-5" />
+                      </button>
+                    </div>
                   </div>
-                )}
 
-                <div className="mt-10">
-                  <button
-                    onClick={handleUpload}
-                    disabled={!file}
-                    className="w-full md:w-auto px-8 py-4 bg-primary hover:bg-primary/90 text-white text-lg font-semibold rounded-full shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
-                  >
-                    <span>Run Audit</span>
-                    <ArrowRight className="w-5 h-5" />
-                  </button>
+                  {/* Right Column: What we check & Sample */}
+                  <div className="bg-surface border border-border rounded-3xl p-8 flex flex-col h-full w-full">
+                    <h3 className="text-lg font-bold mb-6 font-serif">What we evaluate</h3>
+                    <div className="space-y-5">
+                      {SCORING_CRITERIA.slice(0, 4).map((c, i) => (
+                        <div key={i} className="flex items-start space-x-4">
+                          <div className="p-2 bg-primary/10 rounded-xl text-primary">
+                            <c.icon className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-sm text-text">{c.name}</p>
+                            <p className="text-xs text-text-muted mt-0.5">{c.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-8 pt-8 border-t border-border">
+                      <div className="flex items-center justify-between mb-4">
+                        <p className="text-xs font-bold text-text-muted uppercase tracking-wider">Sample Output</p>
+                      </div>
+                      <div className="bg-bg-base border border-border p-4 rounded-xl flex items-center justify-between">
+                        <div>
+                          <p className="font-serif text-3xl font-bold text-error">42<span className="text-sm text-text-muted">/100</span></p>
+                          <p className="text-[10px] uppercase font-bold text-error mt-1 tracking-wider">Critical Overhaul</p>
+                        </div>
+                        <div className="space-y-2 flex-1 ml-6">
+                          <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
+                            <div className="w-[42%] h-full bg-error rounded-full"></div>
+                          </div>
+                          <p className="text-[10px] text-text-muted leading-snug">Low keyword density. Bullets lack quantifiable metrics. ATS parsing failed on table structures.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}

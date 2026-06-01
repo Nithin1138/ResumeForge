@@ -29,7 +29,7 @@ const getAdminConfig = async () => {
   return {
     username: "Nithin",
     passwordHash: "80f86da84da5b0e35545fcec0a5d8c786b075f3bea545aa6bd090f097392b8ed",
-    bannerText: "🚀 Placement Season Hack: Get 20% off unlocked copyable resume formats today only!",
+    bannerText: "🔥 Placement Season: Use our ATS-friendly templates to get noticed.",
     isBannerActive: true,
     dynamicPrice: 49,
     landingVariant: "minimal",

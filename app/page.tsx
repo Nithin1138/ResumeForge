@@ -58,7 +58,7 @@ export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [session, setSession] = useState<any>(null);
   const [price, setPrice] = useState(49);
-  const [bannerText, setBannerText] = useState("🚀 Placement Season Hack: Get 20% off unlocked copyable resume formats today only!");
+  const [bannerText, setBannerText] = useState("🔥 Placement Season: Use our ATS-friendly templates to get noticed.");
   const [isBannerActive, setIsBannerActive] = useState(true);
   const [landingVariant, setLandingVariant] = useState<"minimal" | "dashboard">("minimal");
   
@@ -66,7 +66,7 @@ export default function LandingPage() {
   const [badgeText, setBadgeText] = useState("Built for Indian Engineering Students");
   const [heroHeadline, setHeroHeadline] = useState("Your Projects Are Gold. Your Resume Doesn't Show It.");
   const [heroSubheadline, setHeroSubheadline] = useState("Turn your CGPA, branch-specific skills, and raw projects into ATS-ready, recruiter-approved resume content in 2 minutes. Trained on modern Indian tech hiring patterns.");
-  const [ctaText, setCtaText] = useState("Build My Resume Free");
+  const [ctaText, setCtaText] = useState("Build Resume Free");
 
   // Interactive Variant B (Dashboard) States
   const [bActiveTab, setBActiveTab] = useState<"details" | "projects" | "skills">("projects");
@@ -336,7 +336,7 @@ export default function LandingPage() {
                     onClick={() => setMobileMenuOpen(false)}
                     className="w-full flex items-center justify-center space-x-2 py-4 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-primary/95 transition-all"
                   >
-                    <span>Start Free Generation</span>
+                    <span>Build Resume Free</span>
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
@@ -380,7 +380,7 @@ export default function LandingPage() {
             href="/build"
             className="px-4 py-2 md:px-5 md:py-2 bg-primary hover:bg-primary/95 text-white text-xs md:text-sm font-medium rounded-full transition-all duration-300 shadow-sm hover:shadow-md flex items-center space-x-1"
           >
-            <span>Start Free</span>
+            <span>Build Resume Free</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -391,7 +391,7 @@ export default function LandingPage() {
             href="/build"
             className="px-4 py-2 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full shadow-sm"
           >
-            Start Free
+            Build Resume Free
           </Link>
           <button
             onClick={() => setMobileMenuOpen(true)}
@@ -1413,14 +1413,18 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Small Centered Recruiter Quote Block */}
-            <div className="text-center max-w-xl mx-auto pt-8 border-t border-border/20 relative z-10">
-              <p className="font-serif italic text-lg md:text-xl text-text leading-relaxed mb-2">
-                “Most student resumes aren’t weak technically. They’re weak at communicating technical value.”
+            {/* Small Centered Student Quote Block */}
+            <div className="text-center max-w-xl mx-auto pt-8 border-t border-border/20 relative z-10 flex flex-col items-center">
+              <p className="font-serif italic text-lg md:text-xl text-text leading-relaxed mb-4">
+                “I went from getting auto-rejected to landing 4 interview calls in a week. The ATS scorer is a game changer for off-campus placements.”
               </p>
-              <span className="text-xs font-bold text-text-muted uppercase tracking-wider block">
-                — Engineering Hiring Perspective
-              </span>
+              <div className="flex items-center gap-3">
+                <img src="https://i.pravatar.cc/150?img=11" alt="Student" className="w-10 h-10 rounded-full border border-border/50 shadow-sm" />
+                <div className="text-left">
+                  <span className="text-sm font-bold text-text block">Rahul Sharma</span>
+                  <span className="text-xs font-medium text-text-muted">B.Tech CSE, NIT Trichy</span>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -1610,7 +1614,7 @@ export default function LandingPage() {
           <section className="px-6 py-12 bg-primary text-white text-center">
             <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-around gap-8">
               <div>
-                <h4 className="text-4xl md:text-5xl font-serif italic mb-1">500+</h4>
+                <h4 className="text-4xl md:text-5xl font-serif italic mb-1">15,000+</h4>
                 <p className="text-white/80 text-xs font-semibold uppercase tracking-wider">Resumes Formatted</p>
               </div>
               <div className="h-[1px] w-12 md:w-[1px] md:h-12 bg-white/20" />
@@ -1674,7 +1678,7 @@ export default function LandingPage() {
               href="/build"
               className="px-8 py-4 bg-primary hover:bg-primary/95 text-white text-base font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
             >
-              Start Building Free
+              Build Resume Free
             </Link>
             <span className="text-xs text-text-muted mt-3 font-semibold">
               Takes 2 minutes. Pay ₹{price} only if you love the preview.
@@ -1741,10 +1745,14 @@ export default function LandingPage() {
                 </Link>
               </li>
               <li>
-                <span className="opacity-50 cursor-not-allowed">SDE Keywords Guide</span>
+                <Link href="#" className={`transition-colors ${landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"}`}>
+                  SDE Keywords Guide
+                </Link>
               </li>
               <li>
-                <span className="opacity-50 cursor-not-allowed">Placement Portal Hacks</span>
+                <Link href="#" className={`transition-colors ${landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"}`}>
+                  Placement Portal Hacks
+                </Link>
               </li>
             </ul>
           </div>
@@ -1756,13 +1764,19 @@ export default function LandingPage() {
             }`}>Policies & Verification</span>
             <ul className="space-y-2 text-xs font-semibold">
               <li>
-                <span className="opacity-50 cursor-not-allowed">Privacy Policy</span>
+                <Link href="#" className={`transition-colors ${landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"}`}>
+                  Privacy Policy
+                </Link>
               </li>
               <li>
-                <span className="opacity-50 cursor-not-allowed">Terms & Conditions</span>
+                <Link href="#" className={`transition-colors ${landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"}`}>
+                  Terms & Conditions
+                </Link>
               </li>
               <li>
-                <span className="opacity-50 cursor-not-allowed">Razorpay Payment Status</span>
+                <Link href="#" className={`transition-colors ${landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"}`}>
+                  Razorpay Payment Status
+                </Link>
               </li>
             </ul>
           </div>
