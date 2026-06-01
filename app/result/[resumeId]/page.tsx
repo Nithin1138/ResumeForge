@@ -481,18 +481,12 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
-            <button 
-              onClick={() => setVerificationModalOpen(true)}
-              className="text-[11px] font-bold text-text-muted hover:text-text transition-colors flex items-center gap-1 cursor-pointer order-2 sm:order-1"
-            >
-              Don't trust the ATS score? <span className="underline underline-offset-2 decoration-border hover:decoration-text-muted">Verify it with AI</span>
-            </button>
-            {/* Real Checkout Button */}
+          <div className="flex flex-col sm:flex-row-reverse items-center gap-3 w-full md:w-auto">
+            {/* Real Checkout Button (Renders on the right on desktop, top on mobile) */}
             <button
               onClick={handlePayment}
               disabled={isProcessingPayment}
-              className="px-8 py-3.5 bg-primary hover:bg-primary/95 text-white text-sm font-semibold rounded-full flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg disabled:opacity-50 w-full cursor-pointer"
+              className="px-8 py-3.5 bg-primary hover:bg-primary/95 text-white text-sm font-semibold rounded-full flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg disabled:opacity-50 w-full sm:w-auto cursor-pointer"
             >
               {isProcessingPayment ? (
                 <>
@@ -505,6 +499,19 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
+            </button>
+            
+            {/* AI Verification Button (Renders on the left on desktop, bottom on mobile) */}
+            <button 
+              onClick={() => setVerificationModalOpen(true)}
+              className="px-5 py-3 sm:py-3.5 bg-surface border border-border hover:bg-border/60 text-text text-[11px] sm:text-xs font-bold rounded-full transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-xs group cursor-pointer"
+            >
+              <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
+              <span>
+                <span className="text-text-muted font-medium mr-1.5 hidden sm:inline">Don't trust the score?</span>
+                <span className="text-text-muted font-medium mr-1.5 sm:hidden">Not sure?</span>
+                <span className="underline underline-offset-2 decoration-border group-hover:decoration-text-muted">Verify with AI</span>
+              </span>
             </button>
           </div>
         </div>
