@@ -39,7 +39,7 @@ Resume:
 
   return (
     <section className="w-full pb-16 animate-in fade-in slide-in-from-right-4 duration-300">
-      <div className="text-center mb-12">
+      <div className="text-center mb-8">
         <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
           <ShieldCheck className="w-4 h-4" />
           <span>Transparency Feature</span>
