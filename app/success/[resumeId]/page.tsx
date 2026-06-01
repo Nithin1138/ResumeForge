@@ -394,7 +394,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
   `.trim();
 
   return (
-    <div className="h-auto lg:h-screen lg:overflow-hidden bg-bg-base text-text flex flex-col font-sans print:h-auto print:overflow-visible print:bg-white print:text-black">
+    <div className="h-auto lg:h-screen lg:overflow-hidden bg-bg-base text-text flex flex-col font-sans print:block print:h-auto print:overflow-visible print:bg-white print:text-black">
       {/* Navbar (hidden during print) */}
       <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between print:hidden">
         <div className="flex items-center space-x-2">

@@ -113,11 +113,9 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             margin: 0 !important;
             border-radius: 0 !important;
             width: 794px !important;
-            height: max-content !important; /* Let it wrap content so it doesn't force a 2nd page */
+            height: auto !important; /* Let it wrap content so it doesn't force a 2nd page */
             max-height: none !important;
             overflow: visible !important;
-            page-break-after: avoid !important;
-            page-break-inside: avoid !important;
           }
         }
       `}</style>
