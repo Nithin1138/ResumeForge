@@ -13,17 +13,17 @@ export default function AIVerificationSection({ handlePayment, isProcessingPayme
 
   const promptText = `Analyze this resume for ATS compatibility.
 
-Score the resume from 0–100 based on:
+Score the resume from 0–100 based on the following specific criteria and weights:
 
-1. Keyword Match
-2. Technical Skills
-3. Project Quality
-4. Quantified Achievements
-5. Recruiter Readability
-6. ATS Formatting
+1. Keyword Match (30 points)
+2. ATS Compatibility (25 points)
+3. Technical Strength (15 points)
+4. Project Quality (15 points)
+5. Recruiter Readability (10 points)
+6. Experience Credibility (5 points)
 
 Return:
-Overall Score
+Overall Score (out of 100)
 Category Scores
 Top 3 Strengths
 Top 3 Weaknesses
