@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle, Flame, ShieldCheck, Sparkles, ChevronDown, Award, XCircle, Eye, TrendingUp, Check, Menu, X } from "lucide-react";
-import { getSession } from "next-auth/react";
+import { getLocalSession } from "@/lib/authClient";
 import { motion, AnimatePresence } from "framer-motion";
 
 const containerVariants = {
@@ -61,6 +61,7 @@ export default function LandingPage() {
   const [bannerText, setBannerText] = useState("🔥 Placement Season: Use our ATS-friendly templates to get noticed.");
   const [isBannerActive, setIsBannerActive] = useState(true);
   const [landingVariant, setLandingVariant] = useState<"minimal" | "dashboard">("minimal");
+  const [isConfigLoaded, setIsConfigLoaded] = useState(false);
   
   // Dynamic Landing CMS copy states
   const [badgeText, setBadgeText] = useState("Built for Indian Engineering Students");
@@ -79,7 +80,7 @@ export default function LandingPage() {
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getSession().then(setSession);
+    setSession(getLocalSession());
     
     // Log landing visit analytics
     try {
@@ -115,7 +116,11 @@ export default function LandingPage() {
         if (data.ctaText) setCtaText(data.ctaText);
         if (data.badgeText) setBadgeText(data.badgeText);
         if (data.badgeText) setBadgeText(data.badgeText);
-      }).catch(err => console.error("Failed to load config", err));
+        setIsConfigLoaded(true);
+      }).catch(err => {
+        console.error("Failed to load config", err);
+        setIsConfigLoaded(true);
+      });
   }, []);
 
   // Scroll listener for sticky CTA
@@ -195,9 +200,9 @@ export default function LandingPage() {
           `}
         }
       `}} />
-      <div className={`flex flex-col min-h-screen transition-colors duration-300 font-sans ${
+      <div className={`flex flex-col min-h-screen transition-opacity duration-300 font-sans ${
         landingVariant === "dashboard" ? "bg-[#080b0c] text-[#eae9e5] selection:bg-primary/30" : "bg-bg-base text-text selection:bg-primary/20"
-      }`}>
+      } ${!isConfigLoaded ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
       {isBannerActive && (
         <div className={`w-full text-center py-2 px-4 text-xs font-bold font-sans flex items-center justify-center gap-2 relative z-50 border-b ${
           landingVariant === "dashboard"
