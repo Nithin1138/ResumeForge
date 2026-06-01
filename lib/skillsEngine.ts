@@ -420,11 +420,25 @@ export function generateTechnicalSkills(formData: ResumeFormData): SkillCategory
     }
   }
 
-  // Append soft skills if present
+  // Append soft skills if present (conditionally)
   if (skills.softSkills) {
     const soft = skills.softSkills.split(",").map(s => s.trim()).filter(Boolean);
     if (soft.length > 0) {
-      output.push({ category: "Soft Skills", skills: soft });
+      const branchLower = formData.personal?.branch?.toLowerCase() || "";
+      const isBusinessBranch = 
+        branchLower.includes("bba") || 
+        branchLower.includes("mba") || 
+        branchLower.includes("management") || 
+        branchLower.includes("b.com") || 
+        branchLower.includes("commerce") || 
+        branchLower.includes("finance");
+      
+      const hasFewProjects = !projects || projects.length < 2;
+
+      // Only show soft skills for business/management branches OR if the user has < 2 projects
+      if (isBusinessBranch || hasFewProjects) {
+        output.push({ category: "Soft Skills", skills: soft });
+      }
     }
   }
 
