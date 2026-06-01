@@ -19,7 +19,10 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [activeRoleIndex, setActiveRoleIndex] = useState(0);
 
-  const output = (resume?.outputFull || {}) as FullResumeOutput;
+  const parsedOutput = resume?.outputFull 
+    ? (typeof resume.outputFull === "string" ? JSON.parse(resume.outputFull) : resume.outputFull)
+    : {};
+  const output = parsedOutput as FullResumeOutput;
   
   // Calculate fully dynamic scores on the client in real-time
   const dynamicMetrics = useMemo(() => {
@@ -144,7 +147,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const displayImprovements = dynamicMetrics?.improvements || [];
 
   const freePreview = output!.freeTierPreview || {
-    summary: output!.summary.split(".")[0] + ".",
+    summary: (output!.summary || "A highly motivated professional with extensive experience.").split(".")[0] + ".",
     firstProject: {
       title: output!.projects?.[0]?.title || "Academic Project",
       bullet: output!.projects?.[0]?.bullets?.[0] || "Optimized core features of the system."

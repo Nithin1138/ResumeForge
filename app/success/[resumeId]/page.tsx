@@ -100,7 +100,12 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [customTone, setCustomTone] = useState<string>("Professional & Formal");
   const [customJD, setCustomJD] = useState<string>("");
 
-  const output = (liveResume || resume?.outputFull || {}) as FullResumeOutput;
+  const parsedOutput = liveResume 
+    ? (typeof liveResume === "string" ? JSON.parse(liveResume) : liveResume)
+    : (resume?.outputFull 
+        ? (typeof resume.outputFull === "string" ? JSON.parse(resume.outputFull) : resume.outputFull)
+        : {});
+  const output = parsedOutput as FullResumeOutput;
   const activeRoleIndex = activeProjectVariants?.[0] || 0;
   
   // Calculate fully dynamic scores on the client in real-time
