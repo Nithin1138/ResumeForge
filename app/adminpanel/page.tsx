@@ -2129,7 +2129,7 @@ export default function AdminPanelPage() {
                         setBadgeText("Built for Indian Engineering Students");
                         setHeroHeadline("Your Projects Are Gold. Your Resume Doesn't Show It.");
                         setHeroSubheadline("Turn your CGPA, branch-specific skills, and raw projects into ATS-ready, recruiter-approved resume content in 2 minutes.");
-                        setCtaText("Build My Resume Free");
+                        setCtaText("Build Resume Free");
                       }}
                       className="p-3 bg-surface hover:bg-primary/10 border border-border hover:border-primary/50 text-[10px] text-left rounded-xl transition-all cursor-pointer font-bold space-y-1 block w-full text-text"
                     >
@@ -2185,7 +2185,7 @@ export default function AdminPanelPage() {
                           value={ctaText}
                           onChange={(e) => setCtaText(e.target.value)}
                           className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs font-semibold focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-text"
-                          placeholder="e.g. Build My Resume Free"
+                          placeholder="e.g. Build Resume Free"
                         />
                       </div>
                     </div>

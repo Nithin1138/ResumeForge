@@ -1424,7 +1424,7 @@ export default function LandingPage() {
                 “I went from getting auto-rejected to landing 4 interview calls in a week. The ATS scorer is a game changer for off-campus placements.”
               </p>
               <div className="flex items-center gap-3">
-                <img src="https://i.pravatar.cc/150?img=11" alt="Student" className="w-10 h-10 rounded-full border border-border/50 shadow-sm" />
+                <img src="/rahul.png" alt="Student" className="w-10 h-10 rounded-full border border-border/50 shadow-sm object-cover" />
                 <div className="text-left">
                   <span className="text-sm font-bold text-text block">Rahul Sharma</span>
                   <span className="text-xs font-medium text-text-muted">B.Tech CSE, NIT Trichy</span>
@@ -1769,12 +1769,12 @@ export default function LandingPage() {
             }`}>Policies & Verification</span>
             <ul className="space-y-2 text-xs font-semibold">
               <li>
-                <Link href="#" className={`transition-colors ${landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"}`}>
+                <Link href="/privacy" className={`transition-colors ${landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"}`}>
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="#" className={`transition-colors ${landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"}`}>
+                <Link href="/terms" className={`transition-colors ${landingVariant === "dashboard" ? "hover:text-[#00e1ec]" : "hover:text-primary"}`}>
                   Terms & Conditions
                 </Link>
               </li>

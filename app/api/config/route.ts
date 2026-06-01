@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
         // Dynamic CMS fields
         heroHeadline: (config as any).heroHeadline || "Your Projects Are Gold. Your Resume Doesn't Show It.",
         heroSubheadline: (config as any).heroSubheadline || "Turn your CGPA, branch-specific skills, and raw projects into ATS-ready, recruiter-approved resume content in 2 minutes.",
-        ctaText: (config as any).ctaText || "Build My Resume Free",
+        ctaText: (config as any).ctaText || "Build Resume Free",
         badgeText: (config as any).badgeText || "Built for Indian Engineering Students",
         testimonialsJson: (config as any).testimonialsJson || "[]",
         faqsJson: (config as any).faqsJson || "[]"
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
       activePrice: 49,
       heroHeadline: "Your Projects Are Gold. Your Resume Doesn't Show It.",
       heroSubheadline: "Turn your CGPA, branch-specific skills, and raw projects into ATS-ready, recruiter-approved resume content in 2 minutes.",
-      ctaText: "Build My Resume Free",
+      ctaText: "Build Resume Free",
       badgeText: "Built for Indian Engineering Students",
       testimonialsJson: "[]",
       faqsJson: "[]"
@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
       activePrice: 49,
       heroHeadline: "Your Projects Are Gold. Your Resume Doesn't Show It.",
       heroSubheadline: "Turn your CGPA, branch-specific skills, and raw projects into ATS-ready, recruiter-approved resume content in 2 minutes.",
-      ctaText: "Build My Resume Free",
+      ctaText: "Build Resume Free",
       badgeText: "Built for Indian Engineering Students",
       testimonialsJson: "[]",
       faqsJson: "[]"
