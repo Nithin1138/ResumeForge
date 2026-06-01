@@ -7,6 +7,7 @@ import { FullResumeOutput } from "@/types/resume";
 import { calculateDynamicMetrics } from "@/lib/atsScoring";
 import { getLocalSession } from "@/lib/authClient";
 import ResumePreviewPanel from "@/components/ResumePreviewPanel";
+import AIVerificationSection from "@/components/AIVerificationSection";
 
 export default function ResultPage({ params }: { params: Promise<{ resumeId: string }> }) {
   const { resumeId } = use(params);
@@ -450,6 +451,12 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
           </div>
         </div>
         </div>
+        
+        {/* Independent AI Verification Section */}
+        <AIVerificationSection 
+          handlePayment={handlePayment} 
+          isProcessingPayment={isProcessingPayment} 
+        />
       </main>
 
       {/* STICKY BOTTOM CHECKOUT / PAYMENT CARD */}
