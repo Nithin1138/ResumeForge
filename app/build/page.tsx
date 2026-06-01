@@ -1390,7 +1390,7 @@ export default function BuildPage() {
           <div className="flex space-x-6">
             {[
               { label: "1 standard version", val: "1 version" },
-              { label: "3 versions for different roles", val: "3 versions" }
+              { label: "3 versions for different roles (₹99)", val: "3 versions" }
             ].map((opt, idx) => (
               <label key={idx} className="flex items-center space-x-2 text-sm font-medium cursor-pointer">
                 <input
@@ -1404,6 +1404,28 @@ export default function BuildPage() {
               </label>
             ))}
           </div>
+          
+          {formData.options.projectVariants === "3 versions" && (
+            <div className="mt-4 p-4 bg-primary/5 rounded-xl border border-primary/20 space-y-3">
+              <label className="block text-xs font-bold text-primary">Specify the 3 target roles to tailor for:</label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {[0, 1, 2].map((i) => (
+                  <input
+                    key={i}
+                    type="text"
+                    placeholder={`Role ${i + 1} (e.g. Frontend)`}
+                    className="w-full px-3 py-2 border border-border/50 rounded-lg bg-bg-base focus:ring-1 focus:ring-primary focus:border-transparent outline-none text-xs font-medium"
+                    value={formData.options.targetRoles?.[i] || ""}
+                    onChange={(e) => {
+                      const newRoles = [...(formData.options.targetRoles || ["", "", ""])];
+                      newRoles[i] = e.target.value;
+                      updateOptions({ targetRoles: newRoles });
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -36,16 +36,20 @@ export async function POST(req: NextRequest) {
     
     // Fetch dynamic pricing configuration from database
     let pricePaise = 4900; // default ₹49
-    try {
-      const config = await prisma.adminConfig.findUnique({
-        where: { id: "admin" }
-      });
-      if (config) {
-        const activePrice = config.isFlashOfferActive ? config.flashPrice : config.dynamicPrice;
-        pricePaise = activePrice * 100;
+    if (inputData.options?.projectVariants === "3 versions") {
+      pricePaise = 9900;
+    } else {
+      try {
+        const config = await prisma.adminConfig.findUnique({
+          where: { id: "admin" }
+        });
+        if (config) {
+          const activePrice = config.isFlashOfferActive ? config.flashPrice : config.dynamicPrice;
+          pricePaise = activePrice * 100;
+        }
+      } catch (e) {
+        console.warn("Failed to fetch price config, using default ₹49:", e);
       }
-    } catch (e) {
-      console.warn("Failed to fetch price config, using default ₹49:", e);
     }
     
     // Dynamically get the exact origin to prevent NextAuth redirect bugs if NEXT_PUBLIC_APP_URL is misconfigured

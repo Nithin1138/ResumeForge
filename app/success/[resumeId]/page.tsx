@@ -657,6 +657,64 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
               <h3 className="text-xs font-bold text-text-muted tracking-wider uppercase">ATS Project Bullet Points</h3>
             </div>
 
+            {output.projects[0]?.variants && output.projects[0].variants.length > 0 && (
+              <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex flex-wrap items-center gap-3">
+                <span className="text-xs font-bold text-primary uppercase">Global Role Switcher:</span>
+                {output.projects[0].variants.map((variant: any, vIdx: number) => {
+                  const isGloballyActive = output.projects.every((_: any, idx: number) => activeProjectVariants[idx] === vIdx);
+                  return (
+                    <button
+                      key={vIdx}
+                      onClick={() => {
+                        const newActive: Record<number, number> = {};
+                        const nextLive = JSON.parse(JSON.stringify(liveResume));
+                        const originalOutput = resume.outputFull ? (typeof resume.outputFull === 'string' ? JSON.parse(resume.outputFull) : resume.outputFull) : null;
+                        
+                        output.projects.forEach((_: any, idx: number) => {
+                          newActive[idx] = vIdx;
+                          if (originalOutput && originalOutput.projects[idx] && originalOutput.projects[idx].variants[vIdx]) {
+                            nextLive.projects[idx].bullets = [...originalOutput.projects[idx].variants[vIdx].bullets];
+                          } else if (nextLive.projects[idx].variants && nextLive.projects[idx].variants[vIdx]) {
+                            nextLive.projects[idx].bullets = [...nextLive.projects[idx].variants[vIdx].bullets];
+                          }
+                        });
+                        
+                        setActiveProjectVariants(newActive);
+                        setLiveResume(nextLive);
+                      }}
+                      className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                        isGloballyActive 
+                          ? "bg-primary text-white shadow-xs" 
+                          : "bg-surface border border-border text-text-muted hover:bg-border/30 hover:text-text"
+                      }`}
+                    >
+                      {variant.role}
+                    </button>
+                  );
+                })}
+                <button
+                  onClick={() => {
+                    setActiveProjectVariants({});
+                    const nextLive = JSON.parse(JSON.stringify(liveResume));
+                    const originalOutput = resume.outputFull ? (typeof resume.outputFull === 'string' ? JSON.parse(resume.outputFull) : resume.outputFull) : null;
+                    output.projects.forEach((_: any, idx: number) => {
+                      if (originalOutput && originalOutput.projects[idx]) {
+                        nextLive.projects[idx].bullets = [...originalOutput.projects[idx].bullets];
+                      }
+                    });
+                    setLiveResume(nextLive);
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                    Object.keys(activeProjectVariants).length === 0
+                      ? "bg-text text-bg-base shadow-xs"
+                      : "bg-surface border border-border text-text-muted hover:bg-border/30 hover:text-text"
+                  }`}
+                >
+                  Standard (All)
+                </button>
+              </div>
+            )}
+
           {output.projects.map((proj, idx) => {
             const blockId = `proj_${idx}`;
             const projText = `${proj.title} (${proj.techStack})\n${proj.bullets.map(b => `- ${b}`).join("\n")}`;

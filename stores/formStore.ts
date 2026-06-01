@@ -79,6 +79,7 @@ const initialFormData: ResumeFormData = {
     jobDescription: "",
     tone: "Professional & Formal",
     projectVariants: "1 version",
+    targetRoles: ["", "", ""],
     noProjects: false,
   },
 };

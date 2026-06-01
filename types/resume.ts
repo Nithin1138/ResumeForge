@@ -57,6 +57,7 @@ export interface FinalOptions {
   jobDescription: string;
   tone: "Professional & Formal" | "Modern & Concise" | "Technical & Detailed";
   projectVariants: "1 version" | "3 versions";
+  targetRoles?: string[];
   noProjects?: boolean;
 }
 
