@@ -202,7 +202,7 @@ export default function LandingPage() {
       `}} />
       <div className={`flex flex-col min-h-screen transition-opacity duration-300 font-sans ${
         landingVariant === "dashboard" ? "bg-[#080b0c] text-[#eae9e5] selection:bg-primary/30" : "bg-bg-base text-text selection:bg-primary/20"
-      } ${!isConfigLoaded ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+      }`}>
       {isBannerActive && (
         <div className={`w-full text-center py-2 px-4 text-xs font-bold font-sans flex items-center justify-center gap-2 relative z-50 border-b ${
           landingVariant === "dashboard"
