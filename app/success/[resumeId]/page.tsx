@@ -96,6 +96,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [includeCertifications, setIncludeCertifications] = useState(true);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [activeProjectVariants, setActiveProjectVariants] = useState<Record<number, number>>({});
+  const [scoreMode, setScoreMode] = useState<"resume" | "role">("resume");
   
   const [customTone, setCustomTone] = useState<string>("Professional & Formal");
   const [customJD, setCustomJD] = useState<string>("");
@@ -336,27 +337,27 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   }
 
   // Handle case where user tries to access success page directly without payment
-  if (resume.paymentStatus !== "PAID") {
+  if (resume.paymentStatus !== "PAID" && !isSandbox) {
     return (
       <div className="min-h-screen bg-bg-base text-text flex flex-col items-center justify-center font-sans p-6 text-center">
         <Lock className="w-12 h-12 text-warning mb-4" />
-        <h2 className="text-xl font-bold mb-2">Content is Locked</h2>
-        <p className="text-sm text-text-muted max-w-md mb-6">
-          Payment has not been confirmed for this resume record yet. Please complete checkout to unlock your ATS content.
-        </p>
+        <h2 className="text-xl font-bold mb-2">Resume Locked</h2>
+        <p className="text-sm text-text-muted max-w-sm mb-6">You need to complete payment to view your full resume.</p>
         <Link href={`/result/${resumeId}`} className="px-6 py-3 bg-primary text-white rounded-full font-bold text-sm">
-          Go to Checkout page
+          Go to Checkout
         </Link>
       </div>
     );
   }
 
-  const displayAtsScore = dynamicMetrics?.atsScore || 84;
-  const displayBreakdown = dynamicMetrics?.breakdown || output!.breakdown;
   const activeVariant = output?.variantMetrics?.[activeRoleIndex];
-  const displayStrengths = activeVariant?.strengths?.length ? activeVariant.strengths : (output?.strengths?.length ? output.strengths : dynamicMetrics?.strengths || []);
-  const displayWeaknesses = activeVariant?.weaknesses?.length ? activeVariant.weaknesses : (output?.weaknesses?.length ? output.weaknesses : dynamicMetrics?.weaknesses || []);
-  const displayImprovements = activeVariant?.improvements?.length ? activeVariant.improvements : (output?.improvements?.length ? output.improvements : dynamicMetrics?.improvements || []);
+  
+  const displayAtsScore = scoreMode === "role" && activeVariant ? activeVariant.atsScore : (output!.atsScore || dynamicMetrics?.atsScore || 84);
+  const displayBreakdown = scoreMode === "role" && activeVariant ? activeVariant.breakdown : (output!.breakdown || dynamicMetrics?.breakdown);
+  
+  const displayStrengths = scoreMode === "role" && activeVariant?.strengths?.length ? activeVariant.strengths : (output?.strengths?.length ? output.strengths : dynamicMetrics?.strengths || []);
+  const displayWeaknesses = scoreMode === "role" && activeVariant?.weaknesses?.length ? activeVariant.weaknesses : (output?.weaknesses?.length ? output.weaknesses : dynamicMetrics?.weaknesses || []);
+  const displayImprovements = scoreMode === "role" && activeVariant?.improvements?.length ? activeVariant.improvements : (output?.improvements?.length ? output.improvements : dynamicMetrics?.improvements || []);
 
   // Format the full plain-text version ready for clean Copy All operations
   const fullPlainTextContent = `
@@ -479,7 +480,23 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
           {/* ATS Score Header Card */}
           <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:justify-between gap-6 shadow-xs print:hidden">
             <div className="text-center md:text-left space-y-2 max-w-md">
-              <h1 className="text-2xl md:text-3xl font-bold font-sans">ATSLift Score Engine v2.0</h1>
+            <div className="flex flex-col sm:flex-row items-center md:items-start sm:items-center gap-3">
+              <h1 className="text-2xl md:text-3xl font-bold font-sans">ATSLift Score Engine</h1>
+              <div className="flex bg-primary/10 rounded-full p-1 border border-primary/20 mt-1 sm:mt-0">
+                <button 
+                  onClick={() => setScoreMode("resume")} 
+                  className={`text-[10px] font-bold uppercase px-3 py-1 rounded-full transition-all ${scoreMode === "resume" ? "bg-primary text-white" : "text-primary hover:bg-primary/5 cursor-pointer"}`}
+                >
+                  Resume
+                </button>
+                <button 
+                  onClick={() => setScoreMode("role")} 
+                  className={`text-[10px] font-bold uppercase px-3 py-1 rounded-full transition-all ${scoreMode === "role" ? "bg-primary text-white" : "text-primary hover:bg-primary/5 cursor-pointer"}`}
+                >
+                  Job Role
+                </button>
+              </div>
+            </div>
               <p className="text-sm text-text-muted leading-relaxed font-medium">
                 We have completed a deterministic, category-based evaluation of your resume's technical strength, keyword alignment, and recruiter readability.
               </p>

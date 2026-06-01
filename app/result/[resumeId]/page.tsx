@@ -20,6 +20,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [activeRoleIndex, setActiveRoleIndex] = useState(0);
   const [isVerificationModalOpen, setVerificationModalOpen] = useState(false);
+  const [scoreMode, setScoreMode] = useState<"resume" | "role">("resume");
 
   const parsedOutput = resume?.outputFull 
     ? (typeof resume.outputFull === "string" ? JSON.parse(resume.outputFull) : resume.outputFull)
@@ -141,13 +142,15 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
     }
     return null;
   }
-
-  const displayAtsScore = dynamicMetrics?.atsScore || 84;
-  const displayBreakdown = dynamicMetrics?.breakdown || output!.breakdown;
+  
   const activeVariant = output?.variantMetrics?.[activeRoleIndex];
-  const displayStrengths = activeVariant?.strengths?.length ? activeVariant.strengths : (output?.strengths?.length ? output.strengths : dynamicMetrics?.strengths || []);
-  const displayWeaknesses = activeVariant?.weaknesses?.length ? activeVariant.weaknesses : (output?.weaknesses?.length ? output.weaknesses : dynamicMetrics?.weaknesses || []);
-  const displayImprovements = activeVariant?.improvements?.length ? activeVariant.improvements : (output?.improvements?.length ? output.improvements : dynamicMetrics?.improvements || []);
+  
+  const displayAtsScore = scoreMode === "role" && activeVariant ? activeVariant.atsScore : (output!.atsScore || dynamicMetrics?.atsScore || 84);
+  const displayBreakdown = scoreMode === "role" && activeVariant ? activeVariant.breakdown : (output!.breakdown || dynamicMetrics?.breakdown);
+  
+  const displayStrengths = scoreMode === "role" && activeVariant?.strengths?.length ? activeVariant.strengths : (output?.strengths?.length ? output.strengths : dynamicMetrics?.strengths || []);
+  const displayWeaknesses = scoreMode === "role" && activeVariant?.weaknesses?.length ? activeVariant.weaknesses : (output?.weaknesses?.length ? output.weaknesses : dynamicMetrics?.weaknesses || []);
+  const displayImprovements = scoreMode === "role" && activeVariant?.improvements?.length ? activeVariant.improvements : (output?.improvements?.length ? output.improvements : dynamicMetrics?.improvements || []);
 
   const freePreview = output!.freeTierPreview || {
     summary: (output!.summary || "A highly motivated professional with extensive experience.").split(".")[0] + ".",
@@ -216,7 +219,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
         {!isVerificationModalOpen && (
           <>
         {/* Global Role Switcher (Dynamic Metrics) */}
-        {output.variantMetrics && output.variantMetrics.length > 0 && (
+        {scoreMode === "role" && output.variantMetrics && output.variantMetrics.length > 0 && (
           <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex flex-wrap items-center gap-3 shadow-xs">
             <span className="text-xs font-bold text-primary uppercase">Select Role:</span>
             {output.variantMetrics.map((variant, vIdx) => {
@@ -241,7 +244,23 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
         {/* ATS Score Header Card */}
         <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:justify-between gap-6 shadow-xs">
           <div className="text-center md:text-left space-y-2 max-w-md">
-            <h1 className="text-2xl md:text-3xl font-bold font-sans">ATSLift Score Engine v2.0</h1>
+            <div className="flex flex-col sm:flex-row items-center md:items-start sm:items-center gap-3">
+              <h1 className="text-2xl md:text-3xl font-bold font-sans">ATSLift Score Engine</h1>
+              <div className="flex bg-primary/10 rounded-full p-1 border border-primary/20 mt-1 sm:mt-0">
+                <button 
+                  onClick={() => setScoreMode("resume")} 
+                  className={`text-[10px] font-bold uppercase px-3 py-1 rounded-full transition-all ${scoreMode === "resume" ? "bg-primary text-white" : "text-primary hover:bg-primary/5 cursor-pointer"}`}
+                >
+                  Resume
+                </button>
+                <button 
+                  onClick={() => setScoreMode("role")} 
+                  className={`text-[10px] font-bold uppercase px-3 py-1 rounded-full transition-all ${scoreMode === "role" ? "bg-primary text-white" : "text-primary hover:bg-primary/5 cursor-pointer"}`}
+                >
+                  Job Role
+                </button>
+              </div>
+            </div>
             <p className="text-sm text-text-muted leading-relaxed font-medium">
               We have completed a deterministic, category-based evaluation of your resume's technical strength, keyword alignment, and recruiter readability.
             </p>
