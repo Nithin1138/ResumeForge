@@ -162,10 +162,14 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
           }
         }
 
-        // Retry fetch up to 10 times if payment status isn't PAID to allow time for Razorpay webhooks
+        // Retry fetch up to 10 times if payment status isn't PAID (only if returning from checkout)
         let data = null;
         let retries = 0;
-        const maxRetries = 12; // Wait up to 12 seconds
+        
+        // If they have a paymentId, they just returned from checkout, so wait up to 12s for webhook.
+        // Otherwise, just check once and fail fast.
+        const hasPaymentId = !!searchParams.get("razorpay_payment_id");
+        const maxRetries = (hasPaymentId || isSandbox) ? 12 : 1; 
         
         while (retries < maxRetries) {
           const res = await fetch(`/api/resume/${resumeId}`, {
