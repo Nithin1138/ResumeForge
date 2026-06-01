@@ -16,6 +16,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const [session, setSession] = useState<any>(null);
   const [price, setPrice] = useState(49);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
+  const [activeRoleIndex, setActiveRoleIndex] = useState(0);
 
   useEffect(() => {
     setSession(getLocalSession());
@@ -127,11 +128,19 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   }
 
   const output: FullResumeOutput = resume.outputFull;
+  
+  const activeMetrics = output.variantMetrics?.[activeRoleIndex];
+  const displayAtsScore = activeMetrics?.atsScore || output.atsScore || 84;
+  const displayBreakdown = activeMetrics?.breakdown || output.breakdown;
+  const displayStrengths = activeMetrics?.strengths || output.strengths || [];
+  const displayWeaknesses = activeMetrics?.weaknesses || output.weaknesses || [];
+  const displayImprovements = activeMetrics?.improvements || output.improvements || [];
+
   const freePreview = output.freeTierPreview || {
     summary: output.summary.split(".")[0] + ".",
     firstProject: {
-      title: output.projects[0]?.title || "Academic Project",
-      bullet: output.projects[0]?.bullets[0] || "Optimized core features of the system."
+      title: output.projects?.[0]?.title || "Academic Project",
+      bullet: output.projects?.[0]?.bullets?.[0] || "Optimized core features of the system."
     }
   };
 
@@ -190,6 +199,30 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
 
         {/* ── RIGHT: Only this column scrolls ── */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-36 flex flex-col gap-6">
+        
+        {/* Global Role Switcher (Dynamic Metrics) */}
+        {output.variantMetrics && output.variantMetrics.length > 0 && (
+          <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex flex-wrap items-center gap-3 shadow-xs">
+            <span className="text-xs font-bold text-primary uppercase">Select Role:</span>
+            {output.variantMetrics.map((variant, vIdx) => {
+              const isActive = activeRoleIndex === vIdx;
+              return (
+                <button
+                  key={vIdx}
+                  onClick={() => setActiveRoleIndex(vIdx)}
+                  className={`text-[10px] font-extrabold uppercase px-3 py-1.5 rounded-full transition-all border cursor-pointer ${
+                    isActive 
+                      ? "bg-primary text-white border-primary shadow-md shadow-primary/20" 
+                      : "bg-bg-base text-text-muted border-border hover:border-primary/50"
+                  }`}
+                >
+                  {variant.role}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
         {/* ATS Score Header Card */}
         <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:justify-between gap-6 shadow-xs">
           <div className="text-center md:text-left space-y-2 max-w-md">
@@ -213,12 +246,12 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                   stroke="#437a22"
                   fill="transparent"
                   strokeDasharray="301.6"
-                  strokeDashoffset={301.6 - (301.6 * (output.atsScore || 84)) / 100}
+                  strokeDashoffset={301.6 - (301.6 * displayAtsScore) / 100}
                   className="transition-all duration-1000 ease-out"
                 />
               </svg>
               <div className="absolute flex flex-col items-center">
-                <span className="text-2xl font-black font-mono leading-none">{output.atsScore || 84}</span>
+                <span className="text-2xl font-black font-mono leading-none">{displayAtsScore}</span>
                 <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider mt-0.5">ATS Score</span>
               </div>
             </div>
@@ -226,33 +259,33 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
         </div>
 
         {/* Detailed Score Breakdown */}
-        {output.breakdown && (
+        {displayBreakdown && (
           <div className="bg-surface border border-border rounded-2xl p-6 space-y-4">
             <h2 className="font-bold text-base text-text">Category Breakdown</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div className="p-3 bg-bg-base rounded-xl border border-border/50">
                 <div className="text-xs text-text-muted font-semibold mb-1">Keyword Match</div>
-                <div className="text-lg font-bold text-primary">{output.breakdown.keywordMatch}/30</div>
+                <div className="text-lg font-bold text-primary">{displayBreakdown.keywordMatch}/30</div>
               </div>
               <div className="p-3 bg-bg-base rounded-xl border border-border/50">
                 <div className="text-xs text-text-muted font-semibold mb-1">ATS Compatibility</div>
-                <div className="text-lg font-bold text-primary">{output.breakdown.atsCompatibility}/25</div>
+                <div className="text-lg font-bold text-primary">{displayBreakdown.atsCompatibility}/25</div>
               </div>
               <div className="p-3 bg-bg-base rounded-xl border border-border/50">
                 <div className="text-xs text-text-muted font-semibold mb-1">Technical Strength</div>
-                <div className="text-lg font-bold text-primary">{output.breakdown.technicalStrength}/15</div>
+                <div className="text-lg font-bold text-primary">{displayBreakdown.technicalStrength}/15</div>
               </div>
               <div className="p-3 bg-bg-base rounded-xl border border-border/50">
                 <div className="text-xs text-text-muted font-semibold mb-1">Project Quality</div>
-                <div className="text-lg font-bold text-primary">{output.breakdown.projectQuality}/15</div>
+                <div className="text-lg font-bold text-primary">{displayBreakdown.projectQuality}/15</div>
               </div>
               <div className="p-3 bg-bg-base rounded-xl border border-border/50">
                 <div className="text-xs text-text-muted font-semibold mb-1">Readability</div>
-                <div className="text-lg font-bold text-primary">{output.breakdown.recruiterReadability}/10</div>
+                <div className="text-lg font-bold text-primary">{displayBreakdown.recruiterReadability}/10</div>
               </div>
               <div className="p-3 bg-bg-base rounded-xl border border-border/50">
                 <div className="text-xs text-text-muted font-semibold mb-1">Credibility</div>
-                <div className="text-lg font-bold text-primary">{output.breakdown.experienceCredibility}/5</div>
+                <div className="text-lg font-bold text-primary">{displayBreakdown.experienceCredibility}/5</div>
               </div>
             </div>
           </div>
@@ -266,7 +299,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
               <h2 className="font-bold text-base">Key Strengths</h2>
             </div>
             <ul className="space-y-2 list-disc pl-5 text-sm text-text font-medium">
-              {(output.strengths || []).map((item, idx) => (
+              {displayStrengths.map((item, idx) => (
                 <li key={idx}>{item}</li>
               ))}
             </ul>
@@ -278,7 +311,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
               <h2 className="font-bold text-base">Weaknesses</h2>
             </div>
             <ul className="space-y-2 list-disc pl-5 text-sm text-text font-medium">
-              {(output.weaknesses || []).map((item, idx) => (
+              {displayWeaknesses.map((item, idx) => (
                 <li key={idx}>{item}</li>
               ))}
             </ul>
@@ -291,7 +324,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
             <h2 className="font-bold text-base">Actionable Improvements (Free Included)</h2>
           </div>
           <ul className="space-y-2 list-disc pl-5 text-sm text-text font-medium">
-            {(output.improvements || []).map((item, idx) => (
+            {displayImprovements.map((item, idx) => (
               <li key={idx}>{item}</li>
             ))}
           </ul>
@@ -320,7 +353,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
               <div>
                 <span className="text-[10px] font-extrabold text-primary uppercase block mb-1.5">{output.skills[0]?.category || "Core Skills"}</span>
                 <div className="flex flex-wrap gap-2">
-                  {(output.skills[0]?.skills || []).map((skill, idx) => (
+                  {(output.skills?.[0]?.skills || []).map((skill, idx) => (
                     <span key={idx} className="text-xs bg-bg-base border border-border/80 px-2.5 py-1 rounded-md font-semibold text-text">
                       {skill}
                     </span>
@@ -360,7 +393,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                 <div className="flex justify-between items-center">
                   <h4 className="font-bold text-sm text-primary">{freePreview.firstProject.title}</h4>
                   <span className="text-[10px] bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full font-bold text-primary">
-                    {output.projects[0]?.techStack.split(",").slice(0, 2).join(", ") || "Active Tech"}
+                    {output.projects?.[0]?.techStack?.split(",").slice(0, 2).join(", ") || "Active Tech"}
                   </span>
                 </div>
                 <ul className="list-disc pl-4 space-y-1.5 text-xs font-medium leading-relaxed">
@@ -372,7 +405,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
               </div>
 
               {/* Locked Project Cards */}
-              {output.projects.length > 1 && (
+              {(output.projects || []).length > 1 && (
                 <div className="border border-dashed border-border/60 bg-bg-base/10 rounded-xl p-4 opacity-40 blur-[2.5px] select-none">
                   <h4 className="font-bold text-sm text-text-muted">{output.projects[1].title}</h4>
                   <p className="text-xs mt-1">Locked project bullets optimized for placements...</p>

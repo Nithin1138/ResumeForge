@@ -138,6 +138,32 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
       "Your skills category for programming languages is strong, consider adding certification badges for your cloud tools.",
       "Good quantification of results. Make sure to describe the database schemas under the experience bullets in the final Word doc."
     ],
+    variantMetrics: options?.projectVariants === "3 versions" ? [
+      {
+        role: options?.targetRoles?.[0] || "Software Engineer",
+        atsScore: 92,
+        breakdown: { keywordMatch: 29, atsCompatibility: 25, technicalStrength: 14, projectQuality: 14, recruiterReadability: 8, experienceCredibility: 2 },
+        strengths: ["Highly aligned to primary role", "Excellent framework usage"],
+        weaknesses: ["Could add more system design terms"],
+        improvements: ["Add a caching layer implementation detail."]
+      },
+      {
+        role: options?.targetRoles?.[1] || "Data Analyst",
+        atsScore: 85,
+        breakdown: { keywordMatch: 22, atsCompatibility: 25, technicalStrength: 13, projectQuality: 14, recruiterReadability: 8, experienceCredibility: 3 },
+        strengths: ["Strong data processing skills"],
+        weaknesses: ["Missing visualization keywords"],
+        improvements: ["Mention tools like Tableau or PowerBI."]
+      },
+      {
+        role: options?.targetRoles?.[2] || "Backend Engineer",
+        atsScore: 88,
+        breakdown: { keywordMatch: 26, atsCompatibility: 25, technicalStrength: 14, projectQuality: 14, recruiterReadability: 7, experienceCredibility: 2 },
+        strengths: ["Good API design metrics"],
+        weaknesses: ["Lacking database scaling examples"],
+        improvements: ["Quantify database query optimization."]
+      }
+    ] : undefined,
     freeTierPreview: {
       summary: `Motivated B.Tech student in ${branchName} at ${collegeName} (CGPA: ${cgpaValue}/10.0), specializing in ${targetRole}.`,
       firstProject: {
@@ -243,7 +269,7 @@ Your output must strictly follow these rules:
 12. Avoid fake corporate buzzwords or exaggerated claims inside project bullet points.
 13. IMPORTANT FOR TIPS: Do NOT give tips about resume structure, adding keywords, or formatting (since this app handles the formatting for them). The \`atsTips\` should strictly contain highly personalized CAREER and SKILL improvement advice based on their exact input.
 14. TONE ADAPTATION: Adapt your writing style precisely to the TONE PREFERENCE specified by the user.
-15. PROJECT VARIANTS: If PROJECT VARIANTS PREFERENCE is "3 versions for different roles", for EACH project, you MUST provide 3 distinct versions of the bullets tailored to different roles (e.g., Software Engineer, Data Analyst, Product Manager) inside a "variants" array. The standard "bullets" array must still have the primary version.
+15. PROJECT VARIANTS: If PROJECT VARIANTS PREFERENCE is "3 versions for different roles", for EACH project, you MUST provide 3 distinct versions of the bullets tailored to different roles (e.g., Software Engineer, Data Analyst, Product Manager) inside a "variants" array. The standard "bullets" array must still have the primary version. ADDITIONALLY, you MUST include a "variantMetrics" array at the root level containing exactly 3 objects with role-specific "role", "atsScore", "breakdown", "strengths", "weaknesses", and "improvements".
 16. ATS SCORE ENGINE v2.0:
     Calculate the ATS score deterministically using fixed weighted categories. DO NOT GUESS.
     - Category 1: Keyword Match & Role Alignment (30 Points). Evaluate required tech, domain terms. 0-10 weak, 11-20 moderate, 21-30 strong.
@@ -438,6 +464,23 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
   "improvements": [
     "Add a project demonstrating backend cloud deployment.",
     "Quantify your contribution in the college club role."
+  ],
+  "variantMetrics": [
+    {
+      "role": "Frontend Engineer",
+      "atsScore": 86,
+      "breakdown": {
+        "keywordMatch": 25,
+        "atsCompatibility": 23,
+        "technicalStrength": 12,
+        "projectQuality": 14,
+        "recruiterReadability": 8,
+        "experienceCredibility": 4
+      },
+      "strengths": ["Strong frontend skills."],
+      "weaknesses": ["Missing backend experience."],
+      "improvements": ["Add Node.js project."]
+    }
   ],
   "freeTierPreview": {
     "summary": "First sentence of summary only...",

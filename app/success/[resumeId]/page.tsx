@@ -338,6 +338,14 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
 
   const output: FullResumeOutput = liveResume || resume.outputFull;
   
+  const activeRoleIndex = activeProjectVariants[0] || 0;
+  const activeMetrics = output?.variantMetrics?.[activeRoleIndex];
+  const displayAtsScore = activeMetrics?.atsScore || output?.atsScore || 84;
+  const displayBreakdown = activeMetrics?.breakdown || output?.breakdown;
+  const displayStrengths = activeMetrics?.strengths || output?.strengths || [];
+  const displayWeaknesses = activeMetrics?.weaknesses || output?.weaknesses || [];
+  const displayImprovements = activeMetrics?.improvements || output?.improvements || [];
+
   // Format the full plain-text version ready for clean Copy All operations
   const fullPlainTextContent = `
 ${resume.inputData.personal.fullName.toUpperCase()}
@@ -349,28 +357,28 @@ PROFESSIONAL SUMMARY
 ${output.summary}
 
 TECHNICAL SKILLS
-${output.skills.map(s => `- ${s.category}: ${s.skills.join(", ")}`).join("\n")}
+${(output.skills || []).map(s => `- ${s.category}: ${(s.skills || []).join(", ")}`).join("\n")}
 
 PROJECTS
-${output.projects.map(proj => `
+${(output.projects || []).map(proj => `
 ${proj.title} (${proj.techStack})
 ${proj.duration ? `Duration: ${proj.duration}\n` : ""}${proj.bullets.map(b => `- ${b}`).join("\n")}
 `).join("\n")}
-${output.experience.length > 0 ? `
+${(output.experience || []).length > 0 ? `
 EXPERIENCE
-${output.experience.map(exp => `
+${(output.experience || []).map(exp => `
 ${exp.company} - ${exp.role} (${exp.duration})
-${exp.bullets.map(b => `- ${b}`).join("\n")}
+${(exp.bullets || []).map(b => `- ${b}`).join("\n")}
 `).join("\n")}
-` : ""}${output.positions.length > 0 ? `
+` : ""}${(output.positions || []).length > 0 ? `
 POSITIONS OF RESPONSIBILITY
-${output.positions.map(pos => `
+${(output.positions || []).map(pos => `
 ${pos.title} - ${pos.organization}
 - ${pos.bullet}
 `).join("\n")}
-` : ""}${output.achievements.length > 0 ? `
+` : ""}${(output.achievements || []).length > 0 ? `
 ACHIEVEMENTS
-${output.achievements.map(ach => `- ${ach}`).join("\n")}
+${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
 ` : ""}
   `.trim();
 
@@ -479,12 +487,12 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
                     stroke="#437a22"
                     fill="transparent"
                     strokeDasharray="301.6"
-                    strokeDashoffset={301.6 - (301.6 * (output.atsScore || 84)) / 100}
+                    strokeDashoffset={301.6 - (301.6 * displayAtsScore) / 100}
                     className="transition-all duration-1000 ease-out"
                   />
                 </svg>
                 <div className="absolute flex flex-col items-center">
-                  <span className="text-2xl font-black font-mono leading-none">{output.atsScore || 84}</span>
+                  <span className="text-2xl font-black font-mono leading-none">{displayAtsScore}</span>
                   <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider mt-0.5">ATS Score</span>
                 </div>
               </div>
@@ -492,33 +500,33 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
           </div>
 
           {/* Detailed Score Breakdown */}
-          {output.breakdown && (
+          {displayBreakdown && (
             <div className="bg-surface border border-border rounded-2xl p-6 space-y-4 print:hidden">
               <h2 className="font-bold text-base text-text">Category Breakdown</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="p-3 bg-bg-base rounded-xl border border-border/50">
                   <div className="text-xs text-text-muted font-semibold mb-1">Keyword Match</div>
-                  <div className="text-lg font-bold text-primary">{output.breakdown.keywordMatch}/30</div>
+                  <div className="text-lg font-bold text-primary">{displayBreakdown.keywordMatch}/30</div>
                 </div>
                 <div className="p-3 bg-bg-base rounded-xl border border-border/50">
                   <div className="text-xs text-text-muted font-semibold mb-1">ATS Compatibility</div>
-                  <div className="text-lg font-bold text-primary">{output.breakdown.atsCompatibility}/25</div>
+                  <div className="text-lg font-bold text-primary">{displayBreakdown.atsCompatibility}/25</div>
                 </div>
                 <div className="p-3 bg-bg-base rounded-xl border border-border/50">
                   <div className="text-xs text-text-muted font-semibold mb-1">Technical Strength</div>
-                  <div className="text-lg font-bold text-primary">{output.breakdown.technicalStrength}/15</div>
+                  <div className="text-lg font-bold text-primary">{displayBreakdown.technicalStrength}/15</div>
                 </div>
                 <div className="p-3 bg-bg-base rounded-xl border border-border/50">
                   <div className="text-xs text-text-muted font-semibold mb-1">Project Quality</div>
-                  <div className="text-lg font-bold text-primary">{output.breakdown.projectQuality}/15</div>
+                  <div className="text-lg font-bold text-primary">{displayBreakdown.projectQuality}/15</div>
                 </div>
                 <div className="p-3 bg-bg-base rounded-xl border border-border/50">
                   <div className="text-xs text-text-muted font-semibold mb-1">Readability</div>
-                  <div className="text-lg font-bold text-primary">{output.breakdown.recruiterReadability}/10</div>
+                  <div className="text-lg font-bold text-primary">{displayBreakdown.recruiterReadability}/10</div>
                 </div>
                 <div className="p-3 bg-bg-base rounded-xl border border-border/50">
                   <div className="text-xs text-text-muted font-semibold mb-1">Credibility</div>
-                  <div className="text-lg font-bold text-primary">{output.breakdown.experienceCredibility}/5</div>
+                  <div className="text-lg font-bold text-primary">{displayBreakdown.experienceCredibility}/5</div>
                 </div>
               </div>
             </div>
@@ -532,7 +540,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
                 <h2 className="font-bold text-base">Key Strengths</h2>
               </div>
               <ul className="space-y-2 list-disc pl-5 text-sm text-text font-medium">
-                {(output.strengths || []).map((item, idx) => (
+                {displayStrengths.map((item: string, idx: number) => (
                   <li key={idx}>{item}</li>
                 ))}
               </ul>
@@ -544,7 +552,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
                 <h2 className="font-bold text-base">Weaknesses</h2>
               </div>
               <ul className="space-y-2 list-disc pl-5 text-sm text-text font-medium">
-                {(output.weaknesses || []).map((item, idx) => (
+                {displayWeaknesses.map((item: string, idx: number) => (
                   <li key={idx}>{item}</li>
                 ))}
               </ul>
@@ -557,7 +565,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
               <h2 className="font-bold text-base">ATS Improvement Tips (Included Free)</h2>
             </div>
             <ul className="space-y-3">
-              {(output.improvements || []).map((tip: string, idx: number) => (
+              {displayImprovements.map((tip: string, idx: number) => (
                 <li key={idx} className="flex items-start space-x-2.5 text-xs text-text font-medium leading-relaxed">
                   <span className="w-5 h-5 rounded-full bg-primary/10 border border-primary/25 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
                     {idx + 1}
@@ -635,11 +643,11 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {output.skills.map((cat, idx) => (
+            {(output.skills || []).map((cat, idx) => (
               <div key={idx} className="space-y-2">
                 <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{cat.category}</span>
                 <div className="flex flex-wrap gap-2">
-                  {cat.skills.map((skillName, sIdx) => (
+                  {(cat.skills || []).map((skillName, sIdx) => (
                     <span key={sIdx} className="text-xs bg-bg-base border border-border px-2.5 py-1 rounded-md font-bold text-text">
                       {skillName}
                     </span>
@@ -661,7 +669,7 @@ ${output.achievements.map(ach => `- ${ach}`).join("\n")}
               <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex flex-wrap items-center gap-3">
                 <span className="text-xs font-bold text-primary uppercase">Global Role Switcher:</span>
                 {output.projects[0].variants.map((variant: any, vIdx: number) => {
-                  const isGloballyActive = output.projects.every((_: any, idx: number) => activeProjectVariants[idx] === vIdx);
+                  const isGloballyActive = activeRoleIndex === vIdx;
                   return (
                     <button
                       key={vIdx}

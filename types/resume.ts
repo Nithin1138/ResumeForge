@@ -79,6 +79,22 @@ export interface FreeTierPreview {
   };
 }
 
+export interface VariantMetric {
+  role: string;
+  atsScore: number;
+  breakdown: {
+    keywordMatch: number;
+    atsCompatibility: number;
+    technicalStrength: number;
+    projectQuality: number;
+    recruiterReadability: number;
+    experienceCredibility: number;
+  };
+  strengths: string[];
+  weaknesses: string[];
+  improvements: string[];
+}
+
 export interface FullResumeOutput {
   summary: string;
   skills: {
@@ -132,5 +148,6 @@ export interface FullResumeOutput {
   strengths: string[];
   weaknesses: string[];
   improvements: string[];
+  variantMetrics?: VariantMetric[];
   freeTierPreview: FreeTierPreview;
 }
