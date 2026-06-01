@@ -124,37 +124,39 @@ Resume:
         </div>
 
         {/* Horizontal Timeline */}
-        <div className="flex flex-col justify-between items-start relative mb-10 space-y-6">
+        <div className="flex flex-col md:flex-row justify-center items-start md:items-center relative mb-8 gap-4 md:gap-2 max-w-4xl mx-auto">
           
-          <div className="relative z-10 flex flex-row items-center text-left w-full gap-4">
-            <div className="w-10 h-10 rounded-full bg-bg-base border-2 border-border flex items-center justify-center font-bold text-text shrink-0">1</div>
-            <div>
-              <p className="text-xs font-bold text-text">Copy Current Resume</p>
-            </div>
+          <div className="flex flex-row md:flex-col items-center text-left md:text-center gap-3 md:gap-2 flex-1 w-full md:w-auto">
+            <div className="w-8 h-8 rounded-full bg-bg-base border border-border flex items-center justify-center font-bold text-text text-[10px] shrink-0">1</div>
+            <p className="text-[11px] font-bold text-text leading-tight">Copy Current Resume</p>
           </div>
-          <div className="relative z-10 flex flex-row items-center text-left w-full gap-4">
-            <div className="w-10 h-10 rounded-full bg-bg-base border-2 border-border flex items-center justify-center font-bold text-text shrink-0">2</div>
-            <div>
-              <p className="text-xs font-bold text-text">Analyze Using AI</p>
-            </div>
+          
+          <div className="hidden md:block w-6 h-px bg-border/60 shrink-0" />
+          
+          <div className="flex flex-row md:flex-col items-center text-left md:text-center gap-3 md:gap-2 flex-1 w-full md:w-auto">
+            <div className="w-8 h-8 rounded-full bg-bg-base border border-border flex items-center justify-center font-bold text-text text-[10px] shrink-0">2</div>
+            <p className="text-[11px] font-bold text-text leading-tight">Analyze Using AI</p>
           </div>
-          <div className="relative z-10 flex flex-row items-center text-left w-full gap-4">
-            <div className="w-10 h-10 rounded-full bg-primary/10 border-2 border-primary/50 text-primary flex items-center justify-center font-bold shrink-0 shadow-sm shadow-primary/10">3</div>
-            <div>
-              <p className="text-xs font-bold text-primary">Unlock ATSLift Resume</p>
-            </div>
+          
+          <div className="hidden md:block w-6 h-px bg-border/60 shrink-0" />
+
+          <div className="flex flex-row md:flex-col items-center text-left md:text-center gap-3 md:gap-2 flex-1 w-full md:w-auto">
+            <div className="w-8 h-8 rounded-full bg-primary/10 border-2 border-primary/50 text-primary flex items-center justify-center font-bold text-[10px] shrink-0 shadow-sm shadow-primary/10">3</div>
+            <p className="text-[11px] font-bold text-primary leading-tight">Unlock ATSLift Resume</p>
           </div>
-          <div className="relative z-10 flex flex-row items-center text-left w-full gap-4">
-            <div className="w-10 h-10 rounded-full bg-bg-base border-2 border-border flex items-center justify-center font-bold text-text shrink-0">4</div>
-            <div>
-              <p className="text-xs font-bold text-text">Evaluate Again</p>
-            </div>
+
+          <div className="hidden md:block w-6 h-px bg-border/60 shrink-0" />
+
+          <div className="flex flex-row md:flex-col items-center text-left md:text-center gap-3 md:gap-2 flex-1 w-full md:w-auto">
+            <div className="w-8 h-8 rounded-full bg-bg-base border border-border flex items-center justify-center font-bold text-text text-[10px] shrink-0">4</div>
+            <p className="text-[11px] font-bold text-text leading-tight">Evaluate Again</p>
           </div>
-          <div className="relative z-10 flex flex-row items-center text-left w-full gap-4">
-            <div className="w-10 h-10 rounded-full bg-bg-base border-2 border-border flex items-center justify-center font-bold text-text shrink-0">5</div>
-            <div>
-              <p className="text-xs font-bold text-text">Compare Results</p>
-            </div>
+
+          <div className="hidden md:block w-6 h-px bg-border/60 shrink-0" />
+
+          <div className="flex flex-row md:flex-col items-center text-left md:text-center gap-3 md:gap-2 flex-1 w-full md:w-auto">
+            <div className="w-8 h-8 rounded-full bg-bg-base border border-border flex items-center justify-center font-bold text-text text-[10px] shrink-0">5</div>
+            <p className="text-[11px] font-bold text-text leading-tight">Compare Results</p>
           </div>
         </div>
 
@@ -162,10 +164,10 @@ Resume:
         <div className="text-center pt-8 border-t border-border/50">
           <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-4">Supported AI Models</p>
           <div className="flex flex-wrap justify-center gap-3 mb-5">
-            <span className="px-4 py-2 bg-bg-base border border-border rounded-full text-xs font-semibold text-text flex items-center gap-2"><MessageSquare className="w-4 h-4" /> ChatGPT</span>
-            <span className="px-4 py-2 bg-bg-base border border-border rounded-full text-xs font-semibold text-text flex items-center gap-2"><Zap className="w-4 h-4" /> Gemini</span>
-            <span className="px-4 py-2 bg-bg-base border border-border rounded-full text-xs font-semibold text-text flex items-center gap-2"><Cpu className="w-4 h-4" /> Claude</span>
-            <span className="px-4 py-2 bg-bg-base border border-border rounded-full text-xs font-semibold text-text flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> Grok</span>
+            <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-bg-base border border-border hover:bg-border/40 hover:-translate-y-0.5 transition-all rounded-full text-[11px] font-bold text-text flex items-center gap-2 cursor-pointer shadow-xs"><MessageSquare className="w-3.5 h-3.5" /> ChatGPT</a>
+            <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-bg-base border border-border hover:bg-border/40 hover:-translate-y-0.5 transition-all rounded-full text-[11px] font-bold text-text flex items-center gap-2 cursor-pointer shadow-xs"><Zap className="w-3.5 h-3.5" /> Gemini</a>
+            <a href="https://claude.ai/" target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-bg-base border border-border hover:bg-border/40 hover:-translate-y-0.5 transition-all rounded-full text-[11px] font-bold text-text flex items-center gap-2 cursor-pointer shadow-xs"><Cpu className="w-3.5 h-3.5" /> Claude</a>
+            <a href="https://grok.com/" target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-bg-base border border-border hover:bg-border/40 hover:-translate-y-0.5 transition-all rounded-full text-[11px] font-bold text-text flex items-center gap-2 cursor-pointer shadow-xs"><ShieldCheck className="w-3.5 h-3.5" /> Grok</a>
           </div>
           <p className="text-xs text-text-muted font-medium max-w-md mx-auto">
             Use the same AI model and the same evaluation prompt before and after comparison for the most accurate results.
