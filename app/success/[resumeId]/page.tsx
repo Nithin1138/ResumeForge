@@ -4,6 +4,7 @@ import { use, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap } from "lucide-react";
+import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { FullResumeOutput } from "@/types/resume";
 import { calculateDynamicMetrics } from "@/lib/atsScoring";
@@ -486,17 +487,31 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
             <div className="text-center md:text-left space-y-2 max-w-md">
             <div className="flex flex-col sm:flex-row items-center md:items-start sm:items-center gap-3">
               <h1 className="text-2xl md:text-3xl font-bold font-sans">ATSLift Score Engine</h1>
-              <div className="flex bg-primary/10 rounded-full p-1 border border-primary/20 mt-1 sm:mt-0 w-max shrink-0">
+              <div className="relative flex bg-primary/10 rounded-full p-1 border border-primary/20 mt-1 sm:mt-0 w-max shrink-0">
                 <button 
                   onClick={() => setScoreMode("resume")} 
-                  className={`text-[10px] font-bold uppercase px-4 py-1.5 rounded-full transition-all duration-300 whitespace-nowrap cursor-pointer ${scoreMode === "resume" ? "bg-primary text-white shadow-sm" : "text-primary hover:bg-primary/10"}`}
+                  className={`relative text-[10px] font-bold uppercase px-4 py-1.5 rounded-full transition-colors duration-300 whitespace-nowrap cursor-pointer z-10 ${scoreMode === "resume" ? "text-white" : "text-primary hover:text-primary/80"}`}
                 >
+                  {scoreMode === "resume" && (
+                    <motion.div
+                      layoutId="scoreModeActivePill"
+                      className="absolute inset-0 bg-primary rounded-full shadow-sm -z-10"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
                   Resume
                 </button>
                 <button 
                   onClick={() => setScoreMode("role")} 
-                  className={`text-[10px] font-bold uppercase px-4 py-1.5 rounded-full transition-all duration-300 whitespace-nowrap cursor-pointer ${scoreMode === "role" ? "bg-primary text-white shadow-sm" : "text-primary hover:bg-primary/10"}`}
+                  className={`relative text-[10px] font-bold uppercase px-4 py-1.5 rounded-full transition-colors duration-300 whitespace-nowrap cursor-pointer z-10 ${scoreMode === "role" ? "text-white" : "text-primary hover:text-primary/80"}`}
                 >
+                  {scoreMode === "role" && (
+                    <motion.div
+                      layoutId="scoreModeActivePill"
+                      className="absolute inset-0 bg-primary rounded-full shadow-sm -z-10"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
                   Job Role
                 </button>
               </div>
