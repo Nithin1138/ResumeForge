@@ -161,45 +161,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
         <table style={{ width: "100%", borderCollapse: "collapse", borderSpacing: 0 }}>
           <thead style={{ display: "table-header-group" }}>
             <tr>
-              <td style={{ paddingTop: "64px", paddingLeft: "72px", paddingRight: "72px", paddingBottom: "13pt", border: "none" }}>
-                {/* ── HEADER (repeated on every page) ── */}
-                <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: "22pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "-0.5px", color: "#111", marginBottom: "3pt" }}>
-            {p.fullName || "Your Name"}
-          </div>
-          <div style={{
-            fontSize: "8.5pt",
-            color: "#444",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "4px 8px",
-            flexWrap: "wrap",
-            lineHeight: 1.4
-          }}>
-            {[
-              p.location && <span key="location" style={{ whiteSpace: "nowrap" }}>{p.location}</span>,
-              p.email && <span key="email" style={{ whiteSpace: "nowrap" }}>{p.email}</span>,
-              p.phone && <span key="phone" style={{ whiteSpace: "nowrap" }}>{fmtPhone(p.phone)}</span>,
-              p.linkedin && (
-                <a key="linkedin" href={`https://${fmtLinkedIn(p.linkedin)}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit", whiteSpace: "nowrap" }}>
-                  LinkedIn
-                </a>
-              ),
-              p.github && (
-                <a key="github" href={`https://${fmtGitHub(p.github)}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit", whiteSpace: "nowrap" }}>
-                  GitHub
-                </a>
-              )
-            ].filter(Boolean).map((node, idx, arr) => (
-              <span key={idx} style={{ display: "inline-flex", alignItems: "center" }}>
-                {node}
-                {idx < arr.length - 1 && <span style={{ color: "#bbb", margin: "0 8px" }}>|</span>}
-              </span>
-            ))}
-          </div>
-        </div>
-              </td>
+              <td style={{ height: "64px", padding: 0, border: "none" }}></td>
             </tr>
           </thead>
           <tfoot style={{ display: "table-footer-group" }}>
@@ -210,6 +172,44 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
           <tbody>
             <tr>
               <td style={{ paddingLeft: "72px", paddingRight: "72px", paddingBottom: "0", border: "none", verticalAlign: "top" }}>
+                {/* ── HEADER (only on first page) ── */}
+                <div style={{ textAlign: "center", marginBottom: "13pt" }}>
+                  <div style={{ fontSize: "22pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "-0.5px", color: "#111", marginBottom: "3pt" }}>
+                    {p.fullName || "Your Name"}
+                  </div>
+                  <div style={{
+                    fontSize: "8.5pt",
+                    color: "#444",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "4px 8px",
+                    flexWrap: "wrap",
+                    lineHeight: 1.4
+                  }}>
+                    {[
+                      p.location && <span key="location" style={{ whiteSpace: "nowrap" }}>{p.location}</span>,
+                      p.email && <span key="email" style={{ whiteSpace: "nowrap" }}>{p.email}</span>,
+                      p.phone && <span key="phone" style={{ whiteSpace: "nowrap" }}>{fmtPhone(p.phone)}</span>,
+                      p.linkedin && (
+                        <a key="linkedin" href={`https://${fmtLinkedIn(p.linkedin)}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit", whiteSpace: "nowrap" }}>
+                          LinkedIn
+                        </a>
+                      ),
+                      p.github && (
+                        <a key="github" href={`https://${fmtGitHub(p.github)}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit", whiteSpace: "nowrap" }}>
+                          GitHub
+                        </a>
+                      )
+                    ].filter(Boolean).map((node, idx, arr) => (
+                      <span key={idx} style={{ display: "inline-flex", alignItems: "center" }}>
+                        {node}
+                        {idx < arr.length - 1 && <span style={{ color: "#bbb", margin: "0 8px" }}>|</span>}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
         {/* ── BODY (blurred when locked) ── */}
         <div style={locked ? { filter: "blur(4px)", userSelect: "none", pointerEvents: "none" } : {}}>
 
