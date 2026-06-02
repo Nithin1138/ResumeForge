@@ -66,7 +66,9 @@ function SectionTitle({ children }: { children: string }) {
 // ── Main component ─────────────────────────────────────────────────────────
 export default function ResumePreviewPanel({ resume, output, locked, liveData, includeSummary = false, includeCertifications = true }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
+  const [contentHeight, setContentHeight] = useState(NATURAL_H);
 
   // Calculate scale to fit the A4 paper inside the wrapper
   useEffect(() => {
@@ -80,6 +82,17 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
     };
     calc();
     const ro = new ResizeObserver(calc);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // Measure actual content height to fix scroll bounds
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      setContentHeight(entries[0].target.scrollHeight);
+    });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
@@ -100,7 +113,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
   const ip = resume?.inputData || {};
 
   return (
-    <div ref={wrapperRef} className="w-full h-full flex items-start justify-center overflow-hidden">
+    <div ref={wrapperRef} className="w-full h-full flex items-start justify-center overflow-y-auto overflow-x-hidden custom-scrollbar">
       {/* 
         A4 paper at NATURAL size, then scaled with CSS transform.
         transformOrigin = top center so it stays pinned to the top.
@@ -116,18 +129,24 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             height: auto !important; /* Let it wrap content so it doesn't force a 2nd page */
             max-height: none !important;
             overflow: visible !important;
+            background-image: none !important;
           }
         }
       `}</style>
       <div
         className="print-exact"
+        ref={contentRef}
         style={{
           width: NATURAL_W,
-          height: NATURAL_H,
+          minHeight: NATURAL_H,
+          height: "auto",
           transform: `scale(${scale})`,
           transformOrigin: "top center",
+          marginBottom: `-${contentHeight * (1 - scale)}px`,
           flexShrink: 0,
           backgroundColor: "white",
+          backgroundImage: "linear-gradient(to bottom, transparent 1122px, #cbd5e1 1122px, #cbd5e1 1124px)",
+          backgroundSize: `100% ${NATURAL_H}px`,
           boxShadow: "0 4px 32px rgba(0,0,0,0.18)",
           borderRadius: 3,
           overflow: "hidden",
