@@ -12,6 +12,8 @@ import { getLocalSession } from "@/lib/authClient";
 import ResumePreviewPanel from "@/components/ResumePreviewPanel";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+export const dynamic = 'force-dynamic';
+
 // Helper functions to format URLs for print view
 const formatLinkedIn = (url: string) => {
   if (!url) return "";
