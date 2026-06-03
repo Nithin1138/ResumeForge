@@ -292,18 +292,18 @@ export default function LandingPage() {
                     <span>ATS Grader Demo</span>
                     <ArrowRight className="w-4 h-4 opacity-50" />
                   </Link>
-                  <a 
-                    href="#about" 
-                    onClick={() => { setMobileMenuOpen(false); document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }); }} 
+                  <Link 
+                    href="/about" 
+                    onClick={() => setMobileMenuOpen(false)} 
                     className={`text-lg font-bold flex items-center justify-between py-2 border-b transition-colors duration-300 ${
                       landingVariant === "dashboard"
                         ? "text-[#9f9d98] hover:text-[#00e1ec] border-[#20292b]"
                         : "text-text-muted hover:text-text border-border/30"
                     }`}
                   >
-                    <span>About</span>
+                    <span>About Us</span>
                     <ArrowRight className="w-4 h-4 opacity-50" />
-                  </a>
+                  </Link>
                   <a 
                     href="#faq" 
                     onClick={() => { setMobileMenuOpen(false); document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' }); }} 
