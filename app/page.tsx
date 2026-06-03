@@ -1251,16 +1251,18 @@ export default function LandingPage() {
               <div className="flex items-center gap-2 w-full max-w-sm justify-center px-4">
                 <Link
                   href="/ats-check"
-                  className="md:hidden flex items-center justify-center px-4 py-4 bg-primary/10 text-primary border border-primary/20 rounded-full shadow-sm hover:bg-primary/20 transition-all"
+                  className="md:hidden flex items-center justify-center space-x-1.5 px-5 py-4 bg-primary/10 text-primary border border-primary/20 rounded-full shadow-sm hover:bg-primary/20 transition-all"
                   title="ATS Check"
                 >
                   <Sparkles className="w-5 h-5" />
+                  <span className="text-sm font-bold whitespace-nowrap">ATS Score</span>
                 </Link>
                 <Link
                   href="/build"
                   className="group flex-1 md:flex-none px-6 md:px-8 py-4 bg-primary hover:bg-primary/95 text-white text-base font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2"
                 >
-                  <span className="whitespace-nowrap">Build Resume Free</span>
+                  <span className="whitespace-nowrap hidden md:inline">Build Resume Free</span>
+                  <span className="whitespace-nowrap md:hidden">Start</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
