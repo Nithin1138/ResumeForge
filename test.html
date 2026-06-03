@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @page { size: A4; margin: 0; }
+  body { margin: 0; }
+  .content { padding-bottom: 2000px; }
+</style>
+</head>
+<body>
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead style="display: table-header-group">
+      <tr><td style="height: 64px;"></td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div style="font-size: 22pt;">HEADER</div>
+          <div class="content">Content that forces a page break</div>
+          <div style="font-size: 22pt;">BOTTOM</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>
