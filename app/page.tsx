@@ -1361,7 +1361,7 @@ export default function LandingPage() {
           </section>
 
           {/* SECTION 1: Why Good Students Still Get Rejected */}
-          <section className="px-6 py-12 md:py-24 max-w-5xl mx-auto w-full border-b border-border/40 relative overflow-hidden">
+          <section id="about" className="px-6 py-12 md:py-24 max-w-5xl mx-auto w-full border-b border-border/40 relative overflow-hidden">
             {/* Decorative subtle background glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/2 rounded-full blur-[100px] pointer-events-none" />
 
