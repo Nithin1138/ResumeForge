@@ -65,29 +65,36 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
         const res = await fetch("/api/config");
         if (res.ok) {
           const data = await res.json();
-          if (data.activePrice) {
-            setPrice(data.activePrice);
-          }
+          return data.activePrice || 49;
         }
       } catch (err) {}
+      return 49;
     };
-    fetchConfig();
 
-    const fetchResume = async () => {
+    const loadData = async () => {
       try {
+        const basePrice = await fetchConfig();
         const res = await fetch(`/api/resume/${resumeId}`);
         if (!res.ok) {
           throw new Error("Failed to load resume details.");
         }
         const data = await res.json();
         setResume(data);
+
+        // Check if user selected 3 versions
+        const inputData = typeof data.inputData === 'string' ? JSON.parse(data.inputData) : (data.inputData || {});
+        if (inputData?.options?.projectVariants === "3 versions") {
+          setPrice(99);
+        } else {
+          setPrice(basePrice);
+        }
       } catch (err: any) {
         setError(err.message || "Failed to load data.");
       } finally {
         setLoading(false);
       }
     };
-    fetchResume();
+    loadData();
   }, [resumeId]);
 
   const handlePayment = async () => {
