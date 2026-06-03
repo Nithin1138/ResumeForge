@@ -364,19 +364,21 @@ export default function LandingPage() {
           </span>
         </div>
         
-        <div className="hidden md:flex items-center space-x-4">
-          <Link href="/ats-check" className={`text-xs font-bold transition-all hidden sm:flex items-center space-x-1 px-3 py-1.5 rounded-full border ${
-            landingVariant === "dashboard" ? "text-[#00e1ec] border-[#00e1ec]/30 bg-[#00e1ec]/10 hover:bg-[#00e1ec]/20" : "text-primary border-primary/30 bg-primary/10 hover:bg-primary/20"
+        <div className="hidden md:flex items-center space-x-7">
+          <Link href="/ats-check" className={`text-sm font-semibold transition-all hidden sm:flex items-center space-x-1.5 ${
+            landingVariant === "dashboard" ? "text-[#9f9d98] hover:text-[#00e1ec]" : "text-text-muted hover:text-primary"
           }`}>
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-4 h-4" />
             <span>ATS Check</span>
           </Link>
           {session ? (
-            <Link href="/dashboard" className="text-xs font-bold text-primary hover:underline">
+            <Link href="/dashboard" className={`text-sm font-semibold transition-colors ${
+              landingVariant === "dashboard" ? "text-[#9f9d98] hover:text-white" : "text-text-muted hover:text-text"
+            }`}>
               Dashboard
             </Link>
           ) : (
-            <Link href="/login" className={`text-xs font-bold transition-colors ${
+            <Link href="/login" className={`text-sm font-semibold transition-colors ${
               landingVariant === "dashboard" ? "text-[#9f9d98] hover:text-white" : "text-text-muted hover:text-text"
             }`}>
               Log In
@@ -384,7 +386,7 @@ export default function LandingPage() {
           )}
           <Link
             href="/build"
-            className="px-4 py-2 md:px-5 md:py-2 bg-primary hover:bg-primary/95 text-white text-xs md:text-sm font-medium rounded-full transition-all duration-300 shadow-sm hover:shadow-md flex items-center space-x-1"
+            className="px-6 py-2.5 bg-primary hover:bg-primary/95 text-white text-sm font-bold rounded-full shadow-[0_4px_14px_0_rgba(1,105,111,0.39)] hover:shadow-[0_6px_20px_rgba(1,105,111,0.23)] hover:-translate-y-0.5 transition-all duration-300 flex items-center space-x-1.5"
           >
             <span>Build Resume Free</span>
             <ArrowRight className="w-4 h-4" />
