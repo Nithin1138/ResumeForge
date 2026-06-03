@@ -392,19 +392,10 @@ export default function LandingPage() {
         </div>
         
         {/* Mobile Hamburger Button */}
-        <div className="md:hidden flex items-center gap-2">
-          <Link
-            href="/ats-check"
-            className={`flex items-center space-x-1 px-3 py-2 rounded-full border transition-all ${
-              landingVariant === "dashboard" ? "text-[#00e1ec] border-[#00e1ec]/30 bg-[#00e1ec]/10 hover:bg-[#00e1ec]/20" : "text-primary border-primary/30 bg-primary/10 hover:bg-primary/20"
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span className="text-[10px] font-bold whitespace-nowrap">ATS Check</span>
-          </Link>
+        <div className="md:hidden flex items-center gap-3">
           <Link
             href="/build"
-            className="px-4 py-2 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full shadow-sm whitespace-nowrap hidden min-[380px]:block"
+            className="px-4 py-2 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full shadow-sm"
           >
             Build Resume Free
           </Link>
@@ -845,11 +836,20 @@ export default function LandingPage() {
                     </div>
                   )}
 
-                  <div className="border-t border-[#20292b] pt-4 mt-2">
+                  <div className="border-t border-[#20292b] pt-4 mt-2 flex gap-2">
+                    <Link
+                      href="/ats-check"
+                      className={`h-12 px-4 rounded-xl transition-all flex items-center justify-center border shadow-sm ${
+                        landingVariant === "dashboard" ? "text-[#00e1ec] border-[#00e1ec]/30 bg-[#00e1ec]/10 hover:bg-[#00e1ec]/20" : "text-primary border-primary/30 bg-primary/10 hover:bg-primary/20"
+                      }`}
+                      title="ATS Check"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                    </Link>
                     <button
                       type="button"
                       onClick={() => setMobileTab("grader")}
-                      className="w-full h-12 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-sm"
+                      className="flex-1 h-12 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-sm"
                     >
                       <span>Next: Check Live Score</span>
                       <ArrowRight className="w-4 h-4" />
@@ -958,12 +958,21 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  <div className="border-t border-[#20292b] pt-4 mt-2">
+                  <div className="border-t border-[#20292b] pt-4 mt-2 flex gap-2">
+                    <Link
+                      href="/ats-check"
+                      className={`h-12 px-4 rounded-xl transition-all flex items-center justify-center border shadow-sm ${
+                        landingVariant === "dashboard" ? "text-[#00e1ec] border-[#00e1ec]/30 bg-[#00e1ec]/10 hover:bg-[#00e1ec]/20" : "text-primary border-primary/30 bg-primary/10 hover:bg-primary/20"
+                      }`}
+                      title="ATS Check"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                    </Link>
                     <Link
                       href="/build"
-                      className="w-full h-12 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-sm"
+                      className="flex-1 h-12 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-sm"
                     >
-                      <span>{ctaText}</span>
+                      <span>Build Resume Free</span>
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
