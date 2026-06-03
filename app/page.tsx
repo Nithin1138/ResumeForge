@@ -293,8 +293,20 @@ export default function LandingPage() {
                     <ArrowRight className="w-4 h-4 opacity-50" />
                   </Link>
                   <a 
+                    href="#about" 
+                    onClick={() => { setMobileMenuOpen(false); document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }); }} 
+                    className={`text-lg font-bold flex items-center justify-between py-2 border-b transition-colors duration-300 ${
+                      landingVariant === "dashboard"
+                        ? "text-[#9f9d98] hover:text-[#00e1ec] border-[#20292b]"
+                        : "text-text-muted hover:text-text border-border/30"
+                    }`}
+                  >
+                    <span>About</span>
+                    <ArrowRight className="w-4 h-4 opacity-50" />
+                  </a>
+                  <a 
                     href="#faq" 
-                    onClick={() => setMobileMenuOpen(false)} 
+                    onClick={() => { setMobileMenuOpen(false); document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' }); }} 
                     className={`text-lg font-bold flex items-center justify-between py-2 border-b transition-colors duration-300 ${
                       landingVariant === "dashboard"
                         ? "text-[#9f9d98] hover:text-[#00e1ec] border-[#20292b]"
@@ -841,19 +853,20 @@ export default function LandingPage() {
                   <div className="border-t border-[#20292b] pt-4 mt-2 flex gap-2">
                     <Link
                       href="/ats-check"
-                      className={`h-12 px-4 rounded-xl transition-all flex items-center justify-center border shadow-sm ${
+                      className={`h-12 px-4 rounded-xl transition-all flex items-center justify-center space-x-1.5 border shadow-sm ${
                         landingVariant === "dashboard" ? "text-[#00e1ec] border-[#00e1ec]/30 bg-[#00e1ec]/10 hover:bg-[#00e1ec]/20" : "text-primary border-primary/30 bg-primary/10 hover:bg-primary/20"
                       }`}
                       title="ATS Check"
                     >
                       <Sparkles className="w-4 h-4" />
+                      <span className="text-xs font-bold whitespace-nowrap">ATS Score</span>
                     </Link>
                     <button
                       type="button"
                       onClick={() => setMobileTab("grader")}
                       className="flex-1 h-12 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-sm"
                     >
-                      <span>Next: Check Live Score</span>
+                      <span>Live Score</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -963,18 +976,19 @@ export default function LandingPage() {
                   <div className="border-t border-[#20292b] pt-4 mt-2 flex gap-2">
                     <Link
                       href="/ats-check"
-                      className={`h-12 px-4 rounded-xl transition-all flex items-center justify-center border shadow-sm ${
+                      className={`h-12 px-4 rounded-xl transition-all flex items-center justify-center space-x-1.5 border shadow-sm ${
                         landingVariant === "dashboard" ? "text-[#00e1ec] border-[#00e1ec]/30 bg-[#00e1ec]/10 hover:bg-[#00e1ec]/20" : "text-primary border-primary/30 bg-primary/10 hover:bg-primary/20"
                       }`}
                       title="ATS Check"
                     >
                       <Sparkles className="w-4 h-4" />
+                      <span className="text-xs font-bold whitespace-nowrap">ATS Score</span>
                     </Link>
                     <Link
                       href="/build"
                       className="flex-1 h-12 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-sm"
                     >
-                      <span>Build Resume Free</span>
+                      <span>Start</span>
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
@@ -984,7 +998,7 @@ export default function LandingPage() {
           </div>
 
           {/* ── SECTION 3: HOW IT WORKS (SIMPLE 3 STEPS) ── */}
-          <div className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 text-center space-y-8">
+          <div id="about" className="max-w-5xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 text-center space-y-8">
             <div className="space-y-1">
               <h2 className="text-lg md:text-xl font-bold text-white uppercase tracking-wider">2. Simple Three-Step Process</h2>
               <p className="text-xs text-[#9f9d98] max-w-md mx-auto leading-relaxed">
@@ -1181,7 +1195,7 @@ export default function LandingPage() {
           </div>
 
           {/* ── SECTION 7: CAMPUS PLACEMENTS FAQS ── */}
-          <div className="max-w-3xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 text-left">
+          <div id="faq" className="max-w-3xl mx-auto w-full px-4 md:px-6 py-4 relative z-10 text-left">
             <h3 className="text-xl md:text-2xl font-serif text-white text-center mb-8">
               Frequently Asked Questions
             </h3>
@@ -1662,7 +1676,7 @@ export default function LandingPage() {
           </section>
 
           {/* FAQs */}
-          <section className="px-6 py-12 md:py-20 bg-surface/30 border-t border-border/50">
+          <section id="faq" className="px-6 py-12 md:py-20 bg-surface/30 border-t border-border/50">
             <div className="max-w-3xl mx-auto">
               <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-serif tracking-tight mb-3">Frequently Asked Questions</h2>
