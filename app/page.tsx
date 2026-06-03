@@ -365,10 +365,11 @@ export default function LandingPage() {
         </div>
         
         <div className="hidden md:flex items-center space-x-4">
-          <Link href="/ats-check" className={`text-xs font-bold transition-colors hidden sm:block ${
-            landingVariant === "dashboard" ? "text-[#9f9d98] hover:text-[#00e1ec]" : "text-text-muted hover:text-primary"
+          <Link href="/ats-check" className={`text-xs font-bold transition-all hidden sm:flex items-center space-x-1 px-3 py-1.5 rounded-full border ${
+            landingVariant === "dashboard" ? "text-[#00e1ec] border-[#00e1ec]/30 bg-[#00e1ec]/10 hover:bg-[#00e1ec]/20" : "text-primary border-primary/30 bg-primary/10 hover:bg-primary/20"
           }`}>
-            ATS Check
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>ATS Check</span>
           </Link>
           {session ? (
             <Link href="/dashboard" className="text-xs font-bold text-primary hover:underline">
