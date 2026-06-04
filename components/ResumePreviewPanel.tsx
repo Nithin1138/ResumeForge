@@ -336,12 +336,22 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
           )}
 
           {/* Certifications */}
-          {includeCertifications && ip?.skills?.certifications && (
-            <div style={{ pageBreakInside: "avoid", breakInside: "avoid" }}>
-              <SectionTitle>Certifications</SectionTitle>
-              <div style={{ fontSize: "9.5pt", lineHeight: 1.5 }}>{ip.skills.certifications}</div>
-            </div>
-          )}
+          {includeCertifications && ip?.skills?.certifications && (() => {
+            const certList = ip.skills.certifications
+              .split(/,|\n/)
+              .map((c: string) => c.trim())
+              .filter(Boolean);
+            return (
+              <div style={{ pageBreakInside: "avoid", breakInside: "avoid" }}>
+                <SectionTitle>Certifications</SectionTitle>
+                <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: "3pt 0 0 0", fontSize: "9.5pt" }}>
+                  {certList.map((cert: string, idx: number) => (
+                    <li key={idx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{cert}</li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })()}
         </div>
               </td>
             </tr>
