@@ -37,6 +37,8 @@ export async function POST(req: NextRequest) {
 You are an expert ATS data extraction system.
 Extract all structured data from the provided resume to populate a Resume Builder form. 
 CRITICAL RULE: If a field is missing in the resume, you MUST leave it as an empty string "". Do not make up information. Do not use placeholder text like 'Extracted Name'. 
+CRITICAL RULE: Education details (College, Branch/Major, Graduation Year, CGPA) MUST be placed inside the 'personal' object exactly as defined. Do NOT create a separate 'education' array.
+CRITICAL RULE: For 'cgpa' and 'pgCgpa', extract ONLY the numerical value (e.g., '8.5' or '3.8'), stripping out any '/10' or '%' symbols. For graduation year, extract just the 4-digit year.
 CRITICAL RULE: Pay special attention to extracting hyperlinks (URLs). For DOCX files, you will receive HTML content, so look at the <a href="..."> tags to extract URLs for 'link', 'linkedin', 'github', etc. If a link is present, extract the full URL.
 Return ONLY a valid JSON object matching this exact structure exactly (no markdown):
 
