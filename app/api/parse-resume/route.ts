@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
 You are an expert ATS data extraction system.
 Extract all structured data from the provided resume to populate a Resume Builder form. 
 CRITICAL RULE: If a field is missing in the resume, you MUST leave it as an empty string "". Do not make up information. Do not use placeholder text like 'Extracted Name'. 
+CRITICAL RULE: Pay special attention to extracting hyperlinks (URLs). For DOCX files, you will receive HTML content, so look at the <a href="..."> tags to extract URLs for 'link', 'linkedin', 'github', etc. If a link is present, extract the full URL.
 Return ONLY a valid JSON object matching this exact structure exactly (no markdown):
 
 {
@@ -129,7 +130,7 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
         const base64String = Buffer.from(arrayBuffer).toString("base64");
         
         const response = await ai.models.generateContent({
-          model: "gemini-1.5-flash",
+          model: "gemini-1.5-pro",
           contents: [
             prompt,
             {
@@ -151,14 +152,14 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
         if (isDocx) {
           const arrayBuffer = await file.arrayBuffer();
           const buffer = Buffer.from(arrayBuffer);
-          const result = await mammoth.extractRawText({ buffer });
+          const result = await mammoth.convertToHtml({ buffer });
           resumeText = result.value;
         } else {
           resumeText = await file.text();
         }
 
         const response = await ai.models.generateContent({
-          model: "gemini-1.5-flash",
+          model: "gemini-1.5-pro",
           contents: prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000),
           config: {
             responseMimeType: "application/json",
@@ -183,7 +184,7 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
         });
       } else if (isDocx) {
         const arrayBuffer = await file.arrayBuffer();
-        const result = await mammoth.extractRawText({ buffer: Buffer.from(arrayBuffer) });
+        const result = await mammoth.convertToHtml({ buffer: Buffer.from(arrayBuffer) });
         fallbackText = result.value;
       } else {
         fallbackText = await file.text();
