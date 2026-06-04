@@ -3,7 +3,7 @@ import { GoogleGenAI } from "@google/genai";
 import * as mammoth from "mammoth";
 import { generateGroqFallback } from "@/lib/gemini";
 // @ts-ignore
-const PDFParser = require("pdf2json");
+import pdfParse from "pdf-parse";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -126,74 +126,56 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
     const isPDF = file.type === "application/pdf" || file.name.endsWith(".pdf");
     const isDocx = file.name.endsWith(".docx");
 
+    // Unified text extraction
+    let resumeText = "";
     try {
-      if (isPDF) {
-        // Native PDF parsing with Gemini
-        const arrayBuffer = await file.arrayBuffer();
-        const base64String = Buffer.from(arrayBuffer).toString("base64");
-        
-        const response = await ai.models.generateContent({
-          model: "gemini-1.5-pro",
-          contents: [
-            prompt,
-            {
-              inlineData: {
-                data: base64String,
-                mimeType: "application/pdf"
-              }
-            }
-          ],
-          config: {
-            responseMimeType: "application/json",
-            temperature: 0,
-          }
-        });
-        responseText = response.text || "";
-      } else {
-        // Handle DOCX or TXT
-        let resumeText = "";
-        if (isDocx) {
-          const arrayBuffer = await file.arrayBuffer();
-          const buffer = Buffer.from(arrayBuffer);
-          const result = await mammoth.convertToHtml({ buffer });
-          resumeText = result.value;
-        } else {
-          resumeText = await file.text();
-        }
-
-        const response = await ai.models.generateContent({
-          model: "gemini-1.5-pro",
-          contents: prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000),
-          config: {
-            responseMimeType: "application/json",
-            temperature: 0,
-          }
-        });
-        responseText = response.text || "";
-      }
-    } catch (geminiError: any) {
-      console.warn("Gemini generation failed on direct parse:", geminiError.message || geminiError);
-      
-      // Fallback: extract text (even for PDF) and send to Groq
-      let fallbackText = "";
       if (isPDF) {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
-        fallbackText = await new Promise((resolve, reject) => {
-          const pdfParser = new PDFParser(null, 1);
-          pdfParser.on("pdfParser_dataError", (err: any) => reject(err.parserError));
-          pdfParser.on("pdfParser_dataReady", () => resolve(pdfParser.getRawTextContent()));
-          pdfParser.parseBuffer(buffer);
-        });
+        
+        function render_page(pageData: any) {
+          let render_options = { normalizeWhitespace: false, disableCombineTextItems: false };
+          return pageData.getTextContent(render_options).then(function(textContent: any) {
+            let text = textContent.items.map((item: any) => item.str).join('');
+            return pageData.getAnnotations().then((annotations: any) => {
+              let links = annotations
+                .filter((a: any) => a.subtype === 'Link' && a.url)
+                .map((a: any) => a.url);
+              if (links.length > 0) {
+                text += `\n[Hidden Links Extracted from PDF: ${links.join(', ')}]\n`;
+              }
+              return text;
+            });
+          });
+        }
+        
+        const data = await pdfParse(buffer, { pagerender: render_page });
+        resumeText = data.text;
       } else if (isDocx) {
         const arrayBuffer = await file.arrayBuffer();
-        const result = await mammoth.convertToHtml({ buffer: Buffer.from(arrayBuffer) });
-        fallbackText = result.value;
+        const buffer = Buffer.from(arrayBuffer);
+        const result = await mammoth.convertToHtml({ buffer });
+        resumeText = result.value;
       } else {
-        fallbackText = await file.text();
+        resumeText = await file.text();
       }
+      
+      const fullPrompt = prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000);
 
-      const fullPrompt = prompt + "\n\nRESUME TEXT:\n" + fallbackText.substring(0, 15000);
+      const response = await ai.models.generateContent({
+        model: "gemini-1.5-pro",
+        contents: fullPrompt,
+        config: {
+          responseMimeType: "application/json",
+          temperature: 0,
+        }
+      });
+      responseText = response.text || "";
+    } catch (geminiError: any) {
+      console.warn("Gemini generation failed on direct parse:", geminiError.message || geminiError);
+      
+      // Fallback: send to Groq
+      const fullPrompt = prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000);
       try {
         responseText = await generateGroqFallback(fullPrompt, true);
       } catch (groqError: any) {
