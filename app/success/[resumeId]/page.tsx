@@ -867,7 +867,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
         )}
 
         {/* Section: Experience (If added) */}
-        {output.experience.length > 0 && (
+        {output.experience && output.experience.length > 0 && (
           <div className="space-y-4 print:hidden">
             <div className="border-b border-border/40 pb-2">
               <h3 className="text-xs font-bold text-text-muted tracking-wider uppercase">Internships & Professional Experience</h3>
@@ -875,7 +875,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
 
             {output.experience.map((exp, idx) => {
               const blockId = `exp_${idx}`;
-              const expText = `${exp.company} - ${exp.role}\n${exp.bullets.map(b => `- ${b}`).join("\n")}`;
+              const expText = `${exp.company} - ${exp.role}\n${(exp.bullets || []).map(b => `- ${b}`).join("\n")}`;
 
               return (
                 <div key={idx} className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs">
@@ -902,7 +902,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                         onClick={() => handleRegenerateSection(
                           blockId, 
                           `Experience Bullet Points for ${exp.role} at ${exp.company}`, 
-                          exp.bullets.join("\n"), 
+                          (exp.bullets || []).join("\n"), 
                           (newText) => {
                             setLiveResume((prev: any) => {
                               const next = JSON.parse(JSON.stringify(prev));
@@ -943,7 +943,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                       {exp.role}
                     </div>
                     <ul className="list-disc pl-5 space-y-2 text-sm font-medium leading-relaxed">
-                      {exp.bullets.map((bulletText: string, bIdx: number) => (
+                      {(exp.bullets || []).map((bulletText: string, bIdx: number) => (
                         <li 
                           key={bIdx}
                           className="outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
@@ -969,9 +969,9 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
         )}
 
         {/* Section: POR & Achievements */}
-        {(output.positions.length > 0 || output.achievements.length > 0 || resume.inputData.skills?.certifications) && (
+        {((output.positions && output.positions.length > 0) || (output.achievements && output.achievements.length > 0) || resume.inputData.skills?.certifications) && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:hidden">
-            {output.positions.length > 0 && (
+            {output.positions && output.positions.length > 0 && (
               <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs">
                 <h3 className="text-xs font-bold text-primary tracking-wider uppercase border-b border-border/40 pb-2 mb-4">Leadership / Club POR</h3>
                 <div className="space-y-4">
@@ -1014,7 +1014,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
               </div>
             )}
 
-            {output.achievements.length > 0 && (
+            {output.achievements && output.achievements.length > 0 && (
                 <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs">
                   <h3 className="text-xs font-bold text-primary tracking-wider uppercase border-b border-border/40 pb-2 mb-4">Key Achievements</h3>
                   <ul className="list-disc pl-4 space-y-2 text-xs font-medium leading-relaxed text-text-muted">
