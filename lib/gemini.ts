@@ -50,7 +50,8 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
       link: proj.link || "https://github.com/student/project",
       bullets: [
         `Architected and implemented a high-performance system for ${proj.description || "core product operations"}, optimizing request latencies and response pipelines.`,
-        `Integrated a robust backend to handle ${proj.keyResult || "core key features"}, scaling concurrency to handle 100+ simulated requests per second.`
+        `Integrated a robust backend to handle ${proj.keyResult || "core key features"}, scaling concurrency to handle 100+ simulated requests per second.`,
+        `Streamlined deployment processes and client-side page rendering pathways, decreasing application loading times by 25%.`
       ]
     };
   }) : [
@@ -61,7 +62,8 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
       link: "https://github.com/student/ai-prep",
       bullets: [
         "Built a full-stack automated behavioral interview prep portal, handling 150+ concurrent mock test sessions.",
-        "Engineered real-time audio-to-text scoring modules, increasing interview performance rating metrics by 35%."
+        "Engineered real-time audio-to-text scoring modules, increasing interview performance rating metrics by 35%.",
+        "Optimized client-side rendering pathways using React and Next.js, reducing interactive latency by 20%."
       ]
     }
   ];
@@ -74,7 +76,8 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
       duration: intern.duration || "May 2025 – Jul 2025",
       bullets: [
         `Developed and optimized critical backend routes using ${intern.techUsed || "Node.js, Express"}, reducing page load times for 2,000+ daily visitors by 25%.`,
-        `Collaborated in agile team sprints to deploy key features: ${intern.workDone || "data reporting metrics"}, resolving 15+ bug reports.`
+        `Collaborated in agile team sprints to deploy key features: ${intern.workDone || "data reporting metrics"}, resolving 15+ bug reports.`,
+        `Configured CI/CD pipelines to automate testing and verification steps, improving deployment reliability by 30%.`
       ]
     };
   }) : [];
@@ -99,7 +102,7 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
   const firstProj = mockProjects[0];
 
   return {
-    summary: `Motivated B.Tech student in ${branchName} at ${collegeName} (CGPA: ${cgpaValue}/10.0), specializing in ${targetRole}. Proven record of engineering high-impact projects using ${languagesList.slice(0, 3).join(", ")}. Passionate about building scalable systems, applying optimal data structures, and deploying cloud-native web services.`,
+    summary: `Motivated B.Tech student in ${branchName} at ${collegeName} (CGPA: ${cgpaValue}/10.0), specializing as a ${targetRole}. Proven record of engineering high-impact projects using ${languagesList.slice(0, 3).join(", ")}. Passionate about building scalable systems, applying optimal data structures, and deploying cloud-native web services.`,
     skills: processedSkills.length > 0 ? processedSkills : [
       { category: "Programming Languages", skills: ["Python", "Java", "C++"] },
       { category: "Frameworks & Libraries", skills: ["React", "Next.js", "Express"] },
@@ -117,18 +120,19 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
     experience: mockExperience,
     positions: mockPositions,
     achievements: mockAchievements,
-    atsScore: 89,
+    atsScore: 92,
     breakdown: {
       keywordMatch: 28,
-      atsCompatibility: 24,
-      technicalStrength: 14,
-      projectQuality: 13,
-      recruiterReadability: 8,
-      experienceCredibility: 2
+      atsCompatibility: 25,
+      technicalStrength: 15,
+      projectQuality: 15,
+      recruiterReadability: 10,
+      experienceCredibility: 3
     },
     strengths: [
       "Excellent technical skills categorization",
-      "Strong academic standing with documented CGPA"
+      "Strong academic standing with documented CGPA",
+      "Includes exact target role keyword alignment"
     ],
     weaknesses: [
       "Missing live URLs for project verification"
@@ -262,15 +266,16 @@ Your output must strictly follow these rules:
 5. Align all wording to the target role specified.
 6. If a job description is provided, mirror its keywords naturally in bullets — do not stuff keywords.
 7. Output ONLY valid JSON matching the schema below. No markdown. No explanation.
-8. Keep bullet points to 1-2 lines maximum. Scannable, not paragraphs.
+8. Each project and internship/experience item MUST contain exactly 3 or 4 bullet points in their "bullets" array (and similarly in the "variants" bullets arrays). Do not output fewer than 3 bullet points.
 9. For skills: group logically. Do not repeat skills across sections.
-10. For the summary: mention target role in first line. Keep to 3 sentences max. ATS reads the first 100 words hard.
+10. For the summary: You must explicitly mention the exact target role: "${personal.targetRole}" early in the summary text. Keep to 3 sentences max.
 11. If the tech stack is already displayed below the project title, do NOT repeat technologies inside bullet points unless absolutely necessary for explaining a specific implementation detail. Focus strictly on technical implementation, architecture, and outcomes.
 12. Avoid fake corporate buzzwords or exaggerated claims inside project bullet points.
 13. IMPORTANT FOR TIPS: Do NOT give tips about resume structure, adding keywords, or formatting (since this app handles the formatting for them). The \`atsTips\` should strictly contain highly personalized CAREER and SKILL improvement advice based on their exact input.
 14. TONE ADAPTATION: Adapt your writing style precisely to the TONE PREFERENCE specified by the user.
 15. PROJECT VARIANTS: If PROJECT VARIANTS PREFERENCE is "3 versions for different roles", for EACH project, you MUST provide 3 distinct versions of the bullets tailored to different roles (e.g., Software Engineer, Data Analyst, Product Manager) inside a "variants" array. The standard "bullets" array must still have the primary version. ADDITIONALLY, you MUST include a "variantMetrics" array at the root level containing exactly 3 objects with role-specific "role", "atsScore", "breakdown", "strengths", "weaknesses", and "improvements".
-16. ATS SCORE ENGINE v2.0:
+16. BULLET CHARACTER LENGTH LIMITS: To optimize readability and ATS compliance, every single bullet point in projects and experience sections MUST be between 65 and 135 characters in length. Do not make bullet points shorter than 65 characters or longer than 135 characters.
+17. ATS SCORE ENGINE v2.0:
     Calculate the ATS score deterministically using fixed weighted categories. DO NOT GUESS.
     - Category 1: Keyword Match & Role Alignment (30 Points). Evaluate required tech, domain terms. 0-10 weak, 11-20 moderate, 21-30 strong.
     - Category 2: ATS Compatibility (25 Points). Our app formats this perfectly, so default to 23-25 unless data is severely lacking.
@@ -280,7 +285,7 @@ Your output must strictly follow these rules:
     - Category 6: Experience & Credibility (5 Points). Evaluate internships, achievements. 0-2 weak, 3-4 moderate, 5 strong.
     ANTI-INFLATION RULES: Never assign >95 or <40. No projects/internships = 40-60. Strong projects/metrics = 80-95.
     Output the exact breakdown.
-17. ENGINEER-GRADE PROJECT BULLETS:
+18. ENGINEER-GRADE PROJECT BULLETS:
   - CORE IDENTITY & NATURALNESS:
     Write from the perspective of a technically strong engineering student. Favor clarity, practical implementation, and recruiter readability over enterprise sophistication. Bullets must sound believable for real B.Tech student projects, NOT senior infrastructure engineering work.
   - REALISM FILTER:
@@ -382,7 +387,7 @@ PROJECT VARIANTS PREFERENCE: ${options.projectVariants || "1 version"}
 
 OUTPUT FORMAT (return ONLY this JSON, no other text):
 {
-  "summary": "3-sentence professional summary string here",
+  "summary": "Motivated student specializing as a ${personal.targetRole} with hands-on skill templates...",
   "skills": [
     {
       "category": "Programming Languages",
@@ -410,13 +415,14 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
       "title": "Project Title",
       "techStack": "Python, FastAPI, React",
       "bullets": [
-        "Bullet point 1 with strong action verb",
-        "Bullet point 2 with outcome or feature"
+        "Bullet point 1 with strong action verb and length between 65 and 135 characters",
+        "Bullet point 2 with outcome or feature and length between 65 and 135 characters",
+        "Bullet point 3 with scaling or metrics details and length between 65 and 135 characters"
       ],
       "variants": [
-        { "role": "Frontend Engineer", "bullets": ["Frontend focused bullet 1", "Frontend focused bullet 2"] },
-        { "role": "Backend Engineer", "bullets": ["Backend focused bullet 1", "Backend focused bullet 2"] },
-        { "role": "Fullstack Engineer", "bullets": ["Fullstack focused bullet 1", "Fullstack focused bullet 2"] }
+        { "role": "Frontend Engineer", "bullets": ["Frontend focused bullet 1", "Frontend focused bullet 2", "Frontend focused bullet 3"] },
+        { "role": "Backend Engineer", "bullets": ["Backend focused bullet 1", "Backend focused bullet 2", "Backend focused bullet 3"] },
+        { "role": "Fullstack Engineer", "bullets": ["Fullstack focused bullet 1", "Fullstack focused bullet 2", "Fullstack focused bullet 3"] }
       ],
       "duration": "Jan 2025 – Mar 2025",
       "link": "https://github.com/..."
@@ -428,8 +434,9 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
       "role": "Role Title",
       "duration": "May 2025 – Jul 2025",
       "bullets": [
-        "Bullet point 1",
-        "Bullet point 2"
+        "First descriptive internship bullet point with character length between 65 and 135 characters",
+        "Second descriptive internship bullet point with character length between 65 and 135 characters",
+        "Third descriptive internship bullet point with character length between 65 and 135 characters"
       ]
     }
   ],
@@ -444,14 +451,14 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
     "Achievement bullet 1",
     "Achievement bullet 2"
   ],
-  "atsScore": 84,
+  "atsScore": 92,
   "breakdown": {
-    "keywordMatch": 24,
-    "atsCompatibility": 23,
-    "technicalStrength": 12,
-    "projectQuality": 13,
-    "recruiterReadability": 8,
-    "experienceCredibility": 4
+    "keywordMatch": 28,
+    "atsCompatibility": 25,
+    "technicalStrength": 15,
+    "projectQuality": 15,
+    "recruiterReadability": 10,
+    "experienceCredibility": 3
   },
   "strengths": [
     "Strong use of modern frameworks like React and FastAPI.",
@@ -468,14 +475,14 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
   "variantMetrics": [
     {
       "role": "Frontend Engineer",
-      "atsScore": 86,
+      "atsScore": 93,
       "breakdown": {
-        "keywordMatch": 25,
-        "atsCompatibility": 23,
-        "technicalStrength": 12,
-        "projectQuality": 14,
-        "recruiterReadability": 8,
-        "experienceCredibility": 4
+        "keywordMatch": 29,
+        "atsCompatibility": 25,
+        "technicalStrength": 15,
+        "projectQuality": 15,
+        "recruiterReadability": 10,
+        "experienceCredibility": 3
       },
       "strengths": ["Strong frontend skills."],
       "weaknesses": ["Missing backend experience."],
