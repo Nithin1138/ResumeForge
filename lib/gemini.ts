@@ -187,16 +187,16 @@ export async function generateGroqFallback(prompt: string, isJson: boolean = fal
 
   // High-performance standard Groq models
   const MODELS = [
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+    "mixtral-8x7b-32768",
+    "gemma2-9b-it",
     "openai/gpt-oss-120b",
     "openai/gpt-oss-20b",
     "openai/gpt-oss-safeguard-120b",
     "groq/compound",
     "groq/compound-mini",
-    "qwen/qwen3-32b",
-    "llama-3.3-70b-versatile",
-    "llama-3.1-8b-instant",
-    "mixtral-8x7b-32768",
-    "gemma2-9b-it"
+    "qwen/qwen3-32b"
   ];
 
   for (const modelName of MODELS) {
