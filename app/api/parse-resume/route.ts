@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import * as mammoth from "mammoth";
 import { generateGroqFallback } from "@/lib/gemini";
+// @ts-ignore
+import pdfParse from "pdf-parse";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -122,6 +124,7 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
 
     const ai = new GoogleGenAI({ apiKey });
     let responseText = "";
+    let linkPrompt = "";
     const isPDF = file.type === "application/pdf" || file.name.endsWith(".pdf");
     const isDocx = file.name.endsWith(".docx");
 
@@ -165,7 +168,6 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
         }
 
         const extractedLinks = Array.from(links);
-        let linkPrompt = "";
         if (extractedLinks.length > 0) {
           linkPrompt = `\n\n[CRITICAL: The following hidden URLs were extracted from the PDF metadata: ${extractedLinks.join(', ')}]\nYou MUST use these URLs to fill out the 'linkedin', 'github', and 'link' (for projects) fields if they match the context.`;
         }
@@ -216,19 +218,30 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
       // Fallback: send to Groq. We need to extract text for Groq if it's a PDF.
       let fallbackText = "";
       if (isPDF) {
-         // Because we removed pdf-parse, Groq PDF fallback is limited to binary string or we just give up on Groq for PDF.
-         throw new Error(`Gemini failed: ${geminiError.message || geminiError}. And Groq cannot process PDFs directly.`);
+         try {
+           const parsedPdf = await pdfParse(Buffer.from(await file.arrayBuffer()));
+           fallbackText = parsedPdf.text;
+         } catch (pdfError) {
+           console.error("pdf-parse failed during Groq fallback", pdfError);
+           throw new Error(`Gemini failed (${geminiError.message || geminiError}) and PDF text extraction for Groq fallback also failed.`);
+         }
       } else if (isDocx) {
         const arrayBuffer = await file.arrayBuffer();
         const result = await mammoth.convertToHtml({ buffer: Buffer.from(arrayBuffer) });
-        fallbackText = result.value;
+        fallbackText = result.value.replace(/<[^>]+>/g, " ");
       } else {
         fallbackText = await file.text();
       }
 
-      const fullPrompt = prompt + "\n\nRESUME TEXT:\n" + fallbackText.substring(0, 15000);
+      // Add link extraction data to Groq fallback if we have it
+      let fallbackPrompt = prompt;
+      if (typeof linkPrompt !== 'undefined' && linkPrompt) {
+        fallbackPrompt += linkPrompt;
+      }
+      fallbackPrompt += "\n\nRESUME TEXT:\n" + fallbackText.substring(0, 15000);
+
       try {
-        responseText = await generateGroqFallback(fullPrompt, true);
+        responseText = await generateGroqFallback(fallbackPrompt, true);
       } catch (groqError: any) {
         throw new Error("All AI parsing engines exhausted.");
       }
