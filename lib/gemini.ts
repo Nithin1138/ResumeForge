@@ -309,14 +309,14 @@ Your output must strictly follow these rules:
   - REDUNDANCY FILTER:
     Do NOT repeat identical sentence rhythm, technical structure, or semantic patterns across multiple bullets. If one bullet emphasizes automation, the next should emphasize processing, optimization, transformation, detection, integration, workflows, or measurable outcomes.
   - METRICS, IMPACT & GOOGLE X-Y-Z FORMULA:
-    Write project bullet points following the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure.
-    Always integrate specific engineering metrics—such as processing speed, model accuracy rates, data throughput, or pipeline efficiency percentages—wherever possible to demonstrate impact.
+    Write project bullet points following the Google X-Y-Z formula (Accomplishing [X], as measured by [Y], by doing [Z]), but you MUST phrase them naturally and dynamically. Do NOT literally use the words "Accomplished", "as measured by", or "by doing" in every sentence. Start each bullet point with a strong, varied technical action verb (e.g., Optimized, Trained, Refactored, Engineered, Automated).
+    Always integrate specific engineering metrics—such as processing speed, model accuracy rates, data throughput, or database latency—wherever possible to demonstrate impact.
     CRITICAL: Keep each bullet point extremely concise, short, and compact to satisfy the character length limit (strictly 65 to 135 characters).
-    GOOD (following X-Y-Z & under 135 chars): 
-      * "Decreased DB latency by 45% (Y) using Redis caches and relational indexing (Z) to support 1k+ concurrent users (X)"
-      * "Achieved 93% accuracy (Y) on 5k test inputs by training a custom CNN with augmentation (Z) to automate disease detection (X)"
-      * "Boosted API pipeline efficiency by 30% (Y) by refactoring data ingestion (Z) to process 10k daily entries (X)"
-    Avoid fake corporate jargon or generic words. Phrasing must strictly be formatted as a concise action-outcome sequence mapping (X) measured by (Y) by doing (Z).
+    GOOD EXAMPLES (natural, following X-Y-Z & under 135 chars): 
+      * "Decreased DB latency by 45% using Redis caches and relational indexing to support 1k+ concurrent users"
+      * "Achieved 93% accuracy on 5k test inputs by training a custom CNN with augmentation to automate disease detection"
+      * "Boosted API pipeline efficiency by 30% by refactoring data ingestion to process 10k daily entries"
+    Avoid fake corporate jargon, academic textbook phrasing, or generic words. Vary the sentence structure and starting verbs across all bullets.
   - PHRASING RULES:
     Avoid repetitive textbook phrasing like: "by using", "for", "ensuring", "designed to", "capable of", "resulting in". Avoid generic passive explanations and academic-report tone.
   - TECHNICAL DEPTH PRIORITY:
@@ -567,8 +567,8 @@ export async function generateSectionContent(
 SYSTEM:
 You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
 ${isProjectOrExperience ? `CRITICAL RULE: Since this is a project or experience section, you MUST rewrite it to produce EXACTLY ${expectedBulletCount || 3} high-impact bullet points, each on its own line (separated by newlines).
-Each individual bullet point MUST follow the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure, integrating specific engineering metrics like processing speed, model accuracy rates, or pipeline efficiency percentages.
-Additionally, each bullet point MUST be strictly between 65 and 130 characters in length (including spaces). This is a hard limit to prevent bullets from overflowing onto multiple lines. Keep it extremely concise and compact while still utilizing the X-Y-Z structure.` : ""}
+Each individual bullet point MUST follow the Google X-Y-Z formula (Accomplishing [X], as measured by [Y], by doing [Z]), but you MUST write them naturally and dynamically. Do NOT literally use the words "Accomplished", "as measured by", or "by doing" in the sentences. Instead, start each bullet point with a strong, varied technical action verb (e.g., Optimized, Trained, Refactored, Engineered, Automated) and integrate specific engineering metrics like processing speed, model accuracy rates, database latency, or pipeline efficiency.
+Additionally, each bullet point MUST be strictly between 65 and 130 characters in length (including spaces). This is a hard limit to prevent bullets from overflowing onto multiple lines. Keep them extremely concise and compact.` : ""}
 ${isSummary ? `CRITICAL RULE: Since this is the professional summary, you MUST rewrite it to be extremely targeted, professional, and punchy. It MUST be exactly 1-2 sentences maximum, aiming to fill between 1.5 to 2 lines on the page (approximately 110 to 160 characters in total). Do NOT make it extremely short (such as under 80 characters or a brief phrase like 'Delivers software solutions'). It must read as a cohesive summary describing the candidate's core expertise and engineering background.` : ""}
 ${isProjectOrExperience ? `Output EXACTLY ${expectedBulletCount || 3} lines of plain text, one for each bullet point. Do NOT output a single line or combine them. Do NOT add any list symbols, dashes, asterisks, numbers, or bullet characters (e.g., do NOT output "*", "-", "•", "1.", etc.) at the start of any line.` : `If it's a bullet point, output a single bullet point. If it's a paragraph, output a paragraph. Do NOT start the bullet point with any list symbols, dashes, asterisks, numbers, or bullet characters (e.g. do NOT output "*", "-", "•", etc.). Output ONLY the raw plain text sentence itself.`}
 Do NOT wrap the output in quotes or markdown formatting, just return the raw text.
