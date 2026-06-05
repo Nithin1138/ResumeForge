@@ -123,15 +123,57 @@ export const NORMALIZATION_MAP: Record<string, string> = {
   "catia": "CATIA", "fusion 360": "Fusion 360", "revit": "Revit", "staad pro": "STAAD Pro",
 
   // CS Concepts
-  "dsa": "Data Structures & Algorithms", "data structures & algorithms": "Data Structures & Algorithms",
-  "oop": "Object-Oriented Programming", "oops": "Object-Oriented Programming",
+  "dsa": "Data Structures & Algorithms",
+  "data structures & algorithms": "Data Structures & Algorithms",
+  "data structures and algorithms": "Data Structures & Algorithms",
+  "data structures & algorithms (dsa)": "Data Structures & Algorithms",
+  "data structures and algorithms (dsa)": "Data Structures & Algorithms",
+  "oop": "Object-Oriented Programming",
+  "oops": "Object-Oriented Programming",
   "object-oriented programming": "Object-Oriented Programming",
-  "dbms": "Database Management Systems", "database management systems": "Database Management Systems",
-  "os": "Operating Systems", "operating systems": "Operating Systems",
-  "cn": "Computer Networks", "computer networks": "Computer Networks",
-  "system design": "System Design", "software engineering": "Software Engineering",
-  "agile": "Agile Methodology", "web development": "Web Development",
-  "cloud computing": "Cloud Computing", "microservices": "Microservices"
+  "object oriented programming": "Object-Oriented Programming",
+  "object-oriented programming (oop)": "Object-Oriented Programming",
+  "object oriented programming (oop)": "Object-Oriented Programming",
+  "dbms": "Database Management Systems",
+  "database management systems": "Database Management Systems",
+  "database management system": "Database Management Systems",
+  "database management systems (dbms)": "Database Management Systems",
+  "os": "Operating Systems",
+  "operating systems": "Operating Systems",
+  "operating system": "Operating Systems",
+  "operating systems (os)": "Operating Systems",
+  "cn": "Computer Networks",
+  "computer networks": "Computer Networks",
+  "computer network": "Computer Networks",
+  "computer networks (cn)": "Computer Networks",
+  "system design": "System Design",
+  "software engineering": "Software Engineering",
+  "agile": "Agile Methodology",
+  "web development": "Web Development",
+  "cloud computing": "Cloud Computing",
+  "microservices": "Microservices",
+  
+  // Other Branch Concepts / Acronyms
+  "digital signal processing (dsp)": "Digital Signal Processing",
+  "digital signal processing": "Digital Signal Processing",
+  "dsp": "Digital Signal Processing",
+  
+  "additive manufacturing (3d printing)": "Additive Manufacturing",
+  "additive manufacturing": "Additive Manufacturing",
+  "3d printing": "3D Printing",
+  
+  "bim (building information modeling)": "BIM (Building Information Modeling)",
+  "building information modeling": "BIM (Building Information Modeling)",
+  "bim": "BIM (Building Information Modeling)",
+  
+  "safety & hazard analysis (hazop)": "Safety & Hazard Analysis (HAZOP)",
+  "safety and hazard analysis (hazop)": "Safety & Hazard Analysis (HAZOP)",
+  "safety & hazard analysis": "Safety & Hazard Analysis (HAZOP)",
+  "hazop": "Safety & Hazard Analysis (HAZOP)",
+  
+  "computational fluid dynamics (cfd)": "CFD",
+  "computational fluid dynamics": "CFD",
+  "cfd": "CFD"
 };
 
 const SOFT_SKILLS_BLACKLIST = new Set([

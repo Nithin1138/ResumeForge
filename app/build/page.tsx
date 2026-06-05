@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useFormStore } from "@/stores/formStore";
-import { ArrowLeft, ArrowRight, Plus, Trash2, Loader2, Sparkles, Check, ChevronDown, X, Cloud, CloudOff, RotateCcw, User, Code2, Rocket, Briefcase, Wand2, Zap } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, Trash2, Loader2, Sparkles, Check, ChevronDown, X, Cloud, CloudOff, RotateCcw, User, Code2, Rocket, Briefcase, Wand2, Zap, ArrowUp, ArrowDown, Archive } from "lucide-react";
 import { getLocalSession } from "@/lib/authClient";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BRANCH_SKILL_CONFIGS, DEFAULT_BRANCH_CONFIG } from "@/lib/branchConfig";
@@ -281,9 +281,89 @@ export default function BuildPage() {
     updateOptions,
     setFullFormData,
     resetForm,
+    moveProjectUp,
+    moveProjectDown,
   } = useFormStore();
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [highlightedProjectIdx, setHighlightedProjectIdx] = useState<number | null>(null);
+
+  const handleMoveProjectUp = (idx: number) => {
+    if (idx === 0) return;
+    const newIdx = idx - 1;
+    setHighlightedProjectIdx(newIdx);
+    moveProjectUp(idx);
+    setTimeout(() => {
+      const el = document.getElementById(`project-card-${newIdx}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 100);
+    setTimeout(() => {
+      setHighlightedProjectIdx(null);
+    }, 1200);
+  };
+
+  const handleMoveProjectDown = (idx: number) => {
+    if (idx === formData.projects.length - 1) return;
+    const newIdx = idx + 1;
+    setHighlightedProjectIdx(newIdx);
+    moveProjectDown(idx);
+    setTimeout(() => {
+      const el = document.getElementById(`project-card-${newIdx}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 100);
+    setTimeout(() => {
+      setHighlightedProjectIdx(null);
+    }, 1200);
+  };
+
+  // Local project draft storage with LocalStorage persistence
+  const [draftedProjects, setDraftedProjects] = useState<import("@/types/resume").ProjectInfo[]>([]);
+  const [isDraftOpen, setIsDraftOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("project_drafts");
+      if (stored) {
+        setDraftedProjects(JSON.parse(stored));
+      }
+    } catch (e) {
+      console.error("Failed to load project drafts:", e);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("project_drafts", JSON.stringify(draftedProjects));
+    } catch (e) {
+      console.error("Failed to save project drafts:", e);
+    }
+  }, [draftedProjects]);
+
+  const handleSendToDraft = (idx: number) => {
+    const projectToDraft = formData.projects[idx];
+    setDraftedProjects(prev => [...prev, projectToDraft]);
+    removeProject(idx);
+  };
+
+  const handleRestoreFromDraft = (draftIdx: number) => {
+    const currentProjects = useFormStore.getState().formData.projects;
+    if (currentProjects.length >= 4) return;
+    
+    const projectToRestore = draftedProjects[draftIdx];
+    addProject();
+    const newIdx = useFormStore.getState().formData.projects.length - 1;
+    updateProject(newIdx, projectToRestore);
+    setDraftedProjects(prev => prev.filter((_, i) => i !== draftIdx));
+  };
+
+  const handleDeleteFromDraft = (draftIdx: number) => {
+    setDraftedProjects(prev => prev.filter((_, i) => i !== draftIdx));
+  };
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState(0);
 
@@ -326,7 +406,8 @@ export default function BuildPage() {
           techStack: data.techStack || "",
           description: data.description || "",
           keyResult: data.keyResult || "",
-          duration: data.duration || ""
+          duration: data.duration || "",
+          isFlash: true
         });
       }
       setFlashProjectModal({ isOpen: false, title: "", repoUrl: "", isLoading: false, error: "" });
@@ -904,24 +985,31 @@ export default function BuildPage() {
           <p className="text-sm text-text-muted">Add up to 4 core projects. Describe what you built in plain language.</p>
         </div>
         
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-          <button
-            onClick={() => setFlashProjectModal(prev => ({ ...prev, isOpen: true }))}
-            disabled={formData.projects.length >= 4 || formData.options.noProjects}
-            className="px-4 py-2 bg-[#facc15]/10 border border-[#facc15]/40 hover:bg-[#facc15]/20 disabled:opacity-50 text-[#ca8a04] font-bold text-xs rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer w-full md:w-auto justify-center"
-          >
-            <Zap className="w-4 h-4 fill-current" />
-            <span>+ Flash Project</span>
-          </button>
-          
-          <button
-            onClick={addProject}
-            disabled={formData.projects.length >= 4 || formData.options.noProjects}
-            className="px-4 py-2 bg-primary/10 border border-primary/20 hover:bg-primary/25 disabled:opacity-50 text-primary font-bold text-xs rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer w-full md:w-auto justify-center"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Project ({formData.projects.length}/4)</span>
-          </button>
+        <div className="flex flex-col lg:flex-row items-center lg:items-end gap-3 w-full md:w-auto">
+          <div className="flex flex-col items-center sm:items-start gap-1 w-full sm:w-auto">
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <button
+                onClick={() => setFlashProjectModal(prev => ({ ...prev, isOpen: true }))}
+                disabled={formData.projects.length >= 4 || formData.options.noProjects}
+                className="px-4 py-2 bg-[#facc15]/10 border border-[#facc15]/40 hover:bg-[#facc15]/20 disabled:opacity-50 text-[#ca8a04] font-bold text-xs rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer justify-center whitespace-nowrap"
+              >
+                <Zap className="w-4 h-4 fill-current" />
+                <span>+ Flash Project</span>
+              </button>
+              
+              <button
+                onClick={addProject}
+                disabled={formData.projects.length >= 4 || formData.options.noProjects}
+                className="px-4 py-2 bg-primary/10 border border-primary/20 hover:bg-primary/25 disabled:opacity-50 text-primary font-bold text-xs rounded-full flex items-center space-x-1.5 transition-colors cursor-pointer w-full sm:w-auto justify-center whitespace-nowrap"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Project ({formData.projects.length}/4)</span>
+              </button>
+            </div>
+            <span className="text-[10px] font-semibold text-text-muted pl-2 mt-0.5">
+              (Auto-generated from GitHub Link)
+            </span>
+          </div>
         </div>
       </div>
 
@@ -949,16 +1037,78 @@ export default function BuildPage() {
       )}
 
       <div className="space-y-6">
-        {formData.projects.map((proj, idx) => (
-          <div key={idx} className="border border-border bg-surface/50 rounded-2xl p-6 space-y-4 relative">
-            <div className="flex justify-between items-center pb-2 border-b border-border/30">
-              <span className="text-xs font-bold text-primary tracking-wider uppercase">Project #{idx + 1}</span>
-              <button
-                onClick={() => removeProject(idx)}
-                className="text-text-muted hover:text-error transition-colors p-1"
-              >
-                <Trash2 className="w-4.5 h-4.5" />
-              </button>
+        {formData.projects.map((proj, idx) => {
+          // Dynamic classes based on priority & flash status
+          let borderLeftColor = "border-l-primary";
+          let labelColor = "text-primary";
+          let moveUpHover = "hover:bg-primary/10 hover:text-primary";
+          let moveDownHover = "hover:bg-primary/10 hover:text-primary";
+
+          if (proj.isFlash) {
+            borderLeftColor = "border-l-error";
+            labelColor = "text-error";
+            moveUpHover = "hover:bg-error/10 hover:text-error";
+            moveDownHover = "hover:bg-error/10 hover:text-error";
+          } else if (idx >= 2) {
+            borderLeftColor = "border-l-warning";
+            labelColor = "text-warning";
+            moveUpHover = "hover:bg-warning/10 hover:text-warning";
+            moveDownHover = "hover:bg-warning/10 hover:text-warning";
+          }
+
+          return (
+            <div 
+              key={idx} 
+              id={`project-card-${idx}`}
+              className={`border-t border-r border-b border-l-4 border-border/60 ${borderLeftColor} bg-surface/50 rounded-2xl p-6 space-y-4 relative shadow-sm hover:shadow-md transition-all duration-300 ${
+                highlightedProjectIdx === idx 
+                  ? "ring-2 ring-primary ring-offset-2 dark:ring-offset-surface scale-[1.015] shadow-lg z-10 duration-500" 
+                  : "hover:scale-[1.002]"
+              }`}
+            >
+              <div className="flex justify-between items-center pb-2 border-b border-border/30">
+                <div className="flex items-center space-x-3 flex-wrap gap-y-2">
+                  <span className={`text-xs font-bold ${labelColor} tracking-wider uppercase`}>
+                    Priority {idx + 1} ({idx < 2 ? "3 points" : "2 points"})
+                  </span>
+                  
+
+
+                  <div className="flex space-x-1">
+                    <button
+                      onClick={() => handleMoveProjectUp(idx)}
+                      disabled={idx === 0}
+                      className={`p-1 rounded bg-surface ${moveUpHover} disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-text-muted`}
+                      title="Move Up"
+                    >
+                      <ArrowUp className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleMoveProjectDown(idx)}
+                      disabled={idx === formData.projects.length - 1}
+                      className={`p-1 rounded bg-surface ${moveDownHover} disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-text-muted`}
+                      title="Move Down"
+                    >
+                      <ArrowDown className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => handleSendToDraft(idx)}
+                  className="text-text-muted hover:text-primary transition-colors p-1"
+                  title="Send to Draft"
+                >
+                  <Archive className="w-4.5 h-4.5" />
+                </button>
+                <button
+                  onClick={() => removeProject(idx)}
+                  className="text-text-muted hover:text-error transition-colors p-1"
+                  title="Remove Project"
+                >
+                  <Trash2 className="w-4.5 h-4.5" />
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1049,7 +1199,8 @@ export default function BuildPage() {
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
 
         {!formData.options.noProjects && formData.projects.length === 0 && (
           <div className="text-center py-10 border border-dashed border-border rounded-2xl bg-surface/30">
@@ -1070,6 +1221,108 @@ export default function BuildPage() {
             <p className="text-sm font-semibold text-text-muted">You have opted to continue without adding projects.</p>
           </div>
         )}
+      </div>
+
+      {/* Desktop-only Floating Draft Shelf Semi-circle Trigger */}
+      <div 
+        onClick={() => setIsDraftOpen(true)}
+        className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-primary hover:bg-primary/95 text-white rounded-l-full py-4 pl-3 pr-2 shadow-xl flex-col items-center cursor-pointer select-none transition-all hover:pr-3 duration-200 group border-y border-l border-primary/20"
+      >
+        <Archive className="w-4 h-4 mb-2 group-hover:scale-110 transition-transform" />
+        <span className="text-[9px] font-bold tracking-widest uppercase flex flex-col items-center gap-0.5 select-none leading-none mb-1">
+          <span>D</span>
+          <span>R</span>
+          <span>A</span>
+          <span>F</span>
+          <span>T</span>
+        </span>
+        <span className="bg-white text-primary text-[10px] font-extrabold w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-xs mt-1">
+          {draftedProjects.length}
+        </span>
+      </div>
+
+      {/* Desktop-only Sliding Draft Drawer/Sidebar */}
+      {isDraftOpen && (
+        <div 
+          onClick={() => setIsDraftOpen(false)}
+          className="hidden lg:block fixed inset-0 bg-text/25 backdrop-blur-xs z-50 transition-opacity duration-300"
+        />
+      )}
+      <div 
+        className={`hidden lg:flex fixed top-0 right-0 h-full w-[320px] bg-surface border-l border-border shadow-2xl z-50 flex-col transition-transform duration-300 ${
+          isDraftOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        {/* Drawer Header */}
+        <div className="p-5 border-b border-border flex justify-between items-center bg-surface/30">
+          <div className="flex items-center space-x-2">
+            <Archive className="w-4.5 h-4.5 text-primary" />
+            <h3 className="text-sm font-bold text-text">Drafted Projects</h3>
+          </div>
+          <button 
+            onClick={() => setIsDraftOpen(false)}
+            className="p-1 rounded-full hover:bg-border/30 text-text-muted hover:text-text transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Drawer Body - List of drafts */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          {draftedProjects.length === 0 ? (
+            <div className="text-center py-12 px-4 space-y-3">
+              <Archive className="w-8 h-8 text-text-muted/30 mx-auto" />
+              <p className="text-xs font-semibold text-text-muted">No drafted projects.</p>
+              <p className="text-[10px] text-text-muted leading-relaxed">
+                Send projects to the draft shelf to store them safely for later.
+              </p>
+            </div>
+          ) : (
+            draftedProjects.map((draftProj, draftIdx) => (
+              <div 
+                key={draftIdx} 
+                className="p-4 rounded-xl border border-border/80 bg-surface/10 space-y-3 hover:border-primary/30 transition-colors"
+              >
+                <div>
+                  <h4 className="text-xs font-bold text-text truncate">
+                    {draftProj.title || `Untitled Project`}
+                  </h4>
+                  {draftProj.techStack && (
+                    <p className="text-[10px] text-primary/80 font-medium truncate mt-0.5">
+                      {draftProj.techStack}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex justify-end items-center gap-2 pt-2 border-t border-border/30">
+                  <button
+                    onClick={() => handleDeleteFromDraft(draftIdx)}
+                    className="px-2.5 py-1 text-[10px] font-semibold text-text-muted hover:text-error hover:bg-error/5 rounded-md transition-colors"
+                    title="Delete permanently"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => handleRestoreFromDraft(draftIdx)}
+                    disabled={formData.projects.length >= 4 || formData.options.noProjects}
+                    className="px-3 py-1 bg-primary/10 border border-primary/20 hover:bg-primary/20 disabled:opacity-40 disabled:cursor-not-allowed text-primary text-[10px] font-bold rounded-md transition-colors flex items-center gap-1"
+                    title={formData.projects.length >= 4 ? "Active limit (4) reached" : "Restore to active list"}
+                  >
+                    <Plus className="w-3 h-3" />
+                    Restore
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Drawer Footer info */}
+        <div className="p-4 border-t border-border bg-surface/30 text-center">
+          <p className="text-[9px] text-text-muted font-medium">
+            Active limit: {formData.projects.length}/4 projects active
+          </p>
+        </div>
       </div>
     </div>
   );

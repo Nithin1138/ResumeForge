@@ -111,7 +111,7 @@ ${readmeText.substring(0, 8000)}
 Extract the following:
 1. "techStack": A comma-separated string of the main languages, frameworks, and tools used. 
 2. "description": A professional, concise 1-2 sentence summary of what the project is and what it does. Focus on the engineering aspect. Avoid saying "This is a repository for..." - just state what the system is.
-3. "keyResult": A strong, action-oriented bullet point describing a key achievement, metric, or complex feature built. (e.g., "Architected a scalable backend handling 1000+ requests/sec" or "Implemented JWT authentication and real-time WebSockets"). Keep it to ONE single sentence.
+3. "keyResult": A strong, action-oriented bullet point following the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure, integrating specific engineering metrics (such as processing speed, model accuracy rates, or pipeline efficiency percentages) to describe a key achievement or complex feature built. (e.g., "Reduced manual image analysis effort by 40% (Y) by training a custom CNN classification model with 92% accuracy (Z) to automate real-time crop disease detection (X)" or "Optimized database query latency by 45% (Y) by refactoring database ingestion workflows and adding Redis caching layers (Z) to support 1,000+ active concurrent users (X)"). Keep it to ONE single sentence.
 
 Return ONLY a valid JSON object matching exactly this structure (no markdown tags):
 {
@@ -126,7 +126,7 @@ Return ONLY a valid JSON object matching exactly this structure (no markdown tag
 
     try {
       const response = await ai.models.generateContent({
-        model: "gemini-1.5-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           responseMimeType: "application/json",

@@ -13,6 +13,7 @@ import AIVerificationSection from "@/components/AIVerificationSection";
 
 export default function ResultPage({ params }: { params: Promise<{ resumeId: string }> }) {
   const { resumeId } = use(params);
+  const searchParams = useSearchParams();
   const [resume, setResume] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +24,12 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const [activeRoleIndex, setActiveRoleIndex] = useState(0);
   const [isVerificationModalOpen, setVerificationModalOpen] = useState(false);
   const [scoreMode, setScoreMode] = useState<"resume" | "role">("resume");
+
+  useEffect(() => {
+    if (searchParams && searchParams.get("verify") === "true") {
+      setVerificationModalOpen(true);
+    }
+  }, [searchParams]);
 
   const parsedOutput = resume?.outputFull 
     ? (typeof resume.outputFull === "string" ? JSON.parse(resume.outputFull) : resume.outputFull)
@@ -560,8 +567,10 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                 <span>Back to ATS Score</span>
               </button>
             ) : (
-              <button 
-                onClick={() => setVerificationModalOpen(true)}
+              <a 
+                href={`/result/${resumeId}?verify=true`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="px-5 py-3 sm:py-3.5 bg-surface border border-border hover:bg-border/60 text-text text-[11px] sm:text-xs font-bold rounded-full transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-xs group cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
@@ -570,7 +579,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                   <span className="text-text-muted font-medium mr-1.5 sm:hidden">Not sure?</span>
                   <span className="underline underline-offset-2 decoration-border group-hover:decoration-text-muted">Verify with AI</span>
                 </span>
-              </button>
+              </a>
             )}
           </div>
         </div>

@@ -267,16 +267,16 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             </div>
           )}
 
-          {/* Academic Projects */}
+          {/* Projects */}
           {d.projects?.length > 0 && (
             <div style={{ marginBottom: "13pt" }}>
-              <SectionTitle>Academic Projects</SectionTitle>
+              <SectionTitle>Projects</SectionTitle>
               {d.projects.map((proj: any, idx: number) => (
                 <div key={idx} style={{ marginBottom: idx === d.projects.length - 1 ? 0 : "10pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "1pt" }}>
                     <div style={{ fontWeight: "bold", fontSize: "10pt", color: "#111", display: "flex", alignItems: "center", gap: "6px", flex: 1 }}>
                       {proj.title}
-                      {proj.link && (
+                      {proj.link && proj.link.toLowerCase() !== "none" && proj.link.trim() !== "" && (
                         <a href={proj.link.startsWith("http") ? proj.link : `https://${proj.link}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8.5pt", color: "#666", fontWeight: "normal" }}>
                           [{proj.link.includes("github.com") ? "GitHub" : "Live Demo"}]
                         </a>

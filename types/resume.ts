@@ -31,6 +31,7 @@ export interface ProjectInfo {
   keyResult: string;
   link: string;
   duration: string;
+  isFlash?: boolean;
 }
 
 export interface InternshipInfo {

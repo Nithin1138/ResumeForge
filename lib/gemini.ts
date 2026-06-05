@@ -47,7 +47,7 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
       title: proj.title || `Project ${idx + 1}`,
       techStack: proj.techStack || "React, Node.js",
       duration: proj.duration || "Jan 2025 – Mar 2025",
-      link: proj.link || "https://github.com/student/project",
+      link: proj.link || "",
       bullets: [
         `Architected and implemented a high-performance system for ${proj.description || "core product operations"}, optimizing request latencies and response pipelines.`,
         `Integrated a robust backend to handle ${proj.keyResult || "core key features"}, scaling concurrency to handle 100+ simulated requests per second.`,
@@ -266,7 +266,7 @@ Your output must strictly follow these rules:
 5. Align all wording to the target role specified.
 6. If a job description is provided, mirror its keywords naturally in bullets — do not stuff keywords.
 7. Output ONLY valid JSON matching the schema below. No markdown. No explanation.
-8. Each project and internship/experience item MUST contain exactly 3 or 4 bullet points in their "bullets" array (and similarly in the "variants" bullets arrays). Do not output fewer than 3 bullet points.
+8. PROJECT BULLET COUNTS: The priority of the projects corresponds to their order in the list. For the FIRST TWO projects (Top 2 priorities), generate EXACTLY 3 bullet points each. For ANY ADDITIONAL projects (3rd or 4th priorities, i.e., Minor Projects), generate EXACTLY 2 bullet points each to save space on the page. Internship/experience items MUST contain exactly 3 or 4 bullet points.
 9. For skills: group logically. Do not repeat skills across sections.
 10. For the summary: You must explicitly mention the exact target role: "${personal.targetRole}" early in the summary text. Keep to 3 sentences max.
 11. If the tech stack is already displayed below the project title, do NOT repeat technologies inside bullet points unless absolutely necessary for explaining a specific implementation detail. Focus strictly on technical implementation, architecture, and outcomes.
@@ -308,11 +308,14 @@ Your output must strictly follow these rules:
     The core technical value must appear within the first 8–12 words of every bullet point. Recruiters should instantly understand: 1. what was built, 2. what technical domain was involved, 3. why it mattered. Avoid long introductory setup phrases.
   - REDUNDANCY FILTER:
     Do NOT repeat identical sentence rhythm, technical structure, or semantic patterns across multiple bullets. If one bullet emphasizes automation, the next should emphasize processing, optimization, transformation, detection, integration, workflows, or measurable outcomes.
-  - METRICS & IMPACT:
-    Reintroduce realistic measurable outcomes where genuinely valuable.
-    GOOD: "Processed 10,000+ reviews", "Achieved 91% accuracy", "Reduced manual analysis effort by 40%"
-    BAD: "Increased efficiency dramatically", "Handled millions of requests", "Improved productivity by 500%"
-    Metrics should support the technical story, not dominate every sentence.
+  - METRICS, IMPACT & GOOGLE X-Y-Z FORMULA:
+    Write project bullet points following the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure.
+    Always integrate specific engineering metrics—such as processing speed, model accuracy rates, data throughput, or pipeline efficiency percentages—wherever possible to demonstrate impact.
+    GOOD (following X-Y-Z): 
+      * "Reduced database query latency by 45% (Y) by implementing Redis caching layers and optimizing relational indexes (Z) to support 1,000+ active concurrent users (X)"
+      * "Achieved 93.4% classification accuracy (Y) on 5,000+ test samples by training a customized CNN model with data augmentation (Z) to automate real-time crop disease detection (X)"
+      * "Optimized API pipeline efficiency by 30% (Y) by refactoring database ingestion workflows and adding batch-processing loops (Z) to handle 10,000+ daily log entries (X)"
+    Avoid fake corporate jargon or generic words. Phrasing must strictly be formatted as an action-outcome sequence mapping (X) measured by (Y) by doing (Z).
   - PHRASING RULES:
     Avoid repetitive textbook phrasing like: "by using", "for", "ensuring", "designed to", "capable of", "resulting in". Avoid generic passive explanations and academic-report tone.
   - TECHNICAL DEPTH PRIORITY:
@@ -425,7 +428,7 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
         { "role": "Fullstack Engineer", "bullets": ["Fullstack focused bullet 1", "Fullstack focused bullet 2", "Fullstack focused bullet 3"] }
       ],
       "duration": "Jan 2025 – Mar 2025",
-      "link": "https://github.com/..."
+      "link": "https://github.com/... (leave empty string if none provided)"
     }
   ],
   "experience": [
@@ -521,7 +524,7 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
 
   try {
     const response = await client.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -553,9 +556,11 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
 }
 
 export async function generateSectionContent(sectionType: string, currentText: string): Promise<string> {
+  const isProjectOrExperience = sectionType.toLowerCase().includes("project") || sectionType.toLowerCase().includes("experience") || sectionType.toLowerCase().includes("work");
   const prompt = `
 SYSTEM:
 You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
+${isProjectOrExperience ? `CRITICAL RULE: Since this is a project or experience bullet, you MUST structure it to follow the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure, integrating specific engineering metrics like processing speed, model accuracy rates, or pipeline efficiency percentages.` : ""}
 If it's a bullet point, output a single bullet point. If it's a paragraph, output a paragraph.
 Do not wrap the output in quotes or markdown formatting, just return the raw text.
 
@@ -582,7 +587,7 @@ ${currentText}
 
   try {
     const response = await client.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.5-flash",
       contents: prompt,
     });
 

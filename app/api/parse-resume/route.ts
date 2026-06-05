@@ -3,7 +3,7 @@ import { GoogleGenAI } from "@google/genai";
 import * as mammoth from "mammoth";
 import { generateGroqFallback } from "@/lib/gemini";
 // @ts-ignore
-import pdfParse from "pdf-parse";
+const PDFParser = require("pdf2json");
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -42,6 +42,7 @@ CRITICAL RULE: For 'branch' and 'pgBranch', you MUST select ONLY ONE of these ex
 CRITICAL RULE: For 'cgpa' and 'pgCgpa', extract ONLY the numerical value (e.g., '8.5' or '3.8'), stripping out any '/10' or '%' symbols. For graduation year, extract just the 4-digit year.
 CRITICAL RULE: Pay special attention to extracting hyperlinks (URLs). For DOCX files, you will receive HTML content, so look at the <a href="..."> tags to extract URLs for 'link', 'linkedin', 'github', etc. If a link is present, extract the full URL. If a URL is embedded behind text, extract the underlying link.
 CRITICAL RULE: The JSON structure below shows arrays with one empty object as a template to show you the required keys. If there are no projects, internships, positions, or achievements in the resume, you MUST return an empty array [] for that field. DO NOT return an array containing an empty object.
+CRITICAL RULE: For 'csConcepts', extract academic coursework/core concepts like Data Structures (DSA), Algorithms, Object-Oriented Programming (OOP), Operating Systems (OS), DBMS, Computer Networks, System Design, etc. For 'softSkills', extract any non-technical soft skills like Communication, Leadership, Teamwork, Problem Solving, etc.
 Return ONLY a valid JSON object matching this exact structure exactly (no markdown):
 
 {
@@ -174,7 +175,7 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
 
         // Use native Gemini vision (most robust for layout/columns) alongside the extracted links
         response = await ai.models.generateContent({
-          model: "gemini-1.5-flash",
+          model: "gemini-2.5-flash",
           contents: [
             { text: prompt + linkPrompt },
             {
@@ -202,7 +203,7 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
         
         const fullPrompt = prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000);
         response = await ai.models.generateContent({
-          model: "gemini-1.5-flash",
+          model: "gemini-2.5-flash",
           contents: fullPrompt,
           config: {
             responseMimeType: "application/json",
@@ -219,10 +220,16 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
       let fallbackText = "";
       if (isPDF) {
          try {
-           const parsedPdf = await pdfParse(Buffer.from(await file.arrayBuffer()));
-           fallbackText = parsedPdf.text;
+           const arrayBuffer = await file.arrayBuffer();
+           const buffer = Buffer.from(arrayBuffer);
+           fallbackText = await new Promise((resolve, reject) => {
+             const pdfParser = new PDFParser(null, 1);
+             pdfParser.on("pdfParser_dataError", (err: any) => reject(err.parserError));
+             pdfParser.on("pdfParser_dataReady", () => resolve(pdfParser.getRawTextContent()));
+             pdfParser.parseBuffer(buffer);
+           });
          } catch (pdfError) {
-           console.error("pdf-parse failed during Groq fallback", pdfError);
+           console.error("pdf2json failed during Groq fallback", pdfError);
            throw new Error(`Gemini failed (${geminiError.message || geminiError}) and PDF text extraction for Groq fallback also failed.`);
          }
       } else if (isDocx) {

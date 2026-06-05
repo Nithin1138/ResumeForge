@@ -20,6 +20,8 @@ interface FormStore {
   addProject: () => void;
   removeProject: (index: number) => void;
   updateProject: (index: number, project: Partial<ProjectInfo>) => void;
+  moveProjectUp: (index: number) => void;
+  moveProjectDown: (index: number) => void;
 
   // Internship Repeater
   addInternship: () => void;
@@ -142,6 +144,7 @@ export const useFormStore = create<FormStore>()(
             keyResult: "",
             link: "",
             duration: "",
+            isFlash: false,
           };
           return {
             formData: {
@@ -170,6 +173,32 @@ export const useFormStore = create<FormStore>()(
               ...state.formData,
               projects: updatedProjects,
             },
+            lastSaved: Date.now(),
+          };
+        }),
+
+      moveProjectUp: (index) =>
+        set((state) => {
+          if (index === 0) return state;
+          const updatedProjects = [...state.formData.projects];
+          const temp = updatedProjects[index - 1];
+          updatedProjects[index - 1] = updatedProjects[index];
+          updatedProjects[index] = temp;
+          return {
+            formData: { ...state.formData, projects: updatedProjects },
+            lastSaved: Date.now(),
+          };
+        }),
+
+      moveProjectDown: (index) =>
+        set((state) => {
+          if (index === state.formData.projects.length - 1) return state;
+          const updatedProjects = [...state.formData.projects];
+          const temp = updatedProjects[index + 1];
+          updatedProjects[index + 1] = updatedProjects[index];
+          updatedProjects[index] = temp;
+          return {
+            formData: { ...state.formData, projects: updatedProjects },
             lastSaved: Date.now(),
           };
         }),
