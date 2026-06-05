@@ -556,21 +556,40 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
   }
 }
 
-export async function generateSectionContent(sectionType: string, currentText: string): Promise<string> {
+export async function generateSectionContent(
+  sectionType: string, 
+  currentText: string,
+  expectedBulletCount?: number
+): Promise<string> {
   const isProjectOrExperience = sectionType.toLowerCase().includes("project") || sectionType.toLowerCase().includes("experience") || sectionType.toLowerCase().includes("work");
   const isSummary = sectionType.toLowerCase().includes("summary");
   const prompt = `
 SYSTEM:
 You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
-${isProjectOrExperience ? `CRITICAL RULE: Since this is a project or experience bullet, you MUST structure it to follow the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure, integrating specific engineering metrics like processing speed, model accuracy rates, or pipeline efficiency percentages.
-Additionally, the rewritten bullet point MUST be strictly between 65 and 130 characters in length (including spaces). This is a hard limit to prevent bullets from overflowing onto multiple lines on the resume page. Keep it extremely concise and compact while still utilizing the X-Y-Z structure.` : ""}
+${isProjectOrExperience ? `CRITICAL RULE: Since this is a project or experience section, you MUST rewrite it to produce EXACTLY ${expectedBulletCount || 3} high-impact bullet points, each on its own line (separated by newlines).
+Each individual bullet point MUST follow the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure, integrating specific engineering metrics like processing speed, model accuracy rates, or pipeline efficiency percentages.
+Additionally, each bullet point MUST be strictly between 65 and 130 characters in length (including spaces). This is a hard limit to prevent bullets from overflowing onto multiple lines. Keep it extremely concise and compact while still utilizing the X-Y-Z structure.` : ""}
 ${isSummary ? `CRITICAL RULE: Since this is the professional summary, you MUST rewrite it to be extremely targeted, professional, and punchy. It MUST be exactly 1-2 sentences maximum, aiming to fill between 1.5 to 2 lines on the page (approximately 110 to 160 characters in total). Do NOT make it extremely short (such as under 80 characters or a brief phrase like 'Delivers software solutions'). It must read as a cohesive summary describing the candidate's core expertise and engineering background.` : ""}
-If it's a bullet point, output a single bullet point. If it's a paragraph, output a paragraph.
-Do NOT start the bullet point with any list symbols, dashes, asterisks, numbers, or bullet characters (e.g. do NOT output "*", "-", "•", etc.). Output ONLY the raw plain text sentence itself. Do NOT wrap the output in quotes or markdown formatting, just return the raw text.
+${isProjectOrExperience ? `Output EXACTLY ${expectedBulletCount || 3} lines of plain text, one for each bullet point. Do NOT output a single line or combine them. Do NOT add any list symbols, dashes, asterisks, numbers, or bullet characters (e.g., do NOT output "*", "-", "•", "1.", etc.) at the start of any line.` : `If it's a bullet point, output a single bullet point. If it's a paragraph, output a paragraph. Do NOT start the bullet point with any list symbols, dashes, asterisks, numbers, or bullet characters (e.g. do NOT output "*", "-", "•", etc.). Output ONLY the raw plain text sentence itself.`}
+Do NOT wrap the output in quotes or markdown formatting, just return the raw text.
 
 CURRENT TEXT:
 ${currentText}
 `;
+
+  function cleanSectionText(text: string, isBulletList: boolean): string {
+    const lines = text.trim().split("\n");
+    const cleaned = lines.map(line => {
+      let cleanedLine = line.trim();
+      if (isBulletList) {
+        cleanedLine = cleanedLine.replace(/^[-*•\d\.\s]+/, "");
+      } else {
+        cleanedLine = cleanedLine.replace(/^[-*•\s]+/, "");
+      }
+      return cleanedLine;
+    }).filter(Boolean);
+    return cleaned.join("\n");
+  }
 
   const client = getGeminiClient();
 
@@ -579,13 +598,13 @@ ${currentText}
       try {
         console.log("No Gemini API key available, but Groq key is present. Using Groq directly for section generation.");
         const groqResponse = await generateGroqFallback(prompt, false);
-        return groqResponse.trim().replace(/^[-*•\s]+/, "");
+        return cleanSectionText(groqResponse, isProjectOrExperience);
       } catch (groqError) {
         console.error("Groq direct call failed for section:", groqError);
       }
     }
     return new Promise((resolve) => {
-      setTimeout(() => resolve(currentText + " (Mock Regenerated)"), 1000);
+      setTimeout(() => resolve(cleanSectionText(currentText + " (Mock Regenerated)", isProjectOrExperience)), 1000);
     });
   }
 
@@ -600,15 +619,15 @@ ${currentText}
       throw new Error("Empty response from Gemini API");
     }
 
-    return responseText.trim().replace(/^[-*•\s]+/, ""); // remove bullet dash, asterisk, or space if added by AI
+    return cleanSectionText(responseText, isProjectOrExperience);
   } catch (error) {
     console.error("Error communicating with Gemini API, trying Groq fallback:", error);
     try {
       const groqResponse = await generateGroqFallback(prompt, false);
-      return groqResponse.trim().replace(/^-\s*/, "");
+      return cleanSectionText(groqResponse, isProjectOrExperience);
     } catch (groqError) {
       console.error("Groq fallback failed as well, using current text:", groqError);
-      return currentText;
+      return cleanSectionText(currentText, isProjectOrExperience);
     }
   }
 }

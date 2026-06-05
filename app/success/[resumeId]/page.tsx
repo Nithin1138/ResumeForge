@@ -241,13 +241,19 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
     }, 1500);
   };
 
-  const handleRegenerateSection = async (id: string, sectionType: string, currentText: string, onUpdate: (newText: string) => void) => {
+  const handleRegenerateSection = async (
+    id: string, 
+    sectionType: string, 
+    currentText: string, 
+    onUpdate: (newText: string) => void,
+    expectedBulletCount?: number
+  ) => {
     setRegeneratingStates((prev) => ({ ...prev, [id]: true }));
     try {
       const res = await fetch("/api/generate-section", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sectionType, currentText }),
+        body: JSON.stringify({ sectionType, currentText, expectedBulletCount }),
       });
       if (!res.ok) throw new Error("Failed to regenerate section");
       const data = await res.json();
@@ -914,7 +920,8 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                             next.projects[idx].bullets = newText.split("\n").filter(Boolean);
                             return next;
                           });
-                        }
+                        },
+                        idx < 2 ? 3 : 2
                       )}
                       disabled={regeneratingStates[blockId]}
                       className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"
@@ -1014,7 +1021,8 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                               next.experience[idx].bullets = newText.split("\n").filter(Boolean);
                               return next;
                             });
-                          }
+                          },
+                          (exp.bullets || []).length || 3
                         )}
                         disabled={regeneratingStates[blockId]}
                         className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"
