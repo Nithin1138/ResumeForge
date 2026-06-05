@@ -102,7 +102,7 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
   const firstProj = mockProjects[0];
 
   return {
-    summary: `Motivated B.Tech student in ${branchName} at ${collegeName} (CGPA: ${cgpaValue}/10.0), specializing as a ${targetRole}. Proven record of engineering high-impact projects using ${languagesList.slice(0, 3).join(", ")}. Passionate about building scalable systems, applying optimal data structures, and deploying cloud-native web services.`,
+    summary: `B.Tech student in ${branchName} at ${collegeName} specializing as a ${targetRole}. Experienced in building efficient engineering systems using ${languagesList.slice(0, 3).join(", ")}.`,
     skills: processedSkills.length > 0 ? processedSkills : [
       { category: "Programming Languages", skills: ["Python", "Java", "C++"] },
       { category: "Frameworks & Libraries", skills: ["React", "Next.js", "Express"] },
@@ -268,7 +268,7 @@ Your output must strictly follow these rules:
 7. Output ONLY valid JSON matching the schema below. No markdown. No explanation.
 8. PROJECT BULLET COUNTS: The priority of the projects corresponds to their order in the list. For the FIRST TWO projects (Top 2 priorities), generate EXACTLY 3 bullet points each. For ANY ADDITIONAL projects (3rd or 4th priorities, i.e., Minor Projects), generate EXACTLY 2 bullet points each to save space on the page. Internship/experience items MUST contain exactly 3 or 4 bullet points.
 9. For skills: group logically. Do not repeat skills across sections.
-10. For the summary: You must explicitly mention the exact target role: "${personal.targetRole}" early in the summary text. Keep to 3 sentences max.
+10. For the summary: You must explicitly mention the exact target role: "${personal.targetRole}" early in the summary text. Keep the summary extremely concise, strictly to 1-2 sentences maximum, and under 160 characters in total to fit cleanly within 1.5 to 2 lines on the page.
 11. If the tech stack is already displayed below the project title, do NOT repeat technologies inside bullet points unless absolutely necessary for explaining a specific implementation detail. Focus strictly on technical implementation, architecture, and outcomes.
 12. Avoid fake corporate buzzwords or exaggerated claims inside project bullet points.
 13. IMPORTANT FOR TIPS: Do NOT give tips about resume structure, adding keywords, or formatting (since this app handles the formatting for them). The \`atsTips\` should strictly contain highly personalized CAREER and SKILL improvement advice based on their exact input.
@@ -558,11 +558,13 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
 
 export async function generateSectionContent(sectionType: string, currentText: string): Promise<string> {
   const isProjectOrExperience = sectionType.toLowerCase().includes("project") || sectionType.toLowerCase().includes("experience") || sectionType.toLowerCase().includes("work");
+  const isSummary = sectionType.toLowerCase().includes("summary");
   const prompt = `
 SYSTEM:
 You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
 ${isProjectOrExperience ? `CRITICAL RULE: Since this is a project or experience bullet, you MUST structure it to follow the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure, integrating specific engineering metrics like processing speed, model accuracy rates, or pipeline efficiency percentages.
 Additionally, the rewritten bullet point MUST be strictly between 65 and 130 characters in length (including spaces). This is a hard limit to prevent bullets from overflowing onto multiple lines on the resume page. Keep it extremely concise and compact while still utilizing the X-Y-Z structure.` : ""}
+${isSummary ? `CRITICAL RULE: Since this is the professional summary, you MUST rewrite it to be extremely concise and punchy. It MUST be exactly 1-2 sentences maximum, and strictly under 160 characters in total length (including spaces). This is a hard limit to prevent the summary from taking up more than 1.5 to 2 lines on the page.` : ""}
 If it's a bullet point, output a single bullet point. If it's a paragraph, output a paragraph.
 Do NOT start the bullet point with any list symbols, dashes, asterisks, numbers, or bullet characters (e.g. do NOT output "*", "-", "•", etc.). Output ONLY the raw plain text sentence itself. Do NOT wrap the output in quotes or markdown formatting, just return the raw text.
 
