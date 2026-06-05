@@ -174,7 +174,7 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
         response = await ai.models.generateContent({
           model: "gemini-1.5-pro",
           contents: [
-            prompt + linkPrompt,
+            { text: prompt + linkPrompt },
             {
               inlineData: {
                 data: base64String,
@@ -217,7 +217,7 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
       let fallbackText = "";
       if (isPDF) {
          // Because we removed pdf-parse, Groq PDF fallback is limited to binary string or we just give up on Groq for PDF.
-         throw new Error("Gemini failed and Groq cannot process PDFs directly without pdf-parse.");
+         throw new Error(`Gemini failed: ${geminiError.message || geminiError}. And Groq cannot process PDFs directly.`);
       } else if (isDocx) {
         const arrayBuffer = await file.arrayBuffer();
         const result = await mammoth.convertToHtml({ buffer: Buffer.from(arrayBuffer) });
