@@ -1,0 +1,19 @@
+{
+  "functions": {
+    "app/api/generate/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/generate-section/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/parse-resume/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/ats-check/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/flash-project/route.ts": {
+      "maxDuration": 30
+    }
+  }
+}

@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateResumeContent } from "@/lib/gemini";
 
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
 // Global cache for simple rate limiting across edge invocations
 const rateLimitMap = new Map<string, number[]>();
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 60_000;
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,17 +25,19 @@ export async function POST(req: NextRequest) {
     // Basic in-memory rate limiting (max 5 requests per minute per IP)
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
     const now = Date.now();
-    const windowStart = now - 60 * 1000;
-    
-    // Cleanup old entries
-    for (const [key, timestamps] of rateLimitMap.entries()) {
-      const validTimestamps = timestamps.filter(t => t > windowStart);
-      if (validTimestamps.length === 0) rateLimitMap.delete(key);
-      else rateLimitMap.set(key, validTimestamps);
+    const windowStart = now - RATE_LIMIT_WINDOW_MS;
+
+    // Cleanup stale entries periodically (avoid O(n) scan every request)
+    if (rateLimitMap.size > 200 || Math.random() < 0.05) {
+      for (const [key, timestamps] of rateLimitMap.entries()) {
+        const validTimestamps = timestamps.filter((t) => t > windowStart);
+        if (validTimestamps.length === 0) rateLimitMap.delete(key);
+        else rateLimitMap.set(key, validTimestamps);
+      }
     }
 
-    const userRequests = rateLimitMap.get(ip) || [];
-    if (userRequests.length >= 5) {
+    const userRequests = (rateLimitMap.get(ip) || []).filter((t) => t > windowStart);
+    if (userRequests.length >= RATE_LIMIT_MAX) {
       return NextResponse.json(
         { error: "Too many requests. Please wait a minute before generating again." },
         { status: 429 }
@@ -59,19 +66,21 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Log backend analytics event for step completion
-    try {
-      await prisma.analyticsEvent.create({
+    // Non-blocking analytics — don't delay the response
+    void prisma.analyticsEvent
+      .create({
         data: {
           sessionId,
           eventType: "FORM_COMPLETE",
           page: "build",
-          metadata: JSON.stringify({ resumeId: resume.id, college: resume.college, branch: resume.branch })
-        }
-      });
-    } catch (e) {
-      console.error("Failed to log form completion event:", e);
-    }
+          metadata: JSON.stringify({
+            resumeId: resume.id,
+            college: resume.college,
+            branch: resume.branch,
+          }),
+        },
+      })
+      .catch((e) => console.error("Failed to log form completion event:", e));
 
     return NextResponse.json({ resumeId: resume.id });
   } catch (error) {

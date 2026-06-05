@@ -1,7 +1,9 @@
-import { GoogleGenAI } from "@google/genai";
 import { ResumeFormData, FullResumeOutput } from "@/types/resume";
 import { generateTechnicalSkills, SkillCategoryOutput } from "@/lib/skillsEngine";
 import { normalizeTechStack, optimizeResumeForAts } from "@/lib/atsFormatting";
+import { generateLlmText, hasLlmConfigured } from "@/lib/llm";
+
+export { callGroq as generateGroqFallback } from "@/lib/llm";
 
 function finalizeResumeOutput(
   result: FullResumeOutput,
@@ -9,16 +11,6 @@ function finalizeResumeOutput(
 ): FullResumeOutput {
   return optimizeResumeForAts(result, processedSkills);
 }
-
-// Initialize the Google Gen AI client
-const getGeminiClient = () => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === "mock" || apiKey === "xxx") {
-    console.warn("GEMINI_API_KEY not configured or set to mock. Using simulated LLM response.");
-    return null;
-  }
-  return new GoogleGenAI({ apiKey });
-};
 
 // Generate realistic mock data using student's actual inputs
 const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
@@ -186,81 +178,14 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
   };
 };
 
-// High-performance Groq Fallback Engine [NEW]
-export async function generateGroqFallback(prompt: string, isJson: boolean = false): Promise<string> {
-  const groqKey = process.env.GROQ_API_KEY;
-  if (!groqKey) {
-    throw new Error("Groq API key missing");
-  }
-
-  // High-performance standard Groq models
-  const MODELS = [
-    "llama-3.3-70b-versatile",
-    "llama-3.1-8b-instant",
-    "mixtral-8x7b-32768",
-    "gemma2-9b-it",
-    "openai/gpt-oss-120b",
-    "openai/gpt-oss-20b",
-    "openai/gpt-oss-safeguard-120b",
-    "groq/compound",
-    "groq/compound-mini",
-    "qwen/qwen3-32b"
-  ];
-
-  for (const modelName of MODELS) {
-    try {
-      console.log(`🔄 Trying Groq model: ${modelName}`);
-      const payload: any = {
-        model: modelName,
-        temperature: 0,
-        messages: [{ role: "user", content: prompt }]
-      };
-      if (isJson) {
-        payload.response_format = { type: "json_object" };
-      }
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
-
-      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${groqKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload),
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.warn(`❌ Groq model failed [${modelName}]: ${errorText.substring(0, 200)}`);
-        continue;
-      }
-
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content;
-      if (content) {
-        console.log(`✅ Groq success via ${modelName}`);
-        return content;
-      }
-    } catch (e: any) {
-      console.error(`🔥 Groq error on ${modelName}:`, e.message || e);
-      continue;
-    }
-  }
-
-  throw new Error("All AI providers (Gemini/Groq) are currently exhausted.");
-}
-
 export async function generateResumeContent(formData: ResumeFormData): Promise<FullResumeOutput> {
   const { personal, skills, projects, internships, positions, achievements, options } = formData;
 
   // ── Run deterministic skills engine BEFORE LLM call ──────────────────
   const processedSkills = generateTechnicalSkills(formData);
-  console.log("🔧 Skills Engine Output:", JSON.stringify(processedSkills, null, 2));
+  if (process.env.NODE_ENV !== "production") {
+    console.log("🔧 Skills Engine Output:", JSON.stringify(processedSkills, null, 2));
+  }
 
   // Build precise prompt instructions
   const prompt = `
@@ -516,50 +441,19 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
 }
 `;
 
-  const client = getGeminiClient();
-
-  if (!client) {
-    if (process.env.GROQ_API_KEY) {
-      try {
-        console.log("No Gemini API key available, but Groq key is present. Using Groq directly for resume generation.");
-        const groqResponse = await generateGroqFallback(prompt, true);
-        const groqResult = JSON.parse(groqResponse.trim()) as FullResumeOutput;
-        return finalizeResumeOutput(groqResult, processedSkills);
-      } catch (groqError) {
-        console.error("Groq direct call failed:", groqError);
-      }
-    }
+  if (!hasLlmConfigured()) {
     return new Promise((resolve) => {
       setTimeout(() => resolve(finalizeResumeOutput(generateMockResume(formData), processedSkills)), 1500);
     });
   }
 
   try {
-    const response = await client.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-      },
-    });
-
-    const responseText = response.text;
-    if (!responseText) {
-      throw new Error("Empty response from Gemini API");
-    }
-
-    const geminiResult = JSON.parse(responseText.trim()) as FullResumeOutput;
-    return finalizeResumeOutput(geminiResult, processedSkills);
+    const responseText = await generateLlmText(prompt, { json: true });
+    const result = JSON.parse(responseText.trim()) as FullResumeOutput;
+    return finalizeResumeOutput(result, processedSkills);
   } catch (error) {
-    console.error("Error communicating with Gemini API, trying Groq fallback:", error);
-    try {
-      const groqResponse = await generateGroqFallback(prompt, true);
-      const groqFallbackResult = JSON.parse(groqResponse.trim()) as FullResumeOutput;
-      return finalizeResumeOutput(groqFallbackResult, processedSkills);
-    } catch (groqError) {
-      console.error("Groq fallback failed as well, using mock response:", groqError);
-      return finalizeResumeOutput(generateMockResume(formData), processedSkills);
-    }
+    console.error("LLM resume generation failed, using mock response:", error);
+    return finalizeResumeOutput(generateMockResume(formData), processedSkills);
   }
 }
 
@@ -616,44 +510,18 @@ ${currentText}
     return cleaned.join("\n");
   }
 
-  const client = getGeminiClient();
-
-  if (!client) {
-    if (process.env.GROQ_API_KEY) {
-      try {
-        console.log("No Gemini API key available, but Groq key is present. Using Groq directly for section generation.");
-        const groqResponse = await generateGroqFallback(prompt, false);
-        return cleanSectionText(groqResponse, isProjectOrExperience);
-      } catch (groqError) {
-        console.error("Groq direct call failed for section:", groqError);
-      }
-    }
+  if (!hasLlmConfigured()) {
     return new Promise((resolve) => {
       setTimeout(() => resolve(cleanSectionText(currentText + " (Mock Regenerated)", isProjectOrExperience)), 1000);
     });
   }
 
   try {
-    const response = await client.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
-
-    const responseText = response.text;
-    if (!responseText) {
-      throw new Error("Empty response from Gemini API");
-    }
-
+    const responseText = await generateLlmText(prompt, { json: false });
     return cleanSectionText(responseText, isProjectOrExperience);
   } catch (error) {
-    console.error("Error communicating with Gemini API, trying Groq fallback:", error);
-    try {
-      const groqResponse = await generateGroqFallback(prompt, false);
-      return cleanSectionText(groqResponse, isProjectOrExperience);
-    } catch (groqError) {
-      console.error("Groq fallback failed as well, using current text:", groqError);
-      return cleanSectionText(currentText, isProjectOrExperience);
-    }
+    console.error("LLM section generation failed, using current text:", error);
+    return cleanSectionText(currentText, isProjectOrExperience);
   }
 }
 
@@ -788,53 +656,20 @@ JOB DESCRIPTION:
 ${jobDescription}
 `;
 
-  const client = getGeminiClient();
-
-  if (!client) {
-    if (process.env.GROQ_API_KEY) {
-      try {
-        console.log("No Gemini API key available, but Groq key is present. Using Groq for skills reordering.");
-        const groqResponse = await generateGroqFallback(prompt, true);
-        const parsed = cleanAndParseJson(groqResponse);
-        const result = extractSkillsArray(parsed);
-        return enforceRequiredCategories(currentSkills, result);
-      } catch (groqError) {
-        console.error("Groq reorder skills failed:", groqError);
-      }
-    }
+  if (!hasLlmConfigured()) {
     const result = localReorderSkillsFallback(currentSkills, jobDescription);
     return enforceRequiredCategories(currentSkills, result);
   }
 
   try {
-    const response = await client.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-      },
-    });
-
-    const responseText = response.text;
-    if (!responseText) {
-      throw new Error("Empty response from Gemini API");
-    }
-
+    const responseText = await generateLlmText(prompt, { json: true });
     const parsed = cleanAndParseJson(responseText);
     const result = extractSkillsArray(parsed);
     return enforceRequiredCategories(currentSkills, result);
   } catch (error) {
-    console.error("Error communicating with Gemini API, trying Groq fallback for skills:", error);
-    try {
-      const groqResponse = await generateGroqFallback(prompt, true);
-      const parsed = cleanAndParseJson(groqResponse);
-      const result = extractSkillsArray(parsed);
-      return enforceRequiredCategories(currentSkills, result);
-    } catch (groqError) {
-      console.error("Groq fallback failed as well, using local reorder:", groqError);
-      const result = localReorderSkillsFallback(currentSkills, jobDescription);
-      return enforceRequiredCategories(currentSkills, result);
-    }
+    console.error("LLM skills reorder failed, using local reorder:", error);
+    const result = localReorderSkillsFallback(currentSkills, jobDescription);
+    return enforceRequiredCategories(currentSkills, result);
   }
 }
 

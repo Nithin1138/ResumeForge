@@ -222,6 +222,17 @@ export default function BuildPage() {
   }, []);
 
   const [isParsing, setIsParsing] = useState(false);
+
+  const [isCodingProfileModalOpen, setIsCodingProfileModalOpen] = useState(false);
+  const [editingCodingProfileIndex, setEditingCodingProfileIndex] = useState<number | null>(null);
+  const [codingProfileForm, setCodingProfileForm] = useState({
+    platform: "LeetCode",
+    handle: "",
+    link: "",
+    problemsSolved: "",
+    rating: "",
+  });
+
   const handleAutoFillUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
@@ -287,6 +298,41 @@ export default function BuildPage() {
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [highlightedProjectIdx, setHighlightedProjectIdx] = useState<number | null>(null);
+
+  const handleSaveCodingProfile = () => {
+    const currentProfiles = formData.personal.codingProfiles || [];
+    if (editingCodingProfileIndex !== null) {
+      const newProfiles = [...currentProfiles];
+      newProfiles[editingCodingProfileIndex] = codingProfileForm as any;
+      updatePersonal({ codingProfiles: newProfiles });
+    } else {
+      updatePersonal({ codingProfiles: [...currentProfiles, codingProfileForm as any] });
+    }
+    setIsCodingProfileModalOpen(false);
+    setEditingCodingProfileIndex(null);
+    setCodingProfileForm({ platform: "LeetCode", handle: "", link: "", problemsSolved: "", rating: "" });
+  };
+
+  const handleEditCodingProfile = (index: number) => {
+    const profile = (formData.personal.codingProfiles || [])[index];
+    if (profile) {
+      setCodingProfileForm({
+        platform: profile.platform,
+        handle: profile.handle,
+        link: profile.link,
+        problemsSolved: profile.problemsSolved,
+        rating: profile.rating || "",
+      });
+      setEditingCodingProfileIndex(index);
+      setIsCodingProfileModalOpen(true);
+    }
+  };
+
+  const handleRemoveCodingProfile = (index: number) => {
+    const currentProfiles = formData.personal.codingProfiles || [];
+    const newProfiles = currentProfiles.filter((_, i) => i !== index);
+    updatePersonal({ codingProfiles: newProfiles });
+  };
 
   const handleMoveProjectUp = (idx: number) => {
     if (idx === 0) return;
@@ -813,6 +859,52 @@ export default function BuildPage() {
             value={formData.personal.location || ""}
             onChange={(e) => updatePersonal({ location: e.target.value })}
           />
+        </div>
+
+        <div className="md:col-span-2 mt-2">
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-semibold">Coding Profiles</label>
+            <button
+              type="button"
+              onClick={() => {
+                setCodingProfileForm({ platform: "LeetCode", handle: "", link: "", problemsSolved: "", rating: "" });
+                setEditingCodingProfileIndex(null);
+                setIsCodingProfileModalOpen(true);
+              }}
+              className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center bg-primary/10 px-3 py-1.5 rounded-full"
+            >
+              <Code2 className="w-3.5 h-3.5 mr-1" />
+              Add Profile
+            </button>
+          </div>
+          
+          {(formData.personal.codingProfiles || []).length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {(formData.personal.codingProfiles || []).map((profile, i) => (
+                <div key={i} className="flex justify-between items-center p-3 bg-surface border border-border rounded-xl">
+                  <div className="flex items-center space-x-3 overflow-hidden">
+                    <div className="bg-primary/10 text-primary p-2 rounded-lg shrink-0">
+                      <Code2 className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="text-sm font-bold text-text truncate">{profile.platform}</h4>
+                      <p className="text-xs text-text-muted truncate">
+                        {profile.handle} • {profile.problemsSolved} problems {profile.rating ? `• ${profile.rating}` : ""}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex space-x-1 shrink-0">
+                    <button type="button" onClick={() => handleEditCodingProfile(i)} className="text-primary hover:bg-primary/10 p-1.5 rounded-md transition-colors"><Wand2 className="w-3.5 h-3.5" /></button>
+                    <button type="button" onClick={() => handleRemoveCodingProfile(i)} className="text-red-500 hover:bg-red-500/10 p-1.5 rounded-md transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="border border-dashed border-border rounded-xl p-4 text-center bg-surface/50">
+              <p className="text-xs text-text-muted">Boost validation metrics by adding your LeetCode, HackerRank, or CodeChef profiles.</p>
+            </div>
+          )}
         </div>
 
         <div className="md:col-span-2 border-t border-border/40 pt-4 mt-2">
@@ -2142,6 +2234,121 @@ export default function BuildPage() {
                 )}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Coding Profile Modal */}
+      {isCodingProfileModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+          <div className="bg-bg-base border border-border w-full max-w-md rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="flex items-center justify-between p-4 border-b border-border/50 shrink-0">
+              <h3 className="font-bold text-lg text-text">
+                {editingCodingProfileIndex !== null ? "Edit Coding Profile" : "Add Coding Profile"}
+              </h3>
+              <button 
+                onClick={() => {
+                  setIsCodingProfileModalOpen(false);
+                  setEditingCodingProfileIndex(null);
+                }}
+                className="text-text-muted hover:bg-surface p-1.5 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-5 space-y-4 overflow-y-auto min-h-0">
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Platform *</label>
+                <div className="relative">
+                  <select
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary outline-hidden text-sm appearance-none"
+                    value={codingProfileForm.platform}
+                    onChange={(e) => setCodingProfileForm({ ...codingProfileForm, platform: e.target.value })}
+                  >
+                    <option value="LeetCode">LeetCode</option>
+                    <option value="HackerRank">HackerRank</option>
+                    <option value="CodeChef">CodeChef</option>
+                    <option value="Codeforces">Codeforces</option>
+                    <option value="GeeksforGeeks">GeeksforGeeks</option>
+                    <option value="AtCoder">AtCoder</option>
+                    <option value="TopCoder">TopCoder</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-text-muted">
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Handle / Username *</label>
+                <input
+                  type="text"
+                  required
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary outline-hidden text-sm"
+                  placeholder="e.g. nithin_123"
+                  value={codingProfileForm.handle}
+                  onChange={(e) => setCodingProfileForm({ ...codingProfileForm, handle: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Problems Solved *</label>
+                <input
+                  type="text"
+                  required
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary outline-hidden text-sm"
+                  placeholder="e.g. 500+, 250"
+                  value={codingProfileForm.problemsSolved}
+                  onChange={(e) => setCodingProfileForm({ ...codingProfileForm, problemsSolved: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Rating / Rank <span className="font-normal text-text-muted text-xs">(Optional)</span></label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary outline-hidden text-sm"
+                  placeholder="e.g. 1800, Knight, 4 Star"
+                  value={codingProfileForm.rating}
+                  onChange={(e) => setCodingProfileForm({ ...codingProfileForm, rating: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Profile Link *</label>
+                <input
+                  type="url"
+                  required
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary outline-hidden text-sm"
+                  placeholder="https://leetcode.com/username"
+                  value={codingProfileForm.link}
+                  onChange={(e) => setCodingProfileForm({ ...codingProfileForm, link: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-border/50 shrink-0 flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCodingProfileModalOpen(false);
+                  setEditingCodingProfileIndex(null);
+                }}
+                className="px-5 py-2.5 rounded-xl font-semibold text-text hover:bg-surface transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveCodingProfile}
+                disabled={!codingProfileForm.handle || !codingProfileForm.problemsSolved || !codingProfileForm.link}
+                className="px-5 py-2.5 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
+              >
+                Save Profile
+              </button>
+            </div>
           </div>
         </div>
       )}

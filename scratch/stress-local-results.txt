@@ -1,0 +1,132 @@
+════════════════════════════════════════════════════════════════
+  ATSLift API — Full Stress Test (upper-limit discovery)
+════════════════════════════════════════════════════════════════
+Targets: http://localhost:3000
+Ramp steps: 1 → 5 → 10 → 15 → 20 → 25 → 30 → 40
+Stop ramp when error rate > 25%
+
+
+████████████████████████████████████████████████████████████████
+  ENVIRONMENT: LOCAL — http://localhost:3000
+████████████████████████████████████████████████████████████████
+✅ local is up
+   Caps: MAX_CONCURRENCY=40, SUSTAIN=45s, MAX_REQUESTS=250, TIMEOUT=120000ms
+
+▶ Phase 1: Baseline (1 request)...
+   OK 200 in 11244ms
+
+▶ Phase 2: Rate limit probe (10 sequential, same IP)...
+   OK: 4, 429: 6
+
+▶ Phase 3: Concurrency ramp-up (find upper stable limit)...
+   ×1: 1/1 OK, p50=1220ms, 0.819/s, errRate=0%
+   ×5: 5/5 OK, p50=4623ms, 1.057/s, errRate=0%
+   ×10: 10/10 OK, p50=2264ms, 1.805/s, errRate=0%
+   ×15: 15/15 OK, p50=2575ms, 2.575/s, errRate=0%
+   ×20: 20/20 OK, p50=2680ms, 6.047/s, errRate=0%
+   ×25: 25/25 OK, p50=2634ms, 7.750/s, errRate=0%
+   ×30: 30/30 OK, p50=2885ms, 8.054/s, errRate=0%
+   ×40: 40/40 OK, p50=3573ms, 8.418/s, errRate=0%
+   → Max stable concurrency: ×40
+
+▶ Phase 4: Sustained load (45s, 40 workers, rotating IPs)...
+   Completed 93 requests (total sent: 250)
+
+────────────────────────────────────────────────────────────────
+  LOCAL CAPACITY SUMMARY
+────────────────────────────────────────────────────────────────
+  Max stable concurrency:  ×40
+  Sustained throughput:    ~9.609/sec (~576.6/min, ~34593/hr)
+  Peak burst throughput:   ~8.418/sec (at Ramp ×40)
+  Latency (sustained):     p50=3577ms  p95=5110ms
+  Per-user rate limit:     5 req/min/IP
+  Total requests sent:     250
+
+【Baseline ×1】
+  Requests:     1/1 success (100.0%)
+  429 limited:  0  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   0.089/sec  |  5.3/min  |  ~320/hr
+  Latency (ms): p50=11244  p95=11244  p99=11244  min=11244  max=11244
+  Status codes: {"200":1}
+
+【Rate limit (same IP ×10)】
+  Requests:     4/10 success (40.0%)
+  429 limited:  6  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   0.762/sec  |  45.7/min  |  ~2744/hr
+  Latency (ms): p50=1154  p95=1698  p99=1698  min=1151  max=1698
+  Status codes: {"200":4,"429":6}
+
+【Ramp ×1】
+  Requests:     1/1 success (100.0%)
+  429 limited:  0  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   0.819/sec  |  49.2/min  |  ~2949/hr
+  Latency (ms): p50=1220  p95=1220  p99=1220  min=1220  max=1220
+  Status codes: {"200":1}
+
+【Ramp ×5】
+  Requests:     5/5 success (100.0%)
+  429 limited:  0  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   1.057/sec  |  63.4/min  |  ~3804/hr
+  Latency (ms): p50=4623  p95=4732  p99=4732  min=1484  max=4732
+  Status codes: {"200":5}
+
+【Ramp ×10】
+  Requests:     10/10 success (100.0%)
+  429 limited:  0  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   1.805/sec  |  108.3/min  |  ~6496/hr
+  Latency (ms): p50=2264  p95=5539  p99=5539  min=2029  max=5539
+  Status codes: {"200":10}
+
+【Ramp ×15】
+  Requests:     15/15 success (100.0%)
+  429 limited:  0  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   2.575/sec  |  154.5/min  |  ~9271/hr
+  Latency (ms): p50=2575  p95=5823  p99=5823  min=2344  max=5823
+  Status codes: {"200":15}
+
+【Ramp ×20】
+  Requests:     20/20 success (100.0%)
+  429 limited:  0  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   6.047/sec  |  362.8/min  |  ~21771/hr
+  Latency (ms): p50=2680  p95=3218  p99=3305  min=2470  max=3305
+  Status codes: {"200":20}
+
+【Ramp ×25】
+  Requests:     25/25 success (100.0%)
+  429 limited:  0  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   7.750/sec  |  465.0/min  |  ~27899/hr
+  Latency (ms): p50=2634  p95=3220  p99=3222  min=1611  max=3222
+  Status codes: {"200":25}
+
+【Ramp ×30】
+  Requests:     30/30 success (100.0%)
+  429 limited:  0  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   8.054/sec  |  483.3/min  |  ~28995/hr
+  Latency (ms): p50=2885  p95=3692  p99=3720  min=1612  max=3720
+  Status codes: {"200":30}
+
+【Ramp ×40】
+  Requests:     40/40 success (100.0%)
+  429 limited:  0  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   8.418/sec  |  505.1/min  |  ~30303/hr
+  Latency (ms): p50=3573  p95=4523  p99=4747  min=1974  max=4747
+  Status codes: {"200":40}
+
+【Sustained 45s ×40】
+  Requests:     93/93 success (100.0%)
+  429 limited:  0  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   9.609/sec  |  576.6/min  |  ~34593/hr
+  Latency (ms): p50=3577  p95=5110  p99=5928  min=1545  max=5928
+  Status codes: {"200":93}
+
+════════════════════════════════════════════════════════════════
+  NOTES
+════════════════════════════════════════════════════════════════
+
+  • Per-user cap: 5 resumes/min/IP (hard limit in API)
+  • Production uses live LLM (Gemini/Groq) — slower & API-quota bound
+  • Production test creates real DB records — use sparingly
+  • Vercel serverless: cold starts add 1–3s; maxDuration=60s per function
+  • Re-run: node scratch/stress-test.mjs --both
+  • Tune: SUSTAIN_SEC=120 MAX_CONCURRENCY=80 MAX_TOTAL_REQUESTS=1000 node scratch/stress-test.mjs --both
+

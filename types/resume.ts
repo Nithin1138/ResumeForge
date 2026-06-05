@@ -1,3 +1,11 @@
+export interface CodingProfile {
+  platform: string;
+  handle: string;
+  link: string;
+  problemsSolved: string;
+  rating?: string;
+}
+
 export interface PersonalInfo {
   fullName: string;
   email: string;
@@ -16,6 +24,7 @@ export interface PersonalInfo {
   pgGraduationYear?: string;
   pgCgpa?: string;
   pgDegreeName?: string;
+  codingProfiles?: CodingProfile[];
 }
 
 export interface SkillsInfo {

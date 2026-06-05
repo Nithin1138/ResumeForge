@@ -3,6 +3,9 @@ import { generateSectionContent } from "@/lib/gemini";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

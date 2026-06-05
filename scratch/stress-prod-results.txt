@@ -1,0 +1,100 @@
+════════════════════════════════════════════════════════════════
+  ATSLift API — Full Stress Test (upper-limit discovery)
+════════════════════════════════════════════════════════════════
+Targets: https://atslift.vercel.app
+Ramp steps: 1 → 5 → 10 → 15 → 20
+Stop ramp when error rate > 25%
+
+
+████████████████████████████████████████████████████████████████
+  ENVIRONMENT: PRODUCTION — https://atslift.vercel.app
+████████████████████████████████████████████████████████████████
+✅ production is up
+   Caps: MAX_CONCURRENCY=20, SUSTAIN=60s, MAX_REQUESTS=40, TIMEOUT=90000ms
+
+▶ Phase 1: Baseline (1 request)...
+   OK 200 in 17601ms
+
+▶ Phase 2: Rate limit probe (10 sequential, same IP)...
+   OK: 8, 429: 2
+
+▶ Phase 3: Concurrency ramp-up (find upper stable limit)...
+   ×1: 0/1 OK, p50=0ms, 0.000/s, errRate=100%
+   ⚠ Stopping ramp — error rate exceeded 25% at ×1
+   → Max stable concurrency: ×1
+
+▶ Phase 4: Sustained load (60s, 1 workers, rotating IPs)...
+   Completed 28 requests (total sent: 40)
+
+▶ Phase 5: Spike test (×11, above stable limit)...
+   0/0 OK
+
+────────────────────────────────────────────────────────────────
+  PRODUCTION CAPACITY SUMMARY
+────────────────────────────────────────────────────────────────
+  Max stable concurrency:  ×1
+  Sustained throughput:    ~0.000/sec (~0.0/min, ~0/hr)
+  Peak burst throughput:   ~0.000/sec (at Ramp ×1)
+  Latency (sustained):     p50=0ms  p95=0ms
+  Per-user rate limit:     5 req/min/IP
+  Total requests sent:     40
+
+【Baseline ×1】
+  Requests:     1/1 success (100.0%)
+  429 limited:  0  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   0.057/sec  |  3.4/min  |  ~205/hr
+  Latency (ms): p50=17601  p95=17601  p99=17601  min=17601  max=17601
+  Status codes: {"200":1}
+
+【Rate limit (same IP ×10)】
+  Requests:     8/10 success (80.0%)
+  429 limited:  2  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   0.092/sec  |  5.5/min  |  ~333/hr
+  Latency (ms): p50=5421  p95=35343  p99=35343  min=2141  max=35343
+  Status codes: {"200":8,"429":2}
+
+【Ramp ×1】
+  Requests:     0/1 success (0.0%)
+  429 limited:  1  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   0.000/sec  |  0.0/min  |  ~0/hr
+  Latency (ms): p50=0  p95=0  p99=0  min=—  max=—
+  Status codes: {"429":1}
+
+【Sustained 60s ×1】
+  Requests:     0/28 success (0.0%)
+  429 limited:  28  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   0.000/sec  |  0.0/min  |  ~0/hr
+  Latency (ms): p50=0  p95=0  p99=0  min=—  max=—
+  Status codes: {"429":28}
+
+【Spike ×11】
+  Requests:     0/0 success (0%)
+  429 limited:  0  |  5xx: 0  |  timeouts: 0  |  other: 0
+  Throughput:   0.000/sec  |  0.0/min  |  ~0/hr
+  Latency (ms): p50=0  p95=0  p99=0  min=—  max=—
+
+════════════════════════════════════════════════════════════════
+  NOTES
+════════════════════════════════════════════════════════════════
+
+  • Per-user cap: 5 resumes/min/IP (hard limit in API)
+  • Production uses live LLM (Gemini/Groq) — slower & API-quota bound
+  • Production test creates real DB records — use sparingly
+  • Vercel serverless: cold starts add 1–3s; maxDuration=60s per function
+  • Re-run: node scratch/stress-test.mjs --both
+  • Tune: SUSTAIN_SEC=120 MAX_CONCURRENCY=80 MAX_TOTAL_REQUESTS=1000 node scratch/stress-test.mjs --both
+
+Production realistic: 8 requests, 13s spacing (single IP)
+
+  #1: 200 in 4266ms
+  #2: 200 in 7733ms
+  #3: 200 in 7807ms
+  #4: 200 in 2261ms
+  #5: 200 in 6273ms
+  #6: 200 in 18202ms
+  #7: 200 in 2444ms
+  #8: 200 in 7521ms
+
+Success: 8/8
+Latency p50: 7521ms  p95: 18202ms
+Throughput: 3.3/min (~198/hr) per real user IP

@@ -1,0 +1,24 @@
+Production realistic test (8 req, 13s spacing, single IP)...
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+TypeError: Failed to parse URL from https://atslift.vercel.app/api/generate
+    at new Request (node:internal/deps/undici/undici:11065:19)
+    at fetch (node:internal/deps/undici/undici:11988:25)
+    ... 7 lines matching cause stack trace ...
+    at [eval]-wrapper:6:24 {
+  [cause]: TypeError: URL is not a constructor
+      at new Request (node:internal/deps/undici/undici:11063:25)
+      at fetch (node:internal/deps/undici/undici:11988:25)
+      at fetch (node:internal/deps/undici/undici:16555:10)
+      at fetch (node:internal/bootstrap/web/exposed-window-or-worker:83:12)
+      at one ([eval]:9:21)
+      at [eval]:23:21
+      at [eval]:37:3
+      at runScriptInThisContext (node:internal/vm:219:10)
+      at node:internal/process/execution:451:12
+      at [eval]-wrapper:6:24
+}
+
+Node.js v24.14.0

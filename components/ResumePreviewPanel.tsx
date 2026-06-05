@@ -127,6 +127,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             border-radius: 0 !important;
             width: 794px !important;
             height: auto !important; /* Let it wrap content so it doesn't force a 2nd page */
+            min-height: 0 !important;
             max-height: none !important;
             overflow: visible !important;
             background-image: none !important;
@@ -254,20 +255,44 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
           </div>
 
           {/* Technical Skills */}
-          {d.skills && Array.isArray(d.skills) && d.skills.length > 0 && (
-            <div style={{ marginBottom: "13pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
-              <SectionTitle>Technical Skills</SectionTitle>
-              <div style={{ fontSize: "9.5pt", lineHeight: 1.5 }}>
-                {d.skills
-                  .filter((s: any) => s && Array.isArray(s.skills) && s.skills.length > 0)
-                  .map((s: { category: string; skills: string[] }, i: number, arr: any[]) => (
-                    <p key={i} style={{ margin: i === arr.length - 1 ? "0" : "0 0 3pt 0" }}>
-                      <strong>{s.category}:</strong> {s.skills.join(", ")}
-                    </p>
-                  ))}
+          {(() => {
+            const hasRegularSkills = d.skills && Array.isArray(d.skills) && d.skills.length > 0;
+            const hasCodingProfiles = ip?.personal?.codingProfiles && ip.personal.codingProfiles.length > 0;
+            
+            if (!hasRegularSkills && !hasCodingProfiles) return null;
+
+            const displaySkills = d.skills ? [...d.skills] : [];
+            
+            if (hasCodingProfiles) {
+              const profilesString = ip.personal.codingProfiles.map((p: any) => {
+                const parts = [];
+                if (p.problemsSolved) parts.push(`${p.problemsSolved} problems`);
+                if (p.rating) parts.push(p.rating);
+                const details = parts.length > 0 ? ` (${parts.join(", ")})` : "";
+                return `${p.platform}: ${p.handle}${details}`;
+              }).join(" | ");
+              
+              displaySkills.push({
+                category: "Coding Profiles",
+                skills: [profilesString]
+              });
+            }
+
+            return (
+              <div style={{ marginBottom: "13pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
+                <SectionTitle>Technical Skills</SectionTitle>
+                <div style={{ fontSize: "9.5pt", lineHeight: 1.5 }}>
+                  {displaySkills
+                    .filter((s: any) => s && s.category && Array.isArray(s.skills) && s.skills.length > 0)
+                    .map((s: { category: string; skills: string[] }, i: number, arr: any[]) => (
+                      <p key={i} style={{ margin: i === arr.length - 1 ? "0" : "0 0 3pt 0" }}>
+                        <strong>{s.category}:</strong> {s.skills.join(", ")}
+                      </p>
+                    ))}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Projects */}
           {d.projects?.length > 0 && (

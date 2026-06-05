@@ -67,6 +67,7 @@ const initialFormData: ResumeFormData = {
     pgGraduationYear: "",
     pgCgpa: "",
     pgDegreeName: "",
+    codingProfiles: [],
   },
   skills: {
     categories: {},
