@@ -707,6 +707,22 @@ function extractSkillsArray(parsedJson: any): any[] {
   return [];
 }
 
+function enforceRequiredCategories(originalSkills: any[], optimizedSkills: any[]): any[] {
+  const REQUIRED = ["TOOLS & PLATFORMS", "CORE CS CONCEPTS", "DATABASES"];
+  let result = JSON.parse(JSON.stringify(optimizedSkills));
+
+  for (const reqCat of REQUIRED) {
+    const origItem = originalSkills.find(c => c && c.category && c.category.toUpperCase() === reqCat);
+    if (origItem) {
+      const optIndex = result.findIndex((c: any) => c && c.category && c.category.toUpperCase() === reqCat);
+      if (optIndex === -1) {
+        result.push(origItem);
+      }
+    }
+  }
+  return result;
+}
+
 export async function generateReorderedSkills(currentSkills: any[], jobDescription: string): Promise<any[]> {
   const prompt = `
 SYSTEM:
@@ -718,7 +734,8 @@ CRITICAL RULES:
 3. SPECIFIC RULE: If the job description is related to Data Science, Data Scientist, Machine Learning, Deep Learning, or AI:
    - REMOVE "Data Engineering" as a separate category.
    - MERGE any relevant skills from "Data Engineering" (e.g. ETL Pipelines, Data Warehousing, etc.) into a category called "DATA TECHNOLOGIES" or "AI & DATA TECHNOLOGIES".
-4. Output ONLY a valid JSON array of categories, where each item has "category" (string) and "skills" (array of strings). Do not include any markdown formatting (like \`\`\`json) or surrounding text.
+4. NEVER remove, delete, or prune "Tools & Platforms", "Core CS Concepts", or "Databases". These are essential technical foundations and must always be kept in the final output (though you can re-order them).
+5. Output ONLY a valid JSON array of categories, where each item has "category" (string) and "skills" (array of strings). Do not include any markdown formatting (like \`\`\`json) or surrounding text.
 
 CURRENT SKILLS JSON:
 ${JSON.stringify(currentSkills, null, 2)}
@@ -735,12 +752,14 @@ ${jobDescription}
         console.log("No Gemini API key available, but Groq key is present. Using Groq for skills reordering.");
         const groqResponse = await generateGroqFallback(prompt, true);
         const parsed = cleanAndParseJson(groqResponse);
-        return extractSkillsArray(parsed);
+        const result = extractSkillsArray(parsed);
+        return enforceRequiredCategories(currentSkills, result);
       } catch (groqError) {
         console.error("Groq reorder skills failed:", groqError);
       }
     }
-    return localReorderSkillsFallback(currentSkills, jobDescription);
+    const result = localReorderSkillsFallback(currentSkills, jobDescription);
+    return enforceRequiredCategories(currentSkills, result);
   }
 
   try {
@@ -758,16 +777,19 @@ ${jobDescription}
     }
 
     const parsed = cleanAndParseJson(responseText);
-    return extractSkillsArray(parsed);
+    const result = extractSkillsArray(parsed);
+    return enforceRequiredCategories(currentSkills, result);
   } catch (error) {
     console.error("Error communicating with Gemini API, trying Groq fallback for skills:", error);
     try {
       const groqResponse = await generateGroqFallback(prompt, true);
       const parsed = cleanAndParseJson(groqResponse);
-      return extractSkillsArray(parsed);
+      const result = extractSkillsArray(parsed);
+      return enforceRequiredCategories(currentSkills, result);
     } catch (groqError) {
       console.error("Groq fallback failed as well, using local reorder:", groqError);
-      return localReorderSkillsFallback(currentSkills, jobDescription);
+      const result = localReorderSkillsFallback(currentSkills, jobDescription);
+      return enforceRequiredCategories(currentSkills, result);
     }
   }
 }
