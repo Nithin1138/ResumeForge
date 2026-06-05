@@ -291,13 +291,22 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
       }
 
       const data = await res.json();
-      if (data.skills) {
+      if (data.skills && Array.isArray(data.skills)) {
+        const validatedSkills = data.skills
+          .filter((s: any) => s && typeof s === "object" && typeof s.category === "string")
+          .map((s: any) => ({
+            category: s.category,
+            skills: Array.isArray(s.skills) ? s.skills.map((x: any) => String(x).trim()).filter(Boolean) : []
+          }));
+
         setLiveResume((prev: any) => {
           const current = typeof prev === "string" ? JSON.parse(prev) : prev;
           const next = JSON.parse(JSON.stringify(current));
-          next.skills = data.skills;
+          next.skills = validatedSkills;
           return next;
         });
+      } else {
+        throw new Error("Invalid skills data format returned from API.");
       }
     } catch (err: any) {
       alert("Error optimizing skills: " + err.message);
@@ -772,7 +781,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
               </button>
               <button
                 onClick={() => {
-                  const skillsText = output.skills.map(s => `${s.category}: ${s.skills.join(", ")}`).join("\n");
+                  const skillsText = output.skills.map(s => `${s.category}: ${Array.isArray(s.skills) ? s.skills.join(", ") : ""}`).join("\n");
                   copyToClipboard(skillsText, "skills");
                 }}
                 className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
