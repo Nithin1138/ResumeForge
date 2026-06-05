@@ -585,25 +585,41 @@ GOOGLE X-Y-Z FORMULA — MANDATORY FOR EVERY BULLET:
 Structure: [Action Verb] [what was accomplished — X] [by metric/result — Y] [using/by specific technology/method — Z]
 This answers: WHAT → HOW MUCH → HOW TECHNICALLY
 
+METRIC RULES (read carefully):
+- If the user provided a specific metric in "Key result", USE THAT EXACT NUMBER — do not change it.
+- If no metric is provided, pick a REALISTIC estimate from these domain-specific ranges:
+  • ML classification accuracy: 83%–94% (vary it — do NOT default to 92% every time)
+  • Object detection / CV accuracy: 87%–96%
+  • API latency reduction: 18%–45%
+  • Data processing speed: 2x–8x, or "X rows/sec"
+  • Throughput improvement: 20%–60%
+  • User count / scale: choose one: 50+, 100+, 200+, 500+, 1000+
+  • F1-score / precision / recall: 0.82–0.95
+  • Dataset size: 500, 1k, 5k, 10k, 25k, 50k rows/samples (pick one that fits)
+- NEVER use 92% as a default — it is overused. Pick a varied, domain-appropriate number.
+- NEVER use the same percentage value in two different bullets.
+- NEVER make up a metric type that doesn't match the project domain (e.g., don't add "accuracy" to a pure frontend project).
+
 RULES:
 1. Output EXACTLY ${bulletCount} bullets, one per line, no blank lines between them.
-2. Base the content on "What was built" and "Key result" above — these are the user's actual words about their project. Translate them into resume language.
-3. Every bullet MUST reference at least one specific technology from "Tech Stack". NEVER invent a technology not listed there.
-4. Every bullet MUST include a concrete measurable metric (%, ms, count, score, dataset size, users, etc.). If not in the input, estimate a REALISTIC number for the domain.
-5. Each bullet MUST start with a DIFFERENT strong action verb.
-6. Each bullet MUST be between 90 and 130 characters. Never short or vague.
-7. Cover different aspects: e.g., one bullet for the core ML/backend feature, one for performance/scale, one for the UI/integration or pipeline.
+2. Base the content on "What was built" and "Key result" — translate the user's own words into resume language.
+3. Every bullet MUST reference at least one specific technology from "Tech Stack". NEVER invent a technology not in the list.
+4. Each bullet MUST start with a DIFFERENT strong action verb.
+5. Each bullet MUST be between 90 and 130 characters. Never short or vague.
+6. Cover different aspects across the bullets (core feature, performance/scale, integration/outcome).
 
 BANNED — never output:
 ❌ Technologies NOT in the tech stack above
 ❌ Vague filler: "Optimized performance", "Built a system", "Improved accuracy"
 ❌ Bullets under 80 characters
-❌ Repeating the same verb in two bullets
+❌ The same verb twice
+❌ The same percentage value in two bullets (e.g., two bullets both saying 92%)
+❌ Using 92% unless the user explicitly stated it as their result
 
 STRUCTURE GUIDE:
-Bullet 1 → Core technical feature built (name the algorithm/component + achievement metric)
-Bullet 2 → Performance / scale / efficiency improvement (latency, throughput, accuracy %, data volume)  
-Bullet 3 → Integration / pipeline / UX outcome (what it enables, who uses it, measurable impact)
+Bullet 1 → Core technical feature built (algorithm/model/component + specific metric from domain)
+Bullet 2 → Performance / scale / efficiency improvement (different metric type from Bullet 1)
+Bullet 3 → Integration / pipeline / UX or deployment outcome (users impacted, or a third distinct metric)
 
 Output ONLY the raw bullet text, one per line. No dashes, no bullet symbols, no numbers, no markdown.
 `
