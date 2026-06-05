@@ -311,11 +311,12 @@ Your output must strictly follow these rules:
   - METRICS, IMPACT & GOOGLE X-Y-Z FORMULA:
     Write project bullet points following the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure.
     Always integrate specific engineering metrics—such as processing speed, model accuracy rates, data throughput, or pipeline efficiency percentages—wherever possible to demonstrate impact.
-    GOOD (following X-Y-Z): 
-      * "Reduced database query latency by 45% (Y) by implementing Redis caching layers and optimizing relational indexes (Z) to support 1,000+ active concurrent users (X)"
-      * "Achieved 93.4% classification accuracy (Y) on 5,000+ test samples by training a customized CNN model with data augmentation (Z) to automate real-time crop disease detection (X)"
-      * "Optimized API pipeline efficiency by 30% (Y) by refactoring database ingestion workflows and adding batch-processing loops (Z) to handle 10,000+ daily log entries (X)"
-    Avoid fake corporate jargon or generic words. Phrasing must strictly be formatted as an action-outcome sequence mapping (X) measured by (Y) by doing (Z).
+    CRITICAL: Keep each bullet point extremely concise, short, and compact to satisfy the character length limit (strictly 65 to 135 characters).
+    GOOD (following X-Y-Z & under 135 chars): 
+      * "Decreased DB latency by 45% (Y) using Redis caches and relational indexing (Z) to support 1k+ concurrent users (X)"
+      * "Achieved 93% accuracy (Y) on 5k test inputs by training a custom CNN with augmentation (Z) to automate disease detection (X)"
+      * "Boosted API pipeline efficiency by 30% (Y) by refactoring data ingestion (Z) to process 10k daily entries (X)"
+    Avoid fake corporate jargon or generic words. Phrasing must strictly be formatted as a concise action-outcome sequence mapping (X) measured by (Y) by doing (Z).
   - PHRASING RULES:
     Avoid repetitive textbook phrasing like: "by using", "for", "ensuring", "designed to", "capable of", "resulting in". Avoid generic passive explanations and academic-report tone.
   - TECHNICAL DEPTH PRIORITY:
@@ -560,9 +561,10 @@ export async function generateSectionContent(sectionType: string, currentText: s
   const prompt = `
 SYSTEM:
 You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
-${isProjectOrExperience ? `CRITICAL RULE: Since this is a project or experience bullet, you MUST structure it to follow the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure, integrating specific engineering metrics like processing speed, model accuracy rates, or pipeline efficiency percentages.` : ""}
+${isProjectOrExperience ? `CRITICAL RULE: Since this is a project or experience bullet, you MUST structure it to follow the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure, integrating specific engineering metrics like processing speed, model accuracy rates, or pipeline efficiency percentages.
+Additionally, the rewritten bullet point MUST be strictly between 65 and 130 characters in length (including spaces). This is a hard limit to prevent bullets from overflowing onto multiple lines on the resume page. Keep it extremely concise and compact while still utilizing the X-Y-Z structure.` : ""}
 If it's a bullet point, output a single bullet point. If it's a paragraph, output a paragraph.
-Do not wrap the output in quotes or markdown formatting, just return the raw text.
+Do NOT start the bullet point with any list symbols, dashes, asterisks, numbers, or bullet characters (e.g. do NOT output "*", "-", "•", etc.). Output ONLY the raw plain text sentence itself. Do NOT wrap the output in quotes or markdown formatting, just return the raw text.
 
 CURRENT TEXT:
 ${currentText}
@@ -575,7 +577,7 @@ ${currentText}
       try {
         console.log("No Gemini API key available, but Groq key is present. Using Groq directly for section generation.");
         const groqResponse = await generateGroqFallback(prompt, false);
-        return groqResponse.trim().replace(/^-\s*/, "");
+        return groqResponse.trim().replace(/^[-*•\s]+/, "");
       } catch (groqError) {
         console.error("Groq direct call failed for section:", groqError);
       }
@@ -596,7 +598,7 @@ ${currentText}
       throw new Error("Empty response from Gemini API");
     }
 
-    return responseText.trim().replace(/^-\s*/, ""); // remove bullet dash if added by AI
+    return responseText.trim().replace(/^[-*•\s]+/, ""); // remove bullet dash, asterisk, or space if added by AI
   } catch (error) {
     console.error("Error communicating with Gemini API, trying Groq fallback:", error);
     try {
