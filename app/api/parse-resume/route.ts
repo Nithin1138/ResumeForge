@@ -172,7 +172,7 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
 
         // Use native Gemini vision (most robust for layout/columns) alongside the extracted links
         response = await ai.models.generateContent({
-          model: "gemini-1.5-pro",
+          model: "gemini-1.5-flash",
           contents: [
             { text: prompt + linkPrompt },
             {
@@ -200,7 +200,7 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
         
         const fullPrompt = prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000);
         response = await ai.models.generateContent({
-          model: "gemini-1.5-pro",
+          model: "gemini-1.5-flash",
           contents: fullPrompt,
           config: {
             responseMimeType: "application/json",
