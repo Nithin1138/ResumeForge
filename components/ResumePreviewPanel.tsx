@@ -258,11 +258,13 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             <div style={{ marginBottom: "13pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
               <SectionTitle>Technical Skills</SectionTitle>
               <div style={{ fontSize: "9.5pt", lineHeight: 1.5 }}>
-                {d.skills.map((s: { category: string; skills: string[] }, i: number) => (
-                  <p key={i} style={{ margin: i === d.skills.length - 1 ? "0" : "0 0 3pt 0" }}>
-                    <strong>{s.category}:</strong> {Array.isArray(s.skills) ? s.skills.join(", ") : ""}
-                  </p>
-                ))}
+                {d.skills
+                  .filter((s: any) => s && Array.isArray(s.skills) && s.skills.length > 0)
+                  .map((s: { category: string; skills: string[] }, i: number, arr: any[]) => (
+                    <p key={i} style={{ margin: i === arr.length - 1 ? "0" : "0 0 3pt 0" }}>
+                      <strong>{s.category}:</strong> {s.skills.join(", ")}
+                    </p>
+                  ))}
               </div>
             </div>
           )}

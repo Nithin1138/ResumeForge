@@ -781,7 +781,10 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
               </button>
               <button
                 onClick={() => {
-                  const skillsText = output.skills.map(s => `${s.category}: ${Array.isArray(s.skills) ? s.skills.join(", ") : ""}`).join("\n");
+                  const skillsText = (output.skills || [])
+                    .filter(s => s && Array.isArray(s.skills) && s.skills.length > 0)
+                    .map(s => `${s.category}: ${s.skills.join(", ")}`)
+                    .join("\n");
                   copyToClipboard(skillsText, "skills");
                 }}
                 className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
@@ -792,19 +795,21 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {(output.skills || []).map((cat, idx) => (
-              <div key={idx} className="space-y-2">
-                <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{cat.category}</span>
-                <div className="flex flex-wrap gap-2">
-                  {(cat.skills || []).map((skillName, sIdx) => (
-                    <span key={sIdx} className="text-xs bg-bg-base border border-border px-2.5 py-1 rounded-md font-bold text-text">
-                      {skillName}
-                    </span>
-                  ))}
+          <div className="columns-1 md:columns-2 gap-6 [column-fill:balance]">
+            {(output.skills || [])
+              .filter(cat => cat && Array.isArray(cat.skills) && cat.skills.length > 0)
+              .map((cat, idx) => (
+                <div key={idx} className="break-inside-avoid inline-block w-full space-y-2 mb-5">
+                  <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{cat.category}</span>
+                  <div className="flex flex-wrap gap-2">
+                    {(cat.skills || []).map((skillName, sIdx) => (
+                      <span key={sIdx} className="text-xs bg-bg-base border border-border px-2.5 py-1 rounded-md font-bold text-text">
+                        {skillName}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
 
