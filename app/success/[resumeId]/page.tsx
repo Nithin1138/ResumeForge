@@ -246,14 +246,15 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
     sectionType: string, 
     currentText: string, 
     onUpdate: (newText: string) => void,
-    expectedBulletCount?: number
+    expectedBulletCount?: number,
+    projectContext?: { title?: string; techStack?: string; description?: string }
   ) => {
     setRegeneratingStates((prev) => ({ ...prev, [id]: true }));
     try {
       const res = await fetch("/api/generate-section", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sectionType, currentText, expectedBulletCount }),
+        body: JSON.stringify({ sectionType, currentText, expectedBulletCount, projectContext }),
       });
       if (!res.ok) throw new Error("Failed to regenerate section");
       const data = await res.json();
@@ -921,7 +922,8 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                             return next;
                           });
                         },
-                        idx < 2 ? 3 : 2
+                        idx < 2 ? 3 : 2,
+                        { title: proj.title, techStack: proj.techStack }
                       )}
                       disabled={regeneratingStates[blockId]}
                       className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"
@@ -1022,7 +1024,8 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                               return next;
                             });
                           },
-                          (exp.bullets || []).length || 3
+                          (exp.bullets || []).length || 3,
+                          { title: `${exp.role} at ${exp.company}` }
                         )}
                         disabled={regeneratingStates[blockId]}
                         className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"

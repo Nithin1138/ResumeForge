@@ -559,19 +559,52 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
 export async function generateSectionContent(
   sectionType: string, 
   currentText: string,
-  expectedBulletCount?: number
+  expectedBulletCount?: number,
+  projectContext?: { title?: string; techStack?: string; description?: string }
 ): Promise<string> {
   const isProjectOrExperience = sectionType.toLowerCase().includes("project") || sectionType.toLowerCase().includes("experience") || sectionType.toLowerCase().includes("work");
   const isSummary = sectionType.toLowerCase().includes("summary");
-  const prompt = `
-SYSTEM:
-You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
-${isProjectOrExperience ? `CRITICAL RULE: Since this is a project or experience section, you MUST rewrite it to produce EXACTLY ${expectedBulletCount || 3} high-impact bullet points, each on its own line (separated by newlines).
-Each individual bullet point MUST follow the Google X-Y-Z formula (Accomplishing [X], as measured by [Y], by doing [Z]), but you MUST write them naturally and dynamically. Do NOT literally use the words "Accomplished", "as measured by", or "by doing" in the sentences. Instead, start each bullet point with a strong, varied technical action verb (e.g., Optimized, Trained, Refactored, Engineered, Automated) and integrate specific engineering metrics like processing speed, model accuracy rates, database latency, or pipeline efficiency.
-Additionally, each bullet point MUST be strictly between 65 and 130 characters in length (including spaces). This is a hard limit to prevent bullets from overflowing onto multiple lines. Keep them extremely concise and compact.` : ""}
-${isSummary ? `CRITICAL RULE: Since this is the professional summary, you MUST rewrite it to be extremely targeted, professional, and punchy. It MUST be exactly 1-2 sentences maximum, aiming to fill between 1.5 to 2 lines on the page (approximately 110 to 160 characters in total). Do NOT make it extremely short (such as under 80 characters or a brief phrase like 'Delivers software solutions'). It must read as a cohesive summary describing the candidate's core expertise and engineering background.` : ""}
-${isProjectOrExperience ? `Output EXACTLY ${expectedBulletCount || 3} lines of plain text, one for each bullet point. Do NOT output a single line or combine them. Do NOT add any list symbols, dashes, asterisks, numbers, or bullet characters (e.g., do NOT output "*", "-", "•", "1.", etc.) at the start of any line.` : `If it's a bullet point, output a single bullet point. If it's a paragraph, output a paragraph. Do NOT start the bullet point with any list symbols, dashes, asterisks, numbers, or bullet characters (e.g. do NOT output "*", "-", "•", etc.). Output ONLY the raw plain text sentence itself.`}
-Do NOT wrap the output in quotes or markdown formatting, just return the raw text.
+
+  const bulletCount = expectedBulletCount || 3;
+
+  const prompt = isProjectOrExperience
+    ? `
+You are an expert resume writer. Write EXACTLY ${bulletCount} strong, specific, metric-driven resume bullet points for the following project/experience.
+
+PROJECT DETAILS:
+- Name: ${projectContext?.title || sectionType}
+- Tech Stack: ${projectContext?.techStack || "Not specified"}
+- Existing Bullets (for context only, DO NOT copy these verbatim — rewrite them to be stronger):
+${currentText}
+
+STRICT RULES:
+1. Every bullet MUST be a complete, full-length sentence between 90 and 130 characters long. Shorter is NOT acceptable.
+2. Every bullet MUST mention a specific technology from the tech stack AND include a concrete metric (%, ms, count, score, etc.).
+3. Start each bullet with a DIFFERENT strong technical verb (e.g., Trained, Engineered, Reduced, Automated, Optimized, Refactored, Deployed, Built, Integrated).
+4. NEVER write vague short phrases. These are BANNED:
+   ❌ "Optimized workflows with AI"
+   ❌ "Trained models for high accuracy"
+   ❌ "Engineered real-time updates"
+   ❌ Any bullet under 80 characters
+5. EVERY bullet MUST be specific — name the algorithm/library/architecture used and the outcome achieved.
+
+IDEAL OUTPUT FORMAT (match this level of detail):
+✅ "Trained a Scikit-learn Random Forest classifier on 12k labeled samples achieving 91% F1-score for multi-class regret analysis"
+✅ "Reduced Flask REST API latency by 38% by implementing Redis response caching and asynchronous Celery task queues"
+✅ "Automated resume field extraction using spaCy NER pipeline, parsing 15+ entity types with 93% token-level accuracy on test set"
+✅ "Built a React dashboard with Next.js SSR and FastAPI backend serving 500+ concurrent users with sub-200ms response times"
+
+Output ONLY the bullet text, one per line. No dashes, no bullets, no numbers, no markdown, no blank lines.
+`
+    : `
+You are an expert ATS resume writer.
+${isSummary ? `Rewrite the following professional summary to be targeted, specific, and professional.
+RULES:
+- Exactly 1-2 sentences, between 110 and 160 characters total.
+- Mention the target role and core technical skills explicitly.
+- Do NOT write filler phrases under 80 characters.
+- Output ONLY the rewritten summary text, no quotes, no markdown.` : `Rewrite the following resume section to be more impactful and ATS-optimized.
+- Output ONLY the rewritten text, no quotes, no markdown.`}
 
 CURRENT TEXT:
 ${currentText}

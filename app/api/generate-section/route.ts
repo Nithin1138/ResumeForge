@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { sectionType, currentText, expectedBulletCount } = body;
+    const { sectionType, currentText, expectedBulletCount, projectContext } = body;
 
     if (!sectionType || !currentText) {
       return NextResponse.json(
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const newText = await generateSectionContent(sectionType, currentText, expectedBulletCount);
+    const newText = await generateSectionContent(sectionType, currentText, expectedBulletCount, projectContext);
 
     return NextResponse.json({ newText });
   } catch (error) {
