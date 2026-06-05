@@ -3,7 +3,7 @@
 import { use, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap, Sparkles } from "lucide-react";
+import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap, Sparkles, RotateCcw } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { FullResumeOutput } from "@/types/resume";
@@ -112,6 +112,14 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
         : {});
   const output = parsedOutput as FullResumeOutput;
   const activeRoleIndex = activeProjectVariants?.[0] || 0;
+
+  const isSkillsReordered = useMemo(() => {
+    if (!resume?.outputFull || !liveResume) return false;
+    const originalOutput = typeof resume.outputFull === "string" ? JSON.parse(resume.outputFull) : resume.outputFull;
+    const originalSkillsStr = JSON.stringify(originalOutput?.skills || []);
+    const currentSkillsStr = JSON.stringify(output?.skills || []);
+    return originalSkillsStr !== currentSkillsStr;
+  }, [resume?.outputFull, liveResume, output?.skills]);
   
   // Calculate fully dynamic scores on the client in real-time
   const dynamicMetrics = useMemo(() => {
@@ -295,6 +303,19 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
       alert("Error optimizing skills: " + err.message);
     } finally {
       setIsSmartOrdering(false);
+    }
+  };
+
+  const handleRevertSkills = () => {
+    if (!resume?.outputFull) return;
+    const originalOutput = typeof resume.outputFull === "string" ? JSON.parse(resume.outputFull) : resume.outputFull;
+    if (originalOutput?.skills) {
+      setLiveResume((prev: any) => {
+        const current = typeof prev === "string" ? JSON.parse(prev) : prev;
+        const next = JSON.parse(JSON.stringify(current));
+        next.skills = originalOutput.skills;
+        return next;
+      });
     }
   };
 
@@ -732,6 +753,15 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
           <div className="flex justify-between items-center mb-5 border-b border-border/40 pb-3">
             <h3 className="text-xs font-bold text-primary tracking-wider uppercase">Technical Core Skills</h3>
             <div className="flex items-center space-x-2">
+              {isSkillsReordered && (
+                <button
+                  onClick={handleRevertSkills}
+                  className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Revert Order</span>
+                </button>
+              )}
               <button
                 onClick={handleSmartOrder}
                 disabled={isSmartOrdering}
