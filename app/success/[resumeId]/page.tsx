@@ -247,7 +247,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
     currentText: string, 
     onUpdate: (newText: string) => void,
     expectedBulletCount?: number,
-    projectContext?: { title?: string; techStack?: string; description?: string }
+    projectContext?: { title?: string; techStack?: string; description?: string; keyResult?: string }
   ) => {
     setRegeneratingStates((prev) => ({ ...prev, [id]: true }));
     try {
@@ -911,20 +911,28 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                   </div>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleRegenerateSection(
-                        blockId, 
-                        `Project Bullet Points for ${proj.title}`, 
-                        (proj.bullets || []).join("\n"), 
-                        (newText) => {
-                          setLiveResume((prev: any) => {
-                            const next = JSON.parse(JSON.stringify(prev));
-                            next.projects[idx].bullets = newText.split("\n").filter(Boolean);
-                            return next;
-                          });
-                        },
-                        idx < 2 ? 3 : 2,
-                        { title: proj.title, techStack: proj.techStack }
-                      )}
+                      onClick={() => {
+                        const inputProj = resume?.inputData?.projects?.[idx];
+                        handleRegenerateSection(
+                          blockId, 
+                          `Project Bullet Points for ${proj.title}`, 
+                          (proj.bullets || []).join("\n"), 
+                          (newText) => {
+                            setLiveResume((prev: any) => {
+                              const next = JSON.parse(JSON.stringify(prev));
+                              next.projects[idx].bullets = newText.split("\n").filter(Boolean);
+                              return next;
+                            });
+                          },
+                          idx < 2 ? 3 : 2,
+                          {
+                            title: proj.title,
+                            techStack: proj.techStack,
+                            description: inputProj?.description || "",
+                            keyResult: inputProj?.keyResult || "",
+                          }
+                        );
+                      }}
                       disabled={regeneratingStates[blockId]}
                       className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"
                     >

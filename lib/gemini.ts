@@ -560,58 +560,52 @@ export async function generateSectionContent(
   sectionType: string, 
   currentText: string,
   expectedBulletCount?: number,
-  projectContext?: { title?: string; techStack?: string; description?: string }
+  projectContext?: { title?: string; techStack?: string; description?: string; keyResult?: string }
 ): Promise<string> {
   const isProjectOrExperience = sectionType.toLowerCase().includes("project") || sectionType.toLowerCase().includes("experience") || sectionType.toLowerCase().includes("work");
   const isSummary = sectionType.toLowerCase().includes("summary");
 
   const bulletCount = expectedBulletCount || 3;
 
+  const hasUserInput = projectContext?.description || projectContext?.keyResult;
+
   const prompt = isProjectOrExperience
     ? `
-You are an expert resume writer. Write EXACTLY ${bulletCount} resume bullet points for the project below using the Google X-Y-Z formula.
+You are an expert resume writer. Generate EXACTLY ${bulletCount} strong resume bullet points for this project using the Google X-Y-Z formula.
 
 PROJECT DETAILS:
-Name: ${projectContext?.title || sectionType}
-Tech Stack: ${projectContext?.techStack || "Not specified"}
-Existing bullets (context only — do NOT copy, make them stronger and more specific):
-${currentText}
+- Project Name: ${projectContext?.title || sectionType}
+- Tech Stack: ${projectContext?.techStack || "Not specified"}
+${hasUserInput ? `- What was built (user's own words): ${projectContext?.description || "Not provided"}
+- Key result / highlight (user's own words): ${projectContext?.keyResult || "Not provided"}` : `- Current bullets (rewrite these to be stronger):
+${currentText}`}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 1 — UNDERSTAND THE PROJECT:
-Before writing, identify the domain of this project from the tech stack:
-- If stack has Python/Pandas/NumPy/Scikit-learn/NLTK/Matplotlib → data science / ML project
-- If stack has React/Next.js/TypeScript/Tailwind/Framer Motion → frontend / full-stack project
-- If stack has Flask/FastAPI/PostgreSQL/Express/Node.js → backend / API project
-- If stack has Python/Flask/HTML/CSS/JavaScript → web app project
-Only use technologies listed in "Tech Stack" above. NEVER invent or assume any technology not listed there.
+GOOGLE X-Y-Z FORMULA — MANDATORY FOR EVERY BULLET:
+Structure: [Action Verb] [what was accomplished — X] [by metric/result — Y] [using/by specific technology/method — Z]
+This answers: WHAT → HOW MUCH → HOW TECHNICALLY
 
-STEP 2 — WRITE BULLETS USING X-Y-Z FORMULA:
-Each bullet MUST answer: [X: what was built/achieved] + [Y: measurable metric/result] + [Z: how — the specific tool/method used]
-Structure: [Action Verb] [outcome X] [by Y% / achieving Y metric] [by/using/with Z technology/method]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-MANDATORY RULES:
-1. Output EXACTLY ${bulletCount} bullets, one per line, no blank lines.
-2. Every bullet MUST only reference technologies from THIS project's tech stack. DO NOT use any technology not listed above.
-3. Every bullet MUST contain a concrete metric (%, ms, rows, users, score, count, etc.)
-4. Every bullet MUST name at least one specific technology from the stack above.
+RULES:
+1. Output EXACTLY ${bulletCount} bullets, one per line, no blank lines between them.
+2. Base the content on "What was built" and "Key result" above — these are the user's actual words about their project. Translate them into resume language.
+3. Every bullet MUST reference at least one specific technology from "Tech Stack". NEVER invent a technology not listed there.
+4. Every bullet MUST include a concrete measurable metric (%, ms, count, score, dataset size, users, etc.). If not in the input, estimate a REALISTIC number for the domain.
 5. Each bullet MUST start with a DIFFERENT strong action verb.
-6. Each bullet MUST be between 90 and 130 characters long. Never write a short vague bullet.
-7. If metrics aren't in the existing text, estimate REALISTIC ones matching the project domain.
+6. Each bullet MUST be between 90 and 130 characters. Never short or vague.
+7. Cover different aspects: e.g., one bullet for the core ML/backend feature, one for performance/scale, one for the UI/integration or pipeline.
 
-FORMULA TEMPLATE (adapt to this project's stack and domain):
-• [Verb] a [specific tool from stack] [model/pipeline/feature] on [dataset/scale], achieving [metric]% [outcome]
-• [Verb] [specific component] [latency/load/time] by [X]% by [technical method using tool from stack]
-• [Verb] [feature/system] using [tool from stack], [processing/serving/extracting] [scale metric] with [result metric]
+BANNED — never output:
+❌ Technologies NOT in the tech stack above
+❌ Vague filler: "Optimized performance", "Built a system", "Improved accuracy"
+❌ Bullets under 80 characters
+❌ Repeating the same verb in two bullets
 
-BANNED — never write these patterns:
-❌ Any technology NOT in the tech stack listed above
-❌ Vague bullets: "Optimized workflows", "Built a fast system", "Improved performance"
-❌ Bullets shorter than 80 characters
-❌ Repeating the same verb twice
+STRUCTURE GUIDE:
+Bullet 1 → Core technical feature built (name the algorithm/component + achievement metric)
+Bullet 2 → Performance / scale / efficiency improvement (latency, throughput, accuracy %, data volume)  
+Bullet 3 → Integration / pipeline / UX outcome (what it enables, who uses it, measurable impact)
 
-Output ONLY the raw bullet lines. No dashes, no bullet symbols, no numbers, no markdown.
+Output ONLY the raw bullet text, one per line. No dashes, no bullet symbols, no numbers, no markdown.
 `
     : `
 You are an expert ATS resume writer.

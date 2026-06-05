@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const { sectionType, currentText, expectedBulletCount, projectContext } = body;
+    // projectContext shape: { title?, techStack?, description?, keyResult? }
 
     if (!sectionType || !currentText) {
       return NextResponse.json(
