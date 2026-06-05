@@ -96,18 +96,23 @@ export const useFormStore = create<FormStore>()(
       goToStep: (step) => set(() => ({ activeStep: Math.max(1, Math.min(step, 5)) })),
 
       setFullFormData: (data) =>
-        set(() => ({
-          formData: {
-            personal: { ...initialFormData.personal, ...(data.personal || {}) },
-            skills: { ...initialFormData.skills, ...(data.skills || {}) },
-            projects: data.projects || [],
-            internships: data.internships || [],
-            positions: data.positions || [],
-            achievements: data.achievements || [],
-            options: { ...initialFormData.options, ...(data.options || {}) },
-          },
-          lastSaved: Date.now(),
-        })),
+        set(() => {
+          // Helper to check if an object is completely empty (all string values are "")
+          const isNotEmpty = (obj: any) => Object.values(obj).some((v) => typeof v === 'string' && v.trim() !== "");
+
+          return {
+            formData: {
+              personal: { ...initialFormData.personal, ...(data.personal || {}) },
+              skills: { ...initialFormData.skills, ...(data.skills || {}) },
+              projects: (data.projects || []).filter(isNotEmpty),
+              internships: (data.internships || []).filter(isNotEmpty),
+              positions: (data.positions || []).filter(isNotEmpty),
+              achievements: (data.achievements || []).filter(isNotEmpty),
+              options: { ...initialFormData.options, ...(data.options || {}) },
+            },
+            lastSaved: Date.now(),
+          };
+        }),
 
       updatePersonal: (personal) =>
         set((state) => ({

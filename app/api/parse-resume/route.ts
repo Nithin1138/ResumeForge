@@ -39,6 +39,7 @@ CRITICAL RULE: Education details (College, Branch/Major, Graduation Year, CGPA) 
 CRITICAL RULE: For 'branch' and 'pgBranch', you MUST select ONLY ONE of these exact strings: 'CSE', 'ECE', 'EEE', 'IT', 'Mechanical', 'Civil', 'Chemical', 'Biotechnology', 'Aerospace', or 'Other'. Map the resume's major to the closest one.
 CRITICAL RULE: For 'cgpa' and 'pgCgpa', extract ONLY the numerical value (e.g., '8.5' or '3.8'), stripping out any '/10' or '%' symbols. For graduation year, extract just the 4-digit year.
 CRITICAL RULE: Pay special attention to extracting hyperlinks (URLs). For DOCX files, you will receive HTML content, so look at the <a href="..."> tags to extract URLs for 'link', 'linkedin', 'github', etc. If a link is present, extract the full URL. If a URL is embedded behind text, extract the underlying link.
+CRITICAL RULE: The JSON structure below shows arrays with one empty object as a template to show you the required keys. If there are no projects, internships, positions, or achievements in the resume, you MUST return an empty array [] for that field. DO NOT return an array containing an empty object.
 Return ONLY a valid JSON object matching this exact structure exactly (no markdown):
 
 {
