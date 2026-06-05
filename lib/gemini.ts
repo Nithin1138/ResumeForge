@@ -569,32 +569,45 @@ export async function generateSectionContent(
 
   const prompt = isProjectOrExperience
     ? `
-You are an expert resume writer. Write EXACTLY ${bulletCount} strong, specific, metric-driven resume bullet points for the following project/experience.
+You are an expert resume writer. Write EXACTLY ${bulletCount} strong resume bullet points for this project using the Google X-Y-Z formula.
 
 PROJECT DETAILS:
 - Name: ${projectContext?.title || sectionType}
 - Tech Stack: ${projectContext?.techStack || "Not specified"}
-- Existing Bullets (for context only, DO NOT copy these verbatim — rewrite them to be stronger):
+- Existing bullets (for context only — DO NOT copy verbatim, rewrite stronger):
 ${currentText}
 
-STRICT RULES:
-1. Every bullet MUST be a complete, full-length sentence between 90 and 130 characters long. Shorter is NOT acceptable.
-2. Every bullet MUST mention a specific technology from the tech stack AND include a concrete metric (%, ms, count, score, etc.).
-3. Start each bullet with a DIFFERENT strong technical verb (e.g., Trained, Engineered, Reduced, Automated, Optimized, Refactored, Deployed, Built, Integrated).
-4. NEVER write vague short phrases. These are BANNED:
-   ❌ "Optimized workflows with AI"
-   ❌ "Trained models for high accuracy"
-   ❌ "Engineered real-time updates"
-   ❌ Any bullet under 80 characters
-5. EVERY bullet MUST be specific — name the algorithm/library/architecture used and the outcome achieved.
+GOOGLE X-Y-Z FORMULA (MANDATORY):
+Each bullet MUST follow this structure:
+  [Strong Action Verb] [what was accomplished / outcome X] by [Y% / metric / measurable result] [by doing Z — the technical method used]
 
-IDEAL OUTPUT FORMAT (match this level of detail):
-✅ "Trained a Scikit-learn Random Forest classifier on 12k labeled samples achieving 91% F1-score for multi-class regret analysis"
-✅ "Reduced Flask REST API latency by 38% by implementing Redis response caching and asynchronous Celery task queues"
-✅ "Automated resume field extraction using spaCy NER pipeline, parsing 15+ entity types with 93% token-level accuracy on test set"
-✅ "Built a React dashboard with Next.js SSR and FastAPI backend serving 500+ concurrent users with sub-200ms response times"
+The formula gives bullets that answer: WHAT did you do → HOW WELL (metric) → HOW (technical method).
 
-Output ONLY the bullet text, one per line. No dashes, no bullets, no numbers, no markdown, no blank lines.
+RULES:
+1. Output EXACTLY ${bulletCount} bullets, one per line.
+2. Every bullet MUST include ALL THREE components of X-Y-Z:
+   - X: the engineering outcome or system built (specific to the tech stack)
+   - Y: a concrete measurable metric (%, ms latency, accuracy score, count, throughput, etc.)
+   - Z: the specific technical method, library, algorithm, or architecture used to achieve it
+3. Start each bullet with a DIFFERENT strong action verb. Vary them: Trained, Reduced, Automated, Engineered, Optimized, Built, Refactored, Deployed, Processed, Integrated, Achieved, Accelerated.
+4. Each bullet MUST be between 90 and 130 characters long. Never shorter.
+5. Name specific technologies from the tech stack in every bullet. Never be vague.
+6. If exact metrics aren't in the existing text, derive REALISTIC ones based on the domain (NLP models: F1-score/accuracy; APIs: latency/throughput; full-stack: users/response time; data pipelines: dataset size/processing speed).
+
+BANNED (too vague, never write these):
+❌ "Optimized workflows with AI"
+❌ "Trained models for high accuracy"  
+❌ "Built a fast API"
+❌ Any bullet without a specific metric AND a specific technology name
+
+IDEAL EXAMPLES (match this structure exactly):
+✅ "Trained a Scikit-learn NLTK sentiment classifier on 10k reviews, achieving 91% F1-score for regret severity detection"
+✅ "Reduced Flask REST API response latency by 38% by adding Redis caching and async Celery task queuing for 500+ daily requests"
+✅ "Automated PDF resume parsing with spaCy NER pipeline, extracting 15+ entity fields at 93% field-level accuracy per document"
+✅ "Built a Next.js SSR dashboard backed by FastAPI, reducing page load by 45% for 300+ concurrent users via incremental rendering"
+✅ "Engineered a Pandas-NumPy data pipeline processing 50k+ rows per batch, cutting preprocessing time from 8 min to under 90 sec"
+
+Output ONLY the raw bullet text, one per line. No dashes, no bullets, no numbers, no markdown, no blank lines.
 `
     : `
 You are an expert ATS resume writer.
