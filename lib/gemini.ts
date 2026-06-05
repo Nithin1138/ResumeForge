@@ -676,6 +676,37 @@ function localReorderSkillsFallback(currentSkills: any[], jobDescription: string
   return skills;
 }
 
+function cleanAndParseJson(text: string): any {
+  let cleaned = text.trim();
+  if (cleaned.startsWith("```")) {
+    cleaned = cleaned.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
+  }
+  return JSON.parse(cleaned);
+}
+
+function extractSkillsArray(parsedJson: any): any[] {
+  if (Array.isArray(parsedJson)) {
+    return parsedJson;
+  }
+  if (parsedJson && typeof parsedJson === "object") {
+    if (Array.isArray(parsedJson.skills)) {
+      return parsedJson.skills;
+    }
+    if (Array.isArray(parsedJson.categories)) {
+      return parsedJson.categories;
+    }
+    for (const key of Object.keys(parsedJson)) {
+      if (Array.isArray(parsedJson[key])) {
+        const first = parsedJson[key][0];
+        if (first && typeof first === "object" && ("category" in first || "skills" in first)) {
+          return parsedJson[key];
+        }
+      }
+    }
+  }
+  return [];
+}
+
 export async function generateReorderedSkills(currentSkills: any[], jobDescription: string): Promise<any[]> {
   const prompt = `
 SYSTEM:
@@ -703,7 +734,8 @@ ${jobDescription}
       try {
         console.log("No Gemini API key available, but Groq key is present. Using Groq for skills reordering.");
         const groqResponse = await generateGroqFallback(prompt, true);
-        return JSON.parse(groqResponse.trim());
+        const parsed = cleanAndParseJson(groqResponse);
+        return extractSkillsArray(parsed);
       } catch (groqError) {
         console.error("Groq reorder skills failed:", groqError);
       }
@@ -725,12 +757,14 @@ ${jobDescription}
       throw new Error("Empty response from Gemini API");
     }
 
-    return JSON.parse(responseText.trim());
+    const parsed = cleanAndParseJson(responseText);
+    return extractSkillsArray(parsed);
   } catch (error) {
     console.error("Error communicating with Gemini API, trying Groq fallback for skills:", error);
     try {
       const groqResponse = await generateGroqFallback(prompt, true);
-      return JSON.parse(groqResponse.trim());
+      const parsed = cleanAndParseJson(groqResponse);
+      return extractSkillsArray(parsed);
     } catch (groqError) {
       console.error("Groq fallback failed as well, using local reorder:", groqError);
       return localReorderSkillsFallback(currentSkills, jobDescription);
