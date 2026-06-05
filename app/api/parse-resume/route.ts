@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import * as mammoth from "mammoth";
 import { generateGroqFallback } from "@/lib/gemini";
-// @ts-ignore
-import pdfParse from "pdf-parse";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -126,62 +124,56 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
     const isPDF = file.type === "application/pdf" || file.name.endsWith(".pdf");
     const isDocx = file.name.endsWith(".docx");
 
-    // Unified text extraction
-    let resumeText = "";
-    let base64String = "";
-
     try {
+      let response;
+      let resumeText = "";
+
       if (isPDF) {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
-        base64String = buffer.toString("base64");
+        const base64String = buffer.toString("base64");
         
-        try {
-          function render_page(pageData: any) {
-            let render_options = { normalizeWhitespace: false, disableCombineTextItems: false };
-            return pageData.getTextContent(render_options).then(function(textContent: any) {
-              let text = textContent.items.map((item: any) => item.str).join('');
-              return pageData.getAnnotations().then((annotations: any) => {
-                let links = annotations
-                  .filter((a: any) => a.subtype === 'Link' && a.url)
-                  .map((a: any) => a.url);
-                if (links.length > 0) {
-                  text += `\n[Hidden Links Extracted from PDF: ${links.join(', ')}]\n`;
-                }
-                return text;
-              });
-            });
+        // Robust regex to extract hidden hyperlinks from raw PDF buffer
+        const content = buffer.toString('binary');
+        const links = new Set<string>();
+        
+        // Match literal strings: /URI (https://...)
+        const uriRegex = /\/URI\s*\(([^)]+)\)/g;
+        let match;
+        while ((match = uriRegex.exec(content)) !== null) {
+          // Remove null bytes or escaped characters if any
+          const cleanLink = match[1].replace(/\\0/g, '').trim();
+          if (cleanLink.startsWith('http') || cleanLink.includes('www.')) {
+             links.add(cleanLink);
           }
-          const data = await pdfParse(buffer, { pagerender: render_page });
-          resumeText = data.text;
-        } catch (pdfParseError) {
-          console.warn("pdf-parse failed to extract text/links, falling back to Gemini native vision.", pdfParseError);
         }
-      } else if (isDocx) {
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-        const result = await mammoth.convertToHtml({ buffer });
-        resumeText = result.value;
-      } else {
-        resumeText = await file.text();
-      }
-      
-      let response;
-      if (resumeText) {
-        const fullPrompt = prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000);
-        response = await ai.models.generateContent({
-          model: "gemini-1.5-pro",
-          contents: fullPrompt,
-          config: {
-            responseMimeType: "application/json",
-            temperature: 0,
-          }
-        });
-      } else if (isPDF && base64String) {
+        
+        // Match hex strings: /URI <68747470...>
+        const hexUriRegex = /\/URI\s*<([0-9a-fA-F]+)>/g;
+        while ((match = hexUriRegex.exec(content)) !== null) {
+          try {
+            const hexStr = match[1];
+            let str = '';
+            for (let i = 0; i < hexStr.length; i += 2) {
+              str += String.fromCharCode(parseInt(hexStr.substr(i, 2), 16));
+            }
+            if (str.startsWith('http') || str.includes('www.')) {
+               links.add(str);
+            }
+          } catch (e) {}
+        }
+
+        const extractedLinks = Array.from(links);
+        let linkPrompt = "";
+        if (extractedLinks.length > 0) {
+          linkPrompt = `\n\n[CRITICAL: The following hidden URLs were extracted from the PDF metadata: ${extractedLinks.join(', ')}]\nYou MUST use these URLs to fill out the 'linkedin', 'github', and 'link' (for projects) fields if they match the context.`;
+        }
+
+        // Use native Gemini vision (most robust for layout/columns) alongside the extracted links
         response = await ai.models.generateContent({
           model: "gemini-1.5-pro",
           contents: [
-            prompt,
+            prompt + linkPrompt,
             {
               inlineData: {
                 data: base64String,
@@ -195,15 +187,45 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
           }
         });
       } else {
-        throw new Error("No text or PDF data could be extracted.");
+        // Handle DOCX or TXT
+        if (isDocx) {
+          const arrayBuffer = await file.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          const result = await mammoth.convertToHtml({ buffer });
+          resumeText = result.value;
+        } else {
+          resumeText = await file.text();
+        }
+        
+        const fullPrompt = prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000);
+        response = await ai.models.generateContent({
+          model: "gemini-1.5-pro",
+          contents: fullPrompt,
+          config: {
+            responseMimeType: "application/json",
+            temperature: 0,
+          }
+        });
       }
       
       responseText = response.text || "";
     } catch (geminiError: any) {
       console.warn("Gemini generation failed on direct parse:", geminiError.message || geminiError);
       
-      // Fallback: send to Groq
-      const fullPrompt = prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000);
+      // Fallback: send to Groq. We need to extract text for Groq if it's a PDF.
+      let fallbackText = "";
+      if (isPDF) {
+         // Because we removed pdf-parse, Groq PDF fallback is limited to binary string or we just give up on Groq for PDF.
+         throw new Error("Gemini failed and Groq cannot process PDFs directly without pdf-parse.");
+      } else if (isDocx) {
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.convertToHtml({ buffer: Buffer.from(arrayBuffer) });
+        fallbackText = result.value;
+      } else {
+        fallbackText = await file.text();
+      }
+
+      const fullPrompt = prompt + "\n\nRESUME TEXT:\n" + fallbackText.substring(0, 15000);
       try {
         responseText = await generateGroqFallback(fullPrompt, true);
       } catch (groqError: any) {
