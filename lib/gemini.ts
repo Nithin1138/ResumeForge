@@ -612,3 +612,129 @@ ${currentText}
     }
   }
 }
+
+function localReorderSkillsFallback(currentSkills: any[], jobDescription: string): any[] {
+  const jdLower = jobDescription.toLowerCase();
+  const isDataScience = jdLower.includes("data science") || 
+                        jdLower.includes("datascience") || 
+                        jdLower.includes("machine learning") || 
+                        jdLower.includes("deep learning") || 
+                        jdLower.includes("artificial intelligence") || 
+                        jdLower.includes("data scientist") ||
+                        jdLower.includes("ml engineer") ||
+                        jdLower.includes("nlp");
+
+  // Create deep copy
+  let skills = JSON.parse(JSON.stringify(currentSkills));
+
+  if (isDataScience) {
+    // Find Data Engineering and AI & Data Technologies categories
+    const deIndex = skills.findIndex((c: any) => c.category.toUpperCase() === "DATA ENGINEERING");
+    let aiIndex = skills.findIndex((c: any) => 
+      c.category.toUpperCase() === "AI & DATA TECHNOLOGIES" || 
+      c.category.toUpperCase() === "AI & DATA TECHNOLOGIE" ||
+      c.category.toUpperCase() === "DATA TECHNOLOGIES" ||
+      c.category.toUpperCase() === "DATA TECHNOLOGIE"
+    );
+
+    const deSkills = deIndex !== -1 ? skills[deIndex].skills : [];
+
+    if (deIndex !== -1) {
+      // Remove Data Engineering category
+      skills.splice(deIndex, 1);
+    }
+
+    // Merge skills into AI & Data Technologies (rename to DATA TECHNOLOGIES)
+    if (aiIndex !== -1) {
+      skills[aiIndex].skills = Array.from(new Set([...skills[aiIndex].skills, ...deSkills]));
+      skills[aiIndex].category = "DATA TECHNOLOGIES";
+    } else if (deSkills.length > 0) {
+      // Create new category "DATA TECHNOLOGIES"
+      skills.push({
+        category: "DATA TECHNOLOGIES",
+        skills: deSkills
+      });
+    }
+
+    // Reorder categories to make DATA TECHNOLOGIES first
+    const dtCatIndex = skills.findIndex((c: any) => c.category.toUpperCase() === "DATA TECHNOLOGIES");
+    if (dtCatIndex !== -1) {
+      const [dtCat] = skills.splice(dtCatIndex, 1);
+      skills.unshift(dtCat);
+    }
+  } else {
+    // Basic relevance sort based on keyword occurrences
+    skills.sort((a: any, b: any) => {
+      const aHas = jdLower.includes(a.category.toLowerCase()) || a.skills.some((s: string) => jdLower.includes(s.toLowerCase()));
+      const bHas = jdLower.includes(b.category.toLowerCase()) || b.skills.some((s: string) => jdLower.includes(s.toLowerCase()));
+      if (aHas && !bHas) return -1;
+      if (!aHas && bHas) return 1;
+      return 0;
+    });
+  }
+
+  return skills;
+}
+
+export async function generateReorderedSkills(currentSkills: any[], jobDescription: string): Promise<any[]> {
+  const prompt = `
+SYSTEM:
+You are an expert ATS resume writer. Your task is to re-order, filter, clean, and merge the candidate's technical skills based on the provided job description to make the resume highly targeted and relevant.
+
+CRITICAL RULES:
+1. Re-order the categories and the skills within them so that the most relevant ones to the job description appear first.
+2. Filter/prune any completely irrelevant skills or categories that do not fit the job description at all. Keep only required things.
+3. SPECIFIC RULE: If the job description is related to Data Science, Data Scientist, Machine Learning, Deep Learning, or AI:
+   - REMOVE "Data Engineering" as a separate category.
+   - MERGE any relevant skills from "Data Engineering" (e.g. ETL Pipelines, Data Warehousing, etc.) into a category called "DATA TECHNOLOGIES" or "AI & DATA TECHNOLOGIES".
+4. Output ONLY a valid JSON array of categories, where each item has "category" (string) and "skills" (array of strings). Do not include any markdown formatting (like \`\`\`json) or surrounding text.
+
+CURRENT SKILLS JSON:
+${JSON.stringify(currentSkills, null, 2)}
+
+JOB DESCRIPTION:
+${jobDescription}
+`;
+
+  const client = getGeminiClient();
+
+  if (!client) {
+    if (process.env.GROQ_API_KEY) {
+      try {
+        console.log("No Gemini API key available, but Groq key is present. Using Groq for skills reordering.");
+        const groqResponse = await generateGroqFallback(prompt, true);
+        return JSON.parse(groqResponse.trim());
+      } catch (groqError) {
+        console.error("Groq reorder skills failed:", groqError);
+      }
+    }
+    return localReorderSkillsFallback(currentSkills, jobDescription);
+  }
+
+  try {
+    const response = await client.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      },
+    });
+
+    const responseText = response.text;
+    if (!responseText) {
+      throw new Error("Empty response from Gemini API");
+    }
+
+    return JSON.parse(responseText.trim());
+  } catch (error) {
+    console.error("Error communicating with Gemini API, trying Groq fallback for skills:", error);
+    try {
+      const groqResponse = await generateGroqFallback(prompt, true);
+      return JSON.parse(groqResponse.trim());
+    } catch (groqError) {
+      console.error("Groq fallback failed as well, using local reorder:", groqError);
+      return localReorderSkillsFallback(currentSkills, jobDescription);
+    }
+  }
+}
+

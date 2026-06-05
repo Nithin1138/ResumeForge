@@ -3,7 +3,7 @@
 import { use, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap } from "lucide-react";
+import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { FullResumeOutput } from "@/types/resume";
@@ -103,6 +103,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   
   const [customTone, setCustomTone] = useState<string>("Professional & Formal");
   const [customJD, setCustomJD] = useState<string>("");
+  const [isSmartOrdering, setIsSmartOrdering] = useState<boolean>(false);
 
   const parsedOutput = liveResume 
     ? (typeof liveResume === "string" ? JSON.parse(liveResume) : liveResume)
@@ -198,6 +199,9 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
         setResume(data);
         if (data.paymentStatus === "PAID" && data.outputFull) {
           setLiveResume(data.outputFull);
+          if (data.inputData?.options?.jobDescription) {
+            setCustomJD(data.inputData.options.jobDescription);
+          }
         }
         
         // Launch confetti if successfully paid
@@ -244,6 +248,53 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
       alert("Error regenerating section: " + err.message);
     } finally {
       setRegeneratingStates((prev) => ({ ...prev, [id]: false }));
+    }
+  };
+
+  const handleSmartOrder = async () => {
+    if (!customJD || !customJD.trim()) {
+      const jdElement = document.getElementById("jobDescriptionInput");
+      if (jdElement) {
+        jdElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => {
+          jdElement.focus();
+          jdElement.classList.add("ring-2", "ring-primary", "animate-pulse");
+          setTimeout(() => {
+            jdElement.classList.remove("ring-2", "ring-primary", "animate-pulse");
+          }, 2000);
+        }, 500);
+      }
+      return;
+    }
+
+    setIsSmartOrdering(true);
+    try {
+      const res = await fetch("/api/reorder-skills", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          skills: output.skills,
+          jobDescription: customJD
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to re-order skills.");
+      }
+
+      const data = await res.json();
+      if (data.skills) {
+        setLiveResume((prev: any) => {
+          const current = typeof prev === "string" ? JSON.parse(prev) : prev;
+          const next = JSON.parse(JSON.stringify(current));
+          next.skills = data.skills;
+          return next;
+        });
+      }
+    } catch (err: any) {
+      alert("Error optimizing skills: " + err.message);
+    } finally {
+      setIsSmartOrdering(false);
     }
   };
 
@@ -680,16 +731,26 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
         <div className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs print:hidden">
           <div className="flex justify-between items-center mb-5 border-b border-border/40 pb-3">
             <h3 className="text-xs font-bold text-primary tracking-wider uppercase">Technical Core Skills</h3>
-            <button
-              onClick={() => {
-                const skillsText = output.skills.map(s => `${s.category}: ${s.skills.join(", ")}`).join("\n");
-                copyToClipboard(skillsText, "skills");
-              }}
-              className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
-            >
-              {copiedStates["skills"] ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedStates["skills"] ? "Copied!" : "Copy Skills"}</span>
-            </button>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={handleSmartOrder}
+                disabled={isSmartOrdering}
+                className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"
+              >
+                {isSmartOrdering ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-primary" />}
+                <span>{isSmartOrdering ? "Ordering..." : "Smart Order"}</span>
+              </button>
+              <button
+                onClick={() => {
+                  const skillsText = output.skills.map(s => `${s.category}: ${s.skills.join(", ")}`).join("\n");
+                  copyToClipboard(skillsText, "skills");
+                }}
+                className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
+              >
+                {copiedStates["skills"] ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedStates["skills"] ? "Copied!" : "Copy Skills"}</span>
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1092,8 +1153,9 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
             <div>
               <label className="block text-xs font-bold mb-2">Align with a Job Description</label>
               <textarea
+                id="jobDescriptionInput"
                 rows={3}
-                className="w-full px-3 py-2 border rounded-lg bg-bg-base focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-xs font-medium"
+                className="w-full px-3 py-2 border rounded-lg bg-bg-base focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-xs font-medium transition-all"
                 placeholder="Paste the target job qualifications here to inject key verbs..."
                 value={customJD}
                 onChange={(e) => setCustomJD(e.target.value)}
