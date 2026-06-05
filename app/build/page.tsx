@@ -861,8 +861,8 @@ export default function BuildPage() {
           />
         </div>
 
-        <div className="md:col-span-2 mt-2">
-          <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-between mb-2">
             <label className="block text-sm font-semibold">Coding Profiles</label>
             <button
               type="button"
@@ -871,7 +871,7 @@ export default function BuildPage() {
                 setEditingCodingProfileIndex(null);
                 setIsCodingProfileModalOpen(true);
               }}
-              className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center bg-primary/10 px-3 py-1.5 rounded-full"
+              className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center bg-primary/10 px-3 py-1 rounded-full"
             >
               <Code2 className="w-3.5 h-3.5 mr-1" />
               Add Profile
@@ -879,7 +879,7 @@ export default function BuildPage() {
           </div>
           
           {(formData.personal.codingProfiles || []).length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="flex flex-col gap-3 flex-1">
               {(formData.personal.codingProfiles || []).map((profile, i) => (
                 <div key={i} className="flex justify-between items-center p-3 bg-surface border border-border rounded-xl">
                   <div className="flex items-center space-x-3 overflow-hidden">
@@ -901,7 +901,7 @@ export default function BuildPage() {
               ))}
             </div>
           ) : (
-            <div className="border border-dashed border-border rounded-xl p-4 text-center bg-surface/50">
+            <div className="border border-dashed border-border rounded-xl p-4 text-center bg-surface/50 flex-1 flex flex-col justify-center">
               <p className="text-xs text-text-muted">Boost validation metrics by adding your LeetCode, HackerRank, or CodeChef profiles.</p>
             </div>
           )}

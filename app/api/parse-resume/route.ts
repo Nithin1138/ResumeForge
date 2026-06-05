@@ -40,7 +40,7 @@ CRITICAL RULE: If a field is missing in the resume, you MUST leave it as an empt
 CRITICAL RULE: Education details (College, Branch/Major, Graduation Year, CGPA) MUST be placed inside the 'personal' object exactly as defined. Do NOT create a separate 'education' array.
 CRITICAL RULE: For 'branch' and 'pgBranch', you MUST select ONLY ONE of these exact strings: 'CSE', 'ECE', 'EEE', 'IT', 'Mechanical', 'Civil', 'Chemical', 'Biotechnology', 'Aerospace', or 'Other'. Map the resume's major to the closest one.
 CRITICAL RULE: For 'cgpa' and 'pgCgpa', extract ONLY the numerical value (e.g., '8.5' or '3.8'), stripping out any '/10' or '%' symbols. For graduation year, extract just the 4-digit year.
-CRITICAL RULE: Pay special attention to extracting hyperlinks (URLs). For DOCX files, you will receive HTML content, so look at the <a href="..."> tags to extract URLs for 'link', 'linkedin', 'github', etc. If a link is present, extract the full URL. If a URL is embedded behind text, extract the underlying link.
+CRITICAL RULE: For 'linkedin', 'github', and project 'link' fields, extract the FULL URL (e.g., 'https://github.com/username'). If the resume only contains a username or handle (e.g., 'nithin1138' or 'in/nithin'), you MUST construct the full URL. Check both the visual text and any provided hidden URLs. DO NOT just return 'https://github.com/' or 'https://www.linkedin.com/'. If it's a DOCX, look at <a href="..."> tags.
 CRITICAL RULE: The JSON structure below shows arrays with one empty object as a template to show you the required keys. If there are no projects, internships, positions, or achievements in the resume, you MUST return an empty array [] for that field. DO NOT return an array containing an empty object.
 CRITICAL RULE: For 'csConcepts', extract academic coursework/core concepts like Data Structures (DSA), Algorithms, Object-Oriented Programming (OOP), Operating Systems (OS), DBMS, Computer Networks, System Design, etc. For 'softSkills', extract any non-technical soft skills like Communication, Leadership, Teamwork, Problem Solving, etc.
 Return ONLY a valid JSON object matching this exact structure exactly (no markdown):
@@ -170,7 +170,7 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
 
         const extractedLinks = Array.from(links);
         if (extractedLinks.length > 0) {
-          linkPrompt = `\n\n[CRITICAL: The following hidden URLs were extracted from the PDF metadata: ${extractedLinks.join(', ')}]\nYou MUST use these URLs to fill out the 'linkedin', 'github', and 'link' (for projects) fields if they match the context.`;
+          linkPrompt = `\n\n[CRITICAL: The following hidden URLs were extracted from the PDF metadata: ${extractedLinks.join(', ')}]\nYou MUST match these URLs with the visual text to extract FULL, functional URLs for 'linkedin', 'github', and project 'link' fields. NEVER truncate them.`;
         }
 
         // Use native Gemini vision (most robust for layout/columns) alongside the extracted links
