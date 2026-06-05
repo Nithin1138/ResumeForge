@@ -569,45 +569,49 @@ export async function generateSectionContent(
 
   const prompt = isProjectOrExperience
     ? `
-You are an expert resume writer. Write EXACTLY ${bulletCount} strong resume bullet points for this project using the Google X-Y-Z formula.
+You are an expert resume writer. Write EXACTLY ${bulletCount} resume bullet points for the project below using the Google X-Y-Z formula.
 
 PROJECT DETAILS:
-- Name: ${projectContext?.title || sectionType}
-- Tech Stack: ${projectContext?.techStack || "Not specified"}
-- Existing bullets (for context only — DO NOT copy verbatim, rewrite stronger):
+Name: ${projectContext?.title || sectionType}
+Tech Stack: ${projectContext?.techStack || "Not specified"}
+Existing bullets (context only — do NOT copy, make them stronger and more specific):
 ${currentText}
 
-GOOGLE X-Y-Z FORMULA (MANDATORY):
-Each bullet MUST follow this structure:
-  [Strong Action Verb] [what was accomplished / outcome X] by [Y% / metric / measurable result] [by doing Z — the technical method used]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 1 — UNDERSTAND THE PROJECT:
+Before writing, identify the domain of this project from the tech stack:
+- If stack has Python/Pandas/NumPy/Scikit-learn/NLTK/Matplotlib → data science / ML project
+- If stack has React/Next.js/TypeScript/Tailwind/Framer Motion → frontend / full-stack project
+- If stack has Flask/FastAPI/PostgreSQL/Express/Node.js → backend / API project
+- If stack has Python/Flask/HTML/CSS/JavaScript → web app project
+Only use technologies listed in "Tech Stack" above. NEVER invent or assume any technology not listed there.
 
-The formula gives bullets that answer: WHAT did you do → HOW WELL (metric) → HOW (technical method).
+STEP 2 — WRITE BULLETS USING X-Y-Z FORMULA:
+Each bullet MUST answer: [X: what was built/achieved] + [Y: measurable metric/result] + [Z: how — the specific tool/method used]
+Structure: [Action Verb] [outcome X] [by Y% / achieving Y metric] [by/using/with Z technology/method]
 
-RULES:
-1. Output EXACTLY ${bulletCount} bullets, one per line.
-2. Every bullet MUST include ALL THREE components of X-Y-Z:
-   - X: the engineering outcome or system built (specific to the tech stack)
-   - Y: a concrete measurable metric (%, ms latency, accuracy score, count, throughput, etc.)
-   - Z: the specific technical method, library, algorithm, or architecture used to achieve it
-3. Start each bullet with a DIFFERENT strong action verb. Vary them: Trained, Reduced, Automated, Engineered, Optimized, Built, Refactored, Deployed, Processed, Integrated, Achieved, Accelerated.
-4. Each bullet MUST be between 90 and 130 characters long. Never shorter.
-5. Name specific technologies from the tech stack in every bullet. Never be vague.
-6. If exact metrics aren't in the existing text, derive REALISTIC ones based on the domain (NLP models: F1-score/accuracy; APIs: latency/throughput; full-stack: users/response time; data pipelines: dataset size/processing speed).
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MANDATORY RULES:
+1. Output EXACTLY ${bulletCount} bullets, one per line, no blank lines.
+2. Every bullet MUST only reference technologies from THIS project's tech stack. DO NOT use any technology not listed above.
+3. Every bullet MUST contain a concrete metric (%, ms, rows, users, score, count, etc.)
+4. Every bullet MUST name at least one specific technology from the stack above.
+5. Each bullet MUST start with a DIFFERENT strong action verb.
+6. Each bullet MUST be between 90 and 130 characters long. Never write a short vague bullet.
+7. If metrics aren't in the existing text, estimate REALISTIC ones matching the project domain.
 
-BANNED (too vague, never write these):
-❌ "Optimized workflows with AI"
-❌ "Trained models for high accuracy"  
-❌ "Built a fast API"
-❌ Any bullet without a specific metric AND a specific technology name
+FORMULA TEMPLATE (adapt to this project's stack and domain):
+• [Verb] a [specific tool from stack] [model/pipeline/feature] on [dataset/scale], achieving [metric]% [outcome]
+• [Verb] [specific component] [latency/load/time] by [X]% by [technical method using tool from stack]
+• [Verb] [feature/system] using [tool from stack], [processing/serving/extracting] [scale metric] with [result metric]
 
-IDEAL EXAMPLES (match this structure exactly):
-✅ "Trained a Scikit-learn NLTK sentiment classifier on 10k reviews, achieving 91% F1-score for regret severity detection"
-✅ "Reduced Flask REST API response latency by 38% by adding Redis caching and async Celery task queuing for 500+ daily requests"
-✅ "Automated PDF resume parsing with spaCy NER pipeline, extracting 15+ entity fields at 93% field-level accuracy per document"
-✅ "Built a Next.js SSR dashboard backed by FastAPI, reducing page load by 45% for 300+ concurrent users via incremental rendering"
-✅ "Engineered a Pandas-NumPy data pipeline processing 50k+ rows per batch, cutting preprocessing time from 8 min to under 90 sec"
+BANNED — never write these patterns:
+❌ Any technology NOT in the tech stack listed above
+❌ Vague bullets: "Optimized workflows", "Built a fast system", "Improved performance"
+❌ Bullets shorter than 80 characters
+❌ Repeating the same verb twice
 
-Output ONLY the raw bullet text, one per line. No dashes, no bullets, no numbers, no markdown, no blank lines.
+Output ONLY the raw bullet lines. No dashes, no bullet symbols, no numbers, no markdown.
 `
     : `
 You are an expert ATS resume writer.
