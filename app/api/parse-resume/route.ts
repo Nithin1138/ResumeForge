@@ -128,29 +128,35 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
 
     // Unified text extraction
     let resumeText = "";
+    let base64String = "";
+
     try {
       if (isPDF) {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
+        base64String = buffer.toString("base64");
         
-        function render_page(pageData: any) {
-          let render_options = { normalizeWhitespace: false, disableCombineTextItems: false };
-          return pageData.getTextContent(render_options).then(function(textContent: any) {
-            let text = textContent.items.map((item: any) => item.str).join('');
-            return pageData.getAnnotations().then((annotations: any) => {
-              let links = annotations
-                .filter((a: any) => a.subtype === 'Link' && a.url)
-                .map((a: any) => a.url);
-              if (links.length > 0) {
-                text += `\n[Hidden Links Extracted from PDF: ${links.join(', ')}]\n`;
-              }
-              return text;
+        try {
+          function render_page(pageData: any) {
+            let render_options = { normalizeWhitespace: false, disableCombineTextItems: false };
+            return pageData.getTextContent(render_options).then(function(textContent: any) {
+              let text = textContent.items.map((item: any) => item.str).join('');
+              return pageData.getAnnotations().then((annotations: any) => {
+                let links = annotations
+                  .filter((a: any) => a.subtype === 'Link' && a.url)
+                  .map((a: any) => a.url);
+                if (links.length > 0) {
+                  text += `\n[Hidden Links Extracted from PDF: ${links.join(', ')}]\n`;
+                }
+                return text;
+              });
             });
-          });
+          }
+          const data = await pdfParse(buffer, { pagerender: render_page });
+          resumeText = data.text;
+        } catch (pdfParseError) {
+          console.warn("pdf-parse failed to extract text/links, falling back to Gemini native vision.", pdfParseError);
         }
-        
-        const data = await pdfParse(buffer, { pagerender: render_page });
-        resumeText = data.text;
       } else if (isDocx) {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
@@ -160,16 +166,38 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
         resumeText = await file.text();
       }
       
-      const fullPrompt = prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000);
-
-      const response = await ai.models.generateContent({
-        model: "gemini-1.5-pro",
-        contents: fullPrompt,
-        config: {
-          responseMimeType: "application/json",
-          temperature: 0,
-        }
-      });
+      let response;
+      if (resumeText) {
+        const fullPrompt = prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000);
+        response = await ai.models.generateContent({
+          model: "gemini-1.5-pro",
+          contents: fullPrompt,
+          config: {
+            responseMimeType: "application/json",
+            temperature: 0,
+          }
+        });
+      } else if (isPDF && base64String) {
+        response = await ai.models.generateContent({
+          model: "gemini-1.5-pro",
+          contents: [
+            prompt,
+            {
+              inlineData: {
+                data: base64String,
+                mimeType: "application/pdf"
+              }
+            }
+          ],
+          config: {
+            responseMimeType: "application/json",
+            temperature: 0,
+          }
+        });
+      } else {
+        throw new Error("No text or PDF data could be extracted.");
+      }
+      
       responseText = response.text || "";
     } catch (geminiError: any) {
       console.warn("Gemini generation failed on direct parse:", geminiError.message || geminiError);
