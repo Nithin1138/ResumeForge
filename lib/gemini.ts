@@ -1,6 +1,14 @@
 import { GoogleGenAI } from "@google/genai";
 import { ResumeFormData, FullResumeOutput } from "@/types/resume";
-import { generateTechnicalSkills } from "@/lib/skillsEngine";
+import { generateTechnicalSkills, SkillCategoryOutput } from "@/lib/skillsEngine";
+import { normalizeTechStack, optimizeResumeForAts } from "@/lib/atsFormatting";
+
+function finalizeResumeOutput(
+  result: FullResumeOutput,
+  processedSkills: SkillCategoryOutput[]
+): FullResumeOutput {
+  return optimizeResumeForAts(result, processedSkills);
+}
 
 // Initialize the Google Gen AI client
 const getGeminiClient = () => {
@@ -19,7 +27,7 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
   // Use the skills engine for deterministic, validated output
   const processedSkills = generateTechnicalSkills(formData);
   const findSkills = (label: string) => processedSkills.find(c => c.category === label)?.skills || [];
-  
+
   const languagesList = findSkills("Programming Languages");
   const frameworksList = findSkills("Frameworks & Libraries");
   const toolsList = findSkills("Tools & Platforms");
@@ -45,7 +53,7 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
   const mockProjects = projects.length > 0 ? projects.map((proj, idx) => {
     return {
       title: proj.title || `Project ${idx + 1}`,
-      techStack: proj.techStack || "React, Node.js",
+      techStack: normalizeTechStack(proj.techStack || "React, Node.js"),
       duration: proj.duration || "Jan 2025 – Mar 2025",
       link: proj.link || "",
       bullets: [
@@ -285,7 +293,12 @@ Your output must strictly follow these rules:
     - Category 6: Experience & Credibility (5 Points). Evaluate internships, achievements. 0-2 weak, 3-4 moderate, 5 strong.
     ANTI-INFLATION RULES: Never assign >95 or <40. No projects/internships = 40-60. Strong projects/metrics = 80-95.
     Output the exact breakdown.
-18. ENGINEER-GRADE PROJECT BULLETS:
+    PARSING RULES (DO NOT PENALIZE): ATSLift auto-formats skill lines (max 95 chars per category) and tech stacks (max 6 tools on a dedicated line below the project title). NEVER deduct ATS Compatibility or list weaknesses about parsing quirks, long skill lines, or inline tech stacks.
+19. SKILLS & TECH STACK FORMATTING:
+    - Each skill category line must fit within 95 characters when skills are comma-separated. Prioritize the most relevant skills; omit overflow rather than writing a long line.
+    - For each project, set "techStack" as a comma-separated string of at most 6 core technologies (e.g. "Python, FastAPI, React.js, PostgreSQL"). Never embed the tech stack inside the project title.
+    - Do NOT repeat the full tech stack inside bullet points (it appears on its own line in the final document).
+20. ENGINEER-GRADE PROJECT BULLETS:
   - CORE IDENTITY & NATURALNESS:
     Write from the perspective of a technically strong engineering student. Favor clarity, practical implementation, and recruiter readability over enterprise sophistication. Bullets must sound believable for real B.Tech student projects, NOT senior infrastructure engineering work.
   - REALISM FILTER:
@@ -511,15 +524,13 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
         console.log("No Gemini API key available, but Groq key is present. Using Groq directly for resume generation.");
         const groqResponse = await generateGroqFallback(prompt, true);
         const groqResult = JSON.parse(groqResponse.trim()) as FullResumeOutput;
-        // Override AI-generated skills with engine output
-        groqResult.skills = processedSkills;
-        return groqResult;
+        return finalizeResumeOutput(groqResult, processedSkills);
       } catch (groqError) {
         console.error("Groq direct call failed:", groqError);
       }
     }
     return new Promise((resolve) => {
-      setTimeout(() => resolve(generateMockResume(formData)), 1500);
+      setTimeout(() => resolve(finalizeResumeOutput(generateMockResume(formData), processedSkills)), 1500);
     });
   }
 
@@ -538,32 +549,27 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
     }
 
     const geminiResult = JSON.parse(responseText.trim()) as FullResumeOutput;
-    // Override AI-generated skills with engine output
-    geminiResult.skills = processedSkills;
-    return geminiResult;
+    return finalizeResumeOutput(geminiResult, processedSkills);
   } catch (error) {
     console.error("Error communicating with Gemini API, trying Groq fallback:", error);
     try {
       const groqResponse = await generateGroqFallback(prompt, true);
       const groqFallbackResult = JSON.parse(groqResponse.trim()) as FullResumeOutput;
-      // Override AI-generated skills with engine output
-      groqFallbackResult.skills = processedSkills;
-      return groqFallbackResult;
+      return finalizeResumeOutput(groqFallbackResult, processedSkills);
     } catch (groqError) {
       console.error("Groq fallback failed as well, using mock response:", groqError);
-      return generateMockResume(formData);
+      return finalizeResumeOutput(generateMockResume(formData), processedSkills);
     }
   }
 }
 
 export async function generateSectionContent(
-  sectionType: string, 
+  sectionType: string,
   currentText: string,
   expectedBulletCount?: number,
   projectContext?: { title?: string; techStack?: string; description?: string; keyResult?: string }
 ): Promise<string> {
   const isProjectOrExperience = sectionType.toLowerCase().includes("project") || sectionType.toLowerCase().includes("experience") || sectionType.toLowerCase().includes("work");
-  const isSummary = sectionType.toLowerCase().includes("summary");
 
   const bulletCount = expectedBulletCount || 3;
 
@@ -581,58 +587,17 @@ ${hasUserInput ? `- What was built (user's own words): ${projectContext?.descrip
 ${currentText}`}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GOOGLE X-Y-Z FORMULA — MANDATORY FOR EVERY BULLET:
-Structure: [Action Verb] [what was accomplished — X] [by metric/result — Y] [using/by specific technology/method — Z]
-This answers: WHAT → HOW MUCH → HOW TECHNICALLY
-
-METRIC RULES (read carefully):
-- If the user provided a specific metric in "Key result", USE THAT EXACT NUMBER — do not change it.
-- If no metric is provided, pick a REALISTIC estimate from these domain-specific ranges:
-  • ML classification accuracy: 83%–94% (vary it — do NOT default to 92% every time)
-  • Object detection / CV accuracy: 87%–96%
-  • API latency reduction: 18%–45%
-  • Data processing speed: 2x–8x, or "X rows/sec"
-  • Throughput improvement: 20%–60%
-  • User count / scale: choose one: 50+, 100+, 200+, 500+, 1000+
-  • F1-score / precision / recall: 0.82–0.95
-  • Dataset size: 500, 1k, 5k, 10k, 25k, 50k rows/samples (pick one that fits)
-- NEVER use 92% as a default — it is overused. Pick a varied, domain-appropriate number.
-- NEVER use the same percentage value in two different bullets.
-- NEVER make up a metric type that doesn't match the project domain (e.g., don't add "accuracy" to a pure frontend project).
-
-RULES:
-1. Output EXACTLY ${bulletCount} bullets, one per line, no blank lines between them.
-2. Base the content on "What was built" and "Key result" — translate the user's own words into resume language.
-3. Every bullet MUST reference at least one specific technology from "Tech Stack". NEVER invent a technology not in the list.
-4. Each bullet MUST start with a DIFFERENT strong action verb.
-5. Each bullet MUST be between 90 and 130 characters. Never short or vague.
-6. Cover different aspects across the bullets (core feature, performance/scale, integration/outcome).
-
-BANNED — never output:
-❌ Technologies NOT in the tech stack above
-❌ Vague filler: "Optimized performance", "Built a system", "Improved accuracy"
-❌ Bullets under 80 characters
-❌ The same verb twice
-❌ The same percentage value in two bullets (e.g., two bullets both saying 92%)
-❌ Using 92% unless the user explicitly stated it as their result
-
-STRUCTURE GUIDE:
-Bullet 1 → Core technical feature built (algorithm/model/component + specific metric from domain)
-Bullet 2 → Performance / scale / efficiency improvement (different metric type from Bullet 1)
-Bullet 3 → Integration / pipeline / UX or deployment outcome (users impacted, or a third distinct metric)
-
-Output ONLY the raw bullet text, one per line. No dashes, no bullet symbols, no numbers, no markdown.
+SYSTEM:
+You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
+${isProjectOrExperience ? `CRITICAL RULE: Since this is a project or experience bullet, you MUST structure it to follow the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure, integrating specific engineering metrics like processing speed, model accuracy rates, or pipeline efficiency percentages.` : ""}
+If it's a bullet point, output a single bullet point. If it's a paragraph, output a paragraph.
+Do not wrap the output in quotes or markdown formatting, just return the raw text.
 `
     : `
-You are an expert ATS resume writer.
-${isSummary ? `Rewrite the following professional summary to be targeted, specific, and professional.
-RULES:
-- Exactly 1-2 sentences, between 110 and 160 characters total.
-- Mention the target role and core technical skills explicitly.
-- Do NOT write filler phrases under 80 characters.
-- Output ONLY the rewritten summary text, no quotes, no markdown.` : `Rewrite the following resume section to be more impactful and ATS-optimized.
-- Output ONLY the rewritten text, no quotes, no markdown.`}
-
+SYSTEM:
+You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
+If it's a bullet point, output a single bullet point. If it's a paragraph, output a paragraph.
+Do not wrap the output in quotes or markdown formatting, just return the raw text.
 CURRENT TEXT:
 ${currentText}
 `;
@@ -694,14 +659,14 @@ ${currentText}
 
 function localReorderSkillsFallback(currentSkills: any[], jobDescription: string): any[] {
   const jdLower = jobDescription.toLowerCase();
-  const isDataScience = jdLower.includes("data science") || 
-                        jdLower.includes("datascience") || 
-                        jdLower.includes("machine learning") || 
-                        jdLower.includes("deep learning") || 
-                        jdLower.includes("artificial intelligence") || 
-                        jdLower.includes("data scientist") ||
-                        jdLower.includes("ml engineer") ||
-                        jdLower.includes("nlp");
+  const isDataScience = jdLower.includes("data science") ||
+    jdLower.includes("datascience") ||
+    jdLower.includes("machine learning") ||
+    jdLower.includes("deep learning") ||
+    jdLower.includes("artificial intelligence") ||
+    jdLower.includes("data scientist") ||
+    jdLower.includes("ml engineer") ||
+    jdLower.includes("nlp");
 
   // Create deep copy
   let skills = JSON.parse(JSON.stringify(currentSkills));
@@ -709,8 +674,8 @@ function localReorderSkillsFallback(currentSkills: any[], jobDescription: string
   if (isDataScience) {
     // Find Data Engineering and AI & Data Technologies categories
     const deIndex = skills.findIndex((c: any) => c.category.toUpperCase() === "DATA ENGINEERING");
-    let aiIndex = skills.findIndex((c: any) => 
-      c.category.toUpperCase() === "AI & DATA TECHNOLOGIES" || 
+    let aiIndex = skills.findIndex((c: any) =>
+      c.category.toUpperCase() === "AI & DATA TECHNOLOGIES" ||
       c.category.toUpperCase() === "AI & DATA TECHNOLOGIE" ||
       c.category.toUpperCase() === "DATA TECHNOLOGIES" ||
       c.category.toUpperCase() === "DATA TECHNOLOGIE"

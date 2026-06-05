@@ -1,4 +1,7 @@
 import { FullResumeOutput } from "@/types/resume";
+import { MAX_SKILL_LINE_CHARS } from "@/lib/atsFormatting";
+
+const MAX_TECH_STACK_CHARS = 75;
 
 export interface CalculatedMetrics {
   atsScore: number;
@@ -51,6 +54,22 @@ export function calculateDynamicMetrics(
 
   if (resume.skills && resume.skills.length > 0) {
     atsCompatibility += 5;
+
+    const skillLinesOk = resume.skills.every((cat) => {
+      const line = (cat.skills || []).join(", ");
+      return line.length <= MAX_SKILL_LINE_CHARS;
+    });
+    const techStacksOk = (resume.projects || []).every(
+      (p) => (p.techStack || "").length <= MAX_TECH_STACK_CHARS
+    );
+
+    if (skillLinesOk && techStacksOk) {
+      atsCompatibility = Math.max(atsCompatibility, 24);
+      strengths.push("Skills and tech stacks are formatted for reliable ATS parsing.");
+    } else {
+      weaknesses.push("Some skill lines or tech stacks are too long for ATS parsers.");
+      improvements.push("Limit each skill category to a short comma-separated list and cap project tech stacks to 4–6 tools.");
+    }
   } else {
     weaknesses.push("Skills section is missing.");
     improvements.push("Add a categorized skills section for better ATS parsing.");
