@@ -101,10 +101,66 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [activeProjectVariants, setActiveProjectVariants] = useState<Record<number, number>>({});
   const [scoreMode, setScoreMode] = useState<"resume" | "role">("resume");
   
+  const [density, setDensity] = useState<"concise" | "normal" | "expand">("normal");
+  const [isAdjustingDensity, setIsAdjustingDensity] = useState(false);
+  const [densityCache, setDensityCache] = useState<Record<string, any>>({});
+
   const [customTone, setCustomTone] = useState<string>("Professional & Formal");
   const [customJD, setCustomJD] = useState<string>("");
   const [isSmartOrdering, setIsSmartOrdering] = useState<boolean>(false);
-  const [textDensity, setTextDensity] = useState<"low" | "med" | "high">("med");
+
+  const handleDensityChange = async (newDensity: "concise" | "normal" | "expand") => {
+    if (newDensity === density) return;
+    
+    // Save current version to cache first
+    const currentResume = liveResume || output;
+    setDensityCache(prev => ({ ...prev, [density]: currentResume }));
+    
+    if (densityCache[newDensity]) {
+      setLiveResume(densityCache[newDensity]);
+      setDensity(newDensity);
+      return;
+    }
+    
+    setIsAdjustingDensity(true);
+    try {
+      const res = await fetch("/api/adjust-density", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          resumeData: currentResume,
+          density: newDensity
+        })
+      });
+      
+      if (!res.ok) throw new Error("Failed to adjust text density");
+      
+      const data = await res.json();
+      
+      // Merge rewritten sections into our current state
+      const nextLive = {
+        ...currentResume,
+        projects: currentResume.projects.map((p: any, idx: number) => ({
+          ...p,
+          bullets: data.projects?.[idx]?.bullets || p.bullets
+        })),
+        experience: currentResume.experience.map((e: any, idx: number) => ({
+          ...e,
+          bullets: data.experience?.[idx]?.bullets || e.bullets
+        })),
+        achievements: data.achievements || currentResume.achievements
+      };
+      
+      setDensityCache(prev => ({ ...prev, [newDensity]: nextLive }));
+      setLiveResume(nextLive);
+      setDensity(newDensity);
+    } catch (err) {
+      console.error(err);
+      alert("Could not adjust resume text density. Please try again.");
+    } finally {
+      setIsAdjustingDensity(false);
+    }
+  };
 
   const parsedOutput = liveResume 
     ? (typeof liveResume === "string" ? JSON.parse(liveResume) : liveResume)
@@ -208,6 +264,8 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
         setResume(data);
         if (data.paymentStatus === "PAID" && data.outputFull) {
           setLiveResume(data.outputFull);
+          const original = typeof data.outputFull === "string" ? JSON.parse(data.outputFull) : data.outputFull;
+          setDensityCache({ normal: original });
           if (data.inputData?.options?.jobDescription) {
             setCustomJD(data.inputData.options.jobDescription);
           }
@@ -539,42 +597,26 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-success bg-success/10 border border-success/25 px-2.5 py-1 rounded-full">
                 <CheckCircle2 className="w-3 h-3" /> Unlocked
               </span>
-              
-              {/* Density control buttons */}
-              <div className="inline-flex bg-bg-base/60 border border-border/50 rounded-full p-0.5 text-[10px] font-bold shrink-0 gap-0.5">
-                <button
-                  type="button"
-                  onClick={() => setTextDensity("low")}
-                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
-                    textDensity === "low"
-                      ? "bg-primary text-white shadow-xs"
-                      : "text-text-muted hover:text-text"
-                  }`}
-                >
-                  Concise
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTextDensity("med")}
-                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
-                    textDensity === "med"
-                      ? "bg-primary text-white shadow-xs"
-                      : "text-text-muted hover:text-text"
-                  }`}
-                >
-                  Regular
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTextDensity("high")}
-                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
-                    textDensity === "high"
-                      ? "bg-primary text-white shadow-xs"
-                      : "text-text-muted hover:text-text"
-                  }`}
-                >
-                  Expanded
-                </button>
+
+              {/* Density Control Segmented Pill */}
+              <div className="flex bg-primary/5 border border-primary/20 rounded-full p-0.5 shrink-0 select-none">
+                {(["concise", "normal", "expand"] as const).map((dOpt) => {
+                  const isActive = density === dOpt;
+                  return (
+                    <button
+                      key={dOpt}
+                      onClick={() => handleDensityChange(dOpt)}
+                      disabled={isAdjustingDensity}
+                      className={`text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-full transition-all cursor-pointer disabled:opacity-50 ${
+                        isActive 
+                          ? "bg-primary text-white shadow-sm" 
+                          : "text-text-muted hover:text-primary"
+                      }`}
+                    >
+                      {dOpt}
+                    </button>
+                  );
+                })}
               </div>
 
               <button
@@ -586,7 +628,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
             </div>
           </div>
           {/* Preview fills all remaining height */}
-          <div className="flex-1 overflow-hidden min-h-0 print:overflow-visible">
+          <div className="flex-1 overflow-hidden min-h-0 print:overflow-visible relative">
             <ResumePreviewPanel 
               resume={resume} 
               output={output} 
@@ -594,8 +636,13 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
               liveData={liveResume} 
               includeSummary={includeSummary} 
               includeCertifications={includeCertifications}
-              textDensity={textDensity}
             />
+            {isAdjustingDensity && (
+              <div className="absolute inset-0 bg-white/70 dark:bg-black/50 backdrop-blur-[2px] flex flex-col items-center justify-center z-50">
+                <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
+                <p className="text-xs font-bold text-text-muted">Adjusting resume density...</p>
+              </div>
+            )}
           </div>
         </div>
 

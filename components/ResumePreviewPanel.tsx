@@ -45,7 +45,6 @@ interface Props {
   liveData?: LiveResumeData | null;  // when set, overrides output for preview
   includeSummary?: boolean; // whether to show professional summary
   includeCertifications?: boolean; // whether to show certifications
-  textDensity?: "low" | "med" | "high"; // text density control
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────
@@ -64,74 +63,8 @@ function SectionTitle({ children }: { children: string }) {
   );
 }
 
-function adjustTextDensity(text: string, mode: "low" | "med" | "high"): string {
-  if (!text) return "";
-  text = text.trim();
-  if (mode === "med") return text;
-  
-  if (mode === "low") {
-    // 1. Split by sentence
-    const sentences = text.split(/\.\s+/);
-    let firstSentence = sentences[0];
-    if (firstSentence && !firstSentence.endsWith(".")) {
-      firstSentence += ".";
-    }
-    
-    // 2. Shorten clauses if first sentence is too long
-    if (firstSentence.length > 90) {
-      const splitKeywords = [
-        " as measured by",
-        " by doing",
-        " by implementing",
-        " by utilizing",
-        " by deploying",
-        " by designing",
-        " by integrating",
-        " by using",
-        " to support",
-        " to automate",
-        " to reduce",
-        " decreasing",
-        " optimizing",
-        " improving",
-        " reducing",
-        " scaling",
-        " resulting in",
-        " increasing",
-        " boosting",
-        " handling"
-      ];
-      
-      for (const kw of splitKeywords) {
-        const idx = firstSentence.indexOf(kw);
-        if (idx > 40) {
-          return firstSentence.substring(0, idx).trim() + ".";
-        }
-      }
-      
-      if (firstSentence.length > 85) {
-        const trunc = firstSentence.substring(0, 75);
-        const lastSpace = trunc.lastIndexOf(" ");
-        return (lastSpace > 30 ? trunc.substring(0, lastSpace) : trunc).trim() + ".";
-      }
-    }
-    return firstSentence;
-  }
-  
-  // mode === "high" returns the full text
-  return text;
-}
-
 // ── Main component ─────────────────────────────────────────────────────────
-export default function ResumePreviewPanel({ 
-  resume, 
-  output, 
-  locked, 
-  liveData, 
-  includeSummary = false, 
-  includeCertifications = true,
-  textDensity = "med"
-}: Props) {
+export default function ResumePreviewPanel({ resume, output, locked, liveData, includeSummary = false, includeCertifications = true }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
@@ -389,7 +322,7 @@ export default function ResumePreviewPanel({
                   </div>
                   <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: "4pt 0 0 0", fontSize: "9.5pt" }}>
                     {proj.bullets?.map((b: string, bIdx: number) => (
-                      <li key={bIdx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{adjustTextDensity(b, textDensity)}</li>
+                      <li key={bIdx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{b}</li>
                     ))}
                   </ul>
                 </div>
@@ -409,7 +342,7 @@ export default function ResumePreviewPanel({
                   </div>
                   <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: "3pt 0 0 0", fontSize: "9.5pt" }}>
                     {exp.bullets?.map((b: string, bIdx: number) => (
-                      <li key={bIdx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{adjustTextDensity(b, textDensity)}</li>
+                      <li key={bIdx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{b}</li>
                     ))}
                   </ul>
                 </div>
@@ -417,7 +350,7 @@ export default function ResumePreviewPanel({
               {positionsList.map((pos: any, idx: number) => (
                 <div key={idx} style={{ marginBottom: "5pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                   <div style={{ fontSize: "10pt" }}><strong>{pos.title}</strong><span style={{ color: "#555", marginLeft: "5pt", fontSize: "9.5pt" }}>({pos.organization})</span></div>
-                  <p style={{ fontSize: "9.5pt", margin: "2pt 0 0 14px", lineHeight: 1.35 }}>• {adjustTextDensity(pos.bullet, textDensity)}</p>
+                  <p style={{ fontSize: "9.5pt", margin: "2pt 0 0 14px", lineHeight: 1.35 }}>• {pos.bullet}</p>
                 </div>
               ))}
             </div>
@@ -429,7 +362,7 @@ export default function ResumePreviewPanel({
               <SectionTitle>Key Achievements</SectionTitle>
               <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: 0, fontSize: "9.5pt" }}>
                 {achievementsList.map((ach: string, idx: number) => (
-                  <li key={idx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{adjustTextDensity(ach, textDensity)}</li>
+                  <li key={idx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{ach}</li>
                 ))}
               </ul>
             </div>
@@ -446,7 +379,7 @@ export default function ResumePreviewPanel({
                 <SectionTitle>Certifications</SectionTitle>
                 <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: "3pt 0 0 0", fontSize: "9.5pt" }}>
                   {certList.map((cert: string, idx: number) => (
-                    <li key={idx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{adjustTextDensity(cert, textDensity)}</li>
+                    <li key={idx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{cert}</li>
                   ))}
                 </ul>
               </div>
