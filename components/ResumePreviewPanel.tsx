@@ -168,19 +168,19 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
         <table style={{ width: "100%", borderCollapse: "collapse", borderSpacing: 0 }}>
           <thead style={{ display: "table-header-group" }}>
             <tr>
-              <td style={{ height: "64px", padding: 0, border: "none" }}></td>
+              <td style={{ height: "54px", padding: 0, border: "none" }}></td>
             </tr>
           </thead>
           <tfoot style={{ display: "table-footer-group" }}>
             <tr>
-              <td style={{ height: "64px", padding: 0, border: "none" }}></td>
+              <td style={{ height: "54px", padding: 0, border: "none" }}></td>
             </tr>
           </tfoot>
           <tbody>
             <tr>
               <td style={{ paddingLeft: "72px", paddingRight: "72px", paddingBottom: "0", border: "none", verticalAlign: "top" }}>
                 {/* ── HEADER (only on first page) ── */}
-                <div style={{ textAlign: "center", marginBottom: "13pt" }}>
+                <div style={{ textAlign: "center", marginBottom: "10pt" }}>
                   <div style={{ fontSize: "22pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "-0.5px", color: "#111", marginBottom: "3pt" }}>
                     {p.fullName || "Your Name"}
                   </div>
@@ -222,7 +222,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
 
           {/* Professional Summary */}
           {includeSummary && d.summary && (
-            <div style={{ marginBottom: "13pt" }}>
+            <div style={{ marginBottom: "10pt" }}>
               <p style={{ fontSize: "10pt", textAlign: "justify", margin: 0, padding: 0 }}>
                 {d.summary}
               </p>
@@ -230,7 +230,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
           )}
 
           {/* Education */}
-          <div style={{ marginBottom: "13pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
+          <div style={{ marginBottom: "10pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
             <SectionTitle>Education</SectionTitle>
             {/* PG */}
             {d.pgEducation && (
@@ -285,7 +285,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             }
 
             return (
-              <div style={{ marginBottom: "13pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
+              <div style={{ marginBottom: "10pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                 <SectionTitle>Technical Skills</SectionTitle>
                 <div style={{ fontSize: "9.5pt", lineHeight: 1.5 }}>
                   {displaySkills
@@ -302,10 +302,10 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
 
           {/* Projects */}
           {projectsList.length > 0 && (
-            <div style={{ marginBottom: "13pt" }}>
+            <div style={{ marginBottom: "10pt" }}>
               <SectionTitle>Projects</SectionTitle>
               {projectsList.map((proj: any, idx: number) => (
-                <div key={idx} style={{ marginBottom: idx === projectsList.length - 1 ? 0 : "10pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
+                <div key={idx} style={{ marginBottom: idx === projectsList.length - 1 ? 0 : "7pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "1pt" }}>
                     <div style={{ fontWeight: "bold", fontSize: "10pt", color: "#111", display: "flex", alignItems: "center", gap: "6px", flex: 1 }}>
                       {proj.title}
@@ -322,7 +322,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
                   </div>
                   <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: "4pt 0 0 0", fontSize: "9.5pt" }}>
                     {proj.bullets?.map((b: string, bIdx: number) => (
-                      <li key={bIdx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{b}</li>
+                      <li key={bIdx} style={{ marginBottom: "1.5pt", lineHeight: 1.35 }}>{b}</li>
                     ))}
                   </ul>
                 </div>
@@ -332,23 +332,23 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
 
           {/* Experience & Leadership */}
           {(experienceList.length > 0 || positionsList.length > 0) && (
-            <div style={{ marginBottom: "13pt" }}>
+            <div style={{ marginBottom: "10pt" }}>
               <SectionTitle>Experience & Leadership</SectionTitle>
               {experienceList.map((exp: any, idx: number) => (
-                <div key={idx} style={{ marginBottom: "7pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
+                <div key={idx} style={{ marginBottom: "5pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: "10pt" }}>
                     <div style={{ flex: 1 }}><strong>{exp.company}</strong><span style={{ color: "#555", marginLeft: "5pt", fontSize: "9.5pt" }}>— {exp.role}</span></div>
                     <span style={{ color: "#555", flexShrink: 0, fontSize: "9.5pt", textAlign: "right", marginLeft: "10px" }}>{exp.duration}</span>
                   </div>
                   <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: "3pt 0 0 0", fontSize: "9.5pt" }}>
                     {exp.bullets?.map((b: string, bIdx: number) => (
-                      <li key={bIdx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{b}</li>
+                      <li key={bIdx} style={{ marginBottom: "1.5pt", lineHeight: 1.35 }}>{b}</li>
                     ))}
                   </ul>
                 </div>
               ))}
               {positionsList.map((pos: any, idx: number) => (
-                <div key={idx} style={{ marginBottom: "5pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
+                <div key={idx} style={{ marginBottom: "3.5pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                   <div style={{ fontSize: "10pt" }}><strong>{pos.title}</strong><span style={{ color: "#555", marginLeft: "5pt", fontSize: "9.5pt" }}>({pos.organization})</span></div>
                   <p style={{ fontSize: "9.5pt", margin: "2pt 0 0 14px", lineHeight: 1.35 }}>• {pos.bullet}</p>
                 </div>
@@ -358,11 +358,11 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
 
           {/* Key Achievements */}
           {achievementsList.length > 0 && (
-            <div style={{ marginBottom: "13pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
+            <div style={{ marginBottom: "10pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
               <SectionTitle>Key Achievements</SectionTitle>
               <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: 0, fontSize: "9.5pt" }}>
                 {achievementsList.map((ach: string, idx: number) => (
-                  <li key={idx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{ach}</li>
+                  <li key={idx} style={{ marginBottom: "1.5pt", lineHeight: 1.35 }}>{ach}</li>
                 ))}
               </ul>
             </div>
@@ -379,7 +379,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
                 <SectionTitle>Certifications</SectionTitle>
                 <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: "3pt 0 0 0", fontSize: "9.5pt" }}>
                   {certList.map((cert: string, idx: number) => (
-                    <li key={idx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{cert}</li>
+                    <li key={idx} style={{ marginBottom: "1.5pt", lineHeight: 1.35 }}>{cert}</li>
                   ))}
                 </ul>
               </div>
