@@ -5,11 +5,47 @@ import { generateLlmText, hasLlmConfigured } from "@/lib/llm";
 
 export { callGroq as generateGroqFallback } from "@/lib/llm";
 
+function isEmptyArray(arr: any[] | undefined | null): boolean {
+  if (!arr || arr.length === 0) return true;
+  return arr.every((item) => {
+    if (!item) return true;
+    if (typeof item === "string") return item.trim() === "";
+    if (typeof item === "object") {
+      return Object.entries(item).every(([key, val]) => {
+        if (key === "isFlash") return true;
+        if (typeof val === "string") return val.trim() === "";
+        if (typeof val === "boolean") return !val;
+        return true;
+      });
+    }
+    return false;
+  });
+}
+
+function sanitizeEmptyArrays(result: FullResumeOutput, formData: ResumeFormData): FullResumeOutput {
+  const cleanResult = { ...result };
+  if (isEmptyArray(formData.internships)) {
+    cleanResult.experience = [];
+  }
+  if (isEmptyArray(formData.positions)) {
+    cleanResult.positions = [];
+  }
+  if (isEmptyArray(formData.achievements)) {
+    cleanResult.achievements = [];
+  }
+  if (isEmptyArray(formData.projects) || formData.options?.noProjects) {
+    cleanResult.projects = [];
+  }
+  return cleanResult;
+}
+
 function finalizeResumeOutput(
   result: FullResumeOutput,
-  processedSkills: SkillCategoryOutput[]
+  processedSkills: SkillCategoryOutput[],
+  formData: ResumeFormData
 ): FullResumeOutput {
-  return optimizeResumeForAts(result, processedSkills);
+  const sanitized = sanitizeEmptyArrays(result, formData);
+  return optimizeResumeForAts(sanitized, processedSkills);
 }
 
 // Generate realistic mock data using student's actual inputs
@@ -42,7 +78,7 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
   } : undefined;
 
   // Build high-impact project bullets
-  const mockProjects = projects.length > 0 ? projects.map((proj, idx) => {
+  const mockProjects = (projects.length > 0 && !isEmptyArray(projects)) ? projects.map((proj, idx) => {
     return {
       title: proj.title || `Project ${idx + 1}`,
       techStack: normalizeTechStack(proj.techStack || "React, Node.js"),
@@ -54,7 +90,7 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
         `Streamlined deployment processes and client-side page rendering pathways, decreasing application loading times by 25%.`
       ]
     };
-  }) : [
+  }) : (options?.noProjects ? [] : [
     {
       title: "AI Interview Simulator",
       techStack: "Python, FastAPI, Next.js, OpenAI API",
@@ -66,10 +102,10 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
         "Optimized client-side rendering pathways using React and Next.js, reducing interactive latency by 20%."
       ]
     }
-  ];
+  ]);
 
   // Build internships
-  const mockExperience = internships.length > 0 ? internships.map((intern) => {
+  const mockExperience = (internships.length > 0 && !isEmptyArray(internships)) ? internships.map((intern) => {
     return {
       company: intern.company || "Startup Tech",
       role: intern.role || "SDE Intern",
@@ -83,7 +119,7 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
   }) : [];
 
   // Build PORs
-  const mockPositions = positions.length > 0 ? positions.map((pos) => {
+  const mockPositions = (positions.length > 0 && !isEmptyArray(positions)) ? positions.map((pos) => {
     return {
       title: pos.title || "Technical Coordinator",
       organization: pos.organization || "IEEE Club",
@@ -92,12 +128,9 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
   }) : [];
 
   // Build Achievements
-  const mockAchievements = achievements && achievements.length > 0
+  const mockAchievements = achievements && achievements.length > 0 && !isEmptyArray(achievements)
     ? achievements.map(a => `${a.title}: ${a.description}`)
-    : [
-      "Secured top 5% rank in Smart India Hackathon among 10,000+ applicants.",
-      "Solved 350+ data structures and algorithms questions on LeetCode (Max Rating: 1650)."
-    ];
+    : [];
 
   const firstProj = mockProjects[0];
 
@@ -219,6 +252,10 @@ Your output must strictly follow these rules:
     ANTI-INFLATION RULES: Never assign >95 or <40. No projects/internships = 40-60. Strong projects/metrics = 80-95.
     Output the exact breakdown.
     PARSING RULES (DO NOT PENALIZE): ATSLift auto-formats skill lines (max 95 chars per category) and tech stacks (max 6 tools on a dedicated line below the project title). NEVER deduct ATS Compatibility or list weaknesses about parsing quirks, long skill lines, or inline tech stacks.
+21. EMPTY INPUT HANDLING:
+    - If the input "INTERNSHIPS/EXPERIENCE" is empty, the "experience" array in your JSON output MUST be empty: []. Do NOT invent, reuse, or hallucinate internships, and do NOT copy/move projects or achievements into the experience section.
+    - If the input "POSITIONS OF RESPONSIBILITY" is empty, the "positions" array in your JSON output MUST be empty: []. Do NOT invent, reuse, or hallucinate positions.
+    - If the input "ACHIEVEMENTS" is empty, the "achievements" array in your JSON output MUST be empty: []. Do NOT invent, reuse, or hallucinate achievements.
 19. SKILLS & TECH STACK FORMATTING:
     - Each skill category line must fit within 95 characters when skills are comma-separated. Prioritize the most relevant skills; omit overflow rather than writing a long line.
     - For each project, set "techStack" as a comma-separated string of at most 6 core technologies (e.g. "Python, FastAPI, React.js, PostgreSQL"). Never embed the tech stack inside the project title.
@@ -372,7 +409,7 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
   ],
   "experience": [
     {
-      "company": "Company Name",
+      "company": "Company Name (Note: If no internships/experience items are provided in the input, return an empty array [] for the experience field)",
       "role": "Role Title",
       "duration": "May 2025 – Jul 2025",
       "bullets": [
@@ -384,14 +421,13 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
   ],
   "positions": [
     {
-      "title": "POR Title",
+      "title": "POR Title (Note: If no positions of responsibility are provided in the input, return an empty array [] for the positions field)",
       "organization": "Org Name",
       "bullet": "One strong sentence describing contribution"
     }
   ],
   "achievements": [
-    "Achievement bullet 1",
-    "Achievement bullet 2"
+    "Achievement bullet 1 (Note: If no achievements are provided in the input, return an empty array [] for the achievements field)"
   ],
   "atsScore": 92,
   "breakdown": {
@@ -443,17 +479,17 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
 
   if (!hasLlmConfigured()) {
     return new Promise((resolve) => {
-      setTimeout(() => resolve(finalizeResumeOutput(generateMockResume(formData), processedSkills)), 1500);
+      setTimeout(() => resolve(finalizeResumeOutput(generateMockResume(formData), processedSkills, formData)), 1500);
     });
   }
 
   try {
     const responseText = await generateLlmText(prompt, { json: true });
     const result = JSON.parse(responseText.trim()) as FullResumeOutput;
-    return finalizeResumeOutput(result, processedSkills);
+    return finalizeResumeOutput(result, processedSkills, formData);
   } catch (error) {
     console.error("LLM resume generation failed, using mock response:", error);
-    return finalizeResumeOutput(generateMockResume(formData), processedSkills);
+    return finalizeResumeOutput(generateMockResume(formData), processedSkills, formData);
   }
 }
 

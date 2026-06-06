@@ -112,6 +112,12 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
   const p = resume?.inputData?.personal || {};
   const ip = resume?.inputData || {};
 
+  // Clean empty/mock/placeholder entries from the generated text/outputs
+  const projectsList = (d.projects || []).filter((proj: any) => proj && proj.title && proj.title.trim() !== "" && !proj.title.includes("Project Title"));
+  const experienceList = (d.experience || []).filter((exp: any) => exp && exp.company && exp.company.trim() !== "" && !exp.company.includes("Company Name"));
+  const positionsList = (d.positions || []).filter((pos: any) => pos && pos.title && pos.title.trim() !== "" && !pos.title.includes("POR Title"));
+  const achievementsList = (d.achievements || []).filter((ach: string) => ach && ach.trim() !== "" && !ach.includes("Achievement bullet"));
+
   return (
     <div ref={wrapperRef} className="w-full h-full flex items-start justify-center overflow-y-auto overflow-x-hidden custom-scrollbar">
       {/* 
@@ -295,11 +301,11 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
           })()}
 
           {/* Projects */}
-          {d.projects?.length > 0 && (
+          {projectsList.length > 0 && (
             <div style={{ marginBottom: "13pt" }}>
               <SectionTitle>Projects</SectionTitle>
-              {d.projects.map((proj: any, idx: number) => (
-                <div key={idx} style={{ marginBottom: idx === d.projects.length - 1 ? 0 : "10pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
+              {projectsList.map((proj: any, idx: number) => (
+                <div key={idx} style={{ marginBottom: idx === projectsList.length - 1 ? 0 : "10pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "1pt" }}>
                     <div style={{ fontWeight: "bold", fontSize: "10pt", color: "#111", display: "flex", alignItems: "center", gap: "6px", flex: 1 }}>
                       {proj.title}
@@ -325,10 +331,10 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
           )}
 
           {/* Experience & Leadership */}
-          {(d.experience?.length > 0 || d.positions?.length > 0) && (
+          {(experienceList.length > 0 || positionsList.length > 0) && (
             <div style={{ marginBottom: "13pt" }}>
               <SectionTitle>Experience & Leadership</SectionTitle>
-              {d.experience?.map((exp: any, idx: number) => (
+              {experienceList.map((exp: any, idx: number) => (
                 <div key={idx} style={{ marginBottom: "7pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: "10pt" }}>
                     <div style={{ flex: 1 }}><strong>{exp.company}</strong><span style={{ color: "#555", marginLeft: "5pt", fontSize: "9.5pt" }}>— {exp.role}</span></div>
@@ -341,7 +347,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
                   </ul>
                 </div>
               ))}
-              {d.positions?.map((pos: any, idx: number) => (
+              {positionsList.map((pos: any, idx: number) => (
                 <div key={idx} style={{ marginBottom: "5pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                   <div style={{ fontSize: "10pt" }}><strong>{pos.title}</strong><span style={{ color: "#555", marginLeft: "5pt", fontSize: "9.5pt" }}>({pos.organization})</span></div>
                   <p style={{ fontSize: "9.5pt", margin: "2pt 0 0 14px", lineHeight: 1.35 }}>• {pos.bullet}</p>
@@ -351,11 +357,11 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
           )}
 
           {/* Key Achievements */}
-          {d.achievements?.length > 0 && (
+          {achievementsList.length > 0 && (
             <div style={{ marginBottom: "13pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
               <SectionTitle>Key Achievements</SectionTitle>
               <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: 0, fontSize: "9.5pt" }}>
-                {d.achievements.map((ach: string, idx: number) => (
+                {achievementsList.map((ach: string, idx: number) => (
                   <li key={idx} style={{ marginBottom: "2pt", lineHeight: 1.35 }}>{ach}</li>
                 ))}
               </ul>
