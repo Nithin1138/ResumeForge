@@ -2,15 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { generateGroqFallback } from "@/lib/gemini";
 import { PDFParse } from "pdf-parse";
-import path from "path";
-import { pathToFileURL } from "url";
+import { PDF_WORKER_BASE64 } from "@/lib/pdfWorkerBase64";
 // @ts-ignore
 const PDFParser = require("pdf2json");
 
-// Configure PDFParse worker location to prevent Next.js dynamic chunk loading failures
+const workerUrl = `data:text/javascript;base64,${PDF_WORKER_BASE64}`;
 try {
-  const workerPath = path.resolve(process.cwd(), "node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs");
-  PDFParse.setWorker(pathToFileURL(workerPath).href);
+  PDFParse.setWorker(workerUrl);
 } catch (e) {
   console.warn("Failed to set PDF worker path:", e);
 }
@@ -186,8 +184,9 @@ Return ONLY a valid JSON object matching this exact structure:
 
         // Try extracting exact text stream using PDFParse
         try {
-          const workerPath = path.resolve(process.cwd(), "node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs");
-          PDFParse.setWorker(pathToFileURL(workerPath).href);
+          if (workerUrl) {
+            PDFParse.setWorker(workerUrl);
+          }
           const parser = new PDFParse({ data: new Uint8Array(buffer) });
           const textResult = await parser.getText();
           pdfText = textResult.text || "";
