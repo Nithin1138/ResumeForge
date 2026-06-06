@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { generateGroqFallback } from "@/lib/gemini";
+import { PDFParse } from "pdf-parse";
 // @ts-ignore
 const PDFParser = require("pdf2json");
 
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
           { name: "Experience & Relevance", weightage: 3, score: 2, feedback: "Good academic background." }
         ],
         extractedData: {
-          personal: { fullName: "Mock User", email: "mock@example.com", collegeName: "Mock University", branch: "Computer Science", graduationYear: "2025", cgpa: "8.5", targetRole: "Software Engineer", phone: "1234567890", linkedin: "", github: "", hasPG: false, pgCollegeName: "", pgBranch: "", pgGraduationYear: "", pgCgpa: "", pgDegreeName: "" },
+          personal: { fullName: "Mock User", email: "mock@example.com", collegeName: "Mock University", branch: "Computer Science", graduationYear: "2025", cgpa: "8.5", targetRole: "Software Engineer", phone: "1234567890", linkedin: "", github: "", hasPG: false, pgCollegeName: "", pgBranch: "", pgGraduationYear: "", pgCgpa: "", pgDegreeName: "", codingProfiles: [] },
           skills: { categories: { languages: "Python, JavaScript", frameworks: "React, Node.js", tools: "Git, Docker", databases: "MySQL", core: "OOP", aiAndData: "", csConcepts: "" }, softSkills: "Communication", certifications: "" },
           projects: [{ title: "Mock Project", techStack: "React", description: "A simple web app", keyResult: "Increased speed by 10%", link: "", duration: "" }],
           internships: [],
@@ -64,7 +65,14 @@ Provide a realistic score out of 100 based on the following metrics:
 - Role Relevance (Weightage: 3)
 
 Also, extract all structured data from the resume to populate a Resume Builder form. 
-CRITICAL RULE: If a field is missing in the resume, you MUST leave it as an empty string "". Do not make up information. Do not use placeholder text like 'Extracted Name'. Return ONLY a valid JSON object matching this exact structure:
+CRITICAL RULE: If a field is missing in the resume, you MUST leave it as an empty string "". Do not make up information. Do not use placeholder text like 'Extracted Name'. 
+CRITICAL RULE: LINKS ARE MANDATORY IF PRESENT. For 'linkedin', 'github', 'projects[].link', and 'personal.codingProfiles[].link', extract the FULL URL. If the resume contains a handle/username, you MUST construct the full functional URL.
+CRITICAL RULE: For 'achievements[].description', extract the context, metric, or details of the award/achievement. The description MUST NOT contain or repeat the title. Instead, focus strictly on details or work done. If there are no details, leave 'description' as an empty string "".
+CRITICAL RULE: For each project in 'projects', split the resume details cleanly between 'description' and 'keyResult'. Do NOT repeat the same sentences, phrases, or technologies between 'description' and 'keyResult'. They must be distinct and non-overlapping.
+CRITICAL RULE: For each internship in 'internships', do NOT repeat the technologies listed in 'techUsed' inside the 'workDone' field.
+CRITICAL RULE: For 'personal.codingProfiles', extract competitive programming handles or rankings if mentioned (e.g. LeetCode, Codeforces, HackerRank, CodeChef, GeeksforGeeks). Platform, handle, full link, problemsSolved, and rating. If none, return [].
+
+Return ONLY a valid JSON object matching this exact structure:
 
 {
   "overallScore": 82,
@@ -93,7 +101,16 @@ CRITICAL RULE: If a field is missing in the resume, you MUST leave it as an empt
       "pgBranch": "",
       "pgGraduationYear": "",
       "pgCgpa": "",
-      "pgDegreeName": ""
+      "pgDegreeName": "",
+      "codingProfiles": [
+        {
+          "platform": "",
+          "handle": "",
+          "link": "",
+          "problemsSolved": "",
+          "rating": ""
+        }
+      ]
     },
     "skills": {
       "categories": {
@@ -146,6 +163,7 @@ CRITICAL RULE: If a field is missing in the resume, you MUST leave it as an empt
 `;
 
     let responseText = "";
+    let pdfText = "";
 
     try {
       const ai = new GoogleGenAI({ apiKey });
@@ -153,9 +171,25 @@ CRITICAL RULE: If a field is missing in the resume, you MUST leave it as an empt
       let contents: any[] = [];
       if (isPDF) {
         const arrayBuffer = await file.arrayBuffer();
-        const base64String = Buffer.from(arrayBuffer).toString("base64");
+        const buffer = Buffer.from(arrayBuffer);
+        const base64String = buffer.toString("base64");
+
+        // Try extracting exact text stream using PDFParse
+        try {
+          const parser = new PDFParse({ data: new Uint8Array(buffer) });
+          const textResult = await parser.getText();
+          pdfText = textResult.text || "";
+        } catch (parseError) {
+          console.warn("PDFParse text extraction failed:", parseError);
+        }
+
+        let combinedText = prompt;
+        if (pdfText) {
+          combinedText += `\n\n[CRITICAL: EXACT SELECTABLE TEXT EXTRACTED FROM PDF DIRECTLY]:\n${pdfText}\n\n[INSTRUCTION]: Compare the exact text above with the visual layout in the uploaded PDF. Use the exact text to prevent any typos, spelling errors, or hallucinations. Correctly map the sections (such as Education, Experience, Projects, achievements) even if they are in columns in the PDF view.`;
+        }
+
         contents = [
-          prompt,
+          { text: combinedText },
           {
             inlineData: {
               data: base64String,
@@ -185,18 +219,20 @@ CRITICAL RULE: If a field is missing in the resume, you MUST leave it as an empt
       
       try {
         // Fallback text extraction if Gemini fails
-        let fallbackText = "";
-        if (isPDF) {
-          const arrayBuffer = await file.arrayBuffer();
-          const buffer = Buffer.from(arrayBuffer);
-          fallbackText = await new Promise((resolve, reject) => {
-            const pdfParser = new PDFParser(null, 1);
-            pdfParser.on("pdfParser_dataError", (err: any) => reject(err.parserError));
-            pdfParser.on("pdfParser_dataReady", () => resolve(pdfParser.getRawTextContent()));
-            pdfParser.parseBuffer(buffer);
-          });
-        } else {
-          fallbackText = await file.text();
+        let fallbackText = pdfText;
+        if (!fallbackText) {
+          if (isPDF) {
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            fallbackText = await new Promise((resolve, reject) => {
+              const pdfParser = new PDFParser(null, 1);
+              pdfParser.on("pdfParser_dataError", (err: any) => reject(err.parserError));
+              pdfParser.on("pdfParser_dataReady", () => resolve(pdfParser.getRawTextContent()));
+              pdfParser.parseBuffer(buffer);
+            });
+          } else {
+            fallbackText = await file.text();
+          }
         }
         
         responseText = await generateGroqFallback(prompt + "\n\nRESUME TEXT:\n" + fallbackText, true);
