@@ -104,6 +104,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [customTone, setCustomTone] = useState<string>("Professional & Formal");
   const [customJD, setCustomJD] = useState<string>("");
   const [isSmartOrdering, setIsSmartOrdering] = useState<boolean>(false);
+  const [textDensity, setTextDensity] = useState<"low" | "med" | "high">("med");
 
   const parsedOutput = liveResume 
     ? (typeof liveResume === "string" ? JSON.parse(liveResume) : liveResume)
@@ -538,6 +539,44 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-success bg-success/10 border border-success/25 px-2.5 py-1 rounded-full">
                 <CheckCircle2 className="w-3 h-3" /> Unlocked
               </span>
+              
+              {/* Density control buttons */}
+              <div className="inline-flex bg-bg-base/60 border border-border/50 rounded-full p-0.5 text-[10px] font-bold shrink-0 gap-0.5">
+                <button
+                  type="button"
+                  onClick={() => setTextDensity("low")}
+                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                    textDensity === "low"
+                      ? "bg-primary text-white shadow-xs"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                >
+                  Concise
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTextDensity("med")}
+                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                    textDensity === "med"
+                      ? "bg-primary text-white shadow-xs"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                >
+                  Regular
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTextDensity("high")}
+                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                    textDensity === "high"
+                      ? "bg-primary text-white shadow-xs"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                >
+                  Expanded
+                </button>
+              </div>
+
               <button
                 onClick={triggerBrowserPrint}
                 className="inline-flex items-center gap-1.5 text-[10px] font-bold text-primary bg-primary/10 border border-primary/25 px-2.5 py-1 rounded-full hover:bg-primary/15 transition-colors cursor-pointer"
@@ -555,6 +594,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
               liveData={liveResume} 
               includeSummary={includeSummary} 
               includeCertifications={includeCertifications}
+              textDensity={textDensity}
             />
           </div>
         </div>
