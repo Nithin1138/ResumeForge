@@ -121,12 +121,25 @@ export default function ATSCheckPage() {
         body: formData,
       });
 
+      const text = await response.text();
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to analyze resume");
+        let errorMessage = "Failed to analyze resume";
+        try {
+          const errorData = JSON.parse(text);
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          errorMessage = `Server Error (${response.status}): ${response.statusText || "Internal Server Error"}`;
+        }
+        throw new Error(errorMessage);
       }
 
-      const data: ATSResult = await response.json();
+      let data: ATSResult;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        throw new Error("Failed to parse the server response. Please try again.");
+      }
+
       // Emulate loading a bit longer for UX
       setTimeout(() => {
         setResult(data);

@@ -250,12 +250,25 @@ export default function BuildPage() {
           body: formDataToSend,
         });
 
+        const text = await response.text();
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to parse resume");
+          let errorMessage = "Failed to parse resume";
+          try {
+            const errorData = JSON.parse(text);
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            errorMessage = `Server Error (${response.status}): ${response.statusText || "Internal Server Error"}`;
+          }
+          throw new Error(errorMessage);
         }
 
-        const data = await response.json();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          throw new Error("Failed to parse the server response. Please try again.");
+        }
+
         useFormStore.getState().setFullFormData(data);
         alert("Auto-fill complete! Please review the extracted data.");
       } catch (error: any) {
