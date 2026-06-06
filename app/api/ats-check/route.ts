@@ -171,6 +171,7 @@ Return ONLY a valid JSON object matching this exact structure:
 `;
 
     let responseText = "";
+    let linkPrompt = "";
     let pdfText = "";
 
     try {
@@ -182,7 +183,8 @@ Return ONLY a valid JSON object matching this exact structure:
         const buffer = Buffer.from(arrayBuffer);
         const base64String = buffer.toString("base64");
 
-        // Try extracting exact text stream using PDFParse
+        // Try extracting exact text stream and annotations using PDFParse
+        let extractedLinks: string[] = [];
         try {
           if (workerUrl) {
             PDFParse.setWorker(workerUrl);
@@ -190,11 +192,68 @@ Return ONLY a valid JSON object matching this exact structure:
           const parser = new PDFParse({ data: new Uint8Array(buffer) });
           const textResult = await parser.getText();
           pdfText = textResult.text || "";
+
+          // Extract link annotations (supports compressed streams)
+          const infoResult = await parser.getInfo({ parsePageInfo: true });
+          if (infoResult && infoResult.pages) {
+            for (const page of infoResult.pages) {
+              if (page.links) {
+                for (const link of page.links) {
+                  if (link.url && (link.url.startsWith('http') || link.url.includes('www.'))) {
+                    extractedLinks.push(link.url);
+                  }
+                }
+              }
+            }
+          }
         } catch (parseError) {
           console.warn("PDFParse text extraction failed:", parseError);
         }
 
+        // Robust regex to extract hidden hyperlinks from raw PDF buffer as fallback
+        try {
+          const content = buffer.toString('binary');
+          const links = new Set<string>();
+          
+          // Match literal strings: /URI (https://...)
+          const uriRegex = /\/URI\s*\(([^)]+)\)/g;
+          let match;
+          while ((match = uriRegex.exec(content)) !== null) {
+            const cleanLink = match[1].replace(/\\0/g, '').trim();
+            if (cleanLink.startsWith('http') || cleanLink.includes('www.')) {
+               links.add(cleanLink);
+            }
+          }
+          
+          // Match hex strings: /URI <68747470...>
+          const hexUriRegex = /\/URI\s*<([0-9a-fA-F]+)>/g;
+          while ((match = hexUriRegex.exec(content)) !== null) {
+            try {
+              const hexStr = match[1];
+              let str = '';
+              for (let i = 0; i < hexStr.length; i += 2) {
+                str += String.fromCharCode(parseInt(hexStr.substr(i, 2), 16));
+              }
+              if (str.startsWith('http') || str.includes('www.')) {
+                 links.add(str);
+              }
+            } catch (e) {}
+          }
+          for (const rawLink of links) {
+            if (!extractedLinks.includes(rawLink)) {
+              extractedLinks.push(rawLink);
+            }
+          }
+        } catch (e) {}
+
+        if (extractedLinks.length > 0) {
+          linkPrompt = `\n\n[CRITICAL: The following hidden URLs were extracted from the PDF metadata/annotations: ${extractedLinks.join(', ')}]\nYou MUST match these URLs with the visual text to extract FULL, functional URLs for 'linkedin', 'github', and project 'link' fields. If a link in this list contains "linkedin.com", it MUST be the LinkedIn profile link. If it contains "github.com" and is a user profile (e.g. github.com/username), it is the GitHub profile link. If it contains a repository or project name, it is a project link. Assign them accurately and NEVER leave these fields blank if they are present in the list.`;
+        }
+
         let combinedText = prompt;
+        if (linkPrompt) {
+          combinedText += linkPrompt;
+        }
         if (pdfText) {
           combinedText += `\n\n[CRITICAL: EXACT SELECTABLE TEXT EXTRACTED FROM PDF DIRECTLY]:\n${pdfText}\n\n[INSTRUCTION]: Compare the exact text above with the visual layout in the uploaded PDF. Use the exact text to prevent any typos, spelling errors, or hallucinations. Correctly map the sections (such as Education, Experience, Projects, achievements) even if they are in columns in the PDF view.`;
         }
