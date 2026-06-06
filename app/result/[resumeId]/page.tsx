@@ -14,6 +14,7 @@ import AIVerificationSection from "@/components/AIVerificationSection";
 export default function ResultPage({ params }: { params: Promise<{ resumeId: string }> }) {
   const { resumeId } = use(params);
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [resume, setResume] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -560,17 +561,21 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
             {/* AI Verification Button (Renders on the left on desktop, bottom on mobile) */}
             {isVerificationModalOpen ? (
               <button 
-                onClick={() => setVerificationModalOpen(false)}
+                onClick={() => {
+                  setVerificationModalOpen(false);
+                  router.replace(`/result/${resumeId}`, { scroll: false });
+                }}
                 className="px-5 py-3 sm:py-3.5 bg-surface border border-border hover:bg-border/60 text-text text-[11px] sm:text-xs font-bold rounded-full transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-xs group cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4 text-text-muted group-hover:-translate-x-1 transition-transform shrink-0" />
                 <span>Back to ATS Score</span>
               </button>
             ) : (
-              <a 
-                href={`/result/${resumeId}?verify=true`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button 
+                onClick={() => {
+                  setVerificationModalOpen(true);
+                  router.replace(`/result/${resumeId}?verify=true`, { scroll: false });
+                }}
                 className="px-5 py-3 sm:py-3.5 bg-surface border border-border hover:bg-border/60 text-text text-[11px] sm:text-xs font-bold rounded-full transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-xs group cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
@@ -579,7 +584,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                   <span className="text-text-muted font-medium mr-1.5 sm:hidden">Not sure?</span>
                   <span className="underline underline-offset-2 decoration-border group-hover:decoration-text-muted">Verify with AI</span>
                 </span>
-              </a>
+              </button>
             )}
           </div>
         </div>
