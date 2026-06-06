@@ -3,8 +3,18 @@ import { GoogleGenAI } from "@google/genai";
 import * as mammoth from "mammoth";
 import { generateGroqFallback } from "@/lib/gemini";
 import { PDFParse } from "pdf-parse";
+import path from "path";
+import { pathToFileURL } from "url";
 // @ts-ignore
 const PDFParser = require("pdf2json");
+
+// Configure PDFParse worker location to prevent Next.js dynamic chunk loading failures
+try {
+  const workerPath = path.resolve(process.cwd(), "node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs");
+  PDFParse.setWorker(pathToFileURL(workerPath).href);
+} catch (e) {
+  console.warn("Failed to set PDF worker path:", e);
+}
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -156,6 +166,8 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
 
         // Try extracting exact text stream using PDFParse
         try {
+          const workerPath = path.resolve(process.cwd(), "node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs");
+          PDFParse.setWorker(pathToFileURL(workerPath).href);
           const parser = new PDFParse({ data: new Uint8Array(buffer) });
           const textResult = await parser.getText();
           pdfText = textResult.text || "";
