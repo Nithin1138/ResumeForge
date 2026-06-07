@@ -520,7 +520,7 @@ ${currentText}`}
 SYSTEM:
 You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
 ${isProjectOrExperience ? `CRITICAL RULE: Since this is a project or experience bullet, you MUST structure it to follow the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure, integrating specific engineering metrics like processing speed, model accuracy rates, or pipeline efficiency percentages.` : ""}
-If it's a bullet point, output a single bullet point. If it's a paragraph, output a paragraph.
+You MUST output EXACTLY ${bulletCount} distinct bullet points, each on a new line without any prefix symbol (no "-", "•", "*", or numbers).
 Do not wrap the output in quotes or markdown formatting, just return the raw text.
 `
     : `
