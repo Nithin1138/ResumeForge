@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateResumeContent } from "@/lib/gemini";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -50,9 +52,13 @@ export async function POST(req: NextRequest) {
     // Call LLM generation logic
     const generatedContent = await generateResumeContent(formData);
 
+    const session = await getServerSession(authOptions);
+    const userId = session?.user ? (session.user as any).id : null;
+
     // Save standard strings/JSON-strings to database
     const resume = await prisma.resume.create({
       data: {
+        userId,
         sessionId,
         status: "GENERATED",
         inputData: JSON.stringify(formData),

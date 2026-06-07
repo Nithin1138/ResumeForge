@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, Layout } from "lucide-react";
-import { LogoutButton, DeleteButton } from "@/components/DashboardActions";
+import { LogoutButton, DeleteButton, EditTitle } from "@/components/DashboardActions";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function DashboardPage() {
@@ -168,7 +168,7 @@ export default async function DashboardPage() {
 
                       {/* Main Data: Target Role */}
                       <div className="space-y-1 text-left mt-2 md:mt-0">
-                        <h3 className="font-bold text-base md:text-lg text-text group-hover:text-primary transition-colors line-clamp-1">{resumeItem.targetRole}</h3>
+                        <EditTitle id={resumeItem.id} currentTitle={resumeItem.resumeName || resumeItem.targetRole || "Untitled Resume"} />
                         <p className="max-md:hidden text-xs text-text-muted leading-relaxed font-semibold">
                           College: {resumeItem.college}
                         </p>

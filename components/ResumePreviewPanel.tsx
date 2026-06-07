@@ -5,7 +5,7 @@ import { Lock } from "lucide-react";
 
 // A4 paper at 96 dpi
 const NATURAL_W = 794;
-const NATURAL_H = 1123;
+const NATURAL_H = 1122;
 
 // ── URL / phone formatters (self-contained) ────────────────────────────────
 const fmtLinkedIn = (url: string) => {
@@ -119,7 +119,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
   const achievementsList = (d.achievements || []).filter((ach: string) => ach && ach.trim() !== "" && !ach.includes("Achievement bullet"));
 
   return (
-    <div ref={wrapperRef} className="w-full h-full flex items-start justify-center overflow-y-auto overflow-x-hidden custom-scrollbar">
+    <div ref={wrapperRef} className="w-full h-full flex items-start justify-center overflow-y-auto overflow-x-hidden custom-scrollbar print:block print:h-auto print:w-auto print:overflow-visible">
       {/* 
         A4 paper at NATURAL size, then scaled with CSS transform.
         transformOrigin = top center so it stays pinned to the top.
@@ -132,9 +132,7 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
             margin: 0 !important;
             border-radius: 0 !important;
             width: 794px !important;
-            height: auto !important; /* Let it wrap content so it doesn't force a 2nd page */
-            min-height: 0 !important;
-            max-height: none !important;
+            /* Match the preview's height constraint to ensure identical visual layout */
             overflow: visible !important;
             background-image: none !important;
           }

@@ -87,6 +87,7 @@ model Resume {
   user          User?    @relation(fields: [userId], references: [id])
   sessionId     String   // For non-logged-in users
   status        String   @default("DRAFT") // DRAFT, GENERATED, PAID, EXPORTED
+  resumeName    String?  // Optional name for the resume (editable in dashboard)
   
   // Input and output data stored as strings/JSON strings (SQLite friendly)
   inputData     String   // Full form input (JSON stringified)
