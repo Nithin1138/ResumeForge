@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { sectionType, currentText, expectedBulletCount, projectContext } = body;
+    const { sectionType, currentText, expectedBulletCount, projectContext, density } = body;
     // projectContext shape: { title?, techStack?, description?, keyResult? }
 
     if (!sectionType || !currentText) {
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const newText = await generateSectionContent(sectionType, currentText, expectedBulletCount, projectContext);
+    const newText = await generateSectionContent(sectionType, currentText, expectedBulletCount, projectContext, density);
 
     return NextResponse.json({ newText });
   } catch (error) {

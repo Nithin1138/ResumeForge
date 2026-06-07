@@ -313,7 +313,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
       const res = await fetch("/api/generate-section", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sectionType, currentText, expectedBulletCount, projectContext }),
+        body: JSON.stringify({ sectionType, currentText, expectedBulletCount, projectContext, density }),
       });
       if (!res.ok) throw new Error("Failed to regenerate section");
       const data = await res.json();
@@ -914,7 +914,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
               <h3 className="text-xs font-bold text-text-muted tracking-wider uppercase">ATS Project Bullet Points</h3>
             </div>
 
-            {output.projects[0]?.variants && output.projects[0].variants.length > 0 && (
+            {resume.inputData?.options?.projectVariants === "3 versions" && output.projects[0]?.variants && output.projects[0].variants.length > 0 && (
               <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex flex-wrap items-center gap-3">
                 <span className="text-xs font-bold text-primary uppercase">Global Role Switcher:</span>
                 {output.projects[0].variants.map((variant: any, vIdx: number) => {

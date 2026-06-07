@@ -214,6 +214,75 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
 export async function generateResumeContent(formData: ResumeFormData): Promise<FullResumeOutput> {
   const { personal, skills, projects, internships, positions, achievements, options } = formData;
 
+  const wantsVariants = options?.projectVariants === "3 versions";
+  const r1 = options?.targetRoles?.[0] || "Frontend Engineer";
+  const r2 = options?.targetRoles?.[1] || "Backend Engineer";
+  const r3 = options?.targetRoles?.[2] || "Fullstack Engineer";
+
+  const instruction15 = wantsVariants
+    ? `15. PROJECT VARIANTS: You MUST provide exactly 3 distinct versions of the bullets tailored to the target roles selected (Role 1: ${r1}, Role 2: ${r2}, Role 3: ${r3}) inside a "variants" array. The standard "bullets" array must still have the primary version. ADDITIONALLY, you MUST include a "variantMetrics" array at the root level containing exactly 3 objects with role-specific "role" (matching these 3 roles exactly), "atsScore", "breakdown", "strengths", "weaknesses", and "improvements".`
+    : `15. PROJECT VARIANTS: Since PROJECT VARIANTS PREFERENCE is "1 version", you MUST NOT include the "variants" field in projects nor the "variantMetrics" field in the root JSON. Only output standard "bullets".`;
+
+  const variantsSchema = wantsVariants
+    ? `,
+      "variants": [
+        { "role": "${r1}", "bullets": ["${r1} focused bullet 1", "${r1} focused bullet 2", "${r1} focused bullet 3"] },
+        { "role": "${r2}", "bullets": ["${r2} focused bullet 1", "${r2} focused bullet 2", "${r2} focused bullet 3"] },
+        { "role": "${r3}", "bullets": ["${r3} focused bullet 1", "${r3} focused bullet 2", "${r3} focused bullet 3"] }
+      ]`
+    : ``;
+
+  const variantMetricsSchema = wantsVariants
+    ? `,
+  "variantMetrics": [
+    {
+      "role": "${r1}",
+      "atsScore": 93,
+      "breakdown": {
+        "keywordMatch": 29,
+        "atsCompatibility": 25,
+        "technicalStrength": 15,
+        "projectQuality": 15,
+        "recruiterReadability": 10,
+        "experienceCredibility": 3
+      },
+      "strengths": ["Strong ${r1} skills."],
+      "weaknesses": ["Missing other database/cloud keywords."],
+      "improvements": ["Add cloud deployment."]
+    },
+    {
+      "role": "${r2}",
+      "atsScore": 88,
+      "breakdown": {
+        "keywordMatch": 25,
+        "atsCompatibility": 25,
+        "technicalStrength": 14,
+        "projectQuality": 14,
+        "recruiterReadability": 8,
+        "experienceCredibility": 2
+      },
+      "strengths": ["Strong ${r2} skills."],
+      "weaknesses": ["Lacks UI experience."],
+      "improvements": ["Add simple UI."]
+    },
+    {
+      "role": "${r3}",
+      "atsScore": 90,
+      "breakdown": {
+        "keywordMatch": 27,
+        "atsCompatibility": 25,
+        "technicalStrength": 15,
+        "projectQuality": 14,
+        "recruiterReadability": 9,
+        "experienceCredibility": 2
+      },
+      "strengths": ["Well-rounded ${r3} profile."],
+      "weaknesses": ["Lacks specialized topics."],
+      "improvements": ["Highlight optimization details."]
+    }
+  ]`
+    : ``;
+
   // ── Run deterministic skills engine BEFORE LLM call ──────────────────
   const processedSkills = generateTechnicalSkills(formData);
   if (process.env.NODE_ENV !== "production") {
@@ -239,7 +308,7 @@ Your output must strictly follow these rules:
 12. Avoid fake corporate buzzwords or exaggerated claims inside project bullet points.
 13. IMPORTANT FOR TIPS: Do NOT give tips about resume structure, adding keywords, or formatting (since this app handles the formatting for them). The \`atsTips\` should strictly contain highly personalized CAREER and SKILL improvement advice based on their exact input.
 14. TONE ADAPTATION: Adapt your writing style precisely to the TONE PREFERENCE specified by the user.
-15. PROJECT VARIANTS: If PROJECT VARIANTS PREFERENCE is "3 versions for different roles", for EACH project, you MUST provide 3 distinct versions of the bullets tailored to different roles (e.g., Software Engineer, Data Analyst, Product Manager) inside a "variants" array. The standard "bullets" array must still have the primary version. ADDITIONALLY, you MUST include a "variantMetrics" array at the root level containing exactly 3 objects with role-specific "role", "atsScore", "breakdown", "strengths", "weaknesses", and "improvements".
+${instruction15}
 16. BULLET CHARACTER LENGTH LIMITS: To optimize readability and ATS compliance, every single bullet point in projects and experience sections MUST be between 65 and 135 characters in length. Do not make bullet points shorter than 65 characters or longer than 135 characters.
 17. ATS SCORE ENGINE v2.0:
     Calculate the ATS score deterministically using fixed weighted categories. DO NOT GUESS.
@@ -397,12 +466,7 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
         "Bullet point 1 with strong action verb and length between 65 and 135 characters",
         "Bullet point 2 with outcome or feature and length between 65 and 135 characters",
         "Bullet point 3 with scaling or metrics details and length between 65 and 135 characters"
-      ],
-      "variants": [
-        { "role": "Frontend Engineer", "bullets": ["Frontend focused bullet 1", "Frontend focused bullet 2", "Frontend focused bullet 3"] },
-        { "role": "Backend Engineer", "bullets": ["Backend focused bullet 1", "Backend focused bullet 2", "Backend focused bullet 3"] },
-        { "role": "Fullstack Engineer", "bullets": ["Fullstack focused bullet 1", "Fullstack focused bullet 2", "Fullstack focused bullet 3"] }
-      ],
+      ]${variantsSchema},
       "duration": "Jan 2025 – Mar 2025",
       "link": "https://github.com/... (leave empty string if none provided)"
     }
@@ -449,24 +513,7 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
   "improvements": [
     "Add a project demonstrating backend cloud deployment.",
     "Quantify your contribution in the college club role."
-  ],
-  "variantMetrics": [
-    {
-      "role": "Frontend Engineer",
-      "atsScore": 93,
-      "breakdown": {
-        "keywordMatch": 29,
-        "atsCompatibility": 25,
-        "technicalStrength": 15,
-        "projectQuality": 15,
-        "recruiterReadability": 10,
-        "experienceCredibility": 3
-      },
-      "strengths": ["Strong frontend skills."],
-      "weaknesses": ["Missing backend experience."],
-      "improvements": ["Add Node.js project."]
-    }
-  ],
+  ]${variantMetricsSchema},
   "freeTierPreview": {
     "summary": "First sentence of summary only...",
     "firstProject": {
@@ -497,13 +544,23 @@ export async function generateSectionContent(
   sectionType: string,
   currentText: string,
   expectedBulletCount?: number,
-  projectContext?: { title?: string; techStack?: string; description?: string; keyResult?: string }
+  projectContext?: { title?: string; techStack?: string; description?: string; keyResult?: string },
+  density?: "concise" | "normal" | "expand"
 ): Promise<string> {
   const isProjectOrExperience = sectionType.toLowerCase().includes("project") || sectionType.toLowerCase().includes("experience") || sectionType.toLowerCase().includes("work");
 
   const bulletCount = expectedBulletCount || 3;
 
   const hasUserInput = projectContext?.description || projectContext?.keyResult;
+
+  let charLimitInstruction = "";
+  if (density === "concise") {
+    charLimitInstruction = "Target character count: Every single bullet point MUST be strictly between 50 and 80 characters in length. Keep them very short, punchy, compact, and highly dense.";
+  } else if (density === "expand") {
+    charLimitInstruction = "Target character count: Every single bullet point MUST be strictly between 130 and 180 characters in length. Elaborate slightly, adding more detail about the technical context, implementation, or impact.";
+  } else {
+    charLimitInstruction = "Target character count: Every single bullet point MUST be strictly between 65 and 135 characters in length.";
+  }
 
   const prompt = isProjectOrExperience
     ? `
@@ -521,6 +578,7 @@ SYSTEM:
 You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
 ${isProjectOrExperience ? `CRITICAL RULE: Since this is a project or experience bullet, you MUST structure it to follow the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure, integrating specific engineering metrics like processing speed, model accuracy rates, or pipeline efficiency percentages.` : ""}
 You MUST output EXACTLY ${bulletCount} distinct bullet points, each on a new line without any prefix symbol (no "-", "•", "*", or numbers).
+${charLimitInstruction}
 Do not wrap the output in quotes or markdown formatting, just return the raw text.
 `
     : `
