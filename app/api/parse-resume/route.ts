@@ -2,16 +2,34 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import * as mammoth from "mammoth";
 import { generateGroqFallback } from "@/lib/gemini";
-import { PDFParse } from "pdf-parse";
 import { PDF_WORKER_BASE64 } from "@/lib/pdfWorkerBase64";
-// @ts-ignore
-const PDFParser = require("pdf2json");
+
+let PDFParse: any = null;
+let PDFParser: any = null;
+
+try {
+  if (typeof (global as any).DOMMatrix === "undefined") {
+    (global as any).DOMMatrix = class DOMMatrix {};
+  }
+  const pdfParseMod = require("pdf-parse");
+  PDFParse = pdfParseMod.PDFParse || pdfParseMod;
+} catch (e: any) {
+  console.warn("Failed to load pdf-parse:", e.message || e);
+}
+
+try {
+  PDFParser = require("pdf2json");
+} catch (e: any) {
+  console.warn("Failed to load pdf2json:", e.message || e);
+}
 
 const workerUrl = `data:text/javascript;base64,${PDF_WORKER_BASE64}`;
-try {
-  PDFParse.setWorker(workerUrl);
-} catch (e) {
-  console.warn("Failed to set PDF worker path:", e);
+if (PDFParse) {
+  try {
+    PDFParse.setWorker(workerUrl);
+  } catch (e) {
+    console.warn("Failed to set PDF worker path:", e);
+  }
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -165,6 +183,9 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
         // Try extracting exact text stream and annotations using PDFParse
         let extractedLinks: string[] = [];
         try {
+          if (!PDFParse) {
+            throw new Error("pdf-parse library is not loaded on this server.");
+          }
           if (workerUrl) {
             PDFParse.setWorker(workerUrl);
           }
@@ -288,6 +309,9 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
         fallbackText = pdfText;
         if (!fallbackText) {
           try {
+            if (!PDFParser) {
+              throw new Error("pdf2json library is not loaded on this server.");
+            }
             const arrayBuffer = await file.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
             fallbackText = await new Promise((resolve, reject) => {
