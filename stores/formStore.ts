@@ -103,9 +103,14 @@ export const useFormStore = create<FormStore>()(
           // Helper to check if an object is completely empty (all string values are "")
           const isNotEmpty = (obj: any) => Object.values(obj).some((v) => typeof v === 'string' && v.trim() !== "");
 
+          const personal = { ...initialFormData.personal, ...(data.personal || {}) };
+          if (personal.fullName) personal.fullName = personal.fullName.toUpperCase();
+          if (personal.collegeName) personal.collegeName = personal.collegeName.toUpperCase();
+          if (personal.pgCollegeName) personal.pgCollegeName = personal.pgCollegeName.toUpperCase();
+
           return {
             formData: {
-              personal: { ...initialFormData.personal, ...(data.personal || {}) },
+              personal,
               skills: { ...initialFormData.skills, ...(data.skills || {}) },
               projects: (data.projects || []).filter(isNotEmpty),
               internships: (data.internships || []).filter(isNotEmpty),
@@ -118,13 +123,20 @@ export const useFormStore = create<FormStore>()(
         }),
 
       updatePersonal: (personal) =>
-        set((state) => ({
-          formData: {
-            ...state.formData,
-            personal: { ...state.formData.personal, ...personal },
-          },
-          lastSaved: Date.now(),
-        })),
+        set((state) => {
+          const updatedPersonal = { ...state.formData.personal, ...personal };
+          if (updatedPersonal.fullName) updatedPersonal.fullName = updatedPersonal.fullName.toUpperCase();
+          if (updatedPersonal.collegeName) updatedPersonal.collegeName = updatedPersonal.collegeName.toUpperCase();
+          if (updatedPersonal.pgCollegeName) updatedPersonal.pgCollegeName = updatedPersonal.pgCollegeName.toUpperCase();
+          
+          return {
+            formData: {
+              ...state.formData,
+              personal: updatedPersonal,
+            },
+            lastSaved: Date.now(),
+          };
+        }),
 
       updateSkills: (skills) =>
         set((state) => ({
