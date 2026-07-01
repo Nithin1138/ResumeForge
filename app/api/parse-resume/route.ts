@@ -246,8 +246,39 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
           }
         } catch (e) {}
 
+        // Extract URLs from plain text (catches links typed as text, not as PDF annotations)
+        if (pdfText) {
+          try {
+            // Comprehensive URL regex: matches http(s):// URLs and bare domains like github.com/...
+            const plainTextUrlRegex = /(?:https?:\/\/)?(?:www\.)?(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/[^\s,;\"'<>()\[\]{}]*)?/g;
+            const textLinks = new Set<string>();
+            let txtMatch;
+            while ((txtMatch = plainTextUrlRegex.exec(pdfText)) !== null) {
+              const raw = txtMatch[0].trim().replace(/[.,;]+$/, '');
+              // Only keep if it looks like a profile or project URL (not generic words)
+              if (
+                raw.includes('linkedin.com') ||
+                raw.includes('github.com') ||
+                raw.includes('leetcode.com') ||
+                raw.includes('codeforces.com') ||
+                raw.includes('hackerrank.com') ||
+                raw.includes('codechef.com') ||
+                raw.includes('geeksforgeeks.org') ||
+                raw.includes('kaggle.com') ||
+                raw.includes('portfolio') ||
+                (raw.startsWith('http') && raw.length > 15)
+              ) {
+                const normalized = raw.startsWith('http') ? raw : `https://${raw}`;
+                if (!extractedLinks.includes(normalized)) {
+                  extractedLinks.push(normalized);
+                }
+              }
+            }
+          } catch (e) {}
+        }
+
         if (extractedLinks.length > 0) {
-          linkPrompt = `\n\n[CRITICAL: The following hidden URLs were extracted from the PDF metadata/annotations: ${extractedLinks.join(', ')}]\nYou MUST match these URLs with the visual text to extract FULL, functional URLs for 'linkedin', 'github', and project 'link' fields. If a link in this list contains "linkedin.com", it MUST be the LinkedIn profile link. If it contains "github.com" and is a user profile (e.g. github.com/username), it is the GitHub profile link. If it contains a repository or project name, it is a project link. Assign them accurately and NEVER leave these fields blank if they are present in the list.`;
+          linkPrompt = `\n\n[CRITICAL: The following URLs were extracted from the PDF (annotations + plain text): ${extractedLinks.join(', ')}]\nFor each URL:\n- If it contains "linkedin.com" → assign to 'personal.linkedin'\n- If it contains "github.com" and looks like a user profile (e.g. github.com/username) → assign to 'personal.github'; if it looks like a repo → assign to a matching project 'link'\n- If it contains "leetcode.com", "codeforces.com", "hackerrank.com", "codechef.com", "geeksforgeeks.org", "kaggle.com" → assign to 'personal.codingProfiles'\n- For any other URL → assign to the most relevant project 'link'\nNEVER leave linkedin, github, or codingProfiles blank if these links are present. Always use the FULL URL (with https://).`;
         }
 
         // Prepare hybrid input for Gemini: Prompt + metadata links + exact extracted text + visual page
