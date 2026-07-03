@@ -87,6 +87,7 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
       githubLink: proj.githubLink || "",
       liveLink: proj.liveLink || "",
 
+
       bullets: [
         `Architected and implemented a high-performance system for ${proj.description || "core product operations"}, optimizing request latencies and response pipelines.`,
         `Integrated a robust backend to handle ${proj.keyResult || "core key features"}, scaling concurrency to handle 100+ simulated requests per second.`,
@@ -426,6 +427,7 @@ Duration: ${proj.duration || "None"}
 Link: ${proj.githubLink || proj.link || "None"}
 Live Demo: ${proj.liveLink || "None"}
 
+
 `).join("\n")}
 
 INTERNSHIPS/EXPERIENCE:
@@ -494,7 +496,10 @@ OUTPUT FORMAT (return ONLY this JSON, no other text):
         "Bullet point 3 with scaling or metrics details and length between 65 and 135 characters"
       ]${variantsSchema},
       "duration": "Jan 2025 – Mar 2025",
-      "link": "https://github.com/... (leave empty string if none provided)"
+      "link": "https://github.com/... (leave empty string if none provided)",
+      "githubLink": "https://github.com/... (copy from input Link field; leave empty string if none)",
+      "liveLink": "https://... (copy from input Live Demo field; leave empty string if none)"
+
     }
   ],
   "experience": [

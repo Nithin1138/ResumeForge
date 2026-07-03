@@ -136,7 +136,10 @@ export interface FullResumeOutput {
     }[];
     duration?: string;
     link?: string;
+    githubLink?: string;
+    liveLink?: string;
   }[];
+
   experience: {
     company: string;
     role: string;
