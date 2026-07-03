@@ -307,30 +307,31 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "1pt" }}>
                     <div style={{ fontWeight: "bold", fontSize: "10pt", color: "#111", display: "flex", alignItems: "center", gap: "6px", flex: 1, flexWrap: "wrap" }}>
                       {proj.title}
-                      {/* GitHub Link */}
-                      {(proj.githubLink || (!proj.liveLink && proj.link && proj.link.includes('github.com'))) && (() => {
-                        const url = proj.githubLink || proj.link;
-                        return url && url.toLowerCase() !== 'none' && url.trim() !== '' ? (
-                          <a href={url.startsWith('http') ? url : `https://${url}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8.5pt", color: "#666", fontWeight: "normal" }}>
+                      {/* GitHub Link: prefer githubLink, fall back to link if it contains github.com */}
+                      {(() => {
+                        const ghUrl = proj.githubLink?.trim() ||
+                          (!proj.liveLink?.trim() && proj.link?.trim()?.includes('github.com') ? proj.link.trim() : '');
+                        if (!ghUrl || ghUrl.toLowerCase() === 'none') return null;
+                        return (
+                          <a href={ghUrl.startsWith('http') ? ghUrl : `https://${ghUrl}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8.5pt", color: "#666", fontWeight: "normal" }}>
                             [GitHub]
                           </a>
-                        ) : null;
+                        );
                       })()}
-                      {/* Live Demo Link */}
-                      {(proj.liveLink || (!proj.githubLink && proj.link && !proj.link.includes('github.com'))) && (() => {
-                        const url = proj.liveLink || proj.link;
-                        return url && url.toLowerCase() !== 'none' && url.trim() !== '' ? (
-                          <a href={url.startsWith('http') ? url : `https://${url}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8.5pt", color: "#666", fontWeight: "normal" }}>
+                      {/* Live Demo Link: prefer liveLink, fall back to link only if no githubLink was resolved */}
+                      {(() => {
+                        const resolvedGh = proj.githubLink?.trim() ||
+                          (!proj.liveLink?.trim() && proj.link?.trim()?.includes('github.com') ? proj.link.trim() : '');
+                        const liveUrl = proj.liveLink?.trim() ||
+                          (!resolvedGh && proj.link?.trim() && !proj.link.includes('github.com') ? proj.link.trim() : '');
+                        if (!liveUrl || liveUrl.toLowerCase() === 'none') return null;
+                        return (
+                          <a href={liveUrl.startsWith('http') ? liveUrl : `https://${liveUrl}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8.5pt", color: "#666", fontWeight: "normal" }}>
                             [Live Demo]
                           </a>
-                        ) : null;
+                        );
                       })()}
-                      {/* Legacy: link field when neither githubLink nor liveLink is set but link has something non-github */}
-                      {!proj.githubLink && !proj.liveLink && proj.link && proj.link.toLowerCase() !== 'none' && proj.link.trim() !== '' && (
-                        <a href={proj.link.startsWith('http') ? proj.link : `https://${proj.link}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8.5pt", color: "#666", fontWeight: "normal" }}>
-                          [{proj.link.includes('github.com') ? 'GitHub' : 'Live Demo'}]
-                        </a>
-                      )}
+
                     </div>
                     {proj.duration && <span style={{ flexShrink: 0, whiteSpace: "nowrap", fontSize: "9.5pt", color: "#555", textAlign: "right", marginLeft: "10px" }}>{proj.duration}</span>}
                   </div>
