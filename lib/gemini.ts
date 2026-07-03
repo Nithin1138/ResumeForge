@@ -299,20 +299,28 @@ You are an expert ATS resume writer specializing in Indian engineering student r
 Your output must strictly follow these rules:
 1. NEVER invent, fabricate, or exaggerate facts. Only use information provided.
 2. If a metric is not given, improve phrasing without adding fake numbers.
-3. Use strong action verbs at the start of every bullet point.
+3. Use strong but SIMPLE action verbs at the start of every bullet point. Prefer everyday engineering verbs: Built, Added, Reduced, Processed, Automated, Trained, Integrated, Enabled, Extracted, Filtered, Cached, Queried, Stored, Tracked. AVOID enterprise/complex verbs: Orchestrated, Leveraged, Spearheaded, Architected, Synergized, Deployed across, Operationalized.
 4. Use ATS-safe language: standard section names, no tables, no graphics, no special symbols.
 5. Align all wording to the target role specified.
 6. If a job description is provided, mirror its keywords naturally in bullets — do not stuff keywords.
 7. Output ONLY valid JSON matching the schema below. No markdown. No explanation.
-8. PROJECT BULLET COUNTS: The priority of the projects corresponds to their order in the list. For the FIRST TWO projects (Top 2 priorities), generate EXACTLY 3 bullet points each. For ANY ADDITIONAL projects (3rd or 4th priorities, i.e., Minor Projects), generate EXACTLY 2 bullet points each to save space on the page. Internship/experience items MUST contain exactly 3 or 4 bullet points.
+8. ===HARD CONSTRAINT: PROJECT BULLET COUNTS — VIOLATION IF NOT FOLLOWED===
+   - Project #1 and Project #2 (the first two listed): Generate EXACTLY 3 bullet points each. No more, no less.
+   - Project #3 and Project #4 (if present): Generate EXACTLY 2 bullet points each. No more, no less.
+   - Internship/experience items: EXACTLY 3 or 4 bullet points.
+   - COUNT THE BULLETS before outputting. If the count doesn't match, fix it before responding.
 9. For skills: group logically. Do not repeat skills across sections.
 10. For the summary: You must explicitly mention the exact target role: "${personal.targetRole}" early in the summary text. Keep the summary targeted and professional, strictly 1-2 sentences maximum, aiming to fill between 1.5 to 2 lines on the page (approximately 110 to 160 characters in total). Do NOT make it extremely short (such as under 80 characters or a brief phrase like 'Delivers software solutions'). It must read as a cohesive summary describing the candidate's core expertise and engineering background.
-11. If the tech stack is already displayed below the project title, do NOT repeat technologies inside bullet points unless absolutely necessary for explaining a specific implementation detail. Focus strictly on technical implementation, architecture, and outcomes.
+11. ===HARD CONSTRAINT: DO NOT REPEAT TECH STACK IN BULLETS — VIOLATION IF BROKEN===
+    The tech stack is already shown on its own italic line below the project title in the final PDF.
+    You MUST NOT name any technology from the tech stack inside bullet points UNLESS that specific technology is being explained in context of a particular implementation detail (e.g., "used Redis as a session cache" is OK only if Redis is the point of the bullet).
+    Simply mentioning "using TypeScript", "using FastAPI", "using React" etc. at the end of a bullet = VIOLATION. Remove it.
 12. Avoid fake corporate buzzwords or exaggerated claims inside project bullet points.
 13. IMPORTANT FOR TIPS: Do NOT give tips about resume structure, adding keywords, or formatting (since this app handles the formatting for them). The \`atsTips\` should strictly contain highly personalized CAREER and SKILL improvement advice based on their exact input.
 14. TONE ADAPTATION: Adapt your writing style precisely to the TONE PREFERENCE specified by the user.
 ${instruction15}
 16. BULLET CHARACTER LENGTH LIMITS: To optimize readability and ATS compliance, every single bullet point in projects and experience sections MUST be between 65 and 135 characters in length. Do not make bullet points shorter than 65 characters or longer than 135 characters.
+
 17. ATS SCORE ENGINE v2.0:
     Calculate the ATS score deterministically using fixed weighted categories. DO NOT GUESS.
     - Category 1: Keyword Match & Role Alignment (30 Points). Evaluate required tech, domain terms. 0-10 weak, 11-20 moderate, 21-30 strong.
@@ -337,8 +345,14 @@ ${instruction15}
     Write from the perspective of a technically strong engineering student. Favor clarity, practical implementation, and recruiter readability over enterprise sophistication. Bullets must sound believable for real B.Tech student projects, NOT senior infrastructure engineering work.
   - REALISM FILTER:
     Avoid language that sounds like: Senior Staff Engineer, Enterprise Architect, FAANG Infrastructure Lead, enterprise SaaS consultant, or production-scale distributed systems engineer.
-  - ANTI-BUZZWORD FILTER:
-    Completely avoid: orchestrated, leveraged, spearheaded, synergized, revolutionary, enterprise-grade, cutting-edge, scalable architecture, world-class, mission-critical, highly scalable, robust framework. Use simple technical language instead.
+  - ANTI-BUZZWORD FILTER (HARD BLOCK — DO NOT USE ANY OF THESE WORDS):
+    orchestrated, leveraged, spearheaded, synergized, revolutionary, enterprise-grade, cutting-edge, scalable architecture, world-class, mission-critical, highly scalable, robust framework, full-stack web application, transforming academic data, zero-friction, comprehensive, state-of-the-art, seamlessly, harnessed, pioneered.
+  - TECH STACK IN BULLETS — HARD BLOCK:
+    NEVER end or pad a bullet with "using [Technology]" or "via [Technology]" or "with [Technology]" just to name a tech. The tech stack line already shows the tools.
+    BAD (violation): "Implemented resume generation pipeline using Next.js and TypeScript."
+    BAD (violation): "Built AI platform for document generation using TypeScript, FastAPI."
+    GOOD: "Automated document generation cutting drafting time by 60% for 500+ users."
+    GOOD: "Generated structured resume content from raw inputs using a multi-step prompt pipeline."
   - CONTEXTUAL ENGINEERING LANGUAGE:
     Only use terminology genuinely relevant to the project domain.
       * OpenCV/Vision Projects: real-time processing, facial landmarks, eye-aspect ratio, frame analysis, fatigue detection, alert mechanisms, detection pipelines.
@@ -348,7 +362,7 @@ ${instruction15}
     Do NOT force unrelated backend/infrastructure terminology into projects.
   - OPENINGS & SENTENCE VARIETY:
     Avoid repetitive generic openings like: Developed, Implemented, Designed, Built.
-    Instead naturally rotate stronger but believable verbs: Automated, Optimized, Processed, Integrated, Engineered, Streamlined, Generated, Refactored, Trained, Reduced, Constructed, Enabled.
+    Instead naturally rotate stronger but believable verbs: Automated, Optimized, Processed, Integrated, Streamlined, Generated, Refactored, Trained, Reduced, Constructed, Enabled, Extracted, Filtered, Tracked.
     Mix sentence structures naturally: Short technical implementation bullets, Medium explanatory bullets, Metric-driven outcome bullets, Workflow-focused bullets.
     Avoid identical cadence across all bullets.
   - SCANABILITY RULE:
@@ -356,13 +370,19 @@ ${instruction15}
   - REDUNDANCY FILTER:
     Do NOT repeat identical sentence rhythm, technical structure, or semantic patterns across multiple bullets. If one bullet emphasizes automation, the next should emphasize processing, optimization, transformation, detection, integration, workflows, or measurable outcomes.
   - METRICS, IMPACT & GOOGLE X-Y-Z FORMULA:
-    Write project bullet points following the Google X-Y-Z formula (Accomplishing [X], as measured by [Y], by doing [Z]), but you MUST phrase them naturally and dynamically. Do NOT literally use the words "Accomplished", "as measured by", or "by doing" in every sentence. Start each bullet point with a strong, varied technical action verb (e.g., Optimized, Trained, Refactored, Engineered, Automated).
+    Write project bullet points following the Google X-Y-Z formula (Accomplishing [X], as measured by [Y], by doing [Z]), but you MUST phrase them naturally and dynamically. Do NOT literally use the words "Accomplished", "as measured by", or "by doing" in every sentence. Start each bullet point with a strong, varied technical action verb (e.g., Optimized, Trained, Refactored, Automated).
     Always integrate specific engineering metrics—such as processing speed, model accuracy rates, data throughput, or database latency—wherever possible to demonstrate impact.
     CRITICAL: Keep each bullet point extremely concise, short, and compact to satisfy the character length limit (strictly 65 to 135 characters).
-    GOOD EXAMPLES (natural, following X-Y-Z & under 135 chars): 
+    GOOD EXAMPLES (natural, simple, no stack-repeat, under 135 chars): 
       * "Decreased DB latency by 45% using Redis caches and relational indexing to support 1k+ concurrent users"
-      * "Achieved 93% accuracy on 5k test inputs by training a custom CNN with augmentation to automate disease detection"
+      * "Achieved 93% accuracy on 5k test inputs by training a custom CNN with augmentation"
       * "Boosted API pipeline efficiency by 30% by refactoring data ingestion to process 10k daily entries"
+      * "Parsed 500+ resumes per session using a multi-step extraction pipeline with structured prompt templates"
+    BAD EXAMPLES (avoid these patterns):
+      * "Engineered zero-friction offline sandbox, enabling comprehensive end-to-end testing." — buzzwords + vague
+      * "Developed LLM-driven resume content, ensuring ATS compliance via Next.js and TypeScript." — stack repeat
+      * "Built desktop app turning phone into remote input tool for Mac/Windows." — too vague, no impact
+      * "Developed data warehouse and system for product risk intelligence using Python." — stack repeat + vague
     Avoid fake corporate jargon, academic textbook phrasing, or generic words. Vary the sentence structure and starting verbs across all bullets.
   - PHRASING RULES:
     Avoid repetitive textbook phrasing like: "by using", "for", "ensuring", "designed to", "capable of", "resulting in". Avoid generic passive explanations and academic-report tone.
@@ -372,6 +392,7 @@ ${instruction15}
   - FINAL OUTPUT QUALITY:
     Bullets must feel: technically strong, implementation-focused, ATS-safe, recruiter-readable, natural, concise, and believable for an engineering student project.
     The writing should resemble: real engineering project work, NOT AI-generated corporate resume language.
+
 
 
 RESUME DATA INPUT:
@@ -569,7 +590,7 @@ export async function generateSectionContent(
 
   const prompt = isProjectOrExperience
     ? `
-You are an expert resume writer. Generate EXACTLY ${bulletCount} strong resume bullet points for this project using the Google X-Y-Z formula.
+You are an expert ATS resume writer for engineering students. Generate EXACTLY ${bulletCount} strong, concise resume bullet points for this project.
 
 PROJECT DETAILS:
 - Project Name: ${projectContext?.title || sectionType}
@@ -578,13 +599,23 @@ ${hasUserInput ? `- What was built (user's own words): ${projectContext?.descrip
 - Key result / highlight (user's own words): ${projectContext?.keyResult || "Not provided"}` : `- Current bullets (rewrite these to be stronger):
 ${currentText}`}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SYSTEM:
-You are an expert ATS resume writer. Rewrite the following resume section (${sectionType}) to be more impactful, using strong action verbs, removing fluff, and making it highly professional and metric-driven if possible. Do NOT add fabricated metrics.
-${isProjectOrExperience ? `CRITICAL RULE: Since this is a project or experience bullet, you MUST structure it to follow the Google X-Y-Z formula: "Accomplished [X], as measured by [Y], by doing [Z]" style structure, integrating specific engineering metrics like processing speed, model accuracy rates, or pipeline efficiency percentages.` : ""}
-You MUST output EXACTLY ${bulletCount} distinct bullet points, each on a new line without any prefix symbol (no "-", "•", "*", or numbers).
-${charLimitInstruction}
-Do not wrap the output in quotes or markdown formatting, just return the raw text.
+HARD RULES (violations will be rejected):
+1. Output EXACTLY ${bulletCount} bullet points — COUNT them before responding.
+2. DO NOT repeat any technology name from the Tech Stack inside bullet points just to name it. The tech stack is already shown separately in the resume. Only mention a technology if it is the specific subject of that bullet.
+   BAD: "Built a pipeline using Python and Pandas to process reviews."
+   GOOD: "Processed 50k+ product reviews through a sentiment scoring pipeline, reducing analysis time by 40%."
+3. NO complex corporate buzzwords. Forbidden: orchestrated, leveraged, spearheaded, synergized, enterprise-grade, cutting-edge, zero-friction, comprehensive, seamlessly, pioneered, robust framework, world-class.
+4. Use simple, direct engineering language. Prefer: Built, Automated, Trained, Processed, Integrated, Reduced, Generated, Extracted, Filtered, Cached, Tracked.
+5. Follow Google X-Y-Z formula naturally (what was done, how much impact, by what method) — don't literally write the formula words.
+6. ${charLimitInstruction}
+7. Each bullet must start with a strong action verb. No two bullets start with the same verb.
+8. No prefix symbols on bullets (no "-", "•", "*", numbers). Just raw text, one bullet per line.
+9. Do not wrap output in quotes or markdown.
+
+GOOD EXAMPLES:
+- "Reduced DB query time by 45% by adding indexed lookups and caching frequent queries for 1k+ users"
+- "Trained a CNN on 5k labeled images achieving 93% accuracy for real-time fatigue detection"
+- "Automated report generation for 200+ daily entries, cutting manual effort by 3 hours per day"
 `
     : `
 SYSTEM:
