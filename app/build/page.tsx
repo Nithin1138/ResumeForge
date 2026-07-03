@@ -461,6 +461,7 @@ export default function BuildPage() {
         const newIndex = formData.projects.length;
         updateProject(newIndex, {
           title: data.title || "Flash Project",
+          githubLink: flashProjectModal.repoUrl,
           link: flashProjectModal.repoUrl,
           techStack: data.techStack || "",
           description: data.description || "",
@@ -468,6 +469,7 @@ export default function BuildPage() {
           duration: data.duration || "",
           isFlash: true
         });
+
       }
       setFlashProjectModal({ isOpen: false, title: "", repoUrl: "", isLoading: false, error: "" });
     } catch (err: any) {
@@ -1246,13 +1248,24 @@ export default function BuildPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold mb-1">GitHub / Live Demo Link (Optional)</label>
+                <label className="block text-xs font-bold mb-1">GitHub Repo Link <span className="font-normal text-muted">(Optional)</span></label>
                 <input
                   type="text"
                   className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-xs font-semibold"
                   placeholder="e.g. github.com/username/project"
-                  value={proj.link}
-                  onChange={(e) => updateProject(idx, { link: e.target.value })}
+                  value={proj.githubLink ?? proj.link}
+                  onChange={(e) => updateProject(idx, { githubLink: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold mb-1">Live Demo Link <span className="font-normal text-muted">(Optional)</span></label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface focus:ring-1 focus:ring-primary focus:border-transparent outline-hidden text-xs font-semibold"
+                  placeholder="e.g. myapp.vercel.app"
+                  value={proj.liveLink ?? ""}
+                  onChange={(e) => updateProject(idx, { liveLink: e.target.value })}
                 />
               </div>
 

@@ -305,11 +305,30 @@ export default function ResumePreviewPanel({ resume, output, locked, liveData, i
               {projectsList.map((proj: any, idx: number) => (
                 <div key={idx} style={{ marginBottom: idx === projectsList.length - 1 ? 0 : "7pt", pageBreakInside: "avoid", breakInside: "avoid" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "1pt" }}>
-                    <div style={{ fontWeight: "bold", fontSize: "10pt", color: "#111", display: "flex", alignItems: "center", gap: "6px", flex: 1 }}>
+                    <div style={{ fontWeight: "bold", fontSize: "10pt", color: "#111", display: "flex", alignItems: "center", gap: "6px", flex: 1, flexWrap: "wrap" }}>
                       {proj.title}
-                      {proj.link && proj.link.toLowerCase() !== "none" && proj.link.trim() !== "" && (
-                        <a href={proj.link.startsWith("http") ? proj.link : `https://${proj.link}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8.5pt", color: "#666", fontWeight: "normal" }}>
-                          [{proj.link.includes("github.com") ? "GitHub" : "Live Demo"}]
+                      {/* GitHub Link */}
+                      {(proj.githubLink || (!proj.liveLink && proj.link && proj.link.includes('github.com'))) && (() => {
+                        const url = proj.githubLink || proj.link;
+                        return url && url.toLowerCase() !== 'none' && url.trim() !== '' ? (
+                          <a href={url.startsWith('http') ? url : `https://${url}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8.5pt", color: "#666", fontWeight: "normal" }}>
+                            [GitHub]
+                          </a>
+                        ) : null;
+                      })()}
+                      {/* Live Demo Link */}
+                      {(proj.liveLink || (!proj.githubLink && proj.link && !proj.link.includes('github.com'))) && (() => {
+                        const url = proj.liveLink || proj.link;
+                        return url && url.toLowerCase() !== 'none' && url.trim() !== '' ? (
+                          <a href={url.startsWith('http') ? url : `https://${url}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8.5pt", color: "#666", fontWeight: "normal" }}>
+                            [Live Demo]
+                          </a>
+                        ) : null;
+                      })()}
+                      {/* Legacy: link field when neither githubLink nor liveLink is set but link has something non-github */}
+                      {!proj.githubLink && !proj.liveLink && proj.link && proj.link.toLowerCase() !== 'none' && proj.link.trim() !== '' && (
+                        <a href={proj.link.startsWith('http') ? proj.link : `https://${proj.link}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", fontSize: "8.5pt", color: "#666", fontWeight: "normal" }}>
+                          [{proj.link.includes('github.com') ? 'GitHub' : 'Live Demo'}]
                         </a>
                       )}
                     </div>

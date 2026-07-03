@@ -38,10 +38,13 @@ export interface ProjectInfo {
   techStack: string;
   description: string;
   keyResult: string;
-  link: string;
+  link: string;         // legacy – kept for backward compat
+  githubLink?: string;  // GitHub repository URL
+  liveLink?: string;    // Live demo / deployed URL
   duration: string;
   isFlash?: boolean;
 }
+
 
 export interface InternshipInfo {
   company: string;

@@ -156,9 +156,12 @@ export const useFormStore = create<FormStore>()(
             description: "",
             keyResult: "",
             link: "",
+            githubLink: "",
+            liveLink: "",
             duration: "",
             isFlash: false,
           };
+
           return {
             formData: {
               ...state.formData,

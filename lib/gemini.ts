@@ -83,7 +83,10 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
       title: proj.title || `Project ${idx + 1}`,
       techStack: normalizeTechStack(proj.techStack || "React, Node.js"),
       duration: proj.duration || "Jan 2025 – Mar 2025",
-      link: proj.link || "",
+      link: proj.githubLink || proj.link || "",
+      githubLink: proj.githubLink || "",
+      liveLink: proj.liveLink || "",
+
       bullets: [
         `Architected and implemented a high-performance system for ${proj.description || "core product operations"}, optimizing request latencies and response pipelines.`,
         `Integrated a robust backend to handle ${proj.keyResult || "core key features"}, scaling concurrency to handle 100+ simulated requests per second.`,
@@ -399,7 +402,9 @@ Tech Stack: ${proj.techStack}
 Description: ${proj.description}
 Key Result/Feature: ${proj.keyResult}
 Duration: ${proj.duration || "None"}
-Link: ${proj.link || "None"}
+Link: ${proj.githubLink || proj.link || "None"}
+Live Demo: ${proj.liveLink || "None"}
+
 `).join("\n")}
 
 INTERNSHIPS/EXPERIENCE:
