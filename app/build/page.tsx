@@ -2046,7 +2046,7 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
         desc: "A touch of personality with a well-organized resume structure.",
         supportsPhoto: false,
         preview: (
-          <div className="w-full h-56 bg-white text-zinc-800 rounded-lg p-3 shadow-sm border border-zinc-200 flex gap-2.5 overflow-hidden select-none relative">
+          <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-3 shadow-sm border border-zinc-200 flex gap-2.5 overflow-hidden select-none relative">
             {/* Left dark sidebar */}
             <div className="w-1/3 bg-[#01696f] text-white p-2 flex flex-col space-y-1.5 rounded-xs shrink-0">
               <div className="w-6 h-6 rounded-full bg-white/20 border border-white/40 flex items-center justify-center self-center my-0.5">
@@ -2096,7 +2096,7 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
         desc: "Professional and elegant resume template with clean timeline structure.",
         supportsPhoto: false,
         preview: (
-          <div className="w-full h-56 bg-white text-zinc-800 rounded-lg p-3 shadow-sm border border-zinc-200 flex flex-col items-center space-y-1.5 overflow-hidden select-none relative">
+          <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-3 shadow-sm border border-zinc-200 flex flex-col items-center space-y-1.5 overflow-hidden select-none relative">
             <div className="w-6 h-6 rounded-full bg-zinc-100 border border-zinc-300 flex items-center justify-center mb-0.5">
               <User className="w-3 h-3 text-zinc-600" />
             </div>
@@ -2128,7 +2128,7 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
         desc: "Striking modern header, professional two column template structure.",
         supportsPhoto: false,
         preview: (
-          <div className="w-full h-56 bg-white text-zinc-800 rounded-lg p-0 shadow-sm border border-zinc-200 flex flex-col overflow-hidden select-none relative">
+          <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-0 shadow-sm border border-zinc-200 flex flex-col overflow-hidden select-none relative">
             <div className="w-full bg-[#10b981] text-white p-2.5 flex items-center space-x-2 shrink-0">
               <div className="w-5 h-5 rounded-full bg-white/30 border border-white flex items-center justify-center shrink-0">
                 <User className="w-3 h-3 text-white" />
@@ -2167,7 +2167,7 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
         desc: "Modern and eye-catching resume template. Beautiful contrasting structure.",
         supportsPhoto: true,
         preview: (
-          <div className="w-full h-56 bg-white text-zinc-800 rounded-lg p-2.5 shadow-sm border border-zinc-200 flex gap-2.5 overflow-hidden select-none relative">
+          <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-2.5 shadow-sm border border-zinc-200 flex gap-2.5 overflow-hidden select-none relative">
             <div className="flex-1 space-y-1.5 pt-0.5">
               <div className="flex items-center space-x-1.5">
                 <div className="w-5 h-5 rounded-full bg-zinc-100 border border-zinc-300 flex items-center justify-center shrink-0">
@@ -2204,7 +2204,7 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
         desc: "Perfect balance of fresh and functional resume template design.",
         supportsPhoto: true,
         preview: (
-          <div className="w-full h-56 bg-white text-zinc-800 rounded-lg p-3 shadow-sm border border-zinc-200 flex flex-col space-y-1.5 overflow-hidden select-none relative">
+          <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-3 shadow-sm border border-zinc-200 flex flex-col space-y-1.5 overflow-hidden select-none relative">
             <div className="flex items-center space-x-2">
               <div className="w-6 h-6 rounded-md bg-amber-500/20 border border-amber-600 flex items-center justify-center shrink-0">
                 <User className="w-3 h-3 text-amber-700" />
@@ -2246,87 +2246,200 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
           <p className="text-sm text-text-muted">Choose your template style, photo preferences, and variation count.</p>
         </div>
 
-        {/* ── SLIDE BAR / CATEGORY SWITCHER ── */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="h-5 w-1 rounded-full bg-primary" />
-            <h3 className="text-sm font-extrabold text-text uppercase tracking-wider">1. Select Template Category</h3>
-          </div>
-
-          <div className="inline-flex p-1 bg-surface border border-border/80 rounded-2xl gap-1">
-            <button
-              type="button"
-              onClick={() => {
-                updateOptions({
-                  hasPhoto: false,
-                  templateId: "modern"
-                });
-              }}
-              className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                filterTab === "plain"
-                  ? "bg-primary text-white shadow-xs"
-                  : "text-text-muted hover:text-text hover:bg-border/30"
-              }`}
-            >
-              <span>Plain Resume (No Photo)</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                updateOptions({
-                  hasPhoto: true,
-                  templateId: "photo_modern"
-                });
-              }}
-              className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                filterTab === "photo"
-                  ? "bg-primary text-white shadow-xs"
-                  : "text-text-muted hover:text-text hover:bg-border/30"
-              }`}
-            >
-              <Camera className="w-3.5 h-3.5" />
-              <span>Photo Resume</span>
-            </button>
-          </div>
-
-          {/* UPLOAD HEADSHOT IMAGE WHEN IN PHOTO MODE */}
-          {filterTab === "photo" && (
-            <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4 mt-3 max-w-xl">
-              <div className="flex items-center space-x-3">
-                {formData.options.photoUrl ? (
-                  <div className="relative shrink-0">
-                    <img
-                      src={formData.options.photoUrl}
-                      alt="Profile preview"
-                      className="w-12 h-12 rounded-xl object-cover border-2 border-primary shadow-xs"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => updateOptions({ photoUrl: "" })}
-                      className="absolute -top-1.5 -right-1.5 bg-error text-white p-0.5 rounded-full shadow-xs hover:scale-110 transition-transform"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="w-12 h-12 rounded-xl border border-dashed border-primary/40 bg-surface flex items-center justify-center shrink-0">
-                    <Camera className="w-5 h-5 text-primary/50" />
-                  </div>
-                )}
-                <div>
-                  <span className="text-xs font-bold text-primary block">Headshot Photo</span>
-                  <span className="text-[10px] text-text-muted block">JPG, PNG, WEBP (Max 5MB)</span>
-                </div>
+        {/* ── TOP 2-COLUMN SECTION: CATEGORY & PROJECT VARIATIONS SIDE BY SIDE ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+          {/* Left Column Card: Template Category */}
+          <div className="bg-surface p-5 rounded-2xl border border-border/80 shadow-xs flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2.5">
+                <div className="h-4 w-1 rounded-full bg-primary" />
+                <h3 className="text-xs font-extrabold text-text uppercase tracking-wider">1. Template Format</h3>
               </div>
 
-              <label className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-xl cursor-pointer transition-all shadow-xs shrink-0 flex items-center gap-1.5">
-                <Upload className="w-3.5 h-3.5" />
-                <span>{formData.options.photoUrl ? "Change Photo" : "Upload Photo"}</span>
-                <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
-              </label>
+              {/* Segmented Switcher */}
+              <div className="grid grid-cols-2 p-1 bg-bg-base/80 border border-border/60 rounded-xl gap-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    updateOptions({
+                      hasPhoto: false,
+                      templateId: "modern"
+                    });
+                  }}
+                  className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    filterTab === "plain"
+                      ? "bg-primary text-white shadow-xs"
+                      : "text-text-muted hover:text-text hover:bg-surface/60"
+                  }`}
+                >
+                  <span>Standard ATS (No Photo)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    updateOptions({
+                      hasPhoto: true,
+                      templateId: "photo_modern"
+                    });
+                  }}
+                  className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    filterTab === "photo"
+                      ? "bg-primary text-white shadow-xs"
+                      : "text-text-muted hover:text-text hover:bg-surface/60"
+                  }`}
+                >
+                  <Camera className="w-3.5 h-3.5 shrink-0" />
+                  <span>With Profile Photo</span>
+                </button>
+              </div>
             </div>
-          )}
+
+            {/* Photo Upload Panel (embedded cleanly inside Left Card) */}
+            {filterTab === "photo" ? (
+              <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-3 transition-all">
+                <div className="flex items-center space-x-3 min-w-0">
+                  {formData.options.photoUrl ? (
+                    <div className="relative shrink-0">
+                      <img
+                        src={formData.options.photoUrl}
+                        alt="Profile preview"
+                        className="w-10 h-10 rounded-lg object-cover border-2 border-primary shadow-2xs"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => updateOptions({ photoUrl: "" })}
+                        className="absolute -top-1 -right-1 bg-error text-white p-0.5 rounded-full shadow-xs hover:scale-110 transition-transform"
+                      >
+                        <X className="w-2.5 h-2.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-10 h-10 rounded-lg border border-dashed border-primary/40 bg-surface flex items-center justify-center shrink-0">
+                      <Camera className="w-4 h-4 text-primary/50" />
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold text-primary block truncate">Headshot Photo</span>
+                    <span className="text-[10px] text-text-muted block truncate">JPG, PNG, WEBP (&lt;5MB)</span>
+                  </div>
+                </div>
+
+                <label className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg cursor-pointer transition-all shadow-2xs shrink-0 flex items-center gap-1.5">
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>{formData.options.photoUrl ? "Change" : "Upload"}</span>
+                  <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                </label>
+              </div>
+            ) : (
+              <p className="text-[11px] text-text-muted leading-relaxed px-0.5">
+                Standard single/two-column ATS layout optimized for recruiter scanning without photo overhead.
+              </p>
+            )}
+          </div>
+
+          {/* Right Column Card: Project Bullet Variations */}
+          <div className="bg-surface p-5 rounded-2xl border border-border/80 shadow-xs flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2.5">
+                <div className="h-4 w-1 rounded-full bg-primary" />
+                <h3 className="text-xs font-extrabold text-text uppercase tracking-wider">2. Project Bullet Variations</h3>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {[
+                  { label: "1 Standard Version", val: "1 version", sub: "All roles" },
+                  { label: "3 Tailored Versions (₹99)", val: "3 versions", sub: "Role specific" }
+                ].map((opt, idx) => {
+                  const isChecked = formData.options.projectVariants === opt.val;
+                  return (
+                    <label
+                      key={idx}
+                      className={`flex items-center space-x-2.5 p-3 rounded-xl border cursor-pointer transition-all ${
+                        isChecked
+                          ? "border-primary bg-primary/5 text-primary font-bold shadow-2xs"
+                          : "border-border/60 hover:border-primary/40 text-text-muted bg-bg-base/40"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="variants"
+                        className="accent-primary w-4 h-4 shrink-0"
+                        checked={isChecked}
+                        onChange={() => updateOptions({ projectVariants: opt.val as any })}
+                      />
+                      <div className="min-w-0">
+                        <span className="text-xs font-bold block truncate">{opt.label}</span>
+                        <span className="text-[10px] opacity-75 font-normal block truncate">{opt.sub}</span>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            {formData.options.projectVariants === "3 versions" ? (
+              <div className="space-y-2 pt-2 border-t border-border/40">
+                <label className="block text-xs font-bold text-primary">Specify 3 target roles to tailor for:</label>
+                {(() => {
+                  const branch = formData.personal.branch;
+                  const suggestions: Record<string, string[]> = {
+                    "CSE": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Mobile App Developer", "Cloud Engineer", "Site Reliability Engineer (SRE)", "Machine Learning Engineer", "Security Engineer", "QA Engineer", "Database Administrator", "Product Manager", "Business Analyst", "UX/UI Designer"],
+                    "IT": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Cloud Engineer", "Network Engineer", "IT Consultant", "Systems Analyst", "Database Administrator", "Information Security Analyst", "Cloud Architect", "QA Engineer", "Scrum Master", "Product Manager"],
+                    "AI & DS": ["Data Scientist", "Machine Learning Engineer", "AI Researcher", "Data Analyst", "Data Engineer", "NLP Engineer", "Computer Vision Engineer", "MLOps Engineer", "Business Intelligence Analyst", "Big Data Engineer", "AI Product Manager", "Deep Learning Engineer", "Robotics Engineer"],
+                    "Cyber Security": ["Security Analyst", "Penetration Tester", "Security Engineer", "Ethical Hacker", "Information Security Consultant", "Cyber Security Architect", "Incident Responder", "Cloud Security Engineer", "SOC Analyst", "Cryptographer", "Forensics Investigator", "Vulnerability Assessor", "IAM Engineer"],
+                    "ECE": ["Embedded Software Engineer", "VLSI Design Engineer", "Hardware Engineer", "Network Engineer", "Systems Engineer", "Software Engineer", "Telecommunications Engineer", "RF Engineer", "IoT Engineer", "FPGA Engineer", "Application Engineer", "Hardware Verification Engineer", "Field Engineer", "Firmware Engineer"],
+                    "EEE": ["Electrical Engineer", "Power Systems Engineer", "Control Systems Engineer", "Electronics Engineer", "Software Engineer", "Renewable Energy Engineer", "Grid Engineer", "Automation Engineer", "Instrumentation Engineer", "Test Engineer", "Project Engineer", "Robotics Engineer", "Design Engineer"],
+                    "Mechanical": ["Mechanical Engineer", "Design Engineer", "Manufacturing Engineer", "Thermal Engineer", "Automotive Engineer", "HVAC Engineer", "CAD Designer", "Production Engineer", "Quality Engineer", "Supply Chain Analyst", "Robotics Engineer", "Mechatronics Engineer", "Piping Engineer", "Aerospace Engineer"],
+                    "Civil": ["Civil Engineer", "Structural Engineer", "Construction Manager", "Geotechnical Engineer", "Transportation Engineer", "Environmental Engineer", "Urban Planner", "Water Resources Engineer", "Surveying Engineer", "Site Engineer", "CAD Technician", "Estimator", "BIM Engineer"],
+                    "Chemical": ["Chemical Engineer", "Process Engineer", "Process Design Engineer", "Production Engineer", "R&D Engineer", "Quality Control Engineer", "Plant Engineer", "Biochemical Engineer", "Materials Engineer", "Safety Engineer", "Petrochemical Engineer", "Energy Engineer"],
+                    "Biotechnology": ["Biotechnologist", "Bioinformatics Scientist", "Research Associate", "Clinical Research Associate", "Biomedical Engineer", "Bioprocess Engineer", "Geneticist", "Pharmaceutical Engineer", "Quality Assurance Specialist", "Data Analyst", "Microbiologist", "Regulatory Affairs Specialist"],
+                    "Aerospace": ["Aerospace Engineer", "Aerodynamics Engineer", "Propulsion Engineer", "Avionics Engineer", "Flight Test Engineer", "Spacecraft Engineer", "Systems Engineer", "Stress Engineer", "Materials Engineer", "Aircraft Designer", "Quality Engineer", "UAV Engineer"],
+                  };
+                  const rolesList = suggestions[branch] || ["Software Engineer", "Data Analyst", "Product Manager", "Business Analyst", "System Analyst", "Consultant"];
+                  const currentRoles = formData.options.targetRoles || ["", "", ""];
+
+                  return (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      {[0, 1, 2].map((i) => (
+                        <div key={i} className="relative">
+                          <select
+                            className="w-full px-2.5 py-1.5 border border-border/50 rounded-lg bg-bg-base focus:ring-1 focus:ring-primary focus:border-transparent outline-none text-xs font-medium appearance-none pr-7 cursor-pointer"
+                            value={currentRoles[i] || ""}
+                            onChange={(e) => {
+                              const newRoles = [...currentRoles];
+                              newRoles[i] = e.target.value;
+                              updateOptions({ targetRoles: newRoles });
+                            }}
+                          >
+                            <option value="" disabled>Role {i + 1}</option>
+                            {rolesList.map(role => {
+                              const isDuplicate = currentRoles.includes(role) && currentRoles[i] !== role;
+                              return (
+                                <option key={role} value={role} disabled={isDuplicate}>
+                                  {role} {isDuplicate ? "(Already Selected)" : ""}
+                                </option>
+                              );
+                            })}
+                          </select>
+                          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+                {validationErrors.targetRoles && (
+                  <p className="text-xs text-error font-semibold mt-1">{validationErrors.targetRoles}</p>
+                )}
+              </div>
+            ) : (
+              <p className="text-[11px] text-text-muted leading-relaxed px-0.5">
+                Generates a single high-impact set of bullet points suitable for general applications across all target companies.
+              </p>
+            )}
+          </div>
         </div>
 
         {/* ── TEMPLATE SELECTION GALLERY ── */}
@@ -2335,7 +2448,7 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
             <div className="flex items-center gap-3">
               <div className="h-5 w-1 rounded-full bg-primary" />
               <h3 className="text-sm font-extrabold text-text uppercase tracking-wider">
-                2. Available {filterTab === "photo" ? "Photo" : "Plain"} Templates
+                3. Available {filterTab === "photo" ? "Photo" : "Plain"} Templates
               </h3>
             </div>
             <span className="text-xs text-primary font-bold hidden sm:inline">
@@ -2368,7 +2481,7 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
                     </div>
                   )}
 
-                  {/* Clean height Document Preview */}
+                  {/* A4 Aspect Ratio Document Preview */}
                   {tmpl.preview}
 
                   {/* Title & Desc directly inside card */}
@@ -2383,102 +2496,6 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
                 </div>
               );
             })}
-          </div>
-        </div>
-
-        {/* ── BOTTOM: PROJECT VARIATIONS & TARGET ROLES ── */}
-        <div className="border-t border-border/40 pt-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="h-5 w-1 rounded-full bg-primary" />
-            <h3 className="text-sm font-extrabold text-text uppercase tracking-wider">3. Project Bullet Variations</h3>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 bg-surface p-5 rounded-2xl border border-border">
-            <div className="space-y-3">
-              <label className="block text-sm font-semibold text-text">How many variations of project bullets do you want?</label>
-              <div className="flex flex-col sm:flex-row gap-3">
-                {[
-                  { label: "1 standard version", val: "1 version" },
-                  { label: "3 versions for different roles (₹99)", val: "3 versions" }
-                ].map((opt, idx) => (
-                  <label
-                    key={idx}
-                    className={`flex-1 flex items-center space-x-2.5 p-3 rounded-xl border cursor-pointer transition-all ${
-                      formData.options.projectVariants === opt.val
-                        ? "border-primary bg-primary/5 text-primary font-bold"
-                        : "border-border hover:border-primary/40 text-text-muted"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="variants"
-                      className="accent-primary"
-                      checked={formData.options.projectVariants === opt.val}
-                      onChange={() => updateOptions({ projectVariants: opt.val as any })}
-                    />
-                    <span className="text-xs">{opt.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {formData.options.projectVariants === "3 versions" && (
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-primary">Specify the 3 target roles to tailor for:</label>
-                {(() => {
-                  const branch = formData.personal.branch;
-                  const suggestions: Record<string, string[]> = {
-                    "CSE": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Mobile App Developer", "Cloud Engineer", "Site Reliability Engineer (SRE)", "Machine Learning Engineer", "Security Engineer", "QA Engineer", "Database Administrator", "Product Manager", "Business Analyst", "UX/UI Designer"],
-                    "IT": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Cloud Engineer", "Network Engineer", "IT Consultant", "Systems Analyst", "Database Administrator", "Information Security Analyst", "Cloud Architect", "QA Engineer", "Scrum Master", "Product Manager"],
-                    "AI & DS": ["Data Scientist", "Machine Learning Engineer", "AI Researcher", "Data Analyst", "Data Engineer", "NLP Engineer", "Computer Vision Engineer", "MLOps Engineer", "Business Intelligence Analyst", "Big Data Engineer", "AI Product Manager", "Deep Learning Engineer", "Robotics Engineer"],
-                    "Cyber Security": ["Security Analyst", "Penetration Tester", "Security Engineer", "Ethical Hacker", "Information Security Consultant", "Cyber Security Architect", "Incident Responder", "Cloud Security Engineer", "SOC Analyst", "Cryptographer", "Forensics Investigator", "Vulnerability Assessor", "IAM Engineer"],
-                    "ECE": ["Embedded Software Engineer", "VLSI Design Engineer", "Hardware Engineer", "Network Engineer", "Systems Engineer", "Software Engineer", "Telecommunications Engineer", "RF Engineer", "IoT Engineer", "FPGA Engineer", "Application Engineer", "Hardware Verification Engineer", "Field Engineer", "Firmware Engineer"],
-                    "EEE": ["Electrical Engineer", "Power Systems Engineer", "Control Systems Engineer", "Electronics Engineer", "Software Engineer", "Renewable Energy Engineer", "Grid Engineer", "Automation Engineer", "Instrumentation Engineer", "Test Engineer", "Project Engineer", "Robotics Engineer", "Design Engineer"],
-                    "Mechanical": ["Mechanical Engineer", "Design Engineer", "Manufacturing Engineer", "Thermal Engineer", "Automotive Engineer", "HVAC Engineer", "CAD Designer", "Production Engineer", "Quality Engineer", "Supply Chain Analyst", "Robotics Engineer", "Mechatronics Engineer", "Piping Engineer", "Aerospace Engineer"],
-                    "Civil": ["Civil Engineer", "Structural Engineer", "Construction Manager", "Geotechnical Engineer", "Transportation Engineer", "Environmental Engineer", "Urban Planner", "Water Resources Engineer", "Surveying Engineer", "Site Engineer", "CAD Technician", "Estimator", "BIM Engineer"],
-                    "Chemical": ["Chemical Engineer", "Process Engineer", "Process Design Engineer", "Production Engineer", "R&D Engineer", "Quality Control Engineer", "Plant Engineer", "Biochemical Engineer", "Materials Engineer", "Safety Engineer", "Petrochemical Engineer", "Energy Engineer"],
-                    "Biotechnology": ["Biotechnologist", "Bioinformatics Scientist", "Research Associate", "Clinical Research Associate", "Biomedical Engineer", "Bioprocess Engineer", "Geneticist", "Pharmaceutical Engineer", "Quality Assurance Specialist", "Data Analyst", "Microbiologist", "Regulatory Affairs Specialist"],
-                    "Aerospace": ["Aerospace Engineer", "Aerodynamics Engineer", "Propulsion Engineer", "Avionics Engineer", "Flight Test Engineer", "Spacecraft Engineer", "Systems Engineer", "Stress Engineer", "Materials Engineer", "Aircraft Designer", "Quality Engineer", "UAV Engineer"],
-                  };
-                  const rolesList = suggestions[branch] || ["Software Engineer", "Data Analyst", "Product Manager", "Business Analyst", "System Analyst", "Consultant"];
-                  const currentRoles = formData.options.targetRoles || ["", "", ""];
-
-                  return (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                      {[0, 1, 2].map((i) => (
-                        <div key={i} className="relative">
-                          <select
-                            className="w-full px-3 py-2 border border-border/50 rounded-lg bg-bg-base focus:ring-1 focus:ring-primary focus:border-transparent outline-none text-xs font-medium appearance-none pr-8 cursor-pointer"
-                            value={currentRoles[i] || ""}
-                            onChange={(e) => {
-                              const newRoles = [...currentRoles];
-                              newRoles[i] = e.target.value;
-                              updateOptions({ targetRoles: newRoles });
-                            }}
-                          >
-                            <option value="" disabled>Role {i + 1}</option>
-                            {rolesList.map(role => {
-                              const isDuplicate = currentRoles.includes(role) && currentRoles[i] !== role;
-                              return (
-                                <option key={role} value={role} disabled={isDuplicate}>
-                                  {role} {isDuplicate ? "(Already Selected)" : ""}
-                                </option>
-                              );
-                            })}
-                          </select>
-                          <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">
-                            <ChevronDown className="w-3.5 h-3.5" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })()}
-                {validationErrors.targetRoles && (
-                  <p className="text-xs text-error font-semibold mt-1">{validationErrors.targetRoles}</p>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </div>
