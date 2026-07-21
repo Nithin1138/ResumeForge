@@ -14,7 +14,7 @@ interface PersonaData {
   skills: string[];
   education: { institution: string; degree: string; years: string }[];
   experience: { company: string; role: string; years: string; bullets: string[] }[];
-  projects: { title: string; tech: string; description: string }[];
+  projects: { title: string; tech: string; description: string; bullets?: string[] }[];
   certifications?: string[];
   achievements?: string[];
 }
@@ -28,7 +28,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98765 43210",
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
-    summary: "Senior Software Engineer with 6+ years of experience building high-throughput microservices, distributed cloud systems, and real-time backend platforms at scale. Expert in Spring Boot, AWS, Kafka, and containerized deployments.",
+    summary: "Senior Software Engineer with 6+ years of experience building high-throughput microservices, distributed cloud systems, and real-time backend platforms at scale. Expert in Spring Boot, AWS, Kafka, and containerized deployments. Proven track record of optimizing DB queries and leading development teams.",
     skills: ["Java, Spring Boot", "Microservices & REST", "Kafka & Redis", "AWS & Docker", "SQL & MongoDB", "Kubernetes & Helm", "Git & CI/CD Pipelines"],
     education: [
       { institution: "IIT Bombay", degree: "B.Tech Computer Science", years: "2015 – 2019" },
@@ -43,7 +43,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         bullets: [
           "Architected Big Billion Days checkout engine processing 120,000 requests/sec with 99.99% uptime.",
           "Reduced database query latency by 45% through Redis caching and PostgreSQL index optimization.",
-          "Designed multi-PSP failover payment gateway handler reducing checkout drop-offs by 14%.",
+          "Designed multi-PSP failover payment gateway handler reducing checkout drop-off rates by 14%.",
           "Mentored 8 junior software engineers and led agile sprint planning reviews.",
         ],
       },
@@ -68,12 +68,41 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
       },
     ],
     projects: [
-      { title: "Distributed Payment Gateway Adapter", tech: "Java 17, Spring Boot, AWS", description: "Multi-PSP failover service handling $40M daily digital transactions with automatic reconciliation." },
-      { title: "Real-time Order Tracking Engine", tech: "Node.js, Kafka, Redis", description: "Reduced order tracking API latency from 450ms to 42ms via WebSockets." },
-      { title: "Cloud Log Aggregator Service", tech: "Golang, Elasticsearch, Kibana", description: "Centralized monitoring system collecting logs from 120+ microservices in real-time." },
+      { 
+        title: "Distributed Payment Gateway Adapter", 
+        tech: "Java 17, Spring Boot, AWS", 
+        description: "Multi-PSP failover service handling $40M daily digital transactions with automatic reconciliation.",
+        bullets: [
+          "Implemented automatic retry and circuit breaker patterns using Resilience4j.",
+          "Integrated with 5 major Indian payment gateways with dynamic routing capabilities."
+        ]
+      },
+      { 
+        title: "Real-time Order Tracking Engine", 
+        tech: "Node.js, Kafka, Redis", 
+        description: "Reduced order tracking API latency from 450ms to 42ms via WebSockets.",
+        bullets: [
+          "Scaled tracking architecture to support 150k concurrent driver location updates.",
+          "Optimized geospatial lookups using Redis Geohash commands."
+        ]
+      },
+      { 
+        title: "Cloud Log Aggregator Service", 
+        tech: "Golang, Elasticsearch, Kibana", 
+        description: "Centralized monitoring system collecting logs from 120+ microservices in real-time.",
+        bullets: [
+          "Designed zero-loss buffer queues processing 50 GB of structured logs daily.",
+          "Created automated alerts triggering PagerDuty calls during high anomaly rates."
+        ]
+      },
     ],
     certifications: ["AWS Certified Solutions Architect – Associate", "Oracle Certified Professional Java SE 17", "Certified ScrumMaster (CSM)", "Google Cloud Cloud Architect"],
-    achievements: ["Flipkart Tech Innovation Award 2023", "National Cyber Olympiad Rank 14", "ACM ICPC Regional Qualifier", "1st Place Inter-College Hackathon"],
+    achievements: [
+      "Flipkart Tech Innovation Award 2023 - Recognized for Big Billion Days checkout reliability.",
+      "National Cyber Olympiad Rank 14 - Secured top percentile out of 250,000 participants.",
+      "ACM ICPC Regional Qualifier - Represented college team in national competitive coding.",
+      "1st Place Inter-College Hackathon - Developed real-time disaster management alert portal."
+    ],
   },
 
   recruiter_scan: {
@@ -114,11 +143,31 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
       },
     ],
     projects: [
-      { title: "Merchant Analytics Dashboard", tech: "React, Next.js, Recharts, Tailwind", description: "Real-time revenue monitoring portal processing 10M+ transaction logs per day." },
-      { title: "Automated Developer Onboarding Tool", tech: "Node.js, Docker, GitHub Actions", description: "Accelerated developer environment setup from 2 days to 15 minutes." },
+      { 
+        title: "Merchant Analytics Dashboard", 
+        tech: "React, Next.js, Recharts, Tailwind", 
+        description: "Real-time revenue monitoring portal processing 10M+ transaction logs per day.",
+        bullets: [
+          "Designed dynamic charting libraries supporting multi-year aggregation analysis.",
+          "Implemented localized payment flow UI supports for 8 vernacular Indian languages."
+        ]
+      },
+      { 
+        title: "Automated Developer Onboarding Tool", 
+        tech: "Node.js, Docker, GitHub Actions", 
+        description: "Accelerated developer environment setup from 2 days to 15 minutes.",
+        bullets: [
+          "Created pre-configured Docker containers containing mock API microservices.",
+          "Developed CLI script to automate environment configs and database seeds."
+        ]
+      },
     ],
     certifications: ["Meta Certified Front-End Developer", "Docker Certified Associate", "AWS Certified Cloud Practitioner"],
-    achievements: ["Razorpay Hackathon Winner 2022", "KVPY Scholar Fellowship Winner", "CBSE Merit Certificate for Math"],
+    achievements: [
+      "Razorpay Hackathon Winner 2022 - Developed instant refunds widget plugin.",
+      "KVPY Scholar Fellowship Winner - Awarded prestigious national science scholarship.",
+      "CBSE Merit Certificate for Math - Scored a perfect 100/100 in board examinations."
+    ],
   },
 
   skills_first: {
@@ -158,11 +207,31 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
       },
     ],
     projects: [
-      { title: "High-Throughput Settlement Engine", tech: "Go, gRPC, Cassandra", description: "Zero-data-loss financial transaction engine processing 30k TPS with strict consistency." },
-      { title: "Distributed Lock Manager", tech: "Rust, Raft Consensus", description: "Fault-tolerant cluster lock coordinator with sub-millisecond lease times." },
+      { 
+        title: "High-Throughput Settlement Engine", 
+        tech: "Go, gRPC, Cassandra", 
+        description: "Zero-data-loss financial transaction engine processing 30k TPS with strict consistency.",
+        bullets: [
+          "Created transactional logging adapters using double-entry bookkeeping validation.",
+          "Maintained 99.999% uptime during regional network outages."
+        ]
+      },
+      { 
+        title: "Distributed Lock Manager", 
+        tech: "Rust, Raft Consensus", 
+        description: "Fault-tolerant cluster lock coordinator with sub-millisecond lease times.",
+        bullets: [
+          "Developed light consensus heartbeats minimizing thread congestion overheads.",
+          "Implemented memory-safe lock state trackers utilizing Rust ownership patterns."
+        ]
+      },
     ],
     certifications: ["Certified Kubernetes Administrator (CKA)", "AWS Solutions Architect Pro", "Google Professional Cloud Architect"],
-    achievements: ["PhonePe Tech Fellow 2023", "ACM ICPC Regional Finalist", "Ranked 420 in JEE Advanced"],
+    achievements: [
+      "PhonePe Tech Fellow 2023 - Selected as one of top 3 technical contributors company-wide.",
+      "ACM ICPC Regional Finalist - Placed top 15 in Chennai regional competitive programming.",
+      "Ranked 420 in JEE Advanced - Secured top percentile admission to premium technical institutes."
+    ],
   },
 
   project_first: {
@@ -201,11 +270,31 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
       },
     ],
     projects: [
-      { title: "AI Food Recommendation Engine", tech: "Mixpanel, Python, SQL", description: "Grew average order value by ₹85 per user across 20 metro cities." },
-      { title: "Instant UPI Checkout Funnel", tech: "Figma, Amplitude", description: "Reduced checkout funnel drop-off rate from 18% to 4.2% through smart routing." },
+      { 
+        title: "AI Food Recommendation Engine", 
+        tech: "Mixpanel, Python, SQL", 
+        description: "Grew average order value by ₹85 per user across 20 metro cities.",
+        bullets: [
+          "Constructed cohort models analyzing high-value customer order histories.",
+          "Launched dynamic discount widgets yielding a 14% improvement in cart conversions."
+        ]
+      },
+      { 
+        title: "Instant UPI Checkout Funnel", 
+        tech: "Figma, Amplitude", 
+        description: "Reduced checkout funnel drop-off rate from 18% to 4.2% through smart routing.",
+        bullets: [
+          "Conducted usability interviews with 150+ target merchants.",
+          "Collaborated with fintech partners to enable quick authorization prompts."
+        ]
+      },
     ],
     certifications: ["Certified Scrum Product Owner (CSPO)", "Reforge Growth Series Certificate", "Pragmatic Institute Level VI"],
-    achievements: ["IIM Ahmedabad Gold Medalist", "Product Leader of the Year 2022", "JEE Advanced Air 189"],
+    achievements: [
+      "IIM Ahmedabad Gold Medalist - Graduated top of class in MBA cohort.",
+      "Product Leader of the Year 2022 - Awarded for Zomato Gold growth.",
+      "JEE Advanced Air 189 - Ranked top tier nationwide in college entrance."
+    ],
   },
 
   academic_premium: {
@@ -235,11 +324,31 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
       },
     ],
     projects: [
-      { title: "Multilingual Indic Speech Recognition", tech: "PyTorch, Transformers, CUDA", description: "Achieved state-of-the-art 94% accuracy across 12 Indian languages." },
-      { title: "Autonomous Vehicle Obstacle Detection", tech: "TensorFlow, OpenCV, ROS", description: "Real-time 60 FPS object detection model running on NVIDIA Jetson edge hardware." },
+      { 
+        title: "Multilingual Indic Speech Recognition", 
+        tech: "PyTorch, Transformers, CUDA", 
+        description: "Achieved state-of-the-art 94% accuracy across 12 Indian languages.",
+        bullets: [
+          "Fine-tuned Whisper models with localized Indian voice recordings.",
+          "Reduced parameter size by 40% using structured knowledge distillation."
+        ]
+      },
+      { 
+        title: "Autonomous Vehicle Obstacle Detection", 
+        tech: "TensorFlow, OpenCV, ROS", 
+        description: "Real-time 60 FPS object detection model running on NVIDIA Jetson edge hardware.",
+        bullets: [
+          "Designed custom YOLOv8 architectures optimized for low-power edge units.",
+          "Reduced collision warning API response latencies to under 5ms."
+        ]
+      },
     ],
     certifications: ["DeepLearning.AI TensorFlow Developer", "NVIDIA CUDA Specialist", "Google Cloud Professional MLE"],
-    achievements: ["Best Paper Award at CVPR 2022", "Prime Minister's Research Fellowship (PMRF)", "NTSE Scholar"],
+    achievements: [
+      "Best Paper Award at CVPR 2022 - Awarded for low-resource model research.",
+      "Prime Minister's Research Fellowship (PMRF) - Awarded to top PhD candidates in India.",
+      "NTSE Scholar - Recipient of prestigious national talent search scholarship."
+    ],
   },
 
   one_page_dense: {
@@ -277,11 +386,31 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
       },
     ],
     projects: [
-      { title: "Multi-Region Disaster Recovery Mesh", tech: "AWS EKS, Terraform, Istio", description: "Zero-downtime regional failover infrastructure handling 20M daily active users." },
-      { title: "Automated CI/CD Vulnerability Scanner", tech: "Python, Trivy, SonarQube", description: "Reduced production deployment security vulnerabilities by 90%." },
+      { 
+        title: "Multi-Region Disaster Recovery Mesh", 
+        tech: "AWS EKS, Terraform, Istio", 
+        description: "Zero-downtime regional failover infrastructure handling 20M daily active users.",
+        bullets: [
+          "Designed multi-region traffic routing adapters using AWS Route53 profiles.",
+          "Conducted automated failover drills with zero packet or data loss."
+        ]
+      },
+      { 
+        title: "Automated CI/CD Vulnerability Scanner", 
+        tech: "Python, Trivy, SonarQube", 
+        description: "Reduced production deployment security vulnerabilities by 90%.",
+        bullets: [
+          "Created automated blocking alerts inside Github Actions pipelines.",
+          "Configured compliance reports auto-sent to security team Slack channels."
+        ]
+      },
     ],
     certifications: ["AWS Certified DevOps Engineer Pro", "Certified Kubernetes Administrator (CKA)", "Terraform Associate"],
-    achievements: ["Paytm Engineering Award 2023", "AWS Community Builder 2022", "Top 50 Women in Tech India"],
+    achievements: [
+      "Paytm Engineering Award 2023 - Recognized for database disaster recovery.",
+      "AWS Community Builder 2022 - Selected for technical cloud contributions.",
+      "Top 50 Women in Tech India - Listed by national tech publication."
+    ],
   },
 };
 
@@ -402,7 +531,7 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     summary: "DevSecOps Lead specializing in cloud security automation, automated penetration testing, and zero-trust identity access management.",
     skills: ["AWS Security & IAM", "Penetration Testing", "Docker Security", "Python & Bash Scripts"],
     education: [{ institution: "DTU Delhi", degree: "B.Tech Information Technology", years: "2016 – 2020" }],
-    experience: [{ company: "Razorpay Financials", role: "Senior Security Specialist", years: "2021 – Present", bullets: ["Conacted penetration testing across 50+ microservices.", "Automated CI/CD security scanning using Trivy.", "Fixed critical security vulnerabilities in payment gateway."] }],
+    experience: [{ company: "Razorpay Financials", role: "Senior Security Specialist", years: "2021 – Present", bullets: ["Conducted penetration testing across 50+ microservices.", "Automated CI/CD security scanning using Trivy.", "Fixed critical security vulnerabilities in payment gateway."] }],
     projects: [{ title: "Zero-Trust API Gateway Shield", tech: "Python, Docker, OAuth2", description: "Protected financial endpoints against high-rate DDoS and OWASP threats." }],
     certifications: ["CISSP Certified Specialist", "CEH Master"],
     achievements: ["Top Bug Bounty Hall of Fame 2022"],
@@ -492,7 +621,7 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     summary: "Product Designer crafting intuitive SaaS interfaces, developer workspaces, Behance portfolios, and Figma design systems.",
     skills: ["Figma & Design Systems", "UX Research", "Prototyping", "HTML/CSS", "Wireframing"],
     education: [{ institution: "NID Bengaluru", degree: "B.Des Digital Media", years: "2016 – 2020" }],
-    experience: [{ company: "Postman Tech", role: "Senior Product Designer", years: "2021 – Present", bullets: ["Designed API documentation workspace interface.", "Improved user onboarding completion by 28%.", "Conacted user research sessions globally."] }],
+    experience: [{ company: "Postman Tech", role: "Senior Product Designer", years: "2021 – Present", bullets: ["Designed API documentation workspace interface.", "Improved user onboarding completion by 28%.", "Conducted user research sessions globally."] }],
     projects: [{ title: "Developer API Canvas Workspace", tech: "Figma, React", description: "Workspace UI utilized by 10M+ software engineers globally." }],
     certifications: ["Nielsen Norman UX Master"],
     achievements: ["Behance Featured Portfolio 2023"],
@@ -614,21 +743,20 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     return { key: s, label: labels[s] || s.toUpperCase() };
   });
 
+  const sectionCount = tmpl.sectionOrder.length;
+  // Dynamically set spacing: fewer sections get larger spacing gaps to distribute layout beautifully
+  const listGap = sectionCount <= 5 ? "space-y-4" : (sectionCount === 6 ? "space-y-3" : "space-y-2.5");
+
   // ── Helper to render a section block with clean, un-overflowed typography ──
   const renderSectionBlock = (secKey: string, secLabel: string) => {
-    // Determine bounds dynamically according to how many sections are displayed in the current template format
-    // This allows compact/sparse templates to expand details to fill space, and prevents high-density layouts from overflowing!
-    const sectionCount = tmpl.sectionOrder.length;
-    
-    // Default bounds
+    // Dynamically adjust bullet limits to fill up space
     let expLimit = 2;
     let bulletLimit = 2;
     let projLimit = 2;
     let certLimit = 2;
     let achLimit = 2;
 
-    if (tmpl.id === "silicon_valley" || tmpl.id === "tech_spec" || tmpl.id === "technical_matrix" || tmpl.id === "minimal_grid" || sectionCount <= 5) {
-      // Extremely compact layout/templates: expand items to fill the A4 page preview cleanly
+    if (tmpl.id === "silicon_valley" || tmpl.id === "tech_spec" || tmpl.id === "technical_matrix" || tmpl.id === "product_engineer" || tmpl.id === "minimal_grid" || sectionCount <= 5) {
       expLimit = 3;
       bulletLimit = 3;
       projLimit = 3;
@@ -638,8 +766,8 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
       expLimit = 2;
       bulletLimit = 3;
       projLimit = 2;
-      certLimit = 2;
-      achLimit = 2;
+      certLimit = 3;
+      achLimit = 3;
     }
 
     if (secKey === "summary" && p.summary) {
@@ -691,7 +819,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
       return (
         <div key={secKey} className="space-y-0.5 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          <p className="text-[5.5px] text-zinc-800 font-medium leading-tight truncate">
+          <p className="text-[5.5px] text-zinc-800 font-medium leading-tight whitespace-normal break-words">
             {p.skills.join(" • ")}
           </p>
         </div>
@@ -741,6 +869,9 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
             <div key={idx} className="space-y-0.5">
               <p className="text-[5.5px] font-bold text-zinc-900 truncate">{proj.title} <span className="text-[5px] font-normal text-zinc-500">[{proj.tech}]</span></p>
               <p className="text-[5px] text-zinc-600 leading-tight">• {proj.description}</p>
+              {proj.bullets && proj.bullets.slice(0, bulletLimit - 1).map((b, bi) => (
+                <p key={bi} className="text-[4.8px] text-zinc-500 leading-tight pl-2">• {b}</p>
+              ))}
             </div>
           ))}
         </div>
@@ -832,7 +963,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         </div>
 
         {/* Right Main Body Content */}
-        <div className="flex-1 p-2.5 flex flex-col space-y-2.5 min-w-0 bg-white">
+        <div className="flex-1 p-2.5 flex flex-col min-w-0 bg-white" style={{ gap: sectionCount <= 5 ? "16px" : "10px" }}>
           {!isPhoto && (
             <div className="pb-1 border-b border-zinc-200">
               <h2 className="text-[9px] font-extrabold text-zinc-900 uppercase tracking-tight">{p.name}</h2>
@@ -841,7 +972,9 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
           )}
 
           {/* Render Sections in exact Order */}
-          {sectionsToDisplay.map((sec) => renderSectionBlock(sec.key, sec.label))}
+          <div className={`flex-1 min-w-0 flex flex-col ${listGap}`}>
+            {sectionsToDisplay.map((sec) => renderSectionBlock(sec.key, sec.label))}
+          </div>
         </div>
 
         {/* PDF/DOCX Badge */}
@@ -862,7 +995,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
           <p className="text-[5.5px] text-zinc-700 font-bold">{p.title}</p>
           <p className="text-[5px] text-zinc-500 mt-0.5">{p.email} | {p.phone} | {p.location}</p>
         </div>
-        <div className="flex-1 min-w-0 pl-2 border-l border-zinc-300 ml-1 relative flex flex-col space-y-2.5 py-0.5">
+        <div className={`flex-1 min-w-0 pl-2 border-l border-zinc-300 ml-1 relative flex flex-col ${listGap} py-0.5`}>
           {sectionsToDisplay.map((sec) => (
             <div key={sec.key} className="relative">
               <div className="absolute -left-[11px] top-1 w-1.5 h-1.5 rounded-full bg-zinc-800 border border-white shrink-0" />
@@ -888,12 +1021,12 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
           <p className="text-[5px] text-zinc-500 mt-0.5">{p.email} • {p.phone} • {p.location}</p>
         </div>
         <div className="grid grid-cols-2 gap-2.5 flex-1 min-w-0 py-0.5">
-          <div className="border-r border-zinc-200 pr-1.5 flex flex-col space-y-2.5">
+          <div className="border-r border-zinc-200 pr-1.5 flex flex-col space-y-3.5">
             {renderSectionBlock("education", "EDUCATION")}
             {renderSectionBlock("skills", "TECHNICAL SKILLS")}
             {renderSectionBlock("certifications", "CERTIFICATIONS")}
           </div>
-          <div className="pl-0.5 flex flex-col space-y-2.5">
+          <div className="pl-0.5 flex flex-col space-y-3.5">
             {renderSectionBlock("summary", "PROFILE SUMMARY")}
             {renderSectionBlock("experience", "EMPLOYMENT HISTORY")}
             {renderSectionBlock("projects", "KEY PROJECTS")}
@@ -917,7 +1050,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
           <p className="text-[5.5px] font-serif text-zinc-700 italic">{p.title}</p>
           <p className="text-[5px] text-zinc-500 mt-0.5">{p.email} | {p.phone} | {p.location}</p>
         </div>
-        <div className="flex-1 min-w-0 flex flex-col space-y-2.5 py-0.5">
+        <div className={`flex-1 min-w-0 flex flex-col ${listGap} py-0.5`}>
           {sectionsToDisplay.map((sec) => {
             const numLabel = `${secCounter++}.0  ${sec.label}`;
             return renderSectionBlock(sec.key, numLabel);
@@ -953,7 +1086,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         </div>
 
         {/* Dynamic Full Content Sections */}
-        <div className="flex-1 min-w-0 flex flex-col space-y-2.5 py-0.5">
+        <div className={`flex-1 min-w-0 flex flex-col ${listGap} py-0.5`}>
           {sectionsToDisplay.map((sec) => renderSectionBlock(sec.key, sec.label))}
         </div>
 
@@ -997,7 +1130,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
       </div>
 
       {/* Dynamic Sections in Template Order */}
-      <div className="flex-1 min-w-0 flex flex-col space-y-2.5 py-0.5">
+      <div className={`flex-1 min-w-0 flex flex-col ${listGap} py-0.5`}>
         {sectionsToDisplay.map((sec) => renderSectionBlock(sec.key, sec.label))}
       </div>
 
