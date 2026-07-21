@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Sparkles, Copy, Check, Printer, Loader2, Building2, Briefcase, Sliders, FileText, User, GraduationCap, ChevronDown, ChevronUp } from "lucide-react";
+import { X, Sparkles, Copy, Check, Printer, Loader2, Building2, Briefcase, Sliders, FileText, User, GraduationCap, ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
 import CoverLetterPreview, { CoverLetterData } from "./CoverLetterPreview";
 
 interface CoverLetterModalProps {
@@ -44,7 +44,8 @@ export default function CoverLetterModal({
   const [tone, setTone] = useState("Professional & Executive");
   const [jobDescription, setJobDescription] = useState("");
   
-  const [showPersonalDetails, setShowPersonalDetails] = useState(isDirectMode);
+  // Accordion Step State (By default: Section 1 is open)
+  const [activeAccordion, setActiveAccordion] = useState<number>(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [coverLetter, setCoverLetter] = useState<CoverLetterData | null>(null);
@@ -128,14 +129,14 @@ export default function CoverLetterModal({
               </h3>
               <p className="text-xs text-text-muted">
                 {isDirectMode
-                  ? "Enter your candidate details & target company to generate an ATS-tailored cover letter."
+                  ? "Fill section details below to generate a tailored ATS cover letter."
                   : "Generate a 100% matching, ATS-optimized cover letter using your resume profile."}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-text-muted hover:text-text hover:bg-surface-hover transition-colors"
+            className="p-2 rounded-xl text-text-muted hover:text-text hover:bg-surface-hover transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -143,169 +144,253 @@ export default function CoverLetterModal({
 
         {/* Modal Body */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 divide-y lg:divide-y-0 lg:divide-x divide-border overflow-y-auto flex-1">
-          {/* Left Form Panel */}
-          <div className="lg:col-span-5 p-5 space-y-4 bg-surface/50 overflow-y-auto">
-            
-            {/* Direct Mode / Collapsible Personal Info Section */}
-            {isDirectMode && (
-              <div className="border border-border/80 rounded-xl bg-bg-base/60 p-3.5 space-y-3">
+          {/* Left Form Panel with Accordion Sections */}
+          <div className="lg:col-span-5 p-4 sm:p-5 space-y-3 bg-surface/50 overflow-y-auto flex flex-col justify-between">
+            <div className="space-y-3">
+              
+              {/* SECTION 1: CANDIDATE PROFILE (Shown in Standalone Mode, or editable in Resume Mode) */}
+              {isDirectMode && (
+                <div className="border border-border/80 rounded-xl bg-bg-base/70 overflow-hidden shadow-2xs">
+                  <button
+                    type="button"
+                    onClick={() => setActiveAccordion(activeAccordion === 1 ? 0 : 1)}
+                    className="w-full p-3.5 flex items-center justify-between text-left cursor-pointer hover:bg-surface/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-black flex items-center justify-center border border-primary/20">
+                        1
+                      </span>
+                      <div>
+                        <h4 className="text-xs font-extrabold text-text uppercase tracking-wider">Candidate Profile</h4>
+                        <p className="text-[10px] text-text-muted font-medium">
+                          {candidateName} • {candidateCollege || "College Details"}
+                        </p>
+                      </div>
+                    </div>
+                    {activeAccordion === 1 ? <ChevronUp className="w-4 h-4 text-primary" /> : <ChevronDown className="w-4 h-4 text-text-muted" />}
+                  </button>
+
+                  {activeAccordion === 1 && (
+                    <div className="p-3.5 pt-1 space-y-3 border-t border-border/40 bg-surface/30">
+                      <div>
+                        <label className="block text-[11px] font-bold text-text-muted mb-1">Full Name</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Aarav Sharma"
+                          value={candidateName}
+                          onChange={(e) => setCandidateName(e.target.value)}
+                          className="w-full px-3 py-2 rounded-lg border border-border bg-bg-base text-xs focus:ring-1 focus:ring-primary outline-none"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-[11px] font-bold text-text-muted mb-1">Email</label>
+                          <input
+                            type="email"
+                            placeholder="aarav@gmail.com"
+                            value={candidateEmail}
+                            onChange={(e) => setCandidateEmail(e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-border bg-bg-base text-xs focus:ring-1 focus:ring-primary outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-bold text-text-muted mb-1">Phone</label>
+                          <input
+                            type="text"
+                            placeholder="+91 98765 43210"
+                            value={candidatePhone}
+                            onChange={(e) => setCandidatePhone(e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-border bg-bg-base text-xs focus:ring-1 focus:ring-primary outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-[11px] font-bold text-text-muted mb-1">College Name</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. IIT Bombay"
+                            value={candidateCollege}
+                            onChange={(e) => setCandidateCollege(e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-border bg-bg-base text-xs focus:ring-1 focus:ring-primary outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-bold text-text-muted mb-1">Branch / Degree</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. CSE / IT"
+                            value={candidateBranch}
+                            onChange={(e) => setCandidateBranch(e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-border bg-bg-base text-xs focus:ring-1 focus:ring-primary outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-text-muted mb-1">Key Project / Accomplishment</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Microservices API backend in Node.js & Docker"
+                          value={candidateProject}
+                          onChange={(e) => setCandidateProject(e.target.value)}
+                          className="w-full px-3 py-2 rounded-lg border border-border bg-bg-base text-xs focus:ring-1 focus:ring-primary outline-none"
+                        />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setActiveAccordion(2)}
+                        className="w-full py-2 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold rounded-lg border border-primary/25 transition-colors flex items-center justify-center gap-1 cursor-pointer mt-1"
+                      >
+                        <span>Next: Target Application</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* SECTION 2: TARGET APPLICATION DETAILS */}
+              <div className="border border-border/80 rounded-xl bg-bg-base/70 overflow-hidden shadow-2xs">
                 <button
                   type="button"
-                  onClick={() => setShowPersonalDetails(!showPersonalDetails)}
-                  className="w-full flex items-center justify-between text-xs font-bold text-text uppercase tracking-wider text-left cursor-pointer"
+                  onClick={() => setActiveAccordion(activeAccordion === (isDirectMode ? 2 : 1) ? 0 : (isDirectMode ? 2 : 1))}
+                  className="w-full p-3.5 flex items-center justify-between text-left cursor-pointer hover:bg-surface/50 transition-colors"
                 >
-                  <span className="flex items-center gap-1.5 text-primary">
-                    <User className="w-4 h-4" /> Candidate Details
-                  </span>
-                  {showPersonalDetails ? <ChevronUp className="w-4 h-4 text-text-muted" /> : <ChevronDown className="w-4 h-4 text-text-muted" />}
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-black flex items-center justify-center border border-primary/20">
+                      {isDirectMode ? "2" : "1"}
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-extrabold text-text uppercase tracking-wider">Target Application</h4>
+                      <p className="text-[10px] text-text-muted font-medium">
+                        {companyName || "Target Company"} • {targetRole || defaultRole}
+                      </p>
+                    </div>
+                  </div>
+                  {activeAccordion === (isDirectMode ? 2 : 1) ? <ChevronUp className="w-4 h-4 text-primary" /> : <ChevronDown className="w-4 h-4 text-text-muted" />}
                 </button>
 
-                {showPersonalDetails && (
-                  <div className="space-y-3 pt-2 border-t border-border/40">
+                {activeAccordion === (isDirectMode ? 2 : 1) && (
+                  <div className="p-3.5 pt-1 space-y-3 border-t border-border/40 bg-surface/30">
                     <div>
-                      <label className="block text-[11px] font-bold text-text-muted mb-1">Full Name</label>
+                      <label className="block text-[11px] font-bold text-text-muted mb-1 flex items-center gap-1">
+                        <Building2 className="w-3.5 h-3.5 text-primary" /> Target Company Name
+                      </label>
                       <input
                         type="text"
-                        placeholder="e.g. Aarav Sharma"
-                        value={candidateName}
-                        onChange={(e) => setCandidateName(e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-xs focus:ring-1 focus:ring-primary outline-none"
+                        placeholder="e.g. Google, Flipkart, TCS, Accenture"
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-border bg-bg-base text-xs focus:ring-1 focus:ring-primary outline-none"
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[11px] font-bold text-text-muted mb-1">Email</label>
-                        <input
-                          type="email"
-                          placeholder="aarav@gmail.com"
-                          value={candidateEmail}
-                          onChange={(e) => setCandidateEmail(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-xs focus:ring-1 focus:ring-primary outline-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-bold text-text-muted mb-1">Phone</label>
-                        <input
-                          type="text"
-                          placeholder="+91 98765 43210"
-                          value={candidatePhone}
-                          onChange={(e) => setCandidatePhone(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-xs focus:ring-1 focus:ring-primary outline-none"
-                        />
-                      </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-text-muted mb-1 flex items-center gap-1">
+                        <Briefcase className="w-3.5 h-3.5 text-primary" /> Target Job Role
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Software Development Engineer"
+                        value={targetRole}
+                        onChange={(e) => setTargetRole(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-border bg-bg-base text-xs focus:ring-1 focus:ring-primary outline-none"
+                      />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[11px] font-bold text-text-muted mb-1">College Name</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. IIT Bombay"
-                          value={candidateCollege}
-                          onChange={(e) => setCandidateCollege(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-xs focus:ring-1 focus:ring-primary outline-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-bold text-text-muted mb-1">Branch / Degree</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. CSE / IT"
-                          value={candidateBranch}
-                          onChange={(e) => setCandidateBranch(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-xs focus:ring-1 focus:ring-primary outline-none"
-                        />
-                      </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveAccordion(isDirectMode ? 3 : 2)}
+                      className="w-full py-2 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold rounded-lg border border-primary/25 transition-colors flex items-center justify-center gap-1 cursor-pointer mt-1"
+                    >
+                      <span>Next: Tone & Style</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* SECTION 3: TONE & JOB DESCRIPTION */}
+              <div className="border border-border/80 rounded-xl bg-bg-base/70 overflow-hidden shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => setActiveAccordion(activeAccordion === (isDirectMode ? 3 : 2) ? 0 : (isDirectMode ? 3 : 2))}
+                  className="w-full p-3.5 flex items-center justify-between text-left cursor-pointer hover:bg-surface/50 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-black flex items-center justify-center border border-primary/20">
+                      {isDirectMode ? "3" : "2"}
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-extrabold text-text uppercase tracking-wider">Tone & Writing Style</h4>
+                      <p className="text-[10px] text-text-muted font-medium">
+                        {tone}
+                      </p>
+                    </div>
+                  </div>
+                  {activeAccordion === (isDirectMode ? 3 : 2) ? <ChevronUp className="w-4 h-4 text-primary" /> : <ChevronDown className="w-4 h-4 text-text-muted" />}
+                </button>
+
+                {activeAccordion === (isDirectMode ? 3 : 2) && (
+                  <div className="p-3.5 pt-1 space-y-3 border-t border-border/40 bg-surface/30">
+                    <div>
+                      <label className="block text-[11px] font-bold text-text-muted mb-1 flex items-center gap-1">
+                        <Sliders className="w-3.5 h-3.5 text-primary" /> Tone & Writing Style
+                      </label>
+                      <select
+                        value={tone}
+                        onChange={(e) => setTone(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-border bg-bg-base text-xs focus:ring-1 focus:ring-primary outline-none"
+                      >
+                        <option value="Professional & Executive">Professional & Executive</option>
+                        <option value="Technical & Impact-Driven">Technical & Impact-Driven</option>
+                        <option value="Enthusiastic & Startup Ready">Enthusiastic & Startup Ready</option>
+                      </select>
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-bold text-text-muted mb-1">Key Accomplishment / Project</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Built high-throughput microservice backend in Node.js & Docker"
-                        value={candidateProject}
-                        onChange={(e) => setCandidateProject(e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-xs focus:ring-1 focus:ring-primary outline-none"
+                      <label className="block text-[11px] font-bold text-text-muted mb-1 flex items-center gap-1">
+                        <FileText className="w-3.5 h-3.5 text-primary" /> Job Description Highlights (Optional)
+                      </label>
+                      <textarea
+                        rows={3}
+                        placeholder="Paste key requirements or job description text here for extra keyword matching..."
+                        value={jobDescription}
+                        onChange={(e) => setJobDescription(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-border bg-bg-base text-xs focus:ring-1 focus:ring-primary outline-none"
                       />
                     </div>
                   </div>
                 )}
               </div>
-            )}
 
-            {/* Target Application Settings */}
-            <div>
-              <label className="block text-xs font-bold text-text uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                <Building2 className="w-3.5 h-3.5 text-primary" /> Target Company Name
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Google, Flipkart, TCS, Accenture"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              />
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-text uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                <Briefcase className="w-3.5 h-3.5 text-primary" /> Target Job Role
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Software Development Engineer"
-                value={targetRole}
-                onChange={(e) => setTargetRole(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-text uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                <Sliders className="w-3.5 h-3.5 text-primary" /> Tone & Writing Style
-              </label>
-              <select
-                value={tone}
-                onChange={(e) => setTone(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+            {/* Always visible Bottom Generate Button */}
+            <div className="pt-3 border-t border-border/40 mt-3 shrink-0">
+              <button
+                onClick={handleGenerate}
+                disabled={isGenerating}
+                className="w-full py-3.5 px-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
               >
-                <option value="Professional & Executive">Professional & Executive</option>
-                <option value="Technical & Impact-Driven">Technical & Impact-Driven</option>
-                <option value="Enthusiastic & Startup Ready">Enthusiastic & Startup Ready</option>
-              </select>
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Generating Cover Letter...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    {coverLetter ? "Regenerate Cover Letter" : "✨ Generate Cover Letter"}
+                  </>
+                )}
+              </button>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-text uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                <FileText className="w-3.5 h-3.5 text-primary" /> Job Description Highlights (Optional)
-              </label>
-              <textarea
-                rows={3}
-                placeholder="Paste key requirements or job description text here for extra keyword matching..."
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-border bg-bg-base text-xs focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              />
-            </div>
-
-            <button
-              onClick={handleGenerate}
-              disabled={isGenerating}
-              className="w-full py-3.5 px-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Generating Tailored Cover Letter...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4" />
-                  {coverLetter ? "Regenerate Cover Letter" : "Generate Cover Letter"}
-                </>
-              )}
-            </button>
           </div>
 
           {/* Right Live Preview Panel */}
@@ -354,8 +439,8 @@ export default function CoverLetterModal({
                 <h4 className="text-sm font-bold text-text mb-1">No Cover Letter Generated Yet</h4>
                 <p className="text-xs text-text-muted max-w-xs mb-4">
                   {isDirectMode
-                    ? "Enter candidate details & target company on the left, then click Generate."
-                    : "Enter target company name on the left and click Generate to create a custom ATS cover letter."}
+                    ? "Fill the 3 section accordions on the left and click Generate."
+                    : "Fill target company & role on the left and click Generate to create a custom cover letter."}
                 </p>
               </div>
             )}
