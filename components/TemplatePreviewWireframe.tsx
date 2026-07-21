@@ -781,6 +781,56 @@ const PHOTO_PERSONAS: Record<string, PersonaData> = {
 };
 
 export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition }) {
+  // ── 0. AUTO-GENERATE PLAIN AI CARD (Trust ATSLift AI Engine) ──
+  if (tmpl.isAutoSelect) {
+    return (
+      <div className="w-full aspect-[1/1.41] bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white rounded-md p-3.5 overflow-hidden select-none relative flex flex-col justify-between border border-slate-700/80 shadow-md">
+        {/* Glow background effects */}
+        <div className="absolute top-0 right-0 w-28 h-28 bg-primary/25 rounded-full blur-xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-28 h-28 bg-indigo-500/15 rounded-full blur-xl pointer-events-none" />
+
+        {/* Card Header */}
+        <div className="space-y-1.5 z-10">
+          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/25 border border-primary/40 text-primary-light text-[6.5px] font-bold uppercase tracking-wider">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            Trust ATSLift AI Engine
+          </div>
+
+          <h3 className="text-[11px] font-extrabold text-white leading-tight tracking-tight">
+            Auto-Generate Best {tmpl.supportsPhoto ? "Photo" : "ATS"} Resume
+          </h3>
+          <p className="text-[6.5px] text-slate-300 leading-relaxed font-normal">
+            AI automatically analyzes your target role, branch, and experience density to select &amp; render the highest-scoring layout.
+          </p>
+        </div>
+
+        {/* Feature List */}
+        <div className="space-y-1.5 z-10 my-auto py-2 border-y border-slate-700/60">
+          <div className="flex items-center gap-1.5 text-[6.5px] text-slate-200">
+            <div className="w-3 h-3 rounded-full bg-primary/30 text-primary-light flex items-center justify-center text-[7px] font-bold shrink-0">✓</div>
+            <span>98.4% Average ATS Recruiter Pass Rate</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-[6.5px] text-slate-200">
+            <div className="w-3 h-3 rounded-full bg-primary/30 text-primary-light flex items-center justify-center text-[7px] font-bold shrink-0">✓</div>
+            <span>Auto-fits typography &amp; spacing to 1 page</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-[6.5px] text-slate-200">
+            <div className="w-3 h-3 rounded-full bg-primary/30 text-primary-light flex items-center justify-center text-[7px] font-bold shrink-0">✓</div>
+            <span>Tailors section order for your branch</span>
+          </div>
+        </div>
+
+        {/* Card Footer Badge */}
+        <div className="z-10 flex items-center justify-between pt-0.5">
+          <span className="text-[6px] font-bold text-slate-400 uppercase tracking-wider">100% Automated</span>
+          <span className="px-1.5 py-0.5 text-[6px] font-extrabold bg-primary text-white rounded-md shadow-xs uppercase tracking-wider">
+            AI RECOMMENDED
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   const accent = tmpl.accentColor || "#1e293b";
   const isPhoto = tmpl.supportsPhoto;
 
