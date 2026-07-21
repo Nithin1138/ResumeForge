@@ -1,0 +1,37 @@
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+import EditClient from "./EditClient";
+
+export const dynamic = "force-dynamic";
+
+export default async function EditPage() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    redirect("/login");
+  }
+
+  const user = await prisma.user.findFirst({
+    where: { email: session.user.email },
+    include: {
+      resumes: {
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const formattedSavedResumes = (user.resumes || []).map((r) => ({
+    id: r.id,
+    resumeName: r.resumeName,
+    targetRole: r.targetRole,
+    createdAt: r.createdAt.toISOString(),
+    inputData: r.inputData,
+  }));
+
+  return <EditClient savedResumes={formattedSavedResumes} />;
+}

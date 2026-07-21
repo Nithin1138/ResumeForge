@@ -56,10 +56,10 @@ export default function DesktopSidebar() {
       active: pathname.startsWith("/mycover-letters"),
     },
     {
-      name: "Edit / Build",
-      href: "/build",
+      name: "Edit Pages",
+      href: "/edit",
       icon: Edit3,
-      active: pathname.startsWith("/build"),
+      active: pathname.startsWith("/edit"),
     },
     {
       name: "My Space",
