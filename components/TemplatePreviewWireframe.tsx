@@ -1061,6 +1061,84 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     );
   }
 
+  // ── 4. TIMELINE LAYOUT (Timeline Professional) ──
+  if (tmpl.headerStyle === "timeline") {
+    return (
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2 text-[7.5px] leading-[1.2]">
+        <div className="pb-1.5 border-b border-zinc-200">
+          <h2 className="text-[10.5px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
+          <p className="text-[6.5px] text-zinc-700 font-bold">{p.title}</p>
+          <p className="text-[6px] text-zinc-500 mt-0.5">{p.email} | {p.phone} | {p.location}</p>
+        </div>
+        <div className="space-y-2 flex-1 min-w-0 pl-2 border-l-2 border-zinc-300 ml-1 relative">
+          {sectionsToDisplay.map((sec) => (
+            <div key={sec.key} className="relative">
+              <div className="absolute -left-[13px] top-1 w-2 h-2 rounded-full bg-zinc-900 border-2 border-white shrink-0" />
+              {renderSectionBlock(sec.key, sec.label)}
+            </div>
+          ))}
+        </div>
+        <div className="absolute bottom-1.5 right-1.5 flex gap-0.5 z-10">
+          <span className="px-1 py-0.5 text-[6px] font-bold bg-zinc-100/90 text-zinc-600 rounded-2xs border border-zinc-200 shadow-2xs">PDF</span>
+          <span className="px-1 py-0.5 text-[6px] font-bold bg-zinc-100/90 text-zinc-600 rounded-2xs border border-zinc-200 shadow-2xs">DOCX</span>
+        </div>
+      </div>
+    );
+  }
+
+  // ── 5. DUAL BLOCK LAYOUT (Dual Section 50/50) ──
+  if (tmpl.headerStyle === "dual_block") {
+    return (
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2 text-[7.5px] leading-[1.2]">
+        <div className="pb-1.5 border-b border-zinc-200 text-center">
+          <h2 className="text-[10.5px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
+          <p className="text-[6.5px] text-zinc-700 font-bold">{p.title}</p>
+          <p className="text-[6px] text-zinc-500 mt-0.5">{p.email} • {p.phone} • {p.location}</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 flex-1 min-w-0">
+          <div className="space-y-2 border-r border-zinc-200 pr-2">
+            {renderSectionBlock("education", "EDUCATION")}
+            {renderSectionBlock("skills", "TECHNICAL SKILLS")}
+            {renderSectionBlock("certifications", "CERTIFICATIONS")}
+          </div>
+          <div className="space-y-2 pl-0.5">
+            {renderSectionBlock("summary", "PROFILE SUMMARY")}
+            {renderSectionBlock("experience", "EMPLOYMENT HISTORY")}
+            {renderSectionBlock("projects", "KEY PROJECTS")}
+          </div>
+        </div>
+        <div className="absolute bottom-1.5 right-1.5 flex gap-0.5 z-10">
+          <span className="px-1 py-0.5 text-[6px] font-bold bg-zinc-100/90 text-zinc-600 rounded-2xs border border-zinc-200 shadow-2xs">PDF</span>
+          <span className="px-1 py-0.5 text-[6px] font-bold bg-zinc-100/90 text-zinc-600 rounded-2xs border border-zinc-200 shadow-2xs">DOCX</span>
+        </div>
+      </div>
+    );
+  }
+
+  // ── 6. NUMBERED LAYOUT (IEEE Research Paper) ──
+  if (tmpl.headerStyle === "numbered") {
+    let secCounter = 1;
+    return (
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2 text-[7.5px] leading-[1.2]">
+        <div className="pb-1.5 border-b border-zinc-300 text-center">
+          <h2 className="text-[10.5px] font-serif font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
+          <p className="text-[6.5px] font-serif text-zinc-700 italic">{p.title}</p>
+          <p className="text-[6px] text-zinc-500 mt-0.5">{p.email} | {p.phone} | {p.location}</p>
+        </div>
+        <div className="space-y-2 flex-1 min-w-0">
+          {sectionsToDisplay.map((sec) => {
+            const numLabel = `${secCounter++}.0  ${sec.label}`;
+            return renderSectionBlock(sec.key, numLabel);
+          })}
+        </div>
+        <div className="absolute bottom-1.5 right-1.5 flex gap-0.5 z-10">
+          <span className="px-1 py-0.5 text-[6px] font-bold bg-zinc-100/90 text-zinc-600 rounded-2xs border border-zinc-200 shadow-2xs">PDF</span>
+          <span className="px-1 py-0.5 text-[6px] font-bold bg-zinc-100/90 text-zinc-600 rounded-2xs border border-zinc-200 shadow-2xs">DOCX</span>
+        </div>
+      </div>
+    );
+  }
+
   // ── 2. CENTERED / PROFILE CARD LAYOUT (Student Profile Card / Academic) ──
   if (tmpl.headerStyle === "centered" || tmpl.headerStyle === "profile_card") {
     return (
