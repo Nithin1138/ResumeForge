@@ -45,7 +45,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         </header>
 
         {/* Main Body */}
-        <main className="flex-1 w-full max-w-6xl mx-auto p-4 md:p-8">
+        <main className="flex-1 w-full max-w-6xl mx-auto p-4 md:p-8 animate-fade-in transition-all duration-300 ease-out">
           {children}
         </main>
       </div>
