@@ -14,6 +14,7 @@ interface CoverLetterModalProps {
   initialCandidateName?: string;
   initialCompany?: string;
   initialRole?: string;
+  readOnly?: boolean;
 }
 
 export default function CoverLetterModal({
@@ -26,6 +27,7 @@ export default function CoverLetterModal({
   initialCandidateName,
   initialCompany,
   initialRole,
+  readOnly = false,
 }: CoverLetterModalProps) {
   const isDirectMode = !resumeId && (!inputData || !inputData?.personal?.fullName);
 
@@ -231,7 +233,8 @@ export default function CoverLetterModal({
         {/* Main Content Area */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-y-auto divide-y lg:divide-y-0 lg:divide-x divide-border/60">
           {/* Left Form Controls Panel */}
-          <div className="lg:col-span-5 p-4 md:p-6 space-y-4 overflow-y-auto bg-surface/40">
+          {!readOnly && (
+            <div className="lg:col-span-5 p-4 md:p-6 space-y-4 overflow-y-auto bg-surface/40">
             
             {/* Direct Candidate Details Accordion (If no resume passed) */}
             {isDirectMode && (
@@ -493,9 +496,10 @@ export default function CoverLetterModal({
               )}
             </button>
           </div>
+          )}
 
           {/* Right Document Preview Panel */}
-          <div className="lg:col-span-7 p-4 md:p-6 flex flex-col justify-between bg-bg-base/30 space-y-4">
+          <div className={`${readOnly ? "lg:col-span-12 max-w-3xl mx-auto w-full" : "lg:col-span-7"} p-4 md:p-6 flex flex-col justify-between bg-bg-base/30 space-y-4`}>
             <div className="flex-1 overflow-y-auto min-h-[420px] flex items-center justify-center">
               <CoverLetterPreview
                 data={coverLetter}

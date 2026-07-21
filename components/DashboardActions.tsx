@@ -121,6 +121,44 @@ export function ViewCoverLetterOutputButton({ letter }: { letter: any }) {
         initialCandidateName={letter.candidateName}
         initialCompany={letter.companyName}
         initialRole={letter.targetRole}
+        readOnly={true}
+      />
+    </>
+  );
+}
+
+export function EditCoverLetterButton({ letter }: { letter: any }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const initialData = {
+    recipient: letter.recipient || "Hiring Manager",
+    company: letter.companyName,
+    subject: letter.subject || `Application for ${letter.targetRole}`,
+    salutation: letter.salutation || "Dear Hiring Manager,",
+    openingParagraph: letter.openingParagraph,
+    bodyParagraph: letter.bodyParagraph,
+    closingParagraph: letter.closingParagraph,
+    signOff: letter.signOff || "Sincerely,",
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="p-2.5 text-text-muted hover:text-primary border border-border bg-bg-base/30 rounded-full transition-colors cursor-pointer shrink-0"
+        title="Edit Cover Letter"
+      >
+        <Edit2 className="w-4 h-4" />
+      </button>
+
+      <CoverLetterModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        initialCoverLetter={initialData}
+        initialCandidateName={letter.candidateName}
+        initialCompany={letter.companyName}
+        initialRole={letter.targetRole}
+        readOnly={false}
       />
     </>
   );
