@@ -12,11 +12,9 @@ export default async function WalletPage() {
     redirect("/login");
   }
 
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where: { email: session.user.email },
-    select: {
-      id: true,
-      walletBalance: true,
+    include: {
       walletTransactions: {
         orderBy: { createdAt: "desc" },
       },

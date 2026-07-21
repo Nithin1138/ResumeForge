@@ -12,14 +12,12 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: { email: session.user.email },
-      select: {
-        id: true,
-        walletBalance: true,
+      include: {
         walletTransactions: {
           orderBy: { createdAt: "desc" },
-          take: 20,
+          take: 50,
         },
       },
     });
