@@ -18,6 +18,7 @@ import {
   ArrowLeft
 } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
+import TagSelector from "@/components/TagSelector";
 import { EditTitle, DeleteButton } from "@/components/DashboardActions";
 
 export interface ResumeItem {
@@ -161,24 +162,26 @@ export default function MyResumesClient({ initialResumes }: { initialResumes: Re
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredResumes.map((resume) => {
-              const currentTag = CATEGORIES.find((c) => c.id === (resume.categoryTag || "blue")) || CATEGORIES[4];
+              const tagId = resume.categoryTag;
 
               return (
                 <div
                   key={resume.id}
                   className={`bg-surface border-2 rounded-3xl p-6 shadow-xs relative space-y-5 transition-all hover:shadow-md ${
-                    currentTag.id === "green"
+                    tagId === "green"
                       ? "border-emerald-500/40"
-                      : currentTag.id === "red"
+                      : tagId === "red"
                       ? "border-rose-500/40"
-                      : currentTag.id === "purple"
+                      : tagId === "purple"
                       ? "border-purple-500/40"
-                      : currentTag.id === "orange"
+                      : tagId === "orange"
                       ? "border-amber-500/40"
-                      : "border-sky-500/40"
+                      : tagId === "blue"
+                      ? "border-sky-500/40"
+                      : "border-border"
                   }`}
                 >
-                  {/* Top Bar: Date & Category Color Tag Selector */}
+                  {/* Top Bar: Date & + Tag Selector Button */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2 text-xs font-semibold text-text-muted">
                       <Calendar className="w-3.5 h-3.5" />
@@ -191,47 +194,23 @@ export default function MyResumesClient({ initialResumes }: { initialResumes: Re
                       </span>
                     </div>
 
-                    {/* Category Tag Selector Dropdown / Pills */}
-                    <div className="flex items-center space-x-1 bg-bg-base/60 p-1 rounded-full border border-border/50">
-                      {CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
-                        <button
-                          key={cat.id}
-                          type="button"
-                          onClick={() => handleUpdateCategory(resume.id, cat.id)}
-                          className={`w-4.5 h-4.5 rounded-full transition-all flex items-center justify-center cursor-pointer ${cat.dot} ${
-                            (resume.categoryTag || "blue") === cat.id
-                              ? "ring-2 ring-text ring-offset-1 scale-110"
-                              : "opacity-40 hover:opacity-100"
-                          }`}
-                          title={`Categorize as ${cat.label}`}
-                        >
-                          {(resume.categoryTag || "blue") === cat.id && (
-                            <Check className="w-2.5 h-2.5 text-white" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
+                    {/* Dotted + Tag Selector Button / Popover */}
+                    <TagSelector
+                      currentTag={resume.categoryTag}
+                      onSelectTag={async (newTag) => handleUpdateCategory(resume.id, newTag || "")}
+                    />
                   </div>
 
                   {/* Resume Title & Metadata */}
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between group">
-                      <h3 className="font-bold text-lg text-text">
-                        {resume.resumeName || resume.targetRole || "Engineering Resume"}
-                      </h3>
                       <EditTitle id={resume.id} currentTitle={resume.resumeName || resume.targetRole || "Untitled Resume"} />
                     </div>
 
-                    <div className="flex flex-wrap gap-2 text-xs text-text-muted font-medium">
+                    <div className="flex flex-wrap gap-2 text-xs text-text-muted font-medium pt-1">
                       {resume.college && <span>College: {resume.college}</span>}
                       {resume.branch && <span>• {resume.branch}</span>}
                       {resume.cgpa && <span>(CGPA: {resume.cgpa})</span>}
-                    </div>
-
-                    <div className="pt-1">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${currentTag.color}`}>
-                        {currentTag.label}
-                      </span>
                     </div>
                   </div>
 

@@ -14,6 +14,7 @@ import {
   Briefcase 
 } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
+import TagSelector from "@/components/TagSelector";
 import { DeleteCoverLetterButton, ViewCoverLetterOutputButton, CoverLetterButton } from "@/components/DashboardActions";
 
 export interface CoverLetterItem {
@@ -144,24 +145,26 @@ export default function MyCoverLettersClient({ initialLetters }: { initialLetter
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredLetters.map((letter) => {
-              const currentTag = CATEGORIES.find((c) => c.id === (letter.categoryTag || "blue")) || CATEGORIES[4];
+              const tagId = letter.categoryTag;
 
               return (
                 <div
                   key={letter.id}
                   className={`bg-surface border-2 rounded-3xl p-6 shadow-xs relative space-y-5 transition-all hover:shadow-md ${
-                    currentTag.id === "green"
+                    tagId === "green"
                       ? "border-emerald-500/40"
-                      : currentTag.id === "red"
+                      : tagId === "red"
                       ? "border-rose-500/40"
-                      : currentTag.id === "purple"
+                      : tagId === "purple"
                       ? "border-purple-500/40"
-                      : currentTag.id === "orange"
+                      : tagId === "orange"
                       ? "border-amber-500/40"
-                      : "border-sky-500/40"
+                      : tagId === "blue"
+                      ? "border-sky-500/40"
+                      : "border-border"
                   }`}
                 >
-                  {/* Top Bar: Date & Color Selector */}
+                  {/* Top Bar: Date & + Tag Selector Button */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2 text-xs font-semibold text-text-muted">
                       <Calendar className="w-3.5 h-3.5" />
@@ -174,25 +177,10 @@ export default function MyCoverLettersClient({ initialLetters }: { initialLetter
                       </span>
                     </div>
 
-                    <div className="flex items-center space-x-1 bg-bg-base/60 p-1 rounded-full border border-border/50">
-                      {CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
-                        <button
-                          key={cat.id}
-                          type="button"
-                          onClick={() => handleUpdateCategory(letter.id, cat.id)}
-                          className={`w-4.5 h-4.5 rounded-full transition-all flex items-center justify-center cursor-pointer ${cat.dot} ${
-                            (letter.categoryTag || "blue") === cat.id
-                              ? "ring-2 ring-text ring-offset-1 scale-110"
-                              : "opacity-40 hover:opacity-100"
-                          }`}
-                          title={`Categorize as ${cat.label}`}
-                        >
-                          {(letter.categoryTag || "blue") === cat.id && (
-                            <Check className="w-2.5 h-2.5 text-white" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
+                    <TagSelector
+                      currentTag={letter.categoryTag}
+                      onSelectTag={async (newTag) => handleUpdateCategory(letter.id, newTag || "")}
+                    />
                   </div>
 
                   {/* Company & Role */}
@@ -204,11 +192,6 @@ export default function MyCoverLettersClient({ initialLetters }: { initialLetter
                     <p className="text-xs text-text-muted font-medium">
                       Candidate: {letter.candidateName} {letter.candidateLocation ? `• ${letter.candidateLocation}` : ""}
                     </p>
-                    <div className="pt-1">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${currentTag.color}`}>
-                        {currentTag.label}
-                      </span>
-                    </div>
                   </div>
 
                   {/* Actions Row */}
