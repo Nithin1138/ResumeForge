@@ -205,30 +205,43 @@ export default function CoverLetterModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 md:p-6 z-50 animate-fade-in overflow-y-auto">
-      <div className="bg-surface border border-border/80 rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto">
-        {/* Header Bar */}
-        <div className="p-4 md:px-6 border-b border-border/60 flex items-center justify-between bg-surface">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="font-serif text-lg md:text-xl font-bold text-text">
-                Build Cover Letter
-              </h2>
-              <p className="text-[10px] md:text-xs text-text-muted font-medium">
-                Generate high-impact ATS cover letters aligned to your candidate profile.
-              </p>
-            </div>
-          </div>
-
+      <div className={`bg-surface border border-border/80 rounded-2xl w-full ${readOnly ? "max-w-3xl" : "max-w-5xl"} max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto relative`}>
+        {/* Close button for readOnly mode */}
+        {readOnly && (
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-bg-base text-text-muted hover:text-text transition-colors cursor-pointer"
+            className="absolute top-4 right-4 p-2 rounded-full bg-surface hover:bg-bg-base border border-border text-text-muted hover:text-text transition-all cursor-pointer z-50 shadow-md"
+            title="Close Preview"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
-        </div>
+        )}
+
+        {/* Header Bar */}
+        {!readOnly && (
+          <div className="p-4 md:px-6 border-b border-border/60 flex items-center justify-between bg-surface">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <div>
+                <h2 className="font-serif text-lg md:text-xl font-bold text-text">
+                  Build Cover Letter
+                </h2>
+                <p className="text-[10px] md:text-xs text-text-muted font-medium">
+                  Generate high-impact ATS cover letters aligned to your candidate profile.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-full hover:bg-bg-base text-text-muted hover:text-text transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        )}
 
         {/* Main Content Area */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-y-auto divide-y lg:divide-y-0 lg:divide-x divide-border/60">

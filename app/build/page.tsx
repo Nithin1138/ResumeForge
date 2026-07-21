@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useFormStore } from "@/stores/formStore";
 import { ArrowLeft, ArrowRight, Plus, Trash2, Loader2, Sparkles, Check, ChevronDown, X, Cloud, CloudOff, RotateCcw, User, Code2, Rocket, Briefcase, Wand2, Zap, ArrowUp, ArrowDown, Archive, Layout, Camera, Upload, Image as ImageIcon } from "lucide-react";
@@ -217,7 +217,7 @@ function TagInput({
   );
 }
 
-export default function BuildPage() {
+function BuildPageContent() {
   const [isHydrated, setIsHydrated] = useState(false);
   useEffect(() => {
     setIsHydrated(true);
@@ -285,6 +285,8 @@ export default function BuildPage() {
   };
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editResumeId = searchParams?.get("resumeId");
   const {
     formData,
     activeStep,
@@ -311,6 +313,25 @@ export default function BuildPage() {
     moveProjectUp,
     moveProjectDown,
   } = useFormStore();
+
+  useEffect(() => {
+    if (editResumeId) {
+      (async () => {
+        try {
+          const res = await fetch(`/api/resume/${editResumeId}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.inputData) {
+              setFullFormData(data.inputData);
+              goToStep(1);
+            }
+          }
+        } catch (error) {
+          console.error("Failed to load resume for editing:", error);
+        }
+      })();
+    }
+  }, [editResumeId, setFullFormData, goToStep]);
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [highlightedProjectIdx, setHighlightedProjectIdx] = useState<number | null>(null);
@@ -2933,5 +2954,19 @@ export default function BuildPage() {
         </div>
       )}
     </div>
+  );
+}
+
+import { Suspense } from "react";
+
+export default function BuildPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-bg-base text-text flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    }>
+      <BuildPageContent />
+    </Suspense>
   );
 }

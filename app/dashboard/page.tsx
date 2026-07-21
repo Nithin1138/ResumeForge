@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, Layout, Mail, User, Database, Bot, ArrowRight } from "lucide-react";
+import { Loader2, Plus, Sparkles, BookOpen, Trash2, Edit2, Calendar, FileText, CheckCircle2, ChevronRight, Layout, Mail, User, Database, Bot, ArrowRight } from "lucide-react";
 import { LogoutButton, DeleteButton, EditTitle, CoverLetterButton, DeleteCoverLetterButton, ViewCoverLetterOutputButton, EditCoverLetterButton } from "@/components/DashboardActions";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -224,7 +224,16 @@ export default async function DashboardPage() {
 
                     {/* Bottom Row: Actions */}
                     <div className="flex flex-row items-center justify-between border-t border-border/30 mt-4 md:mt-6 pt-3 md:pt-4 gap-4">
-                      <DeleteButton id={resumeItem.id} />
+                      <div className="flex items-center space-x-2">
+                        <DeleteButton id={resumeItem.id} />
+                        <Link
+                          href={`/build?resumeId=${resumeItem.id}`}
+                          className="p-2.5 text-text-muted hover:text-primary border border-border bg-bg-base/30 rounded-full transition-colors cursor-pointer shrink-0"
+                          title="Edit Resume Settings"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Link>
+                      </div>
 
                       <Link
                         href={isPaid ? `/success/${resumeItem.id}?sandbox=true` : `/result/${resumeItem.id}`}
