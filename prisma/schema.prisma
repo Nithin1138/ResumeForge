@@ -293,6 +293,11 @@ model MasterProfile {
   fullName           String?
   phone              String?
   location           String?
+  github             String?
+  linkedin           String?
+  portfolio          String?
+  noticePeriod       String?
+
   college            String?
   branch             String?
   cgpa               String?
@@ -303,6 +308,7 @@ model MasterProfile {
   projectsJson       String   @default("[]")
   experiencesJson    String   @default("[]")
   certificationsJson String   @default("[]")
+  customFieldsJson   String   @default("[]")
   customNotes        String?  @db.Text
 
   createdAt          DateTime @default(now())

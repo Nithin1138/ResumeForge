@@ -38,6 +38,11 @@ export async function POST(req: NextRequest) {
     if (mp) {
       profileContext = `
 Candidate Name: ${mp.fullName || user.name || "Candidate"}
+Phone: ${mp.phone || "N/A"}
+Location: ${mp.location || "N/A"}
+GitHub: ${mp.github || "N/A"}
+LinkedIn: ${mp.linkedin || "N/A"}
+Notice Period: ${mp.noticePeriod || "Immediate"}
 College: ${mp.college || "Engineering College"}
 Branch: ${mp.branch || "Computer Science / Engineering"}
 CGPA: ${mp.cgpa || "N/A"}
@@ -47,6 +52,7 @@ Technical Skills: ${mp.skillsJson}
 Projects: ${mp.projectsJson}
 Experience: ${mp.experiencesJson}
 Certifications: ${mp.certificationsJson}
+Custom Fields & Key-Value Details: ${mp.customFieldsJson}
 Custom Achievements & Notes: ${mp.customNotes || "None"}
       `.trim();
     } else if (user.resumes.length > 0) {
