@@ -69,9 +69,9 @@ export default function DesktopSidebar() {
     },
     {
       name: "Wallet",
-      href: "/dashboard#wallet",
+      href: "/wallet",
       icon: Wallet,
-      active: pathname === "/dashboard" && typeof window !== "undefined" && window.location.hash === "#wallet",
+      active: pathname.startsWith("/wallet"),
     },
     {
       name: "Profile",
@@ -135,7 +135,7 @@ export default function DesktopSidebar() {
       <div className="p-4 border-t border-border/40 space-y-3 bg-bg-base/30">
         {/* Wallet Balance Pill (Always rendered to avoid layout shifts) */}
         <Link
-          href="/dashboard#wallet"
+          href="/wallet"
           prefetch={true}
           className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between hover:bg-emerald-500/15 transition-all text-xs cursor-pointer min-h-[46px]"
         >
