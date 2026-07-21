@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, Layout } from "lucide-react";
-import { LogoutButton, DeleteButton, EditTitle } from "@/components/DashboardActions";
+import { LogoutButton, DeleteButton, EditTitle, CoverLetterButton } from "@/components/DashboardActions";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function DashboardPage() {
@@ -57,7 +57,8 @@ export default async function DashboardPage() {
           </span>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3 sm:space-x-4">
+          <CoverLetterButton variant="navbar" className="hidden sm:inline-flex" />
           <div className="hidden md:block text-right">
             <div className="text-sm font-bold text-text">{user.name || session.user.email?.split("@")[0]}</div>
             <div className="text-[10px] text-text-muted font-semibold">{session.user.email}</div>
@@ -88,13 +89,16 @@ export default async function DashboardPage() {
               Manage your engineering resume outputs, check ATS score statistics, and run modifications.
             </p>
           </div>
-          <Link
-            href="/build"
-            className="max-md:hidden px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Build New Resume</span>
-          </Link>
+          <div className="flex items-center gap-2.5 max-md:w-full">
+            <CoverLetterButton variant="header" className="max-md:flex-1" />
+            <Link
+              href="/build"
+              className="max-md:hidden px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Build New Resume</span>
+            </Link>
+          </div>
         </div>
 
         {/* Quick Stats Grid */}
@@ -140,7 +144,11 @@ export default async function DashboardPage() {
               {resumes.map((resumeItem) => {
                 const isPaid = resumeItem.paymentStatus === "PAID";
                 let atsScore = 85;
-                try { if (resumeItem.outputFull) { atsScore = JSON.parse(resumeItem.outputFull).atsScore || 85; } } catch {}
+                let parsedInputData = null;
+                try {
+                  if (resumeItem.outputFull) { atsScore = JSON.parse(resumeItem.outputFull).atsScore || 85; }
+                  if (resumeItem.inputData) { parsedInputData = JSON.parse(resumeItem.inputData); }
+                } catch {}
                 const isGood = atsScore >= 80;
                 
                 // Color-coded ATS scores
@@ -179,8 +187,11 @@ export default async function DashboardPage() {
                     </div>
 
                     {/* Bottom Row: Actions */}
-                    <div className="flex flex-row items-center justify-between border-t border-border/30 mt-4 md:mt-6 pt-3 md:pt-4 gap-4">
-                      <DeleteButton id={resumeItem.id} />
+                    <div className="flex flex-row items-center justify-between border-t border-border/30 mt-4 md:mt-6 pt-3 md:pt-4 gap-2.5">
+                      <div className="flex items-center gap-2">
+                        <DeleteButton id={resumeItem.id} />
+                        <CoverLetterButton variant="card" resumeId={resumeItem.id} inputData={parsedInputData} />
+                      </div>
 
                       <Link
                         href={isPaid ? `/success/${resumeItem.id}?sandbox=true` : `/result/${resumeItem.id}`}
@@ -206,13 +217,16 @@ export default async function DashboardPage() {
               <p className="text-sm text-text-muted max-w-sm mx-auto mb-6 font-semibold">
                 You haven&apos;t generated any ATS resume content yet. Fill out details and optimize your profile in 2 minutes.
               </p>
-              <Link
-                href="/build"
-                className="max-md:w-full max-md:min-h-[44px] px-6 py-3 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Start Building Now</span>
-              </Link>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <CoverLetterButton variant="header" />
+                <Link
+                  href="/build"
+                  className="max-md:w-full max-md:min-h-[44px] px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Start Building Resume</span>
+                </Link>
+              </div>
             </div>
           )}
         </div>
