@@ -2046,19 +2046,24 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
         desc: "A touch of personality with a well-organized resume structure.",
         supportsPhoto: false,
         preview: (
-          <div className="w-full h-48 bg-white text-zinc-800 rounded-lg p-2.5 shadow-sm border border-zinc-200 flex gap-2 overflow-hidden select-none relative">
+          <div className="w-full h-56 bg-white text-zinc-800 rounded-lg p-3 shadow-sm border border-zinc-200 flex gap-2.5 overflow-hidden select-none relative">
             {/* Left dark sidebar */}
-            <div className="w-1/3 bg-[#01696f] text-white p-1.5 flex flex-col space-y-1 rounded-xs shrink-0">
-              <div className="w-5 h-5 rounded-full bg-white/20 border border-white/40 flex items-center justify-center self-center my-0.5">
-                <User className="w-2.5 h-2.5 text-white" />
+            <div className="w-1/3 bg-[#01696f] text-white p-2 flex flex-col space-y-1.5 rounded-xs shrink-0">
+              <div className="w-6 h-6 rounded-full bg-white/20 border border-white/40 flex items-center justify-center self-center my-0.5">
+                <User className="w-3 h-3 text-white" />
               </div>
               <div className="w-3/4 h-1 bg-white/80 rounded-xs self-center" />
               <div className="w-full h-[0.5px] bg-white/30 my-0.5" />
               <div className="w-1/2 h-1 bg-white/60 rounded-xs" />
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 <div className="w-full h-0.5 bg-white/40 rounded-xs" />
                 <div className="w-4/5 h-0.5 bg-white/40 rounded-xs" />
                 <div className="w-3/4 h-0.5 bg-white/40 rounded-xs" />
+              </div>
+              <div className="w-1/2 h-1 bg-white/60 rounded-xs mt-1" />
+              <div className="space-y-1">
+                <div className="w-full h-0.5 bg-white/40 rounded-xs" />
+                <div className="w-4/5 h-0.5 bg-white/40 rounded-xs" />
               </div>
             </div>
             {/* Right content */}
@@ -2066,20 +2071,20 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
               <div className="w-2/3 h-2 bg-zinc-800 rounded-xs" />
               <div className="w-full h-[0.5px] bg-zinc-200" />
               <div className="w-1/3 h-1.5 bg-[#01696f] rounded-xs" />
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
                 <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
                 <div className="w-11/12 h-0.5 bg-zinc-300 rounded-xs" />
               </div>
               <div className="w-1/3 h-1.5 bg-[#01696f] rounded-xs mt-1" />
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
                 <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
               </div>
             </div>
             <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
+              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
+              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
             </div>
           </div>
         )
@@ -2091,11 +2096,11 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
         desc: "Professional and elegant resume template with clean timeline structure.",
         supportsPhoto: false,
         preview: (
-          <div className="w-full h-48 bg-white text-zinc-800 rounded-lg p-2.5 shadow-sm border border-zinc-200 flex flex-col items-center space-y-1.5 overflow-hidden select-none relative">
-            <div className="w-5 h-5 rounded-full bg-zinc-100 border border-zinc-300 flex items-center justify-center mb-0.5">
-              <User className="w-2.5 h-2.5 text-zinc-600" />
+          <div className="w-full h-56 bg-white text-zinc-800 rounded-lg p-3 shadow-sm border border-zinc-200 flex flex-col items-center space-y-1.5 overflow-hidden select-none relative">
+            <div className="w-6 h-6 rounded-full bg-zinc-100 border border-zinc-300 flex items-center justify-center mb-0.5">
+              <User className="w-3 h-3 text-zinc-600" />
             </div>
-            <div className="w-1/2 h-2 bg-zinc-800 rounded-xs text-center" />
+            <div className="w-1/2 h-2.5 bg-zinc-800 rounded-xs text-center" />
             <div className="w-3/4 h-1 bg-zinc-400 rounded-xs" />
             <div className="w-full h-[0.5px] bg-zinc-700 my-0.5" />
             <div className="w-full space-y-1 text-left">
@@ -2104,14 +2109,14 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
               <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
               <div className="w-5/6 h-0.5 bg-zinc-300 rounded-xs" />
             </div>
-            <div className="w-full space-y-1 text-left mt-0.5">
+            <div className="w-full space-y-1 text-left mt-1">
               <div className="w-1/4 h-1.5 bg-zinc-700 rounded-xs" />
               <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
               <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
             </div>
             <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
+              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
+              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
             </div>
           </div>
         )
@@ -2123,31 +2128,34 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
         desc: "Striking modern header, professional two column template structure.",
         supportsPhoto: false,
         preview: (
-          <div className="w-full h-48 bg-white text-zinc-800 rounded-lg p-0 shadow-sm border border-zinc-200 flex flex-col overflow-hidden select-none relative">
-            <div className="w-full bg-[#10b981] text-white p-2 flex items-center space-x-2 shrink-0">
-              <div className="w-4.5 h-4.5 rounded-full bg-white/30 border border-white flex items-center justify-center shrink-0">
-                <User className="w-2.5 h-2.5 text-white" />
+          <div className="w-full h-56 bg-white text-zinc-800 rounded-lg p-0 shadow-sm border border-zinc-200 flex flex-col overflow-hidden select-none relative">
+            <div className="w-full bg-[#10b981] text-white p-2.5 flex items-center space-x-2 shrink-0">
+              <div className="w-5 h-5 rounded-full bg-white/30 border border-white flex items-center justify-center shrink-0">
+                <User className="w-3 h-3 text-white" />
               </div>
               <div className="space-y-0.5 min-w-0 flex-1">
-                <div className="w-3/4 h-1.5 bg-white rounded-xs" />
+                <div className="w-3/4 h-2 bg-white rounded-xs" />
                 <div className="w-1/2 h-1 bg-white/70 rounded-xs" />
               </div>
             </div>
-            <div className="p-2 flex gap-2 flex-1">
-              <div className="w-1/3 border-r border-zinc-200 pr-1.5 space-y-1">
-                <div className="w-2/3 h-1 bg-emerald-600 rounded-xs" />
+            <div className="p-2.5 flex gap-2.5 flex-1">
+              <div className="w-1/3 border-r border-zinc-200 pr-2 space-y-1">
+                <div className="w-2/3 h-1.5 bg-emerald-600 rounded-xs" />
                 <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
                 <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-2/3 h-1.5 bg-emerald-600 rounded-xs mt-2" />
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
               </div>
               <div className="flex-1 space-y-1">
-                <div className="w-1/2 h-1 bg-emerald-600 rounded-xs" />
+                <div className="w-1/2 h-1.5 bg-emerald-600 rounded-xs" />
                 <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
                 <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-11/12 h-0.5 bg-zinc-300 rounded-xs" />
               </div>
             </div>
             <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
+              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
+              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
             </div>
           </div>
         )
@@ -2159,30 +2167,32 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
         desc: "Modern and eye-catching resume template. Beautiful contrasting structure.",
         supportsPhoto: true,
         preview: (
-          <div className="w-full h-48 bg-white text-zinc-800 rounded-lg p-2 shadow-sm border border-zinc-200 flex gap-2 overflow-hidden select-none relative">
+          <div className="w-full h-56 bg-white text-zinc-800 rounded-lg p-2.5 shadow-sm border border-zinc-200 flex gap-2.5 overflow-hidden select-none relative">
             <div className="flex-1 space-y-1.5 pt-0.5">
               <div className="flex items-center space-x-1.5">
-                <div className="w-4.5 h-4.5 rounded-full bg-zinc-100 border border-zinc-300 flex items-center justify-center shrink-0">
-                  <User className="w-2.5 h-2.5 text-zinc-600" />
+                <div className="w-5 h-5 rounded-full bg-zinc-100 border border-zinc-300 flex items-center justify-center shrink-0">
+                  <User className="w-3 h-3 text-zinc-600" />
                 </div>
                 <div className="w-2/3 h-2 bg-zinc-800 rounded-xs" />
               </div>
               <div className="w-full h-[0.5px] bg-zinc-200" />
-              <div className="w-1/2 h-1 bg-zinc-700 rounded-xs" />
-              <div className="space-y-0.5">
+              <div className="w-1/2 h-1.5 bg-zinc-700 rounded-xs" />
+              <div className="space-y-1">
                 <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
                 <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
                 <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
               </div>
             </div>
-            <div className="w-1/3 bg-[#1e3a8a] text-white p-1.5 rounded-xs space-y-1.5 shrink-0">
+            <div className="w-1/3 bg-[#1e3a8a] text-white p-2 rounded-xs space-y-1.5 shrink-0">
               <div className="w-full h-1 bg-white/80 rounded-xs" />
               <div className="w-full h-0.5 bg-white/40 rounded-xs" />
               <div className="w-4/5 h-0.5 bg-white/40 rounded-xs" />
+              <div className="w-full h-1 bg-white/80 rounded-xs mt-2" />
+              <div className="w-full h-0.5 bg-white/40 rounded-xs" />
             </div>
             <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
+              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
+              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
             </div>
           </div>
         )
@@ -2194,10 +2204,10 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
         desc: "Perfect balance of fresh and functional resume template design.",
         supportsPhoto: true,
         preview: (
-          <div className="w-full h-48 bg-white text-zinc-800 rounded-lg p-2.5 shadow-sm border border-zinc-200 flex flex-col space-y-1.5 overflow-hidden select-none relative">
+          <div className="w-full h-56 bg-white text-zinc-800 rounded-lg p-3 shadow-sm border border-zinc-200 flex flex-col space-y-1.5 overflow-hidden select-none relative">
             <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 rounded-md bg-amber-500/20 border border-amber-600 flex items-center justify-center shrink-0">
-                <User className="w-2.5 h-2.5 text-amber-700" />
+              <div className="w-6 h-6 rounded-md bg-amber-500/20 border border-amber-600 flex items-center justify-center shrink-0">
+                <User className="w-3 h-3 text-amber-700" />
               </div>
               <div className="space-y-0.5">
                 <div className="w-20 h-2 bg-zinc-800 rounded-xs" />
@@ -2216,13 +2226,18 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
               </div>
             </div>
             <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
+              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
+              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
             </div>
           </div>
         )
       },
     ];
+
+    const isPhotoTemplate = formData.options.hasPhoto;
+    const filterTab = isPhotoTemplate ? "photo" : "plain";
+
+    const filteredTemplates = templatesList.filter(t => filterTab === "photo" ? t.supportsPhoto : !t.supportsPhoto);
 
     return (
       <div className="space-y-8">
@@ -2231,79 +2246,97 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
           <p className="text-sm text-text-muted">Choose your template style, photo preferences, and variation count.</p>
         </div>
 
-        {/* ── TOP: PHOTO IN RESUME & UPLOAD ── */}
+        {/* ── SLIDE BAR / CATEGORY SWITCHER ── */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="h-5 w-1 rounded-full bg-primary" />
-            <h3 className="text-sm font-extrabold text-text uppercase tracking-wider">1. Profile Photo Options</h3>
+            <h3 className="text-sm font-extrabold text-text uppercase tracking-wider">1. Select Template Category</h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label className="flex items-center space-x-3 cursor-pointer p-4 rounded-2xl border border-border/60 hover:border-primary/40 bg-surface transition-colors">
-              <input
-                type="checkbox"
-                className="w-4.5 h-4.5 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
-                checked={formData.options.hasPhoto || false}
-                onChange={(e) => {
-                  const checked = e.target.checked;
-                  updateOptions({
-                    hasPhoto: checked,
-                    ...(!checked && { photoUrl: "" }),
-                    ...(checked && (formData.options.templateId === "modern" || formData.options.templateId === "classic" || formData.options.templateId === "minimal") && { templateId: "photo_modern" })
-                  });
-                }}
-              />
-              <div>
-                <span className="text-sm font-bold text-text">Need photo in resume?</span>
-                <span className="text-xs text-text-muted block mt-0.5">Enable headshot photo upload for photo-based templates.</span>
-              </div>
-            </label>
+          <div className="inline-flex p-1 bg-surface border border-border/80 rounded-2xl gap-1">
+            <button
+              type="button"
+              onClick={() => {
+                updateOptions({
+                  hasPhoto: false,
+                  templateId: "modern"
+                });
+              }}
+              className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                filterTab === "plain"
+                  ? "bg-primary text-white shadow-xs"
+                  : "text-text-muted hover:text-text hover:bg-border/30"
+              }`}
+            >
+              <span>Plain Resume (No Photo)</span>
+            </button>
 
-            {formData.options.hasPhoto && (
-              <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4">
-                <div className="flex items-center space-x-3">
-                  {formData.options.photoUrl ? (
-                    <div className="relative shrink-0">
-                      <img
-                        src={formData.options.photoUrl}
-                        alt="Profile preview"
-                        className="w-12 h-12 rounded-xl object-cover border-2 border-primary shadow-xs"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => updateOptions({ photoUrl: "", hasPhoto: false })}
-                        className="absolute -top-1.5 -right-1.5 bg-error text-white p-0.5 rounded-full shadow-xs hover:scale-110 transition-transform"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="w-12 h-12 rounded-xl border border-dashed border-primary/40 bg-surface flex items-center justify-center shrink-0">
-                      <Camera className="w-5 h-5 text-primary/50" />
-                    </div>
-                  )}
-                  <div>
-                    <span className="text-xs font-bold text-primary block">Headshot Photo</span>
-                    <span className="text-[10px] text-text-muted block">JPG, PNG, WEBP (Max 5MB)</span>
+            <button
+              type="button"
+              onClick={() => {
+                updateOptions({
+                  hasPhoto: true,
+                  templateId: "photo_modern"
+                });
+              }}
+              className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                filterTab === "photo"
+                  ? "bg-primary text-white shadow-xs"
+                  : "text-text-muted hover:text-text hover:bg-border/30"
+              }`}
+            >
+              <Camera className="w-3.5 h-3.5" />
+              <span>Photo Resume</span>
+            </button>
+          </div>
+
+          {/* UPLOAD HEADSHOT IMAGE WHEN IN PHOTO MODE */}
+          {filterTab === "photo" && (
+            <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4 mt-3 max-w-xl">
+              <div className="flex items-center space-x-3">
+                {formData.options.photoUrl ? (
+                  <div className="relative shrink-0">
+                    <img
+                      src={formData.options.photoUrl}
+                      alt="Profile preview"
+                      className="w-12 h-12 rounded-xl object-cover border-2 border-primary shadow-xs"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => updateOptions({ photoUrl: "" })}
+                      className="absolute -top-1.5 -right-1.5 bg-error text-white p-0.5 rounded-full shadow-xs hover:scale-110 transition-transform"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
                   </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-xl border border-dashed border-primary/40 bg-surface flex items-center justify-center shrink-0">
+                    <Camera className="w-5 h-5 text-primary/50" />
+                  </div>
+                )}
+                <div>
+                  <span className="text-xs font-bold text-primary block">Headshot Photo</span>
+                  <span className="text-[10px] text-text-muted block">JPG, PNG, WEBP (Max 5MB)</span>
                 </div>
-
-                <label className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-xl cursor-pointer transition-all shadow-xs shrink-0 flex items-center gap-1.5">
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>{formData.options.photoUrl ? "Change" : "Upload"}</span>
-                  <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
-                </label>
               </div>
-            )}
-          </div>
+
+              <label className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-xl cursor-pointer transition-all shadow-xs shrink-0 flex items-center gap-1.5">
+                <Upload className="w-3.5 h-3.5" />
+                <span>{formData.options.photoUrl ? "Change Photo" : "Upload Photo"}</span>
+                <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+              </label>
+            </div>
+          )}
         </div>
 
-        {/* ── MIDDLE: TEMPLATE SELECTION GALLERY ── */}
+        {/* ── TEMPLATE SELECTION GALLERY ── */}
         <div className="border-t border-border/40 pt-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-5 w-1 rounded-full bg-primary" />
-              <h3 className="text-sm font-extrabold text-text uppercase tracking-wider">2. Select Resume Template</h3>
+              <h3 className="text-sm font-extrabold text-text uppercase tracking-wider">
+                2. Available {filterTab === "photo" ? "Photo" : "Plain"} Templates
+              </h3>
             </div>
             <span className="text-xs text-primary font-bold hidden sm:inline">
               Selected: {templatesList.find(t => t.id === (formData.options.templateId || "modern"))?.name}
@@ -2311,7 +2344,7 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {templatesList.map((tmpl) => {
+            {filteredTemplates.map((tmpl) => {
               const isSelected = (formData.options.templateId || "modern") === tmpl.id;
               return (
                 <div
@@ -2319,7 +2352,7 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
                   onClick={() => {
                     updateOptions({
                       templateId: tmpl.id,
-                      hasPhoto: tmpl.supportsPhoto ? (formData.options.hasPhoto ?? true) : formData.options.hasPhoto
+                      hasPhoto: tmpl.supportsPhoto ? true : false
                     });
                   }}
                   className={`border rounded-2xl p-3.5 cursor-pointer transition-all relative flex flex-col justify-between space-y-3 bg-surface ${
