@@ -570,7 +570,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
             className="px-4 py-2 bg-gradient-to-r from-primary via-emerald-600 to-primary hover:opacity-95 text-white font-extrabold text-xs rounded-full flex items-center space-x-1.5 shadow-md hover:shadow-lg hover:scale-105 transition-all cursor-pointer ring-2 ring-primary/40"
           >
             <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-            <span>✨ Build Free Cover Letter</span>
+            <span>✨ Build Cover Letter</span>
             <span className="text-[9px] bg-amber-300 text-zinc-950 font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider ml-1 shadow-xs">
               FREE
             </span>
@@ -1412,14 +1412,14 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                   Included Free
                 </span>
               </div>
-              <p className="text-xs text-text-muted font-medium">Create a matching ATS cover letter tailored for any target company in seconds — included 100% free with your resume.</p>
+              <p className="text-xs text-text-muted font-medium">Create a matching ATS cover letter tailored for any target company in seconds.</p>
             </div>
             <button
               onClick={() => setCoverLetterModalOpen(true)}
               className="w-full py-3 bg-primary text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-2 transition-colors cursor-pointer shadow-md hover:shadow-lg"
             >
               <Sparkles className="w-4 h-4" />
-              <span>✨ Create Free Cover Letter</span>
+              <span>✨ Create Cover Letter</span>
             </button>
           </div>
         </div>
