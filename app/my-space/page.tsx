@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import MySpaceClient from "./MySpaceClient";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 export const metadata = {
   title: "My Space | ATSLift Candidate Vault",
@@ -12,7 +11,7 @@ export const metadata = {
 };
 
 export default async function MySpacePage() {
-  const session = await getServerSession(authOptions).catch(() => null);
+  const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
     redirect("/login");
