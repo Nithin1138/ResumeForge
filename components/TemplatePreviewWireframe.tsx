@@ -414,7 +414,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
   },
 };
 
-// ── 20 DISTINCT PHOTO PERSONAS (Each photo template has its own unique photo URL & Indian candidate profile) ──
+// ── 20 DISTINCT PHOTO PERSONAS (Fully enriched with text, experiences, projects, and custom certifications) ──
 const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
   auto_generate_photo: {
     name: "Priya V. Ananya",
@@ -423,13 +423,46 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98765 00112",
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
-    summary: "Cloud Systems Lead with 7+ years building enterprise microservices, API gateways, and automated DevOps architectures for banking sectors.",
-    skills: ["AWS & Kubernetes", "Java & Spring Boot", "Docker & Terraform", "PostgreSQL & Redis"],
-    education: [{ institution: "IIT Bombay", degree: "B.Tech Computer Science", years: "2015 – 2019" }],
-    experience: [{ company: "Flipkart Tech", role: "Lead Systems Architect", years: "2021 – Present", bullets: ["Scaled transaction systems to 100k requests/sec.", "Reduced infrastructure latency by 35% through Redis caching.", "Mentored 10 backend engineers."] }],
-    projects: [{ title: "Cloud Payment Routing Engine", tech: "Java, AWS EKS", description: "Real-time payment adapter handling ₹50M daily GMV with multi-provider failover." }],
-    certifications: ["AWS Solutions Architect Pro", "HashiCorp Terraform Certified"],
-    achievements: ["Flipkart Innovator Award 2022"],
+    summary: "Cloud Systems Lead with 7+ years building enterprise microservices, API gateways, and automated DevOps architectures for banking sectors. Specialist in high-performance computing, distributed databases, and security compliance.",
+    skills: ["AWS & Kubernetes", "Java & Spring Boot", "Docker & Terraform", "PostgreSQL & Redis", "Kafka & Redis", "Git & CI/CD Pipelines"],
+    education: [
+      { institution: "IIT Bombay", degree: "B.Tech Computer Science", years: "2015 – 2019" },
+      { institution: "National Public School", degree: "CBSE Class XII - 96.2%", years: "2013 – 2015" }
+    ],
+    experience: [
+      { 
+        company: "Flipkart Tech", 
+        role: "Lead Systems Architect", 
+        years: "2021 – Present", 
+        bullets: [
+          "Scaled payment transaction systems to support 100k concurrent requests/sec.",
+          "Reduced cloud infrastructure latency by 35% through smart Redis caching layers.",
+          "Mentored 10 backend engineers and conducted weekly architecture design audits."
+        ] 
+      },
+      {
+        company: "Swiggy Labs",
+        role: "Senior Backend Developer",
+        years: "2019 – 2021",
+        bullets: [
+          "Optimized food order routing engine latency from 1.2s to 120ms during peak hours.",
+          "Built event-driven microservices processing 2.4M transactions daily."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Cloud Payment Routing Engine", 
+        tech: "Java, AWS EKS", 
+        description: "Real-time payment adapter handling ₹50M daily GMV with multi-provider failover.",
+        bullets: [
+          "Integrated resilient failover switch handling API failure rates above 1.5%.",
+          "Automated ledger reconciliation with zero transaction variance audits."
+        ]
+      }
+    ],
+    certifications: ["AWS Solutions Architect Pro", "HashiCorp Terraform Certified", "Certified Kubernetes Security Specialist"],
+    achievements: ["Flipkart Innovator Award 2022", "Top Ranker ACM ICPC Regionals", "National Talent Scholar"],
   },
   photo_executive: {
     name: "Aarav Sharma",
@@ -438,13 +471,46 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98111 22334",
     location: "Delhi NCR",
     photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
-    summary: "Engineering Director scaling 100+ SDE organizations, distributed databases, real-time telemetry, and high-frequency messaging platforms.",
-    skills: ["Engineering Leadership", "Distributed Systems", "Go, C++, Rust", "Microservices & Kubernetes"],
-    education: [{ institution: "IIT Delhi", degree: "B.Tech Computer Science", years: "2012 – 2016" }],
-    experience: [{ company: "Tesla India R&D", role: "Director of Software", years: "2020 – Present", bullets: ["Scaled engineering team from 20 to 120 engineers.", "Architected telemetry platform processing 10B points.", "Delivered high-performance EV battery mapping software."] }],
-    projects: [{ title: "Vehicle Telemetry Stream Engine", tech: "Go, Apache Kafka", description: "Stream processing infrastructure scaling to 10M concurrent IoT devices." }],
-    certifications: ["AWS Certified DevOps Professional", "Certified Scrum Trainer"],
-    achievements: ["Engineering Leadership Excellence Award"],
+    summary: "Engineering Director scaling 100+ SDE organizations, distributed databases, real-time telemetry, and high-frequency messaging platforms for automotive EV domains.",
+    skills: ["Engineering Leadership", "Distributed Systems", "Go, C++, Rust", "Microservices & Kubernetes", "Scrum & Agile Development"],
+    education: [
+      { institution: "IIT Delhi", degree: "B.Tech Computer Science", years: "2012 – 2016" },
+      { institution: "Modern School, Barakhamba", degree: "CBSE Class XII - 95.4%", years: "2010 – 2012" }
+    ],
+    experience: [
+      { 
+        company: "Tesla India R&D", 
+        role: "Director of Software", 
+        years: "2020 – Present", 
+        bullets: [
+          "Scaled engineering team from 20 to 120 engineers across 3 locations in India.",
+          "Architected telemetry platform processing 10B vehicle points daily.",
+          "Delivered high-performance EV battery mapping software on schedule."
+        ] 
+      },
+      {
+        company: "Samsung R&D Noida",
+        role: "Senior Engineering Manager",
+        years: "2016 – 2020",
+        bullets: [
+          "Led development of camera processing applications for flagship galaxy devices.",
+          "Optimized image processing pipeline latencies by 32%."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Vehicle Telemetry Stream Engine", 
+        tech: "Go, Apache Kafka", 
+        description: "Stream processing infrastructure scaling to 10M concurrent IoT devices.",
+        bullets: [
+          "Maintained zero telemetry data loss during heavy cell tower disconnect cycles.",
+          "Implemented custom parser engine handling multiple network packet headers."
+        ]
+      }
+    ],
+    certifications: ["AWS Certified DevOps Professional", "Certified Scrum Trainer", "Stanford Executive Leadership Program"],
+    achievements: ["Engineering Leadership Excellence Award", "Samsung Special Patent Innovator", "IIT Delhi Alumni Scholar"],
   },
   photo_side_panel: {
     name: "Ananya Rao",
@@ -453,13 +519,46 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98222 33445",
     location: "Mumbai, MH",
     photoUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
-    summary: "Creative Director crafting digital mobile app experiences and multi-platform design systems for leading Indian tech consumer brands.",
-    skills: ["Figma & Design Systems", "UI/UX Prototyping", "User Research", "Design Tokens", "Typography"],
-    education: [{ institution: "NID Ahmedabad", degree: "B.Des Interaction Design", years: "2015 – 2019" }],
-    experience: [{ company: "Swiggy Design Studio", role: "Lead UI/UX Designer", years: "2021 – Present", bullets: ["Redesigned checkout flow increasing conversions by 24%.", "Created company-wide Figma design library and tokens.", "Conducted usability testing across 12 cities."] }],
-    projects: [{ title: "10-Minute Grocery Delivery App", tech: "Figma, Protopie", description: "Designed mobile app ordering experience for 2M active food buyers." }],
-    certifications: ["Nielsen Norman UX Certification", "HFI Certified Usability Analyst"],
-    achievements: ["India Design Mark Winner"],
+    summary: "Creative Director crafting digital mobile app experiences and multi-platform design systems for leading Indian tech consumer brands. Specialist in user-centric product discovery and Figma systems.",
+    skills: ["Figma & Design Systems", "UI/UX Prototyping", "User Research", "Design Tokens", "Typography", "Adobe Creative Suite"],
+    education: [
+      { institution: "NID Ahmedabad", degree: "B.Des Interaction Design", years: "2015 – 2019" },
+      { institution: "Cathedral School, Mumbai", degree: "ISC Board - 94.8%", years: "2013 – 2015" }
+    ],
+    experience: [
+      { 
+        company: "Swiggy Design Studio", 
+        role: "Lead UI/UX Designer", 
+        years: "2021 – Present", 
+        bullets: [
+          "Redesigned checkout flow increasing conversion rates by 24% globally.",
+          "Created company-wide Figma design library and tokens supporting 4 internal brands.",
+          "Conducted usability testing sessions across 12 tier-1 and tier-2 cities."
+        ] 
+      },
+      {
+        company: "Myntra Tech",
+        role: "Senior UI Designer",
+        years: "2019 – 2021",
+        bullets: [
+          "Designed fashion studio personalized feed interface resulting in 18% CTR growth.",
+          "Built visual assets, guidelines, and responsive layouts for shopping festivals."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "10-Minute Grocery Delivery App", 
+        tech: "Figma, Protopie", 
+        description: "Designed mobile app ordering experience for 2M active food buyers.",
+        bullets: [
+          "Completed comprehensive competitive analysis across 4 instant delivery systems.",
+          "Created interactive motion prototypes detailing shopping cart states."
+        ]
+      }
+    ],
+    certifications: ["Nielsen Norman UX Certification", "HFI Certified Usability Analyst", "IDF Design Specialist"],
+    achievements: ["India Design Mark Winner", "Kyoorius Design Fellow", "NID Academic Merit Scholarship"],
   },
   photo_student_card: {
     name: "Rohan Verma",
@@ -468,13 +567,56 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98333 44556",
     location: "Hyderabad, TS",
     photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
-    summary: "High-performing Computer Science graduate with strong algorithms, backend systems, and competitive coding background. Winner of national coding hackathons.",
-    skills: ["Python & C++", "Data Structures", "SQL & DBMS", "React & Node.js", "Git & Github"],
-    education: [{ institution: "BITS Pilani", degree: "B.E. Computer Science", years: "2020 – 2024" }],
-    experience: [{ company: "Amazon India", role: "SDE Intern", years: "2023 – 2024", bullets: ["Built automated catalog validation tool saving 40 SDE hours weekly.", "Integrated security scanners checking 1,000 packages/sec.", "Wrote unit tests achieving 94% code coverage."] }],
-    projects: [{ title: "Peer-to-Peer Code Review Portal", tech: "React, Node.js, Socket.io", description: "Real-time collaborative code editor used by 500+ university students." }],
-    certifications: ["AWS Certified Cloud Practitioner"],
-    achievements: ["ACM ICPC Regional Rank 12", "Smart India Hackathon Winner 2022"],
+    summary: "High-performing Computer Science graduate with strong algorithms, backend systems, and competitive coding background. Winner of national coding hackathons and active open-source contributor.",
+    skills: ["Python & C++", "Data Structures & Algos", "SQL & DBMS", "React & Node.js", "Git & Github", "AWS Cloud Foundation", "Linux Shell Scripting"],
+    education: [
+      { institution: "BITS Pilani", degree: "B.E. Computer Science", years: "2020 – 2024" },
+      { institution: "DPS Indiranagar, Bengaluru", degree: "CBSE Class XII - 97.8%", years: "2018 – 2020" },
+      { institution: "Bishop Cotton Boys School", degree: "ICSE Class X - 96.4%", years: "2016 – 2018" }
+    ],
+    experience: [
+      { 
+        company: "Amazon India", 
+        role: "SDE Intern", 
+        years: "2023 – 2024", 
+        bullets: [
+          "Built automated catalog validation tool saving 40 SDE hours weekly.",
+          "Integrated security scanners checking 1,000 product packages/sec.",
+          "Wrote automated unit tests achieving 94% overall code coverage."
+        ] 
+      },
+      {
+        company: "HackerEarth India",
+        role: "Campus Coding Lead",
+        years: "2022 – 2023",
+        bullets: [
+          "Organized 4 university hackathons with 1,200+ active participants.",
+          "Created programming challenge questions for campus competitive hackathons."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Peer-to-Peer Code Review Portal", 
+        tech: "React, Node.js, Socket.io", 
+        description: "Real-time collaborative code editor used by 500+ university students.",
+        bullets: [
+          "Developed synchronous text editor sync using CRDT algorithm.",
+          "Configured automated code execution environment using Docker containers."
+        ]
+      },
+      {
+        title: "Smart Dorm Automation System",
+        tech: "ESP32, Python, MQTT",
+        description: "IoT student dorm device automated access control saving energy bills.",
+        bullets: [
+          "Implemented secure Bluetooth login triggers reducing card tap times.",
+          "Configured sensor dashboards sending telemetry stats via MQTT."
+        ]
+      }
+    ],
+    certifications: ["AWS Certified Cloud Practitioner", "HackerRank Problem Solving Gold", "Google TensorFlow Developer"],
+    achievements: ["ACM ICPC Regional Rank 12", "Smart India Hackathon Winner 2022", "KVPY Fellow Rank 23"],
   },
   photo_corporate: {
     name: "Aditya Reddy",
@@ -483,13 +625,56 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98444 55667",
     location: "Mumbai, MH",
     photoUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&auto=format&fit=crop&q=80",
-    summary: "Corporate Finance Specialist managing investment portfolio strategy, corporate valuation, and financial risk assessment for enterprise banking.",
-    skills: ["Financial Modeling", "Corporate Valuation", "M&A Analytics", "Bloomberg Terminal", "Excel Macros"],
-    education: [{ institution: "IIM Ahmedabad", degree: "MBA Finance", years: "2017 – 2019" }],
-    experience: [{ company: "Goldman Sachs India", role: "Senior Financial Analyst", years: "2020 – Present", bullets: ["Executed ₹500 Cr M&A advisory transactions in India.", "Built financial valuation models for tech consumer startups.", "Presented strategic recommendations to board members."] }],
-    projects: [{ title: "Automated Credit Risk Scoring Engine", tech: "Python, Financial Models", description: "Reduced loan default risk evaluation turnaround from 3 days to 4 hours." }],
-    certifications: ["CFA Charterholder Level 3"],
-    achievements: ["Goldman Sachs Leadership Award", "IIM Gold Medalist"],
+    summary: "Corporate Finance Specialist managing investment portfolio strategy, corporate valuation, and financial risk assessment for enterprise banking. Expert in financial modeling and M&A analytics.",
+    skills: ["Financial Modeling", "Corporate Valuation", "M&A Analytics", "Bloomberg Terminal", "Excel Macros", "Investment Portfolio Management"],
+    education: [
+      { institution: "IIM Ahmedabad", degree: "MBA Finance", years: "2017 – 2019" },
+      { institution: "IIT Madras", degree: "B.Tech Civil Engineering", years: "2013 – 2017" },
+      { institution: "Loyola School, Jamshedpur", degree: "ISC Board - 96.8%", years: "2011 – 2013" }
+    ],
+    experience: [
+      { 
+        company: "Goldman Sachs India", 
+        role: "Senior Financial Analyst", 
+        years: "2020 – Present", 
+        bullets: [
+          "Executed ₹500 Cr M&A advisory transactions in India tech sectors.",
+          "Built financial valuation models for 12+ consumer startups raising Series B.",
+          "Presented strategic recommendations and pitchbooks to executive board members."
+        ] 
+      },
+      {
+        company: "ICICI Bank Corporate Group",
+        role: "Strategy Associate",
+        years: "2019 – 2020",
+        bullets: [
+          "Analyzed infrastructure loan portfolios valued above ₹2,000 Crores.",
+          "Prepared quarterly risk assessment reports for bank directors."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Automated Credit Risk Scoring Engine", 
+        tech: "Python, Financial Models", 
+        description: "Reduced loan default risk evaluation turnaround from 3 days to 4 hours.",
+        bullets: [
+          "Implemented quantitative risk scoring using historical merchant credit profiles.",
+          "Optimized macro models with multi-variable market sensitivity analysis."
+        ]
+      },
+      {
+        title: "Fintech Venture Capital Research",
+        tech: "Excel, Bloomberg API",
+        description: "Strategic diligence report on Indian neo-banking sector investment trends.",
+        bullets: [
+          "Assessed competitive market indexes across 14 top financial companies.",
+          "Authored report utilized by investment committee for capital allocation."
+        ]
+      }
+    ],
+    certifications: ["CFA Charterholder Level 3 Passed", "Bloomberg Certified Expert", "Financial Risk Manager (FRM) Certified"],
+    achievements: ["Goldman Sachs Leadership Award", "IIM Gold Medalist for Strategy", "IIT Madras Academic Merit Award"],
   },
   photo_creative_tech: {
     name: "Kavya Iyer",
@@ -498,13 +683,56 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98555 66778",
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80",
-    summary: "Product Engineer combining modern WebGL creative frontend animations with scalable GraphQL microservices and databases.",
-    skills: ["React & Three.js", "TypeScript & Node.js", "GraphQL & Prisma", "Tailwind CSS", "PostgreSQL"],
-    education: [{ institution: "IIIT Hyderabad", degree: "B.Tech Computer Science", years: "2016 – 2020" }],
-    experience: [{ company: "CRED Tech", role: "Senior Frontend Engineer", years: "2021 – Present", bullets: ["Built interactive 3D payment success animations in app.", "Optimized web vitals score to 98/100 globally.", "Implemented accessible UI components (WCAG)."] }],
-    projects: [{ title: "3D Interactive Design Studio", tech: "Three.js, React, WebGL", description: "Browser-based 3D model editor processing 50k monthly interactive sessions." }],
-    certifications: ["Meta Certified Front-End Developer"],
-    achievements: ["CRED Hackathon Champion 2023"],
+    summary: "Product Engineer combining modern WebGL creative frontend animations with scalable GraphQL microservices, real-time databases, and interactive design systems.",
+    skills: ["React & Three.js", "TypeScript & Node.js", "GraphQL & Prisma", "Tailwind CSS", "PostgreSQL & Redis", "WebGL & GSAP", "Docker & CI/CD"],
+    education: [
+      { institution: "IIIT Hyderabad", degree: "B.Tech Computer Science", years: "2016 – 2020" },
+      { institution: "PSBB Chennai", degree: "CBSE Class XII - 96.5%", years: "2014 – 2016" },
+      { institution: "Chinmaya Vidyalaya", degree: "CBSE Class X - 10 CGPA", years: "2012 – 2014" }
+    ],
+    experience: [
+      { 
+        company: "CRED Tech", 
+        role: "Senior Frontend Engineer", 
+        years: "2021 – Present", 
+        bullets: [
+          "Built interactive 3D payment success animations inside core consumer app.",
+          "Optimized web vitals score to 98/100 globally across all CRED web services.",
+          "Implemented accessible UI components conforming strictly to WCAG guidelines."
+        ] 
+      },
+      {
+        company: "InMobi Ads",
+        role: "Software Developer",
+        years: "2020 – 2021",
+        bullets: [
+          "Created modular interactive ad builder dashboard utilized by 50+ enterprise clients.",
+          "Reduced ad canvas load times by 40% using optimized Webpack bundle codes."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "3D Interactive Design Studio", 
+        tech: "Three.js, React, WebGL", 
+        description: "Browser-based 3D model editor processing 50k monthly interactive sessions.",
+        bullets: [
+          "Optimized polygon mesh rendering reducing browser memory usage by 55%.",
+          "Built export wrappers supports for standard obj, gltf, and fbx file coordinates."
+        ]
+      },
+      {
+        title: "Collaborative Whiteboard Canvas",
+        tech: "React, Socket.io, Node.js",
+        description: "Real-time collaborative diagramming portal for virtual design workshops.",
+        bullets: [
+          "Engineered vector canvas operations syncing in under 15ms via WebSockets.",
+          "Designed canvas snapshots backend auto-saved to secure AWS S3 buckets."
+        ]
+      }
+    ],
+    certifications: ["Meta Certified Front-End Developer", "Three.js Journey Graduate", "Certified ScrumMaster"],
+    achievements: ["CRED Hackathon Champion 2023", "IIIT Hyderabad Best Thesis Award", "Top Ranker National Coding League"],
   },
   photo_academic: {
     name: "Vikram Sengupta",
@@ -513,13 +741,37 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98666 77889",
     location: "Kolkata, WB",
     photoUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80",
-    summary: "Academic AI researcher publishing papers in deep learning, neural speech synthesis, and low-resource NLP speech systems.",
-    skills: ["PyTorch & TensorFlow", "NLP & Transformers", "Python & CUDA", "LaTeX Scientific Papers"],
-    education: [{ institution: "IIT Kharagpur", degree: "M.Tech AI & Data Science", years: "2018 – 2020" }],
-    experience: [{ company: "IISc Research R&D", role: "Research Associate", years: "2020 – Present", bullets: ["Published 4 peer-reviewed papers in IEEE & NeurIPS.", "Trained multilingual transformer speech synthesis models.", "Secured research funding from Science Research Board."] }],
-    projects: [{ title: "Indic Natural Speech Synthesizer", tech: "PyTorch, CUDA", description: "Neural speech model generating natural audio across 8 Indian regional languages." }],
-    certifications: ["DeepLearning.AI AI Specialist"],
-    achievements: ["Prime Minister's Research Fellow"],
+    summary: "Academic AI researcher publishing papers in deep learning, neural speech synthesis, and low-resource NLP speech systems for regional languages.",
+    skills: ["PyTorch & TensorFlow", "NLP & Transformers", "Python & CUDA", "LaTeX Scientific Papers", "Linux & Git", "HuggingFace Hub"],
+    education: [
+      { institution: "IIT Kharagpur", degree: "M.Tech AI & Data Science", years: "2018 – 2020" },
+      { institution: "Jadavpur University", degree: "B.E. Electronics Engineering", years: "2014 – 2018" }
+    ],
+    experience: [
+      { 
+        company: "IISc Research R&D", 
+        role: "Research Associate", 
+        years: "2020 – Present", 
+        bullets: [
+          "Published 4 peer-reviewed papers in prestigious IEEE and NeurIPS conferences.",
+          "Trained multilingual transformer speech synthesis models for regional dialects.",
+          "Secured research funding grants valued at ₹25 Lakhs from Science Research Board."
+        ] 
+      }
+    ],
+    projects: [
+      { 
+        title: "Indic Natural Speech Synthesizer", 
+        tech: "PyTorch, CUDA", 
+        description: "Neural speech model generating natural audio across 8 Indian regional languages.",
+        bullets: [
+          "Achieved state-of-the-art mean opinion scores in speech naturalness.",
+          "Released open-source dataset containing 200 hours of clean audio samples."
+        ]
+      }
+    ],
+    certifications: ["DeepLearning.AI AI Specialist", "NVIDIA CUDA Optimization Program"],
+    achievements: ["Prime Minister's Research Fellow", "Jadavpur University Gold Medalist", "Best Poster Award IEEE SPS"],
   },
   photo_split_hero: {
     name: "Neha Kulkarni",
@@ -529,12 +781,45 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     location: "Gurgaon, HR",
     photoUrl: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&auto=format&fit=crop&q=80",
     summary: "DevSecOps Lead specializing in cloud security automation, automated penetration testing, and zero-trust identity access management.",
-    skills: ["AWS Security & IAM", "Penetration Testing", "Docker Security", "Python & Bash Scripts"],
-    education: [{ institution: "DTU Delhi", degree: "B.Tech Information Technology", years: "2016 – 2020" }],
-    experience: [{ company: "Razorpay Financials", role: "Senior Security Specialist", years: "2021 – Present", bullets: ["Conducted penetration testing across 50+ microservices.", "Automated CI/CD security scanning using Trivy.", "Fixed critical security vulnerabilities in payment gateway."] }],
-    projects: [{ title: "Zero-Trust API Gateway Shield", tech: "Python, Docker, OAuth2", description: "Protected financial endpoints against high-rate DDoS and OWASP threats." }],
-    certifications: ["CISSP Certified Specialist", "CEH Master"],
-    achievements: ["Top Bug Bounty Hall of Fame 2022"],
+    skills: ["AWS Security & IAM", "Penetration Testing", "Docker Security", "Python & Bash Scripts", "SIEM & Splunk", "Trivy & SonarQube"],
+    education: [
+      { institution: "DTU Delhi", degree: "B.Tech Information Technology", years: "2016 – 2020" },
+      { institution: "Delhi Public School, Rohini", degree: "CBSE Class XII - 95.8%", years: "2014 – 2016" }
+    ],
+    experience: [
+      { 
+        company: "Razorpay Financials", 
+        role: "Senior Security Specialist", 
+        years: "2021 – Present", 
+        bullets: [
+          "Conducted penetration testing across 50+ microservices resolving vulnerabilities.",
+          "Automated CI/CD security scanning using Trivy, stopping unverified container builds.",
+          "Fixed critical security vulnerabilities in payment gateway adapter layers."
+        ] 
+      },
+      {
+        company: "Wipro CyberSentry",
+        role: "Security Analyst",
+        years: "2020 – 2021",
+        bullets: [
+          "Monitored threat intelligence feeds for financial enterprise clients.",
+          "Investigated 150+ automated network incident alerts weekly."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Zero-Trust API Gateway Shield", 
+        tech: "Python, Docker, OAuth2", 
+        description: "Protected financial endpoints against high-rate DDoS and OWASP threats.",
+        bullets: [
+          "Developed rate limiter middleware reducing malicious spikes by 99.8%.",
+          "Configured secure OAuth2 client credential authorizations."
+        ]
+      }
+    ],
+    certifications: ["CISSP Certified Specialist", "CEH Master", "AWS Certified Security Specialty"],
+    achievements: ["Top Bug Bounty Hall of Fame 2022", "DTU Technical Merit Award", "NASSCOM Cyber Security Champion"],
   },
   photo_clean_vertical: {
     name: "Siddharth Gupta",
@@ -544,12 +829,45 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&auto=format&fit=crop&q=80",
     summary: "Embedded Firmware Engineer writing real-time micro-controller C/C++ drivers, RTOS kernels, and automotive CAN bus communication systems.",
-    skills: ["Embedded C/C++", "FreeRTOS & ESP32", "STM32 & ARM Cortex", "CAN Bus & MQTT Protocols"],
-    education: [{ institution: "BITS Pilani, Goa", degree: "B.E. Electronics", years: "2016 – 2020" }],
-    experience: [{ company: "Ather Energy", role: "Senior Firmware Engineer", years: "2021 – Present", bullets: ["Developed Battery Management System (BMS) cell firmware.", "Optimized FreeRTOS task schedules reducing power by 22%.", "Designed safety diagnostic systems for battery packs."] }],
-    projects: [{ title: "Smart EV Battery Telemetry Unit", tech: "ESP32, FreeRTOS, C++", description: "Real-time cellular IoT device sending BMS metrics to AWS cloud." }],
-    certifications: ["ARM Accredited Engineer"],
-    achievements: ["Ather Hardware Innovation Award"],
+    skills: ["Embedded C/C++", "FreeRTOS & ESP32", "STM32 & ARM Cortex", "CAN Bus & MQTT", "Altium Designer", "Logic Analyzers"],
+    education: [
+      { institution: "BITS Pilani, Goa", degree: "B.E. Electronics", years: "2016 – 2020" },
+      { institution: "St. Paul's School, Goa", degree: "Class XII Science - 95.2%", years: "2014 – 2016" }
+    ],
+    experience: [
+      { 
+        company: "Ather Energy", 
+        role: "Senior Firmware Engineer", 
+        years: "2021 – Present", 
+        bullets: [
+          "Developed Battery Management System (BMS) cell firmware for Ather 450X.",
+          "Optimized FreeRTOS task schedules reducing idle power drain by 22%.",
+          "Designed safety diagnostic alert triggers for thermal battery packs."
+        ] 
+      },
+      {
+        company: "Bosch Engineering",
+        role: "Firmware Developer",
+        years: "2020 – 2021",
+        bullets: [
+          "Wrote low-level C device drivers for automotive infotainment systems.",
+          "Conformed firmware code structures to MISRA-C compliance rules."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Smart EV Battery Telemetry Unit", 
+        tech: "ESP32, FreeRTOS, C++", 
+        description: "Real-time cellular IoT device sending BMS metrics to AWS cloud.",
+        bullets: [
+          "Configured secure TLS certificate handshakes inside IoT firmware.",
+          "Reduced telemetry data buffers using custom run-length encoding."
+        ]
+      }
+    ],
+    certifications: ["ARM Accredited Engineer", "RTOS Architecture Specialist", "Altium Design Certification"],
+    achievements: ["Ather Hardware Innovation Award", "BITS Pilani Project Merit Fellowship", "National Olympiad in Physics State Top 5"],
   },
   photo_personal_brand: {
     name: "Meera Joshi",
@@ -559,12 +877,45 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     location: "Mumbai, MH",
     photoUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80",
     summary: "Brand Strategist crafting personal identities, executive portfolios, and visual media design guidelines for startup founders.",
-    skills: ["Brand Strategy & Identity", "Figma & Illustrator", "Visual Storytelling", "Copywriting"],
-    education: [{ institution: "NID Ahmedabad", degree: "B.Des Graphic Design", years: "2015 – 2019" }],
-    experience: [{ company: "Ogilvy India", role: "Lead Brand Strategist", years: "2020 – Present", bullets: ["Led digital rebranding for top D2C consumer startup.", "Created brand guidelines adopted across marketing teams.", "Won awards for visual identity campaign designs."] }],
-    projects: [{ title: "D2C Brand Identity Overhaul", tech: "Figma, Illustrator", description: "Unified brand aesthetics and increased web store conversions by 40%." }],
-    certifications: ["Adobe Certified Expert"],
-    achievements: ["Kyoorius Design Gold Winner 2022"],
+    skills: ["Brand Strategy & Identity", "Figma & Illustrator", "Visual Storytelling", "Copywriting", "Art Direction", "Typography"],
+    education: [
+      { institution: "NID Ahmedabad", degree: "B.Des Graphic Design", years: "2015 – 2019" },
+      { institution: "La Martiniere, Kolkata", degree: "ISC Board - 93.4%", years: "2013 – 2015" }
+    ],
+    experience: [
+      { 
+        company: "Ogilvy India", 
+        role: "Lead Brand Strategist", 
+        years: "2020 – Present", 
+        bullets: [
+          "Led digital rebranding for top D2C consumer startup.",
+          "Created brand guidelines adopted across marketing teams.",
+          "Won awards for visual identity campaign designs."
+        ] 
+      },
+      {
+        company: "Dentsu Webchutney",
+        role: "Senior Graphic Designer",
+        years: "2019 – 2020",
+        bullets: [
+          "Conceptualized social media campaigns generating 1.5M views.",
+          "Designed logo marks, icons, and layout spreads."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "D2C Brand Identity Overhaul", 
+        tech: "Figma, Illustrator", 
+        description: "Unified brand aesthetics and increased web store conversions by 40%.",
+        bullets: [
+          "Recreated full visual design asset system including typography tokens.",
+          "Conducted targeted visual branding interviews with 200+ consumers."
+        ]
+      }
+    ],
+    certifications: ["Adobe Certified Expert", "Brand Strategy Bootcamp Graduate"],
+    achievements: ["Kyoorius Design Gold Winner 2022", "Ogilvy Campaign of the Month", "Creative Focus Talent Scholarship"],
   },
   photo_premium_identity: {
     name: "Rahul Deshmukh",
@@ -574,12 +925,45 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     location: "Pune, MH",
     photoUrl: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=200&auto=format&fit=crop&q=80",
     summary: "Engineering Manager leading 25+ developers, cloud infrastructure, and enterprise agile Scrum delivery across banking systems.",
-    skills: ["Engineering Management", "Agile & Scrum Delivery", "System Architecture", "Team Mentorship"],
-    education: [{ institution: "VJTI Mumbai", degree: "B.Tech Computer Engineering", years: "2011 – 2015" }],
-    experience: [{ company: "Barclays Technology", role: "Engineering Manager", years: "2019 – Present", bullets: ["Managed 3 engineering squads building retail payments core.", "Reduced production bug rates by 45% through CI/CD pipelines.", "Delivered high-value security updates on schedule."] }],
-    projects: [{ title: "Enterprise Payments Core", tech: "Java, AWS", description: "High-volume banking core servicing 5M daily merchant credit card transactions." }],
-    certifications: ["Certified Scrum Master"],
-    achievements: ["Barclays Leadership Fellow"],
+    skills: ["Engineering Management", "Agile & Scrum Delivery", "System Architecture", "Team Mentorship", "AWS Cloud Systems", "Budgeting & Hiring"],
+    education: [
+      { institution: "VJTI Mumbai", degree: "B.Tech Computer Engineering", years: "2011 – 2015" },
+      { institution: "Ruparel College, Mumbai", degree: "HSC Board - 94.6%", years: "2009 – 2011" }
+    ],
+    experience: [
+      { 
+        company: "Barclays Technology", 
+        role: "Engineering Manager", 
+        years: "2019 – Present", 
+        bullets: [
+          "Managed 3 engineering squads building retail payments core systems.",
+          "Reduced production bug rates by 45% through robust CI/CD pipelines.",
+          "Delivered high-value security updates on schedule under tight timelines."
+        ] 
+      },
+      {
+        company: "Cognizant India",
+        role: "Senior Lead Architect",
+        years: "2015 – 2019",
+        bullets: [
+          "Led development of cloud hosting adapters for banking clients.",
+          "Supervised a technical migration team of 8 senior developers."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Enterprise Payments Core", 
+        tech: "Java, AWS", 
+        description: "High-volume banking core servicing 5M daily merchant credit card transactions.",
+        bullets: [
+          "Designed database failover logic achieving sub-second sync backups.",
+          "Optimized credit verification pipelines reducing request latency by 60%."
+        ]
+      }
+    ],
+    certifications: ["Certified Scrum Master", "AWS Solutions Architect Professional", "ITIL Foundation Certified"],
+    achievements: ["Barclays Leadership Fellow", "Cognizant Technical Star Award", "VJTI Class Valedictorian"],
   },
   photo_executive_board: {
     name: "Karan Malhotra",
@@ -589,12 +973,45 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     location: "Mumbai, MH",
     photoUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
     summary: "Senior Business Executive managing ₹500 Cr annual revenue operations and corporate growth strategy across conglomerate sectors.",
-    skills: ["P&L Management", "Strategic Growth", "Board Governance", "M&A Advisory"],
-    education: [{ institution: "IIM Calcutta", degree: "MBA Executive", years: "2012 – 2014" }],
-    experience: [{ company: "Reliance Industries", role: "VP Strategy", years: "2018 – Present", bullets: ["Drove operational efficiency saving ₹45 Crores.", "Led strategic market expansion into 15 new regions.", "Secured executive board approvals for operations strategy."] }],
-    projects: [{ title: "Retail Logistics Transformation", tech: "SAP S/4HANA", description: "Streamlined supply chain logistics across 2,000 retail store networks." }],
-    certifications: ["Corporate Governance Certified"],
-    achievements: ["ET Business Leader 2023"],
+    skills: ["P&L Management", "Strategic Growth", "Board Governance", "M&A Advisory", "Global Logistics", "Enterprise Finance"],
+    education: [
+      { institution: "IIM Calcutta", degree: "MBA Executive", years: "2012 – 2014" },
+      { institution: "IIT Kharagpur", degree: "B.Tech Mechanical Engineering", years: "2008 – 2012" }
+    ],
+    experience: [
+      { 
+        company: "Reliance Industries", 
+        role: "VP Strategy", 
+        years: "2018 – Present", 
+        bullets: [
+          "Drove operational efficiency saving ₹45 Crores annually.",
+          "Led strategic market expansion into 15 new regions across India.",
+          "Secured executive board approvals for logistics operations strategy."
+        ] 
+      },
+      {
+        company: "Tata Group Strategic Office",
+        role: "Senior Manager Strategy",
+        years: "2014 – 2018",
+        bullets: [
+          "Conducted market sizing and feasibility analysis for clean energy investments.",
+          "Facilitated key joint venture collaborations with global automotive partners."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Retail Logistics Transformation", 
+        tech: "SAP S/4HANA", 
+        description: "Streamlined supply chain logistics across 2,000 retail store networks.",
+        bullets: [
+          "Reduced warehouse processing turnarounds by 28% utilizing real-time tracking.",
+          "Integrated predictive ordering modules optimizing inventory stock balances."
+        ]
+      }
+    ],
+    certifications: ["Corporate Governance Certified", "Six Sigma Black Belt", "SAP Certified Logistics Consultant"],
+    achievements: ["ET Business Leader 2023", "Reliance President's Award", "IIM Calcutta Alumni Merit Star"],
   },
   photo_magazine_cover: {
     name: "Diya Kapoor",
@@ -604,12 +1021,45 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     location: "Delhi NCR",
     photoUrl: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&auto=format&fit=crop&q=80",
     summary: "Creative Lead producing editorial fashion campaigns, magazine typography, and brand media layouts for print and web.",
-    skills: ["Editorial Typography", "Art Direction", "Adobe InDesign & Photoshop", "Media Production"],
-    education: [{ institution: "NIFT Delhi", degree: "B.Des Fashion Communication", years: "2016 – 2020" }],
-    experience: [{ company: "Vogue India", role: "Senior Art Lead", years: "2021 – Present", bullets: ["Directed cover shoot design for 12 monthly magazine issues.", "Managed digital marketing creative assets for social media.", "Curated visual content for brand launches."] }],
-    projects: [{ title: "Digital Magazine Interactive Edition", tech: "Adobe InDesign, WebGL", description: "Created interactive digital edition generating 1.2M online readers." }],
-    certifications: ["Adobe Certified Expert"],
-    achievements: ["Vogue Excellence Award 2022"],
+    skills: ["Editorial Typography", "Art Direction", "Adobe InDesign & Photoshop", "Media Production", "Fashion Styling", "Copywriting"],
+    education: [
+      { institution: "NIFT Delhi", degree: "B.Des Fashion Communication", years: "2016 – 2020" },
+      { institution: "Stephens College, Delhi", degree: "B.A. English Honors", years: "2013 – 2016" }
+    ],
+    experience: [
+      { 
+        company: "Vogue India", 
+        role: "Senior Art Lead", 
+        years: "2021 – Present", 
+        bullets: [
+          "Directed cover shoot design for 12 monthly magazine issues.",
+          "Managed digital marketing creative assets for social media.",
+          "Curated visual content for brand launches and luxury client events."
+        ] 
+      },
+      {
+        company: "Elle India",
+        role: "Associate Art Director",
+        years: "2020 – 2021",
+        bullets: [
+          "Designed editorial pages, layouts, and typography grids.",
+          "Managed vendor relations for monthly print publication cycles."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Digital Magazine Interactive Edition", 
+        tech: "Adobe InDesign, WebGL", 
+        description: "Created interactive digital edition generating 1.2M online readers.",
+        bullets: [
+          "Integrated rich video embeds and audio cues within layouts.",
+          "Improved tablet page load performance by 35% through asset optimization."
+        ]
+      }
+    ],
+    certifications: ["Adobe Certified Expert", "UX Design Bootcamp Certificate"],
+    achievements: ["Vogue Excellence Award 2022", "NIFT Graduation Gold Award", "Top Creative Contributor India Fashion Week"],
   },
   photo_designer_portfolio: {
     name: "Sneha Choudhury",
@@ -619,12 +1069,45 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1548142813-c348350df52b?w=200&auto=format&fit=crop&q=80",
     summary: "Product Designer crafting intuitive SaaS interfaces, developer workspaces, Behance portfolios, and Figma design systems.",
-    skills: ["Figma & Design Systems", "UX Research", "Prototyping", "HTML/CSS", "Wireframing"],
-    education: [{ institution: "NID Bengaluru", degree: "B.Des Digital Media", years: "2016 – 2020" }],
-    experience: [{ company: "Postman Tech", role: "Senior Product Designer", years: "2021 – Present", bullets: ["Designed API documentation workspace interface.", "Improved user onboarding completion by 28%.", "Conducted user research sessions globally."] }],
-    projects: [{ title: "Developer API Canvas Workspace", tech: "Figma, React", description: "Workspace UI utilized by 10M+ software engineers globally." }],
-    certifications: ["Nielsen Norman UX Master"],
-    achievements: ["Behance Featured Portfolio 2023"],
+    skills: ["Figma & Design Systems", "UX Research", "Prototyping", "HTML/CSS", "Wireframing", "Webflow Development"],
+    education: [
+      { institution: "NID Bengaluru", degree: "B.Des Digital Media", years: "2016 – 2020" },
+      { institution: "Baldwin Girls School, Bengaluru", degree: "ISC Board - 94.8%", years: "2014 – 2016" }
+    ],
+    experience: [
+      { 
+        company: "Postman Tech", 
+        role: "Senior Product Designer", 
+        years: "2021 – Present", 
+        bullets: [
+          "Designed API documentation workspace interface used by millions of developers.",
+          "Improved user onboarding completion by 28% through step-by-step tooltip widgets.",
+          "Conducted user research sessions globally and constructed user journey personas."
+        ] 
+      },
+      {
+        company: "Flipkart Design",
+        role: "UX Designer",
+        years: "2020 – 2021",
+        bullets: [
+          "Designed interface layouts for regional language grocery onboarding.",
+          "Analyzed heatmaps identifying user friction points on product checkouts."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Developer API Canvas Workspace", 
+        tech: "Figma, React", 
+        description: "Workspace UI utilized by 10M+ software engineers globally.",
+        bullets: [
+          "Designed drag-and-drop node canvas interface mapping backend APIs.",
+          "Conducted usability verification tests with 200+ core developers."
+        ]
+      }
+    ],
+    certifications: ["Nielsen Norman UX Master", "Google UX Design Professional Certificate"],
+    achievements: ["Behance Featured Portfolio 2023", "NID Design Fellow Award", "Postman Star Design Award"],
   },
   photo_identity_card: {
     name: "Varun Saxena",
@@ -634,12 +1117,45 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     location: "Hyderabad, TS",
     photoUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
     summary: "CISO managing enterprise cybersecurity infrastructure, security operations center (SOC), and cloud compliance frameworks.",
-    skills: ["Enterprise Cyber Security", "SOC Operations", "ISO 27001", "Threat Mitigation"],
-    education: [{ institution: "IIT Hyderabad", degree: "M.Tech Cybersecurity", years: "2013 – 2015" }],
-    experience: [{ company: "Infosys Security", role: "CISO Advisory Lead", years: "2019 – Present", bullets: ["Protected cloud infrastructure across 100+ enterprise clients.", "Achieved ISO 27001 audit compliance.", "Conducted incident response threat mitigation drills."] }],
-    projects: [{ title: "Global SOC Alert Triage Engine", tech: "Python, SIEM", description: "Automated cyber threat triage reducing response time by 80%." }],
-    certifications: ["CISM & CISSP Certified"],
-    achievements: ["CISO Leader Award 2023"],
+    skills: ["Enterprise Cyber Security", "SOC Operations", "ISO 27001", "Threat Mitigation", "IAM & Cloud Security", "Penetration Testing"],
+    education: [
+      { institution: "IIT Hyderabad", degree: "M.Tech Cybersecurity", years: "2013 – 2015" },
+      { institution: "NIT Warangal", degree: "B.Tech Computer Science", years: "2009 – 2013" }
+    ],
+    experience: [
+      { 
+        company: "Infosys Security", 
+        role: "CISO Advisory Lead", 
+        years: "2019 – Present", 
+        bullets: [
+          "Protected cloud infrastructure across 100+ enterprise clients globally.",
+          "Achieved ISO 27001 audit compliance with zero minor non-conformities.",
+          "Conducted incident response threat mitigation drills for 500+ employees."
+        ] 
+      },
+      {
+        company: "Wipro Cybersecurity",
+        role: "Lead Security Architect",
+        years: "2015 – 2019",
+        bullets: [
+          "Designed security firewalls and identity access gates for MNC banking clients.",
+          "Conducted system vulnerability checks identifying 34 critical security bugs."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Global SOC Alert Triage Engine", 
+        tech: "Python, SIEM", 
+        description: "Automated cyber threat triage reducing response time by 80%.",
+        bullets: [
+          "Integrated AI threat parser prioritizing critical alerts.",
+          "Configured secure automated slack warnings to trigger SOC response."
+        ]
+      }
+    ],
+    certifications: ["CISM & CISSP Certified", "CompTIA Security+ Certified"],
+    achievements: ["CISO Leader Award 2023", "Infosys Technical Fellow", "NIT Warangal Academic Star"],
   },
   photo_startup_founder: {
     name: "Pooja Sundaram",
@@ -649,12 +1165,45 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
     summary: "Tech Founder building AI consumer products, raising venture seed funding, and managing YC startup growth strategies.",
-    skills: ["Product Strategy", "Seed Fundraising", "AI Product Development", "Growth Funnels"],
-    education: [{ institution: "IIT Madras", degree: "B.Tech Computer Science", years: "2015 – 2019" }],
-    experience: [{ company: "Krutrim AI (YC W22)", role: "Co-Founder & CEO", years: "2021 – Present", bullets: ["Built Indic LLM app serving 500k active monthly users.", "Raised $2.5M seed funding from top VC funds.", "Managed team of 15 SDEs and ML researchers."] }],
-    projects: [{ title: "Multilingual Indic AI Assistant", tech: "Python, PyTorch", description: "Consumer AI voice assistant processing 1M daily conversations." }],
-    certifications: ["Y Combinator Founder W22"],
-    achievements: ["Forbes 30 Under 30 Asia"],
+    skills: ["Product Strategy", "Seed Fundraising", "AI Product Development", "Growth Funnels", "Technical Leadership", "Agile Roadmap"],
+    education: [
+      { institution: "IIT Madras", degree: "B.Tech Computer Science", years: "2015 – 2019" },
+      { institution: "KV IIT Madras, Chennai", degree: "CBSE Class XII - 96.8%", years: "2013 – 2015" }
+    ],
+    experience: [
+      { 
+        company: "Krutrim AI (YC W22)", 
+        role: "Co-Founder & CEO", 
+        years: "2021 – Present", 
+        bullets: [
+          "Built Indic LLM app serving 500k active monthly users globally.",
+          "Raised $2.5M seed funding from top VC funds in India and Silicon Valley.",
+          "Managed team of 15 SDEs and ML researchers on product execution."
+        ] 
+      },
+      {
+        company: "InMobi Tech",
+        role: "Product SDE II",
+        years: "2019 – 2021",
+        bullets: [
+          "Developed target personalization algorithms raising publisher revenue by 18%.",
+          "Engineered ad rendering pipelines scaling to 15k requests/sec."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Multilingual Indic AI Assistant", 
+        tech: "Python, PyTorch", 
+        description: "Consumer AI voice assistant processing 1M daily conversations.",
+        bullets: [
+          "Fine-tuned transformer models supporting speech inputs in 6 Indian languages.",
+          "Reduced inference resource footprints by 45% using model pruning."
+        ]
+      }
+    ],
+    certifications: ["Y Combinator Founder W22", "DeepLearning.AI NLP Graduate"],
+    achievements: ["Forbes 30 Under 30 Asia", "IIT Madras Entrepreneurship Fellow", "National Talent Search Scholar"],
   },
   photo_newspaper_editorial: {
     name: "Ritu Bhattacharya",
@@ -664,12 +1213,45 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     location: "Kolkata, WB",
     photoUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=80",
     summary: "Technology Journalist and Editorial Lead publishing investigative tech journalism, business profiles, and reports.",
-    skills: ["Tech Journalism", "Editorial Writing", "Media Strategy", "Investigative Research"],
-    education: [{ institution: "St. Xavier's College", degree: "B.A. Mass Communication", years: "2014 – 2017" }],
-    experience: [{ company: "The Economic Times", role: "Senior Tech Editor", years: "2020 – Present", bullets: ["Published 150+ investigative tech startup stories.", "Managed weekly technology editorial column.", "Conducted interviews with top tech startup CEOs."] }],
-    projects: [{ title: "Indian Startup Ecosystem Report", tech: "Data Analytics, Journalism", description: "Comprehensive report cited by top VC investors and media platforms." }],
-    certifications: ["Ramnath Goenka Excellence in Journalism"],
-    achievements: ["Press Club Award 2022"],
+    skills: ["Tech Journalism", "Editorial Writing", "Media Strategy", "Investigative Research", "Copyediting", "SEO Strategy"],
+    education: [
+      { institution: "St. Xavier's College", degree: "B.A. Mass Communication", years: "2014 – 2017" },
+      { institution: "Loreto House, Kolkata", degree: "Class XII Humanities - 94.6%", years: "2012 – 2014" }
+    ],
+    experience: [
+      { 
+        company: "The Economic Times", 
+        role: "Senior Tech Editor", 
+        years: "2020 – Present", 
+        bullets: [
+          "Published 150+ investigative tech startup stories and company profiles.",
+          "Managed weekly technology editorial column read by 500k+ subscribers.",
+          "Conducted interviews with top tech startup CEOs and global venture capital leads."
+        ] 
+      },
+      {
+        company: "MediaNama India",
+        role: "Lead Tech Reporter",
+        years: "2017 – 2020",
+        bullets: [
+          "Covered Indian digital policy, cybersecurity regulations, and telecom news.",
+          "Authored investigative reports on mobile payment gateway standards."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Indian Startup Ecosystem Report", 
+        tech: "Data Analytics, Journalism", 
+        description: "Comprehensive report cited by top VC investors and media platforms.",
+        bullets: [
+          "Analyzed funding rounds of 200+ startup companies from 2020 to 2023.",
+          "Created interactive charts and summaries highlighting target sector growths."
+        ]
+      }
+    ],
+    certifications: ["Ramnath Goenka Excellence in Journalism", "SEO Content Strategy Certification"],
+    achievements: ["Press Club Award 2022", "St. Xavier's Valedictorian Award", "Kolkata Young Media Fellow"],
   },
   photo_profile_dashboard: {
     name: "Tarun Nambiar",
@@ -679,12 +1261,45 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     location: "Kochi, KL",
     photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
     summary: "Dashboard Engineer specializing in real-time web UI analytics portals, data visualization, and micro-frontends.",
-    skills: ["React & Next.js", "D3.js & Recharts", "TypeScript & Tailwind", "Dashboard UI"],
-    education: [{ institution: "NIT Calicut", degree: "B.Tech Computer Science", years: "2016 – 2020" }],
-    experience: [{ company: "Freshworks Inc", role: "Senior UI Engineer", years: "2021 – Present", bullets: ["Built customer support analytics dashboard used by 60k businesses.", "Reduced chart rendering lag by 60% through custom canvas.", "Coordinated front-end sprint delivery cycles."] }],
-    projects: [{ title: "Real-Time Telemetry Dashboard", tech: "React, D3.js, WebSockets", description: "Live monitoring console processing 10k telemetry data points per second." }],
-    certifications: ["Meta Certified Front-End Developer"],
-    achievements: ["Freshworks Hackathon Winner"],
+    skills: ["React & Next.js", "D3.js & Recharts", "TypeScript & Tailwind", "Dashboard UI", "Webpack & Micro-frontends", "Node.js API"],
+    education: [
+      { institution: "NIT Calicut", degree: "B.Tech Computer Science", years: "2016 – 2020" },
+      { institution: "Chinmaya Vidyalaya, Kochi", degree: "Class XII Science - 95.8%", years: "2014 – 2016" }
+    ],
+    experience: [
+      { 
+        company: "Freshworks Inc", 
+        role: "Senior UI Engineer", 
+        years: "2021 – Present", 
+        bullets: [
+          "Built customer support analytics dashboard used by 60k businesses globally.",
+          "Reduced chart rendering lag by 60% through custom canvas implementations.",
+          "Coordinated front-end sprint delivery cycles and technical code reviews."
+        ] 
+      },
+      {
+        company: "TCS Innovation Labs",
+        role: "UI Developer",
+        years: "2020 – 2021",
+        bullets: [
+          "Developed web UI dashboards for global manufacturing clients.",
+          "Optimized page responsiveness reducing initial image load by 30%."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Real-Time Telemetry Dashboard", 
+        tech: "React, D3.js, WebSockets", 
+        description: "Live monitoring console processing 10k telemetry data points per second.",
+        bullets: [
+          "Designed dynamic charts plotting system load metrics with sub-second lag.",
+          "Configured WebSocket reconnection adapters preventing telemetry gaps."
+        ]
+      }
+    ],
+    certifications: ["Meta Certified Front-End Developer", "D3.js Visualization Specialist"],
+    achievements: ["Freshworks Hackathon Winner", "NIT Calicut Innovation Fellow", "Top Performer TCS Group"],
   },
   photo_european_cv: {
     name: "Ishita Chatterjee",
@@ -693,13 +1308,46 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 99888 99001",
     location: "Berlin / Bengaluru",
     photoUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
-    summary: "Global Software Engineer matching European hiring standards, building cross-border cloud platforms.",
-    skills: ["Java, Go & Python", "Europass CV Standards", "Cloud Architecture", "Multilingual (English, German)"],
-    education: [{ institution: "TU Munich / IIT Madras", degree: "M.Sc Computer Science", years: "2017 – 2019" }],
-    experience: [{ company: "SAP SE Germany", role: "Senior Cloud Architect", years: "2020 – Present", bullets: ["Architected SAP BTP cloud microservices.", "Led cross-border engineering teams across EU & India.", "Designed high-security authorization connectors."] }],
-    projects: [{ title: "Global ERP Data Connector", tech: "Go, Kubernetes, SAP BTP", description: "Enterprise data bridge connecting European & Asian cloud databases." }],
-    certifications: ["SAP Certified Cloud Architect"],
-    achievements: ["SAP European Tech Fellow"],
+    summary: "Global Software Engineer matching European hiring standards, building cross-border cloud platforms and ERP integrations.",
+    skills: ["Java, Go & Python", "Europass CV Standards", "Cloud Architecture", "Multilingual (English, German)", "Docker & Kubernetes", "SAP BTP"],
+    education: [
+      { institution: "TU Munich / IIT Madras", degree: "M.Sc Computer Science", years: "2017 – 2019" },
+      { institution: "La Martiniere, Kolkata", degree: "ICSE & ISC Board - 96.2%", years: "2011 – 2017" }
+    ],
+    experience: [
+      { 
+        company: "SAP SE Germany", 
+        role: "Senior Cloud Architect", 
+        years: "2020 – Present", 
+        bullets: [
+          "Architected SAP BTP cloud microservices for global digital supply chains.",
+          "Led cross-border engineering teams across Germany, India, and USA.",
+          "Designed high-security authorization connectors complying with EU GDPR rules."
+        ] 
+      },
+      {
+        company: "Siemens R&D Bengaluru",
+        role: "Software Developer",
+        years: "2019 – 2020",
+        bullets: [
+          "Developed web microservices for industrial automation control panels.",
+          "Improved backend request latency by 25% using Go implementation."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Global ERP Data Connector", 
+        tech: "Go, Kubernetes, SAP BTP", 
+        description: "Enterprise data bridge connecting European & Asian cloud databases.",
+        bullets: [
+          "Configured secure TLS certificate channels passing strict security clearances.",
+          "Designed database adapters syncing 500k ERP records daily."
+        ]
+      }
+    ],
+    certifications: ["SAP Certified Cloud Architect", "Go Programming Language Certified", "German Language Level B2"],
+    achievements: ["SAP European Tech Fellow", "DAAD Scholarship Winner", "IIT Madras Academic Honor"],
   },
   photo_consulting_profile: {
     name: "Aditi Mukherjee",
@@ -708,13 +1356,46 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 99999 00112",
     location: "Mumbai, MH",
     photoUrl: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&auto=format&fit=crop&q=80",
-    summary: "Strategy Consultant advising Fortune 500 executives on digital transformation, operational efficiency, and market entry.",
-    skills: ["Strategy Consulting", "Digital Transformation", "Financial Valuation", "Executive Presentations"],
-    education: [{ institution: "IIM Bangalore", degree: "MBA Strategy", years: "2017 – 2019" }],
-    experience: [{ company: "McKinsey & Company", role: "Engagement Manager", years: "2020 – Present", bullets: ["Advised CXOs of top 5 Indian private banks on digital banking strategy.", "Led team of 6 management consultants on client projects.", "Delivered operating model designs reducing overheads by 18%."] }],
-    projects: [{ title: "Private Bank Digital Strategy", tech: "McKinsey Benchmarking", description: "Created digital roadmap increasing retail banking revenues by ₹120 Crores." }],
-    certifications: ["McKinsey Certified Engagement Lead"],
-    achievements: ["IIM Bangalore Gold Medalist"],
+    summary: "Strategy Consultant advising Fortune 500 executives on digital transformation, operational efficiency, and market entry strategies.",
+    skills: ["Strategy Consulting", "Digital Transformation", "Financial Valuation", "Executive Presentations", "P&L Optimization", "Market Diligence"],
+    education: [
+      { institution: "IIM Bangalore", degree: "MBA Strategy", years: "2017 – 2019" },
+      { institution: "St. Xavier's College, Mumbai", degree: "B.A. Economics Honors", years: "2014 – 2017" }
+    ],
+    experience: [
+      { 
+        company: "McKinsey & Company", 
+        role: "Engagement Manager", 
+        years: "2020 – Present", 
+        bullets: [
+          "Advised CXOs of top 5 Indian private banks on digital banking strategy and roadmaps.",
+          "Led team of 6 management consultants on digital transformation client projects.",
+          "Delivered operating model designs reducing overheads by 18%."
+        ] 
+      },
+      {
+        company: "KPMG Advisory India",
+        role: "Consultant Strategy",
+        years: "2019 – 2020",
+        bullets: [
+          "Assessed market entry feasibility for global automotive companies in India.",
+          "Created client pitch decks and financial analysis worksheets."
+        ]
+      }
+    ],
+    projects: [
+      { 
+        title: "Private Bank Digital Strategy", 
+        tech: "McKinsey Benchmarking", 
+        description: "Created digital roadmap increasing retail banking revenues by ₹120 Crores.",
+        bullets: [
+          "Led research on digital onboarding adoption across 10 metro cities.",
+          "Formulated mobile app redesign strategy yielding 35% user growth."
+        ]
+      }
+    ],
+    certifications: ["McKinsey Certified Engagement Lead", "Certified Financial Analyst Level 1"],
+    achievements: ["IIM Bangalore Gold Medalist", "St. Xavier's College Economics Rank 1", "National Case Study Winner"],
   },
 };
 
@@ -919,7 +1600,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
                 <img
                   src={p.photoUrl}
                   alt={p.name}
-                  className="w-10 h-10 rounded-full object-cover border border-white/80 shrink-0"
+                  className="w-13 h-13 rounded-full object-cover border-2 border-white/90 shrink-0 shadow-sm"
                 />
                 <span className="text-[7.5px] font-bold text-white leading-none tracking-tight block mt-0.5 truncate max-w-full">{p.name}</span>
                 <span className="text-[5.5px] text-white/80 font-medium block truncate max-w-full">{p.title}</span>
@@ -1074,7 +1755,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
             <img
               src={p.photoUrl}
               alt={p.name}
-              className="w-9 h-9 rounded-full object-cover border border-zinc-300 shadow-2xs shrink-0 mb-0.5"
+              className="w-14 h-14 rounded-full object-cover border border-zinc-300 shadow-sm shrink-0 mb-0.5"
               style={{ borderColor: accent }}
             />
           )}
@@ -1108,7 +1789,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
           <img
             src={p.photoUrl}
             alt={p.name}
-            className="w-9 h-9 rounded-md object-cover border shadow-2xs shrink-0"
+            className="w-13 h-13 rounded-lg object-cover border shadow-sm shrink-0"
             style={{ borderColor: accent }}
           />
         )}
@@ -1123,7 +1804,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
           <img
             src={p.photoUrl}
             alt={p.name}
-            className="w-9 h-9 rounded-md object-cover border shadow-2xs shrink-0"
+            className="w-13 h-13 rounded-lg object-cover border shadow-sm shrink-0"
             style={{ borderColor: accent }}
           />
         )}
