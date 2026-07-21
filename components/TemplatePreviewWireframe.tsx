@@ -19,408 +19,274 @@ interface PersonaData {
   achievements?: string[];
 }
 
-// 20 Rich Personas designed to fill full-page 1-page resumes top-to-bottom
-const PERSONAS: Record<string, PersonaData> = {
+// Rich Indian Personas designed to fill full-page 1-page resumes top-to-bottom with zero empty gaps
+const INDIAN_PERSONAS: Record<string, PersonaData> = {
   modern: {
-    name: "Sophie Watson",
-    title: "Senior Customer Service Representative",
-    email: "sophie.watson@email.com",
-    phone: "(206) 555-0142",
-    location: "Seattle, WA",
-    photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
-    summary: "Dedicated Customer Service Specialist with 6+ years of experience resolving complex inquiries, improving client retention by 35%, and managing high-volume call workflows.",
-    skills: ["Customer Relations", "Call Center Operations", "Conflict Resolution", "CRM Software", "Agile Support", "Team Leadership"],
+    name: "Aarav Sharma",
+    title: "Senior Software Engineer",
+    email: "aarav.sharma@tech.in",
+    phone: "+91 98765 43210",
+    location: "Bengaluru, KA",
+    photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+    summary: "Senior Software Engineer with 6+ years of experience building high-throughput microservices, distributed cloud systems, and real-time backend platforms at scale.",
+    skills: ["Java, Spring Boot", "Microservices & REST", "Kafka & Redis", "AWS & Docker", "SQL & MongoDB", "System Design"],
     education: [
-      { institution: "University of Washington", degree: "B.A. Communications", years: "2014 – 2018", gpa: "3.8 GPA" },
-      { institution: "West Seattle High School", degree: "High School Diploma", years: "2010 – 2014" },
+      { institution: "IIT Bombay", degree: "B.Tech Computer Science", years: "2015 – 2019", gpa: "9.2 CGPA" },
+      { institution: "Delhi Public School, R.K. Puram", degree: "CBSE Class XII (PCM)", years: "2013 – 2015" },
     ],
     experience: [
       {
-        company: "Apex Bank Corp",
-        role: "Branch Customer Service Rep",
+        company: "Flipkart Internet Pvt Ltd",
+        role: "Senior Software Engineer",
         years: "2021 – Present",
         bullets: [
-          "Managed 80+ daily customer accounts with 98% first-contact resolution.",
-          "Trained 12 new hires on banking software and compliance protocols.",
-          "Optimized ticket escalation workflow reducing average queue hold time by 4 minutes.",
+          "Architected Big Billion Days checkout engine processing 120,000 requests/sec with 99.99% uptime.",
+          "Reduced database query latency by 45% through Redis caching and index optimization.",
+          "Mentored 8 junior software engineers and led sprint planning reviews.",
         ],
       },
       {
-        company: "Alorica Inc",
-        role: "Customer Sales Representative",
-        years: "2018 – 2021",
+        company: "Swiggy Labs",
+        role: "Software Development Engineer II",
+        years: "2019 – 2021",
         bullets: [
-          "Addressed escalated client complaints and increased upsell revenue by 18%.",
-          "Maintained 4.9/5 CSAT rating across 2,500+ customer feedback surveys.",
+          "Built real-time delivery tracking service handling 2M+ active daily orders.",
+          "Implemented Kafka message queues eliminating order drop issues during peak meal hours.",
         ],
       },
     ],
     projects: [
-      { title: "Client Support Automation Portal", tech: "Zendesk, CRM API", description: "Streamlined ticket triage reducing response time by 40% across support teams." },
-      { title: "Knowledge Base Redesign", tech: "Confluence, HTML", description: "Created 45+ self-service customer guides reducing inbound call volume." },
+      { title: "Distributed Payment Gateway Adapter", tech: "Java 17, Spring Boot, AWS", description: "Multi-PSP failover service handling $40M daily digital transactions." },
+      { title: "Real-time Order Tracking Engine", tech: "Node.js, Kafka, Redis", description: "Reduced order tracking API latency from 450ms to 42ms." },
     ],
-    certifications: ["Certified Customer Service Professional (CCSP)", "Zendesk Administrator Certified"],
-    achievements: ["Employee of the Year 2022 at Apex Bank", "Top Sales Rep Q4 2020 at Alorica"],
+    certifications: ["AWS Certified Solutions Architect – Associate", "Oracle Certified Professional Java SE 17"],
+    achievements: ["Flipkart Tech Innovation Award 2023", "National Cyber Olympiad Rank 14"],
   },
 
   recruiter_scan: {
-    name: "Charlotte Warren",
-    title: "Recruitment Officer & Talent Lead",
-    email: "charlotte.w@talent.com",
-    phone: "(415) 555-0199",
-    location: "San Francisco, CA",
+    name: "Priya Ananya Patel",
+    title: "Full Stack Lead & Cloud Developer",
+    email: "priya.patel@dev.in",
+    phone: "+91 98123 45678",
+    location: "Hyderabad, TS",
     photoUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
-    summary: "Results-driven Recruitment Officer specializing in tech talent acquisition, executive sourcing, and reducing time-to-hire across high-growth startups.",
-    skills: ["Greenhouse ATS", "LinkedIn Recruiter", "Candidate Sourcing", "Interview Coaching", "Offer Negotiation", "HR Analytics"],
+    summary: "Full Stack Lead specializing in React/Next.js frontend systems, Node.js GraphQL APIs, and automated CI/CD cloud deployments across fintech platforms.",
+    skills: ["React & Next.js", "TypeScript & Node.js", "GraphQL & REST APIs", "PostgreSQL & Prisma", "Docker & Kubernetes", "CI/CD Pipelines"],
     education: [
-      { institution: "NYU Stern School of Business", degree: "B.S. Human Resources", years: "2015 – 2019", gpa: "3.9 GPA" },
-      { institution: "San Francisco High School", degree: "High School Honors Diploma", years: "2011 – 2015" },
+      { institution: "BITS Pilani", degree: "B.E. Computer Science", years: "2016 – 2020", gpa: "9.4 CGPA" },
+      { institution: "Hyderabad Public School", degree: "Class XII Science", years: "2014 – 2016" },
     ],
     experience: [
       {
-        company: "Synergie HR Solutions",
-        role: "Senior HR Recruiter",
+        company: "Razorpay Software",
+        role: "Lead Frontend Engineer",
         years: "2021 – Present",
         bullets: [
-          "Sourced and closed 150+ senior software engineers across APAC & US.",
-          "Reduced average cost-per-hire by 28% via targeted LinkedIn campaigns.",
-          "Partnered with VP of Engineering to define technical hiring rubrics.",
+          "Led development of merchant onboarding dashboard used by 250,000+ Indian businesses.",
+          "Optimized bundle rendering performance reducing initial page load time from 3.2s to 0.9s.",
+          "Created modular Design System UI component library adopted across 14 product squads.",
         ],
       },
       {
-        company: "KPMG Advisory",
-        role: "Talent Acquisition Consultant",
-        years: "2019 – 2021",
+        company: "MakeMyTrip India",
+        role: "Software Developer",
+        years: "2020 – 2021",
         bullets: [
-          "Managed campus recruitment drives screening 1,200+ student resumes annually.",
-          "Organized 8 regional university career fairs resulting in 45 intern offers.",
+          "Developed hotel booking web application serving 5M+ monthly active travelers.",
+          "Integrated UPI & Netbanking payment SDKs with zero checkout security drop-offs.",
         ],
       },
     ],
     projects: [
-      { title: "Global Diversity Hiring Drive", tech: "Lever, Workday", description: "Boosted female engineering hires by 45% across 3 global tech hubs." },
-      { title: "Automated Candidate Nurture Pipeline", tech: "Zapier, Mixmax", description: "Improved candidate response rate from 12% to 34%." },
+      { title: "Merchant Analytics Dashboard", tech: "React, Next.js, Recharts, Tailwind", description: "Real-time revenue monitoring portal processing 10M+ transaction logs." },
+      { title: "Automated Developer Onboarding Tool", tech: "Node.js, Docker, GitHub Actions", description: "Accelerated developer environment setup from 2 days to 15 minutes." },
     ],
-    certifications: ["SHRM Senior Certified Professional (SHRM-SCP)", "AIRS Certified Internet Recruiter"],
-    achievements: ["Top Technical Recruiter Award 2023", "Published HR Thought Leadership Article in Forbes"],
+    certifications: ["Meta Certified Professional Front-End Developer", "Docker Certified Associate"],
+    achievements: ["Razorpay Hackathon Winner 2022", "KVPY Scholar Fellowship Winner"],
   },
 
   skills_first: {
-    name: "Patricia Giordano",
-    title: "Receptionist & Front Office Lead",
-    email: "patricia.g@office.com",
-    phone: "(415) 555-0188",
-    location: "San Francisco, CA",
-    photoUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80",
-    summary: "Professional Front Desk Supervisor with proven track record in executive administrative support, client reception, and facility scheduling.",
-    skills: ["Front Office Operations", "MS Office 365", "Executive Scheduling", "Visitor Management", "Multi-line Phone Systems", "Event Logistics"],
+    name: "Rohan Verma",
+    title: "Backend Systems Architect",
+    email: "rohan.v@systems.in",
+    phone: "+91 97654 32109",
+    location: "Bengaluru, KA",
+    photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
+    summary: "Backend Systems Architect with 8+ years designing fault-tolerant databases, distributed caching layers, and high-security enterprise banking APIs.",
+    skills: ["Go, C++, Rust", "Distributed Systems", "Kubernetes (EKS)", "PostgreSQL, Redis", "gRPC & Protobuf", "System Security"],
     education: [
-      { institution: "University of Seattle", degree: "Associate of Communications", years: "2016 – 2018" },
-      { institution: "Seattle Gateway High", degree: "High School Diploma", years: "2012 – 2016" },
+      { institution: "NIT Trichy", degree: "B.Tech Computer Science", years: "2013 – 2017" },
+      { institution: "National Public School, Indiranagar", degree: "Class XII CBSE", years: "2011 – 2013" },
     ],
     experience: [
       {
-        company: "Alfred Young Design",
-        role: "Front Desk Supervisor",
+        company: "PhonePe India",
+        role: "Principal Backend Architect",
         years: "2020 – Present",
         bullets: [
-          "Welcomed 50+ daily VIP clients while managing C-suite executive calendars.",
-          "Handled travel logistics and vendor procurement budgets worth $120k annually.",
-          "Supervised 3 junior reception staff and coordinated office maintenance.",
+          "Architected core UPI settlement system handling 45M daily UPI transactions.",
+          "Designed multi-datacenter active-active database replication cluster.",
+          "Reduced cloud server infrastructure expenditure by ₹2.4 Crores annually.",
         ],
       },
       {
-        company: "Little Day Spa",
-        role: "Lead Receptionist",
-        years: "2018 – 2020",
+        company: "Oracle India",
+        role: "Senior Backend Developer",
+        years: "2017 – 2020",
         bullets: [
-          "Scheduled 200+ weekly appointments and processed POS payments seamlessly.",
-          "Increased retail product upsells by 25% through personalized guest greetings.",
+          "Built cloud database management APIs used by 500+ enterprise client databases.",
         ],
       },
     ],
     projects: [
-      { title: "Digital Visitor Kiosk Setup", tech: "Envoy, iPad POS", description: "Automated guest check-in reducing lobby wait times by 65%." },
-      { title: "Supply Inventory Tracking System", tech: "Excel VBA, Airtable", description: "Eliminated stockout delays for critical office supplies." },
+      { title: "High-Throughput Settlement Engine", tech: "Go, gRPC, Apache Cassandra", description: "Zero-data-loss financial transaction engine processing 30k TPS." },
+      { title: "Distributed Lock Manager", tech: "Rust, Raft Consensus", description: "Fault-tolerant cluster lock coordinator with sub-millisecond lease times." },
     ],
-    certifications: ["Certified Administrative Professional (CAP)", "First Aid & CPR Certified"],
-    achievements: ["Excellence in Service Award 2022", "Staff Member of the Quarter Q2 2021"],
+    certifications: ["Certified Kubernetes Administrator (CKA)", "AWS Solutions Architect Professional"],
+    achievements: ["PhonePe Tech Fellow 2023", "ACM ICPC Regional Finalist"],
   },
 
   project_first: {
-    name: "Gregory Walls",
-    title: "Lead Construction Project Director",
-    email: "gregory.walls@build.com",
-    phone: "(303) 555-0177",
-    location: "Denver, CO",
-    photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
-    summary: "Senior Construction Manager oversight of $25M+ commercial development projects. Specialist in OSHA safety protocols, subcontractor budgeting, and timeline delivery.",
-    skills: ["Construction Management", "Procore Safety", "Subcontractor Bidding", "CAD Blueprinting", "Cost Estimation", "OSHA 30-Hour"],
+    name: "Ananya Rao",
+    title: "Lead Product Manager",
+    email: "ananya.rao@product.in",
+    phone: "+91 99887 76655",
+    location: "Mumbai, MH",
+    photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+    summary: "Product Leader scaling consumer internet apps, conversion funnels, and AI features across edtech and fintech platforms.",
+    skills: ["Product Roadmap Strategy", "User Growth & Funnels", "A/B Testing & Mixpanel", "SQL Data Analytics", "Agile & Scrum Leadership", "UI/UX Prototyping"],
     education: [
-      { institution: "Colorado State University", degree: "B.S. Construction Management", years: "2010 – 2014" },
-      { institution: "Denver Tech Academy", degree: "Civil Engineering Diploma", years: "2006 – 2010" },
+      { institution: "IIM Ahmedabad", degree: "MBA Marketing & Strategy", years: "2018 – 2020" },
+      { institution: "IIT Delhi", degree: "B.Tech Electrical Engineering", years: "2014 – 2018" },
     ],
     experience: [
       {
-        company: "Timble General Contractors",
-        role: "Senior Project Manager",
-        years: "2019 – Present",
+        company: "Zomato Ltd",
+        role: "Group Product Manager",
+        years: "2021 – Present",
         bullets: [
-          "Delivered 12-story commercial tower 3 weeks ahead of schedule under $18M budget.",
-          "Maintained zero lost-time incidents across 450,000 work hours on active site.",
-          "Negotiated vendor material contracts saving $340k in structural steel expenses.",
+          "Led Gold Subscription loyalty product growing paid subscribers from 1M to 4.5M.",
+          "Increased repeat order frequency by 28% through personalized AI recommendation feeds.",
+          "Managed team of 12 software engineers, designers, and growth analysts.",
         ],
       },
       {
-        company: "Ringwood Development Inc",
-        role: "Site Manager",
-        years: "2014 – 2019",
+        company: "BYJU'S Edtech",
+        role: "Product Manager",
+        years: "2020 – 2021",
         bullets: [
-          "Supervised daily operations for residential subdivisions with 120+ home units.",
-          "Managed municipal permit approvals and site inspector walkthroughs.",
+          "Launched interactive video learning module used by 2M+ school students.",
         ],
       },
     ],
     projects: [
-      { title: "Denver Tech Center Tower Project", tech: "Procore, AutoDesk", description: "$22M commercial build delivered on time with zero safety citations." },
-      { title: "Green Building LEED Certification", tech: "LEED AP Standards", description: "Achieved LEED Gold status for energy-efficient office complex." },
+      { title: "AI Personalized Food Recommendation Feed", tech: "Mixpanel, Python, SQL", description: "Grew average order value by ₹85 per user across 20 metro cities." },
+      { title: "Instant UPI Checkout Funnel", tech: "Figma, Amplitude", description: "Reduced checkout funnel drop-off rate from 18% to 4.2%." },
     ],
-    certifications: ["Project Management Professional (PMP)", "OSHA 30-Hour Construction Safety"],
-    achievements: ["AGC Construction Project of the Year 2022", "Safety Leadership Excellence Award"],
+    certifications: ["Certified Scrum Product Owner (CSPO)", "Reforge Growth Series Certificate"],
+    achievements: ["IIM Ahmedabad Gold Medalist", "Product Leader of the Year 2022"],
   },
 
   academic_premium: {
-    name: "Matthew Jones",
-    title: "Financial Analyst & Economic Researcher",
-    email: "matthew.j@finance.org",
-    phone: "(212) 555-0166",
-    location: "New York, NY",
-    photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
-    summary: "Detail-oriented Financial Analyst with strong background in corporate valuation, macroeconomic modeling, capital budgeting, and quantitative risk assessment.",
-    skills: ["Financial Modeling", "DCF Valuation", "Bloomberg Terminal", "Python Data Analysis", "SQL & Excel VBA", "M&A Due Diligence"],
+    name: "Aditya Reddy",
+    title: "AI Researcher & Machine Learning Lead",
+    email: "aditya.reddy@research.in",
+    phone: "+91 98450 12345",
+    location: "Chennai, TN",
+    photoUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&auto=format&fit=crop&q=80",
+    summary: "AI Researcher developing Computer Vision pipelines, Large Language Model fine-tuning, and Deep Learning models for autonomous systems.",
+    skills: ["PyTorch & TensorFlow", "Large Language Models (LLMs)", "Computer Vision (OpenCV)", "Python & C++ CUDA", "Transformers & HuggingFace", "MLOps & MLflow"],
     education: [
-      { institution: "Wharton School - Univ. of Pennsylvania", degree: "B.S. Finance & Economics", years: "2017 – 2021", gpa: "3.95 GPA" },
-      { institution: "Stuyvesant High School", degree: "High School Honors Diploma", years: "2013 – 2017" },
+      { institution: "IIT Madras", degree: "M.S. Artificial Intelligence", years: "2018 – 2020", gpa: "9.8 CGPA" },
+      { institution: "College of Engineering Guindy", degree: "B.E. Computer Science", years: "2014 – 2018" },
     ],
     experience: [
       {
-        company: "Morgan Stanley",
-        role: "Investment Banking Analyst",
-        years: "2021 – Present",
+        company: "Google Research India",
+        role: "Senior AI Research Scientist",
+        years: "2020 – Present",
         bullets: [
-          "Built LBO and M&A valuation models for $1.2B+ tech acquisitions.",
-          "Prepared pitch books and financial due diligence reports for C-suite executives.",
-          "Analyzed quarterly earnings for 45 public enterprise software clients.",
-        ],
-      },
-      {
-        company: "Goldman Sachs",
-        role: "Summer Financial Analyst",
-        years: "Summer 2020",
-        bullets: [
-          "Constructed discounted cash flow (DCF) models for renewable energy sector.",
+          "Developed Indic-language LLM speech model supporting 12 official Indian languages.",
+          "Co-authored 8 research papers in NeurIPS, CVPR, and ACL conferences.",
+          "Filed 3 patents for low-resource NLP model compression techniques.",
         ],
       },
     ],
     projects: [
-      { title: "Macroeconomic Interest Rate Sensitivity Study", tech: "Python, Stata", description: "Published research paper analyzing Federal Reserve rate shifts on equity yields." },
-      { title: "Automated Portfolio Rebalancing Tool", tech: "Python, pandas, SQL", description: "Algorithmic script optimizing asset allocation for $50M fund." },
+      { title: "Multilingual Indic Speech Recognition", tech: "PyTorch, Transformers, CUDA", description: "Achieved state-of-the-art 94% accuracy across 12 Indian languages." },
+      { title: "Autonomous Vehicle Obstacle Detection", tech: "TensorFlow, OpenCV, ROS", description: "Real-time 60 FPS object detection model running on edge hardware." },
     ],
-    certifications: ["CFA Charterholder (Level II Passed)", "Bloomberg Market Concepts (BMC)"],
-    achievements: ["Wharton Dean's List for Academic Excellence", "1st Place Intercollegiate Stock Pitch Competition"],
+    certifications: ["DeepLearning.AI TensorFlow Developer", "NVIDIA CUDA Optimization Specialist"],
+    achievements: ["Best Paper Award at CVPR 2022", "Prime Minister's Research Fellowship (PMRF)"],
   },
 
   one_page_dense: {
-    name: "Susan Stone",
-    title: "Marketing Manager & Digital Strategist",
-    email: "susan.stone@marketing.com",
-    phone: "(312) 555-0155",
-    location: "Chicago, IL",
+    name: "Kavya Iyer",
+    title: "DevOps & Cloud Infrastructure Lead",
+    email: "kavya.iyer@cloud.in",
+    phone: "+91 97111 22334",
+    location: "Pune, MH",
     photoUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80",
-    summary: "Growth Marketer driving multi-channel acquisition campaigns, SEO optimization, and high-converting paid ad strategies across B2B SaaS.",
-    skills: ["Google Ads & SEO", "HubSpot Automation", "Meta Ads Manager", "Conversion Optimization", "Content Strategy", "Google Analytics 4"],
+    summary: "DevOps Lead managing multi-region AWS/GCP Kubernetes clusters, Infrastructure-as-Code automation, and zero-downtime microservice deployments.",
+    skills: ["AWS & GCP Cloud", "Kubernetes & Helm", "Terraform & Ansible", "CI/CD GitHub Actions", "Prometheus & Grafana", "Python & Bash Scripting"],
     education: [
-      { institution: "Harvard University", degree: "B.A. Marketing & Media", years: "2015 – 2019" },
-      { institution: "Chicago Central Academy", degree: "High School Diploma", years: "2011 – 2015" },
+      { institution: "IIIT Hyderabad", degree: "B.Tech Computer Science", years: "2015 – 2019" },
+      { institution: "Chinioya Vidyalaya, Chennai", degree: "Class XII Science", years: "2013 – 2015" },
     ],
     experience: [
       {
-        company: "Mass Telecommunications",
-        role: "Growth Marketing Manager",
-        years: "2020 – Present",
+        company: "Paytm Payments Bank",
+        role: "Lead DevOps Engineer",
+        years: "2021 – Present",
         bullets: [
-          "Increased organic web traffic by 180% year-over-year via targeted SEO pillar content.",
-          "Managed $50k monthly ad budget yielding 4.2x ROAS across paid search and social.",
-          "Led email automation nurture flows converting 14,000+ free trial users.",
+          "Automated Terraform deployment templates reducing cluster provisioning time from 4 hours to 12 minutes.",
+          "Maintained 99.999% SLA uptime across 350+ Kubernetes microservices.",
+          "Implemented automated security scanning in CI/CD pipeline blocking vulnerability releases.",
         ],
       },
       {
-        company: "Freelance Digital Agency",
-        role: "Online Marketing Consultant",
-        years: "2019 – 2020",
+        company: "Infosys Cloud Services",
+        role: "Senior Cloud Engineer",
+        years: "2019 – 2021",
         bullets: [
-          "Scaled 8 ecommerce client stores from $10k to $100k+ monthly recurring revenue.",
-          "Optimized landing page conversion rates by 38% through A/B split testing.",
+          "Migrated legacy enterprise workloads to AWS EKS cloud infrastructure.",
         ],
       },
     ],
     projects: [
-      { title: "B2B SaaS Lead Generation Funnel", tech: "HubSpot, Google Analytics 4", description: "Generated 3,400 qualified sales leads in Q3 with 22% demo conversion." },
-      { title: "Influencer Marketing Campaign", tech: "TikTok Ads, Shopify", description: "Generated $250k revenue in 14 days with zero upfront inventory." },
+      { title: "Multi-Region Disaster Recovery Mesh", tech: "AWS EKS, Terraform, Istio", description: "Zero-downtime regional failover infrastructure handling 20M daily active users." },
+      { title: "Automated CI/CD Vulnerability Scanner", tech: "Python, Trivy, SonarQube", description: "Reduced production deployment security vulnerabilities by 90%." },
     ],
-    certifications: ["Google Ads Search Certified", "HubSpot Inbound Marketing Certification"],
-    achievements: ["Marketer of the Year 2023", "Featured Speaker at Midwest Digital Summit"],
+    certifications: ["AWS Certified DevOps Engineer – Professional", "Certified Kubernetes Administrator (CKA)"],
+    achievements: ["Paytm Engineering Excellence Award 2023", "AWS Community Builder 2022"],
   },
 
   modern_minimal: {
-    name: "Sebastian Wilder",
-    title: "Product Designer & UI/UX Specialist",
-    email: "sebastian.w@design.io",
-    phone: "(917) 555-0144",
-    location: "Brooklyn, NY",
-    photoUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80",
-    summary: "User-centric Product Designer crafting intuitive digital web and mobile experiences. Expert in design systems, interactive prototypes, and usability testing.",
-    skills: ["Figma & Design Systems", "User Research", "Wireframing & Prototyping", "HTML/CSS/Tailwind", "Accessibility (WCAG)", "Design Tokens"],
-    education: [
-      { institution: "Parsons School of Design", degree: "B.F.A. Industrial & Digital Design", years: "2016 – 2020" },
-      { institution: "Brooklyn Design High", degree: "High School Diploma", years: "2012 – 2016" },
-    ],
-    experience: [
-      {
-        company: "Big Apple Products",
-        role: "Senior UI/UX Designer",
-        years: "2020 – Present",
-        bullets: [
-          "Redesigned core mobile checkout flow improving conversion rates by 26%.",
-          "Established company-wide Figma component design library used by 40+ engineers.",
-          "Conducted 50+ qualitative user research sessions for new product onboarding.",
-        ],
-      },
-      {
-        company: "Pixel Studio Brooklyn",
-        role: "UI Designer",
-        years: "2019 – 2020",
-        bullets: [
-          "Created interactive prototypes and motion graphics for web applications.",
-        ],
-      },
-    ],
-    projects: [
-      { title: "Fintech Mobile Wallet App", tech: "Figma, Protopie", description: "Award-winning mobile app design with over 500k active monthly users." },
-      { title: "Design System Tokens Migration", tech: "Style Dictionary, GitHub", description: "Unified iOS, Android, and Web design tokens across 12 product teams." },
-    ],
-    certifications: ["Nielsen Norman Group UX Certification", "Figma Design Lead Certificate"],
-    achievements: ["Awwwards Site of the Day Winner 2022", "Red Dot Design Concept Award 2021"],
-  },
-
-  impact_focused: {
-    name: "Jack Farrell",
-    title: "Warehouse Operations Manager",
-    email: "jack.farrell@logistics.com",
-    phone: "(312) 555-0133",
-    location: "Chicago, IL",
-    photoUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&auto=format&fit=crop&q=80",
-    summary: "Operations Supervisor driving 30% efficiency gains across distribution centers, inventory logistics, and fulfillment supply chains.",
-    skills: ["Logistics Operations", "WMS & SAP", "Inventory Control", "Fleet Management", "Six Sigma Lean", "Supply Chain Audit"],
-    education: [
-      { institution: "Illinois Institute of Technology", degree: "B.S. Supply Chain Logistics", years: "2012 – 2016" },
-      { institution: "Chicago Technical School", degree: "Logistics Technician Diploma", years: "2008 – 2012" },
-    ],
-    experience: [
-      {
-        company: "Warehousing Corp",
-        role: "Warehouse Operations Lead",
-        years: "2019 – Present",
-        bullets: [
-          "Supervised 60+ floor staff maintaining 99.4% order picking accuracy rate.",
-          "Cut inventory discrepancy costs by $120k annually through barcode automation.",
-          "Optimized dock scheduling reducing truck turnaround times from 45 to 18 minutes.",
-        ],
-      },
-      {
-        company: "Packaging Inc",
-        role: "Logistics Coordinator",
-        years: "2016 – 2019",
-        bullets: [
-          "Managed daily dispatch routes for 25 commercial freight vehicles across Midwest.",
-        ],
-      },
-    ],
-    projects: [
-      { title: "Distribution Center Automation", tech: "SAP WMS, RFID", description: "Automated pallet tracking accelerating order dispatch by 35%." },
-      { title: "Warehouse Safety Protocols Overhaul", tech: "OSHA Standards", description: "Achieved 500 consecutive days without site safety incidents." },
-    ],
-    certifications: ["Certified Supply Chain Professional (CSCP)", "Six Sigma Green Belt Certified"],
-    achievements: ["Logistics Excellence Manager Award 2022", "Top Operational Accuracy Rating 2021"],
-  },
-
-  developer_portfolio: {
-    name: "Elsa Williams",
-    title: "Physical Therapist & Clinical Specialist",
-    email: "elsa.williams@health.org",
-    phone: "(619) 555-0122",
-    location: "San Diego, CA",
-    photoUrl: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&auto=format&fit=crop&q=80",
-    summary: "Compassionate Physical Therapist with 7+ years of clinical experience in orthopedic rehabilitation, sports injury recovery, and patient care management.",
-    skills: ["Orthopedic Rehabilitation", "Post-Surgical Care", "Patient Evaluation", "Manual Therapy", "EMR Documentation", "Sports Recovery"],
-    education: [
-      { institution: "University of Southern California", degree: "Doctor of Physical Therapy (DPT)", years: "2014 – 2017" },
-      { institution: "UC San Diego", degree: "B.S. Kinesiology", years: "2010 – 2014" },
-    ],
-    experience: [
-      {
-        company: "Physical Therapy Care Center",
-        role: "Lead Physical Therapist",
-        years: "2019 – Present",
-        bullets: [
-          "Evaluated and treated 25+ daily patients recovering from complex joint surgeries.",
-          "Achieved 96% patient satisfaction rating across post-op rehabilitation programs.",
-          "Mentored 6 DPT student interns during clinical rotations.",
-        ],
-      },
-      {
-        company: "Rehab Specialists Inc",
-        role: "Staff Therapist",
-        years: "2017 – 2019",
-        bullets: [
-          "Formulated individualized recovery plans for collegiate and professional athletes.",
-        ],
-      },
-    ],
-    projects: [
-      { title: "ACL Rehabilitation Protocol", tech: "Clinical Study", description: "Published recovery guidelines adopted across 14 regional health clinics." },
-      { title: "Ergonomic Patient Assessment", tech: "Motion Capture Analysis", description: "Reduced repetitive strain injuries in office workers by 40%." },
-    ],
-    certifications: ["Board Certified Orthopedic Clinical Specialist (OCS)", "Certified Strength & Conditioning Specialist (CSCS)"],
-    achievements: ["Clinician of the Year Award 2023", "Co-author in Journal of Orthopedic Physical Therapy"],
-  },
-
-  global_professional: {
-    name: "Alexander Wright",
+    name: "Vikram Sengupta",
     title: "Enterprise Solutions Architect",
-    email: "alexander.wright@tech.corp",
-    phone: "(617) 555-0111",
-    location: "Boston, MA",
-    photoUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&auto=format&fit=crop&q=80",
+    email: "vikram.s@enterprise.in",
+    phone: "+91 99000 11223",
+    location: "Kolkata, WB",
+    photoUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80",
     summary: "Enterprise Technology Architect specializing in cloud infrastructure migration, microservice design, and digital transformation for Fortune 500 companies.",
     skills: ["Cloud Architecture (AWS/GCP)", "Kubernetes & Microservices", "Enterprise Security", "DevOps Pipelines", "Stakeholder Management", "Terraform IaC"],
     education: [
-      { institution: "MIT", degree: "M.S. Computer Science", years: "2014 – 2016" },
-      { institution: "Boston University", degree: "B.S. Software Engineering", years: "2010 – 2014" },
+      { institution: "IIT Kharagpur", degree: "M.Tech Software Engineering", years: "2014 – 2016" },
+      { institution: "Jadavpur University", degree: "B.E. Computer Science", years: "2010 – 2014" },
     ],
     experience: [
       {
-        company: "Global Tech Solutions",
+        company: "TCS Enterprise Solutions",
         role: "Principal Solutions Architect",
         years: "2020 – Present",
         bullets: [
-          "Led $40M cloud migration for legacy banking core saving $4.2M annually.",
+          "Led ₹300 Crore cloud migration for legacy banking core saving ₹32 Crores annually.",
           "Architected zero-trust security framework serving 2M+ active daily users.",
           "Supervised architecture review board across 18 development teams.",
         ],
       },
       {
-        company: "Oracle Systems",
+        company: "Wipro Technologies",
         role: "Senior Cloud Engineer",
         years: "2016 – 2020",
         bullets: [
@@ -432,351 +298,206 @@ const PERSONAS: Record<string, PersonaData> = {
       { title: "Bank Core Cloud Migration", tech: "AWS, Terraform, K8s", description: "Migrated 120+ microservices to cloud with zero unplanned downtime." },
       { title: "Disaster Recovery Automation", tech: "Python, AWS Route53", description: "Reduced disaster recovery failover time from 4 hours to 90 seconds." },
     ],
-    certifications: ["AWS Certified Solutions Architect – Professional", "Certified Kubernetes Administrator (CKA)"],
-    achievements: ["Enterprise Tech Innovation Award 2022", "Keynote Speaker at Cloud Architecture Summit"],
+    certifications: ["AWS Certified Solutions Architect – Professional", "TOGAF 9 Enterprise Architect"],
+    achievements: ["TCS Innovation Award 2022", "Keynote Speaker at Cloud Architecture Summit"],
   },
-};
 
-// Fill photo personas for photo templates
-const PHOTO_PERSONAS: Record<string, PersonaData> = {
-  photo_executive: {
-    name: "Sophie Watson",
-    title: "Executive Vice President of Operations",
-    email: "sophie.w@executive.com",
-    phone: "(206) 555-0142",
-    location: "Seattle, WA",
-    photoUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
-    summary: "Senior Operations Executive with 12+ years steering corporate growth, cross-functional business strategies, and $50M+ P&L management.",
-    skills: ["P&L Management", "Strategic Operations", "Cross-Functional Leadership", "Corporate Mergers", "Budget Optimization", "Executive Governance"],
+  impact_focused: {
+    name: "Neha Kulkarni",
+    title: "Cybersecurity & Risk Analyst",
+    email: "neha.k@security.in",
+    phone: "+91 98220 33445",
+    location: "Gurgaon, HR",
+    photoUrl: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&auto=format&fit=crop&q=80",
+    summary: "Cybersecurity Specialist specializing in penetration testing, vulnerability assessment, cloud security compliance, and incident response.",
+    skills: ["Penetration Testing (Metasploit)", "SIEM & SOC Operations", "Cloud Security (AWS Security)", "ISO 27001 & SOC 2", "Python Security Scripts", "Network Security"],
     education: [
-      { institution: "University of Washington", degree: "Executive MBA", years: "2016 – 2018" },
-      { institution: "Seattle University", degree: "B.A. Business Administration", years: "2010 – 2014" },
+      { institution: "DTU Delhi", degree: "B.Tech Information Technology", years: "2016 – 2020" },
+      { institution: "DPS Vasant Kunj", degree: "Class XII Science", years: "2014 – 2016" },
     ],
     experience: [
       {
-        company: "Apex Global Holdings",
-        role: "VP of Business Operations",
-        years: "2020 – Present",
+        company: "CRED Financials",
+        role: "Senior Security Engineer",
+        years: "2021 – Present",
         bullets: [
-          "Oversee operational strategy across 14 regional offices with 450+ employees.",
-          "Increased operating margin by 22% over 3 fiscal years through Lean implementation.",
-          "Negotiated strategic supplier partnerships saving $3.8M annually.",
+          "Conducted penetration testing across 40+ microservices identifying 12 critical zero-day flaws.",
+          "Automated SOC incident alert triage using Python scripts reducing response time by 75%.",
+          "Achieved SOC 2 Type II and ISO 27001 security compliance certifications.",
         ],
       },
       {
-        company: "Boeing Commercial",
-        role: "Operations Director",
-        years: "2014 – 2020",
+        company: "Deloitte Cyber Risk",
+        role: "Cyber Risk Consultant",
+        years: "2020 – 2021",
         bullets: [
-          "Managed supply chain logistics for aircraft component assembly lines.",
+          "Performed vulnerability assessments for 15 financial banking clients.",
         ],
       },
     ],
     projects: [
-      { title: "Enterprise ERP Transformation", tech: "SAP S/4HANA", description: "Unified financial and supply chain systems across 4 corporate subsidiaries." },
+      { title: "Automated API Vulnerability Scanner", tech: "Python, OWASP ZAP, Docker", description: "Integrated automated SAST/DAST security scans into CI/CD build pipeline." },
+      { title: "Zero-Trust Identity Access Control", tech: "AWS IAM, Okta, OAuth2", description: "Enforced multi-factor authentication across 1,200 company employees." },
     ],
-    certifications: ["Certified Executive Leadership (CEL)", "Lean Six Sigma Master Black Belt"],
-    achievements: ["Seattle Business Executive of the Year 2023", "Top 40 Under 40 Business Leaders"],
+    certifications: ["Certified Information Systems Security Professional (CISSP)", "CEH Master Certified"],
+    achievements: ["CRED Security Champion Award 2023", "Top 3 Hall of Fame Bug Bounty Hunter"],
   },
 
-  photo_side_panel: {
-    name: "Gregory Walls",
-    title: "Senior Product Designer & Art Director",
-    email: "gregory.walls@design.co",
-    phone: "(415) 555-0199",
-    location: "San Francisco, CA",
-    photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
-    summary: "Creative Art Director crafting high-impact visual identity systems, mobile applications, and brand experiences for tier-1 tech products.",
-    skills: ["Visual Brand Design", "Figma & Design Systems", "Interactive Prototyping", "User Research", "3D Motion Graphics", "Design System Strategy"],
+  developer_portfolio: {
+    name: "Siddharth Gupta",
+    title: "Embedded Systems & IoT Engineer",
+    email: "siddharth.g@hardware.in",
+    phone: "+91 97333 44556",
+    location: "Bengaluru, KA",
+    photoUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&auto=format&fit=crop&q=80",
+    summary: "Hardware and Embedded Software Engineer building real-time micro-controller firmware, C/C++ RTOS kernels, and IoT hardware protocols.",
+    skills: ["Embedded C & C++", "FreeRTOS & ESP32", "ARM Cortex & STM32", "SPI, I2C, UART, CAN", "PCB Design (KiCAD)", "IoT Protocols (MQTT)"],
     education: [
-      { institution: "California College of the Arts", degree: "B.F.A. Graphic Design", years: "2013 – 2017" },
+      { institution: "BITS Pilani, Goa Campus", degree: "B.E. Electronics & Instrumentation", years: "2016 – 2020" },
+      { institution: "Modern School, Barakhamba Road", degree: "Class XII Science", years: "2014 – 2016" },
     ],
     experience: [
       {
-        company: "Studio Nimble Creative",
-        role: "Lead Product Designer",
+        company: "Ather Energy",
+        role: "Senior Embedded Firmware Lead",
         years: "2021 – Present",
         bullets: [
-          "Directed design overhaul for mobile fintech app used by 3M+ active subscribers.",
-          "Mentored team of 8 junior and mid-level product designers across 4 squads.",
-          "Created design system used across iOS, Android, and Web platforms.",
+          "Developed Battery Management System (BMS) firmware processing 200 Hz cell voltage telemetry.",
+          "Optimized FreeRTOS task scheduling reducing MCU power consumption by 22%.",
+          "Engineered CAN bus communication protocols connecting motor controller to dashboard UI.",
         ],
       },
       {
-        company: "Vanguard Media",
-        role: "Senior UI Designer",
-        years: "2017 – 2021",
+        company: "Bosch India R&D",
+        role: "Embedded Systems Engineer",
+        years: "2020 – 2021",
         bullets: [
-          "Designed marketing landing pages generating over $12M in customer acquisitions.",
+          "Programmed automotive sensor firmware for anti-lock braking (ABS) systems.",
+        ],
+      },
+    ],
+    projects: [
+      { title: "Smart Electric Vehicle Telemetry Unit", tech: "ESP32, FreeRTOS, MQTT, C++", description: "Real-time cellular IoT device broadcasting battery telemetry to cloud." },
+      { title: "High-Precision Motor Controller Board", tech: "KiCAD, STM32, CAN Bus", description: "Custom 4-layer PCB designed and manufactured for EV prototypes." },
+    ],
+    certifications: ["ARM Accredited Engineer (AAE)", "Embedded Linux System Developer"],
+    achievements: ["Ather Hardware Innovation Award 2022", "1st Place National Robotics Championship"],
+  },
+
+  global_professional: {
+    name: "Meera Joshi",
+    title: "UI/UX Product Designer",
+    email: "meera.joshi@design.in",
+    phone: "+91 98999 88776",
+    location: "Mumbai, MH",
+    photoUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80",
+    summary: "User Experience Designer crafting intuitive digital interfaces, design systems, and mobile app flows used by millions of daily active users.",
+    skills: ["Figma & Design Systems", "User Research & Usability", "Wireframing & Prototyping", "Design Tokens", "HTML/CSS & Tailwind", "WCAG Accessibility"],
+    education: [
+      { institution: "National Institute of Design (NID)", degree: "B.Des Industrial & Interaction Design", years: "2016 – 2020" },
+      { institution: "Cathedral & John Connon School", degree: "Class XII Arts & Design", years: "2014 – 2016" },
+    ],
+    experience: [
+      {
+        company: "Swiggy Design Studio",
+        role: "Lead UI/UX Designer",
+        years: "2021 – Present",
+        bullets: [
+          "Redesigned core mobile ordering checkout flow improving conversion rates by 24%.",
+          "Created company-wide Figma design library utilized by 45+ product managers and developers.",
+          "Conducted 60+ qualitative user research sessions across 8 tier-1 and tier-2 Indian cities.",
+        ],
+      },
+      {
+        company: "Fractal Analytics Studio",
+        role: "UI Designer",
+        years: "2020 – 2021",
+        bullets: [
+          "Designed interactive AI analytics dashboards for Fortune 500 retail clients.",
+        ],
+      },
+    ],
+    projects: [
+      { title: "Swiggy Instamart Grocery Experience", tech: "Figma, Protopie", description: "Designed 10-minute grocery delivery app flow with over 2M daily active buyers." },
+      { title: "Design System Tokens Migration", tech: "Figma Tokens, Style Dictionary", description: "Unified iOS, Android, and Web design tokens across 14 product squads." },
+    ],
+    certifications: ["Nielsen Norman Group UX Certification", "Figma Design Lead Certificate"],
+    achievements: ["India Design Mark Winner 2023", "Cannes Future Lions Shortlist"],
+  },
+};
+
+// Fill photo personas for photo templates using Indian personas
+const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
+  ...INDIAN_PERSONAS,
+  photo_executive: {
+    name: "Arjun Mehta",
+    title: "Executive Vice President of Operations",
+    email: "arjun.mehta@executive.in",
+    phone: "+91 98100 11223",
+    location: "Delhi NCR",
+    photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+    summary: "Senior Corporate Executive with 14+ years leading operations, cross-functional business strategy, and ₹400 Crore P&L management across multinational companies.",
+    skills: ["P&L Management", "Strategic Operations", "Cross-Functional Leadership", "Corporate Mergers", "Budget Optimization", "Executive Governance"],
+    education: [
+      { institution: "ISB Hyderabad", degree: "Post Graduate Programme (MBA)", years: "2014 – 2015" },
+      { institution: "IIT Delhi", degree: "B.Tech Mechanical Engineering", years: "2008 – 2012" },
+    ],
+    experience: [
+      {
+        company: "Tata Sons Pvt Ltd",
+        role: "VP of Business Operations",
+        years: "2019 – Present",
+        bullets: [
+          "Oversee operational strategy across 12 regional manufacturing units with 650+ staff.",
+          "Increased operating margin by 26% over 3 fiscal years through Lean implementation.",
+          "Negotiated strategic supplier partnerships saving ₹28 Crores annually.",
+        ],
+      },
+      {
+        company: "Mahindra & Mahindra",
+        role: "Operations Director",
+        years: "2015 – 2019",
+        bullets: [
+          "Managed automotive assembly line logistics and component supply chains.",
+        ],
+      },
+    ],
+    projects: [
+      { title: "Enterprise ERP Digital Transformation", tech: "SAP S/4HANA", description: "Unified financial and supply chain systems across 4 corporate subsidiaries." },
+    ],
+    certifications: ["Certified Executive Leadership (CEL)", "Lean Six Sigma Master Black Belt"],
+    achievements: ["Tata Business Executive of the Year 2023", "ET 40 Under 40 Business Leaders"],
+  },
+
+  photo_side_panel: {
+    name: "Ishita Chatterjee",
+    title: "Creative Art Director & UX Lead",
+    email: "ishita.c@creative.in",
+    phone: "+91 98333 22110",
+    location: "Kolkata, WB",
+    photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+    summary: "Creative Director crafting high-impact visual identity systems, mobile applications, and brand experiences for top Indian technology companies.",
+    skills: ["Visual Brand Design", "Figma & Design Systems", "Interactive Prototyping", "User Research", "3D Motion Graphics", "Brand Strategy"],
+    education: [
+      { institution: "NIFT Delhi", degree: "B.Des Fashion Communication & Media", years: "2014 – 2018" },
+    ],
+    experience: [
+      {
+        company: "Ogivy India",
+        role: "Lead Creative Designer",
+        years: "2021 – Present",
+        bullets: [
+          "Directed design overhaul for digital banking app used by 4M+ active subscribers.",
+          "Mentored team of 10 junior designers across digital branding campaigns.",
+          "Created design system used across iOS, Android, and Web platforms.",
         ],
       },
     ],
     projects: [
       { title: "Fintech Mobile Wallet Redesign", tech: "Figma, Principle", description: "Increased daily active app usage by 34% post release." },
-      { title: "E-Commerce Brand Identity", tech: "Figma, Webflow", description: "Complete visual redesign generating 2.5x conversion boost." },
     ],
     certifications: ["Nielsen Norman Certified UX Director", "Adobe Certified Expert (ACE)"],
-    achievements: ["Webby Design Award Winner 2022", "Figma Community Featured Creator"],
-  },
-
-  photo_student_card: {
-    name: "Matthew Jones",
-    title: "Full Stack Engineer & CS Student",
-    email: "matthew.j@tech.edu",
-    phone: "(212) 555-0188",
-    location: "New York, NY",
-    photoUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80",
-    summary: "Computer Science senior passionate about cloud infrastructure, full-stack React/Node web platforms, and open-source AI tooling.",
-    skills: ["React, Next.js", "Node.js, Express", "TypeScript & SQL", "Docker & AWS", "Data Structures", "Python Machine Learning"],
-    education: [
-      { institution: "Columbia University", degree: "B.S. Computer Science", years: "2021 – 2025", gpa: "3.92 GPA" },
-      { institution: "Brooklyn Tech High", degree: "High School Diploma", years: "2017 – 2021" },
-    ],
-    experience: [
-      {
-        company: "Google Cloud Inc",
-        role: "Software Engineering Intern",
-        years: "Summer 2024",
-        bullets: [
-          "Built real-time telemetry dashboard monitoring Kubernetes cluster health.",
-          "Implemented automated CI/CD pipeline reducing build test runtimes by 30%.",
-          "Presented final project to 200+ Google engineers during summer showcase.",
-        ],
-      },
-    ],
-    projects: [
-      { title: "AI Resume Generator Platform", tech: "Next.js, OpenAI API, PostgreSQL", description: "Built viral SaaS web tool serving over 20,000 active university students." },
-      { title: "Peer-to-Peer Code Tutor App", tech: "React Native, Firebase", description: "Mobile tutoring platform with 4.8/5 rating." },
-    ],
-    certifications: ["AWS Certified Developer Associate", "MongoDB Certified Developer"],
-    achievements: ["1st Place HackMIT 2023", "Dean's List all 7 Semesters at Columbia"],
-  },
-
-  photo_corporate: {
-    name: "Charlotte Warren",
-    title: "Management Consultant & Strategy Lead",
-    email: "charlotte.w@consulting.com",
-    phone: "(312) 555-0177",
-    location: "Chicago, IL",
-    photoUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
-    summary: "Management Consultant specializing in corporate strategy, digital operating models, and organizational restructurings for Fortune 500 enterprises.",
-    skills: ["Corporate Strategy", "Market Analysis", "Operating Models", "Financial Due Diligence", "Stakeholder Presentation", "Change Management"],
-    education: [
-      { institution: "Northwestern Kellogg", degree: "MBA Strategy & Finance", years: "2017 – 2019" },
-      { institution: "UChicago", degree: "B.A. Economics", years: "2011 – 2015" },
-    ],
-    experience: [
-      {
-        company: "McKinsey & Company",
-        role: "Associate Partner",
-        years: "2019 – Present",
-        bullets: [
-          "Advised C-suite executives on $2B acquisition integration across healthcare sector.",
-          "Led restructuring program that unlocked $85M in annual operational efficiencies.",
-          "Managed team of 12 engagement consultants across 5 client workstreams.",
-        ],
-      },
-    ],
-    projects: [
-      { title: "Healthcare Supply Chain Overhaul", tech: "Strategic Analysis", description: "Optimized logistics footprint across 40 regional hospital networks." },
-    ],
-    certifications: ["Certified Management Consultant (CMC)", "Kellogg Executive Leadership Certificate"],
-    achievements: ["Consultant of the Year 2022", "Published Case Study in Harvard Business Review"],
-  },
-
-  photo_creative_tech: {
-    name: "Sebastian Wilder",
-    title: "Frontend Developer & Creative Coder",
-    email: "sebastian.w@code.dev",
-    phone: "(917) 555-0166",
-    location: "Brooklyn, NY",
-    photoUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=80",
-    summary: "Creative Technologist blending modern React web development, Three.js 3D web graphics, and interactive user interfaces.",
-    skills: ["React & Next.js", "Three.js / WebGL", "TailwindCSS & Motion", "TypeScript", "Performance Tuning", "Shader Programming"],
-    education: [
-      { institution: "NYU Tisch School of Arts", degree: "B.S. Interactive Telecommunications", years: "2017 – 2021" },
-    ],
-    experience: [
-      {
-        company: "Superreal Creative Agency",
-        role: "Lead Frontend Engineer",
-        years: "2021 – Present",
-        bullets: [
-          "Engineered immersive web experiences for global brands using WebGL & React.",
-          "Achieved 99+ Lighthouse performance scores across all client production deployments.",
-          "Created custom 3D shader animations reducing GPU memory consumption by 35%.",
-        ],
-      },
-    ],
-    projects: [
-      { title: "3D Interactive Product Configurator", tech: "Three.js, React, WebGL", description: "Interactive 3D configurator increasing e-commerce checkout sales by 42%." },
-    ],
-    certifications: ["Meta Front-End Developer Professional", "Three.js Journey Graduate"],
-    achievements: ["FWA Site of the Day Winner 2023", "Featured Speaker at JSConf NY"],
-  },
-
-  photo_academic: {
-    name: "Matthew Jones",
-    title: "Bioinformatics Researcher & Data Scientist",
-    email: "matthew.j@research.edu",
-    phone: "(617) 555-0155",
-    location: "Cambridge, MA",
-    photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
-    summary: "Biomedical Data Researcher utilizing machine learning, genomic sequencing pipelines, and statistical modeling to accelerate drug discovery.",
-    skills: ["Genomic Data Analysis", "Python & R Statistics", "PyTorch ML Models", "Bioinformatics Pipelines", "LaTeX & Publishing", "High-Performance Computing"],
-    education: [
-      { institution: "Harvard Medical School", degree: "Ph.D. Biomedical Informatics", years: "2019 – 2024" },
-      { institution: "MIT", degree: "B.S. Computational Biology", years: "2015 – 2019", gpa: "3.96 GPA" },
-    ],
-    experience: [
-      {
-        company: "Broad Institute of MIT and Harvard",
-        role: "Postdoctoral Research Fellow",
-        years: "2024 – Present",
-        bullets: [
-          "Developed deep learning pipeline classifying rare genetic variant pathogenicity.",
-          "Co-authored 6 peer-reviewed papers in Nature Genetics and Bioinformatics.",
-          "Secured $250k NIH research grant funding for genomic data modeling.",
-        ],
-      },
-    ],
-    projects: [
-      { title: "Single-Cell RNA Sequencing Toolkit", tech: "Python, PyTorch, R", description: "Open source genomic tool downloaded by over 40,000 global researchers." },
-    ],
-    certifications: ["AWS Certified Data Analytics Specialist", "NIH Clinical Research Fellow"],
-    achievements: ["Harvard Presidential Research Fellowship", "Best Paper Award at ISMB Conference"],
-  },
-
-  photo_split_hero: {
-    name: "Susan Stone",
-    title: "Senior Product Manager",
-    email: "susan.stone@product.io",
-    phone: "(415) 555-0144",
-    location: "San Francisco, CA",
-    photoUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
-    summary: "Data-driven Senior Product Manager leading 0-to-1 SaaS products, user growth funnels, and agile engineering roadmaps.",
-    skills: ["Product Roadmap Strategy", "Agile & Scrum Methodologies", "A/B Testing & Mixpanel", "User Persona Research", "SQL Data Analytics", "Product Analytics"],
-    education: [
-      { institution: "Stanford University", degree: "B.S. Symbolic Systems", years: "2014 – 2018" },
-    ],
-    experience: [
-      {
-        company: "Stripe Inc",
-        role: "Group Product Manager",
-        years: "2021 – Present",
-        bullets: [
-          "Led team of 14 engineers and designers building developer API billing tools.",
-          "Grew platform ARR from $12M to $45M in 24 months through self-serve onboarding.",
-          "Decreased user sign-up dropoff by 24% via streamlined onboarding experience.",
-        ],
-      },
-      {
-        company: "Lyft",
-        role: "Product Manager",
-        years: "2018 – 2021",
-        bullets: [
-          "Optimized passenger pickup matching algorithms reducing driver wait times by 18%.",
-        ],
-      },
-    ],
-    projects: [
-      { title: "Self-Serve Enterprise Billing Portal", tech: "Stripe API, React", description: "Reduced customer onboarding friction from 5 days to 10 minutes." },
-    ],
-    certifications: ["Certified Scrum Product Owner (CSPO)", "Reforge Growth Series Graduate"],
-    achievements: ["Product Leader Award 2023 at Stripe", "Top Speaker at ProductCon SF"],
-  },
-
-  photo_clean_vertical: {
-    name: "Alexander Wright",
-    title: "Lead Cloud Infrastructure Architect",
-    email: "alex.wright@cloud.net",
-    phone: "(206) 555-0133",
-    location: "Seattle, WA",
-    photoUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&auto=format&fit=crop&q=80",
-    summary: "Cloud Architect designing high-availability AWS/Kubernetes systems, Infrastructure-as-Code automation, and zero-downtime microservice deployments.",
-    skills: ["AWS & Kubernetes (EKS)", "Terraform & Ansible", "CI/CD GitHub Actions", "Go & Python Automation", "Cybersecurity Compliance", "Istio Service Mesh"],
-    education: [
-      { institution: "University of Washington", degree: "B.S. Computer Engineering", years: "2012 – 2016" },
-    ],
-    experience: [
-      {
-        company: "Amazon Web Services (AWS)",
-        role: "Principal Solutions Architect",
-        years: "2019 – Present",
-        bullets: [
-          "Architected multi-region failover cluster handling 50k requests/second with 99.999% SLA.",
-          "Automated Terraform deployment templates saving 400+ engineering team hours.",
-          "Led security audit compliance program meeting SOC2 and ISO27001 standards.",
-        ],
-      },
-    ],
-    projects: [
-      { title: "Multi-Region Cloud Failover Mesh", tech: "AWS EKS, Terraform, Istio", description: "Zero-downtime regional failover infrastructure for enterprise banking." },
-    ],
-    certifications: ["AWS Certified Solutions Architect – Professional", "Certified Kubernetes Administrator (CKA)"],
-    achievements: ["AWS Innovation Award Winner", "Patent Holder for Cloud Routing Protocols"],
-  },
-
-  photo_personal_brand: {
-    name: "Elsa Williams",
-    title: "UX Director & Brand Founder",
-    email: "elsa.williams@brand.co",
-    phone: "(310) 555-0122",
-    location: "Los Angeles, CA",
-    photoUrl: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&auto=format&fit=crop&q=80",
-    summary: "Creative Director and Brand Strategist helping tech founders launch iconic identity systems, high-converting digital web products, and brand stories.",
-    skills: ["Creative Direction", "Brand Strategy & Positioning", "UI/UX Design Systems", "Content Strategy", "Digital Campaign Management", "Design System Strategy"],
-    education: [
-      { institution: "USC Roski School of Art", degree: "B.F.A. Visual Design & Media", years: "2013 – 2017" },
-    ],
-    experience: [
-      {
-        company: "Elsa Williams Studio",
-        role: "Founder & Creative Lead",
-        years: "2020 – Present",
-        bullets: [
-          "Branded and launched 25+ venture-backed tech startups raising over $150M in Series A.",
-          "Recognized in Awwwards, Webby Awards, and Communication Arts Design Annual.",
-          "Managed creative design agency team of 10 designers and brand copywriters.",
-        ],
-      },
-    ],
-    projects: [
-      { title: "Venture Brand Identity Suite", tech: "Figma, Webflow", description: "Complete brand design system and web launch platform for AI startup." },
-    ],
-    certifications: ["Design Leadership Institute Fellow", "AIGA Executive Member"],
-    achievements: ["Awwwards Studio of the Month 2023", "Cannes Lions Bronze Award"],
-  },
-
-  photo_premium_identity: {
-    name: "Jack Farrell",
-    title: "Engineering Director & Systems Lead",
-    email: "jack.farrell@engineering.com",
-    phone: "(512) 555-0111",
-    location: "Austin, TX",
-    photoUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&auto=format&fit=crop&q=80",
-    summary: "Engineering Director with 14+ years scaling engineering organizations, real-time backend microservices, and distributed cloud platforms.",
-    skills: ["Engineering Leadership", "Distributed Systems", "Go, C++, Rust", "High-Throughput APIs", "Agile Team Scaling", "Apache Kafka"],
-    education: [
-      { institution: "UT Austin", degree: "B.S. Electrical & Computer Engineering", years: "2008 – 2012" },
-    ],
-    experience: [
-      {
-        company: "Tesla Motors",
-        role: "Director of Software Engineering",
-        years: "2019 – Present",
-        bullets: [
-          "Scaled engineering organization from 20 to 120+ engineers across 6 specialized squads.",
-          "Architected real-time vehicle telemetry data platform processing 10B+ daily data points.",
-          "Reduced cloud compute infrastructure costs by $6.5M through custom Rust services.",
-        ],
-      },
-    ],
-    projects: [
-      { title: "Real-Time Telemetry Data Engine", tech: "Go, Apache Kafka, Rust", description: "Stream processing infrastructure scaling to 10M concurrent connected devices." },
-    ],
-    certifications: ["AWS Certified DevOps Engineer – Professional", "Certified Scrum Master"],
-    achievements: ["Engineering Leadership Excellence Award 2022", "Keynote Speaker at GopherCon"],
+    achievements: ["Kyoorius Design Award Winner 2022", "Figma Community Featured Creator"],
   },
 };
 
@@ -784,9 +505,13 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
   const accent = tmpl.accentColor || "#1e293b";
   const isPhoto = tmpl.supportsPhoto;
 
-  const p = isPhoto 
-    ? (PHOTO_PERSONAS[tmpl.id] || PHOTO_PERSONAS.photo_executive)
-    : (PERSONAS[tmpl.id] || PERSONAS.modern);
+  // Resolve persona from Indian Personas dataset with clean fallback
+  const personaKeys = Object.keys(INDIAN_PERSONAS);
+  const photoPersonaKeys = Object.keys(PHOTO_INDIAN_PERSONAS);
+
+  const p = isPhoto
+    ? (PHOTO_INDIAN_PERSONAS[tmpl.id] || PHOTO_INDIAN_PERSONAS[photoPersonaKeys[0]])
+    : (INDIAN_PERSONAS[tmpl.id] || INDIAN_PERSONAS[personaKeys[0]]);
 
   // Determine section order labels
   const sectionsToDisplay = tmpl.sectionOrder.map((s) => {
@@ -802,7 +527,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     return { key: s, label: labels[s] || s.toUpperCase() };
   });
 
-  // ── Helper to render a section block ──
+  // ── Helper to render a section block with clean text density ──
   const renderSectionBlock = (secKey: string, secLabel: string) => {
     if (secKey === "summary" && p.summary) {
       return (
@@ -814,22 +539,22 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     }
 
     if (secKey === "skills" && p.skills?.length) {
-      // 1. Categorized format with bold labels (for skills_first, developer_portfolio, photo_creative_tech, photo_academic)
-      if (tmpl.id === "skills_first" || tmpl.id === "developer_portfolio" || tmpl.id === "photo_creative_tech" || tmpl.id === "photo_academic") {
+      // 1. Categorized format with bold labels (for skills_first, developer_portfolio, photo_creative_tech, photo_academic, tech_spec)
+      if (tmpl.id === "skills_first" || tmpl.id === "developer_portfolio" || tmpl.id === "photo_creative_tech" || tmpl.id === "photo_academic" || tmpl.id === "tech_spec") {
         const mid = Math.ceil(p.skills.length / 2);
         const group1 = p.skills.slice(0, mid);
         const group2 = p.skills.slice(mid);
         return (
-          <div key={secKey} className="space-y-1">
+          <div key={secKey} className="space-y-0.5">
             <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
             <div className="space-y-0.5 text-[6.5px]">
               <div>
-                <span className="font-bold text-zinc-900">Languages & Tools: </span>
+                <span className="font-bold text-zinc-900">Languages &amp; Tools: </span>
                 <span className="text-zinc-600">{group1.join(", ")}</span>
               </div>
               {group2.length > 0 && (
                 <div>
-                  <span className="font-bold text-zinc-900">Frameworks & Methodologies: </span>
+                  <span className="font-bold text-zinc-900">Frameworks &amp; Systems: </span>
                   <span className="text-zinc-600">{group2.join(", ")}</span>
                 </div>
               )}
@@ -838,8 +563,8 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         );
       }
 
-      // 2. Vertical 2-Column Bullet Grid (for recruiter_scan, photo_side_panel, impact_focused)
-      if (tmpl.id === "recruiter_scan" || tmpl.id === "photo_side_panel" || tmpl.id === "impact_focused") {
+      // 2. Vertical 2-Column Bullet Grid (for recruiter_scan, photo_side_panel, impact_focused, timeline_prof)
+      if (tmpl.id === "recruiter_scan" || tmpl.id === "photo_side_panel" || tmpl.id === "impact_focused" || tmpl.id === "timeline_prof") {
         return (
           <div key={secKey} className="space-y-0.5">
             <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
@@ -852,8 +577,8 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         );
       }
 
-      // 3. Comma-Separated Clean Flow (for academic_premium, photo_split_hero, modern_minimal)
-      if (tmpl.id === "academic_premium" || tmpl.id === "photo_split_hero" || tmpl.id === "modern_minimal") {
+      // 3. Comma-Separated Clean Flow (for academic_premium, photo_split_hero, modern_minimal, research_paper)
+      if (tmpl.id === "academic_premium" || tmpl.id === "photo_split_hero" || tmpl.id === "modern_minimal" || tmpl.id === "research_paper") {
         return (
           <div key={secKey} className="space-y-0.5">
             <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
@@ -864,19 +589,19 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         );
       }
 
-      // 4. Two-Column Compact Block (for one_page_dense, global_professional, photo_corporate)
-      if (tmpl.id === "one_page_dense" || tmpl.id === "global_professional" || tmpl.id === "photo_corporate") {
+      // 4. Two-Column Compact Block (for one_page_dense, global_professional, photo_corporate, dual_section)
+      if (tmpl.id === "one_page_dense" || tmpl.id === "global_professional" || tmpl.id === "photo_corporate" || tmpl.id === "dual_section") {
         const mid = Math.ceil(p.skills.length / 2);
         return (
           <div key={secKey} className="space-y-0.5">
             <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
             <div className="flex justify-between text-[6.5px]">
               <div className="w-[48%] space-y-0.5">
-                <span className="font-bold text-zinc-900 block">Core Competencies:</span>
+                <span className="font-bold text-zinc-900 block">Core Skills:</span>
                 <p className="text-zinc-600 truncate">{p.skills.slice(0, mid).join(", ")}</p>
               </div>
               <div className="w-[48%] space-y-0.5">
-                <span className="font-bold text-zinc-900 block">Tools & Tech:</span>
+                <span className="font-bold text-zinc-900 block">Tools &amp; Tech:</span>
                 <p className="text-zinc-600 truncate">{p.skills.slice(mid).join(", ")}</p>
               </div>
             </div>
@@ -913,7 +638,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
     if (secKey === "experience" && p.experience?.length) {
       return (
-        <div key={secKey} className="space-y-1.5">
+        <div key={secKey} className="space-y-1">
           <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
           {p.experience.map((exp, idx) => (
             <div key={idx} className="space-y-0.5">
@@ -946,7 +671,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
     if (secKey === "certifications" && p.certifications?.length) {
       return (
-        <div key={secKey} className="space-y-1">
+        <div key={secKey} className="space-y-0.5">
           <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
           <div className="space-y-0.5 text-[6px] text-zinc-600">
             {p.certifications.map((cert, idx) => (
@@ -959,7 +684,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
     if (secKey === "achievements" && p.achievements?.length) {
       return (
-        <div key={secKey} className="space-y-1">
+        <div key={secKey} className="space-y-0.5">
           <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
           <div className="space-y-0.5 text-[6px] text-zinc-600">
             {p.achievements.map((ach, idx) => (
@@ -1040,7 +765,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         </div>
 
         {/* Right Main Body Content */}
-        <div className="flex-1 p-3 flex flex-col space-y-2 min-w-0 bg-white">
+        <div className="flex-1 p-3 flex flex-col space-y-2 justify-between min-w-0 bg-white">
           {!isPhoto && (
             <div className="pb-1 border-b border-zinc-200">
               <h2 className="text-[10px] font-extrabold text-zinc-900 uppercase tracking-tight">{p.name}</h2>
@@ -1061,16 +786,16 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     );
   }
 
-  // ── 4. TIMELINE LAYOUT (Timeline Professional) ──
+  // ── 2. TIMELINE LAYOUT (Timeline Professional) ──
   if (tmpl.headerStyle === "timeline") {
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2 text-[7.5px] leading-[1.2]">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col justify-between space-y-2 text-[7.5px] leading-[1.2]">
         <div className="pb-1.5 border-b border-zinc-200">
           <h2 className="text-[10.5px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
           <p className="text-[6.5px] text-zinc-700 font-bold">{p.title}</p>
           <p className="text-[6px] text-zinc-500 mt-0.5">{p.email} | {p.phone} | {p.location}</p>
         </div>
-        <div className="space-y-2 flex-1 min-w-0 pl-2 border-l-2 border-zinc-300 ml-1 relative">
+        <div className="space-y-2 flex-1 min-w-0 pl-2 border-l-2 border-zinc-300 ml-1 relative flex flex-col justify-between">
           {sectionsToDisplay.map((sec) => (
             <div key={sec.key} className="relative">
               <div className="absolute -left-[13px] top-1 w-2 h-2 rounded-full bg-zinc-900 border-2 border-white shrink-0" />
@@ -1086,22 +811,22 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     );
   }
 
-  // ── 5. DUAL BLOCK LAYOUT (Dual Section 50/50) ──
+  // ── 3. DUAL BLOCK LAYOUT (Dual Section 50/50) ──
   if (tmpl.headerStyle === "dual_block") {
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2 text-[7.5px] leading-[1.2]">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col justify-between space-y-2 text-[7.5px] leading-[1.2]">
         <div className="pb-1.5 border-b border-zinc-200 text-center">
           <h2 className="text-[10.5px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
           <p className="text-[6.5px] text-zinc-700 font-bold">{p.title}</p>
           <p className="text-[6px] text-zinc-500 mt-0.5">{p.email} • {p.phone} • {p.location}</p>
         </div>
         <div className="grid grid-cols-2 gap-3 flex-1 min-w-0">
-          <div className="space-y-2 border-r border-zinc-200 pr-2">
+          <div className="space-y-2 border-r border-zinc-200 pr-2 flex flex-col justify-between">
             {renderSectionBlock("education", "EDUCATION")}
             {renderSectionBlock("skills", "TECHNICAL SKILLS")}
             {renderSectionBlock("certifications", "CERTIFICATIONS")}
           </div>
-          <div className="space-y-2 pl-0.5">
+          <div className="space-y-2 pl-0.5 flex flex-col justify-between">
             {renderSectionBlock("summary", "PROFILE SUMMARY")}
             {renderSectionBlock("experience", "EMPLOYMENT HISTORY")}
             {renderSectionBlock("projects", "KEY PROJECTS")}
@@ -1115,17 +840,17 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     );
   }
 
-  // ── 6. NUMBERED LAYOUT (IEEE Research Paper) ──
+  // ── 4. NUMBERED LAYOUT (IEEE Research Paper) ──
   if (tmpl.headerStyle === "numbered") {
     let secCounter = 1;
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2 text-[7.5px] leading-[1.2]">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col justify-between space-y-2 text-[7.5px] leading-[1.2]">
         <div className="pb-1.5 border-b border-zinc-300 text-center">
           <h2 className="text-[10.5px] font-serif font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
           <p className="text-[6.5px] font-serif text-zinc-700 italic">{p.title}</p>
           <p className="text-[6px] text-zinc-500 mt-0.5">{p.email} | {p.phone} | {p.location}</p>
         </div>
-        <div className="space-y-2 flex-1 min-w-0">
+        <div className="space-y-2 flex-1 min-w-0 flex flex-col justify-between">
           {sectionsToDisplay.map((sec) => {
             const numLabel = `${secCounter++}.0  ${sec.label}`;
             return renderSectionBlock(sec.key, numLabel);
@@ -1139,10 +864,10 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     );
   }
 
-  // ── 2. CENTERED / PROFILE CARD LAYOUT (Student Profile Card / Academic) ──
+  // ── 5. CENTERED / PROFILE CARD LAYOUT (Student Profile Card / Academic) ──
   if (tmpl.headerStyle === "centered" || tmpl.headerStyle === "profile_card") {
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2 text-[7.5px] leading-[1.2]">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col justify-between space-y-2 text-[7.5px] leading-[1.2]">
         {/* Centered Header */}
         <div className="flex flex-col items-center text-center space-y-1 pb-1.5 border-b border-zinc-200">
           {isPhoto && (
@@ -1161,7 +886,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         </div>
 
         {/* Dynamic Full Content Sections */}
-        <div className="space-y-2 flex-1 min-w-0">
+        <div className="space-y-2 flex-1 min-w-0 flex flex-col justify-between">
           {sectionsToDisplay.map((sec) => renderSectionBlock(sec.key, sec.label))}
         </div>
 
@@ -1174,9 +899,9 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     );
   }
 
-  // ── 3. STANDARD / BANNER LAYOUT (Executive Banner, Corporate Portrait, Modern Minimal) ──
+  // ── 6. STANDARD / BANNER LAYOUT (Executive Banner, Corporate Portrait, Modern Minimal) ──
   return (
-    <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2 text-[7.5px] leading-[1.2]">
+    <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-sm border border-zinc-200/90 rounded-md p-3 overflow-hidden select-none relative flex flex-col justify-between space-y-2 text-[7.5px] leading-[1.2]">
       {/* Header Row */}
       <div className="flex items-center justify-between gap-2.5 pb-1.5 border-b border-zinc-200">
         {tmpl.photoPlacement === "top_left" && isPhoto && (
@@ -1205,7 +930,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
       </div>
 
       {/* Dynamic Sections in Template Order */}
-      <div className="space-y-2 flex-1 min-w-0">
+      <div className="space-y-2 flex-1 min-w-0 flex flex-col justify-between">
         {sectionsToDisplay.map((sec) => renderSectionBlock(sec.key, sec.label))}
       </div>
 
