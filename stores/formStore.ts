@@ -108,9 +108,9 @@ export const useFormStore = create<FormStore>()(
       activeStep: 1,
       lastSaved: null,
 
-      nextStep: () => set((state) => ({ activeStep: Math.min(state.activeStep + 1, 5) })),
+      nextStep: () => set((state) => ({ activeStep: Math.min(state.activeStep + 1, 6) })),
       prevStep: () => set((state) => ({ activeStep: Math.max(state.activeStep - 1, 1) })),
-      goToStep: (step) => set(() => ({ activeStep: Math.max(1, Math.min(step, 5)) })),
+      goToStep: (step) => set(() => ({ activeStep: Math.max(1, Math.min(step, 6)) })),
 
       setFullFormData: (data) =>
         set(() => {
