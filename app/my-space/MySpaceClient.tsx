@@ -200,8 +200,10 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   };
 
   const copyToClipboard = (text: string, keyName: string) => {
-    if (!text) return;
-    navigator.clipboard.writeText(text);
+    if (!text || typeof window === "undefined") return;
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).catch(() => {});
+    }
     setCopiedKey(keyName);
     setTimeout(() => setCopiedKey(null), 2000);
   };

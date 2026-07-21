@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import ProfileClient from "./ProfileClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "My Profile | ATSLift",
   description: "Manage your ATSLift candidate account, update personal details, and check your resume activity.",

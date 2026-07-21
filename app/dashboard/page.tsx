@@ -7,6 +7,8 @@ import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCir
 import { LogoutButton, DeleteButton, EditTitle, CoverLetterButton } from "@/components/DashboardActions";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 
