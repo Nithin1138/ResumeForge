@@ -1,20 +1,31 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import MySpaceClient from "./MySpaceClient";
+import { Loader2 } from "lucide-react";
 
-export const dynamic = "force-dynamic";
+export default function MySpacePage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-export const metadata = {
-  title: "My Space | ATSLift Candidate Vault",
-  description: "Manage your master profile details, academic records, engineering projects, and generate instant tailored AI application answers.",
-};
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-bg-base text-text flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
 
-export default async function MySpacePage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user?.email) {
-    redirect("/login");
+  if (status === "unauthenticated" || !session?.user?.email) {
+    if (typeof window !== "undefined") {
+      router.push("/login");
+    }
+    return (
+      <div className="min-h-screen bg-bg-base text-text flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
   }
 
   return <MySpaceClient userEmail={session.user.email} />;
