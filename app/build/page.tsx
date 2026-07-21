@@ -2347,15 +2347,15 @@ export default function BuildPage() {
                           Auto Generate Mode
                         </span>
                         <p className="text-[11px] font-bold text-text leading-snug px-1">
-                          ATSLift AI selects the optimal template structure for your target role
+                          Analyses skills, projects &amp; academics to auto-select the best template structure
                         </p>
                       </div>
                       <div className="space-y-1 text-[10px] text-text-muted font-medium bg-bg-base/80 p-2.5 rounded-lg border border-border/50 w-full text-left">
                         <p className="flex items-center gap-1.5 text-primary font-bold">
-                          <span>✓</span> Analyzes branch &amp; target roles
+                          <span>✓</span> Evaluates skills &amp; projects density
                         </p>
                         <p className="flex items-center gap-1.5">
-                          <span>✓</span> Auto-tunes font &amp; section order
+                          <span>✓</span> Auto-tunes font &amp; section ordering
                         </p>
                         <p className="flex items-center gap-1.5">
                           <span>✓</span> Guaranteed 99%+ ATS pass rate
