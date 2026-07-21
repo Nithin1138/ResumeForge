@@ -19,7 +19,7 @@ interface PersonaData {
   achievements?: string[];
 }
 
-// ── BALANCED INDIAN PERSONAS (Calibrated to fit A4 aspect ratio 100% without overflow or gaps) ──
+// ── BALANCED INDIAN PERSONAS (Calibrated to fill 100% A4 page height cleanly without overflow or empty space) ──
 const INDIAN_PERSONAS: Record<string, PersonaData> = {
   modern: {
     name: "Aarav Sharma",
@@ -149,7 +149,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
     location: "Mumbai, MH",
     photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
     summary: "Product Leader scaling consumer internet apps, conversion funnels, and AI features across edtech and fintech platforms.",
-    skills: ["Product Roadmap Strategy", "User Growth & Funnels", "A/B Testing & Mixpanel", "SQL Analytics", "Agile & Scrum Leadership"],
+    skills: ["Product Roadmap Strategy", "User Growth & Funnels", "A/B Testing & Mixpanel", "SQL Analytics", "Agile Leadership"],
     education: [
       { institution: "IIM Ahmedabad", degree: "MBA Marketing & Strategy", years: "2018 – 2020" },
       { institution: "IIT Delhi", degree: "B.Tech Electrical Engineering", years: "2014 – 2018" },
@@ -588,8 +588,8 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     if (secKey === "summary" && p.summary) {
       return (
         <div key={secKey} className="space-y-0.5">
-          <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          <p className="text-[6px] text-zinc-600 leading-snug line-clamp-2">{p.summary}</p>
+          <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+          <p className="text-[5.5px] text-zinc-600 leading-snug line-clamp-2">{p.summary}</p>
         </div>
       );
     }
@@ -601,8 +601,8 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         const group2 = p.skills.slice(mid);
         return (
           <div key={secKey} className="space-y-0.5">
-            <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-            <div className="space-y-0.5 text-[6px]">
+            <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+            <div className="space-y-0.5 text-[5.5px]">
               <div className="truncate">
                 <span className="font-bold text-zinc-900">Core: </span>
                 <span className="text-zinc-600">{group1.join(", ")}</span>
@@ -621,8 +621,8 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
       if (tmpl.id === "recruiter_scan" || tmpl.id === "photo_side_panel" || tmpl.id === "impact_focused" || tmpl.id === "timeline_prof") {
         return (
           <div key={secKey} className="space-y-0.5">
-            <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-            <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[6px] text-zinc-700">
+            <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+            <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[5.5px] text-zinc-700">
               {p.skills.slice(0, 4).map((sk, idx) => (
                 <span key={idx} className="truncate">• {sk}</span>
               ))}
@@ -633,8 +633,8 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
       return (
         <div key={secKey} className="space-y-0.5">
-          <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          <p className="text-[6px] text-zinc-800 font-medium leading-tight truncate">
+          <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+          <p className="text-[5.5px] text-zinc-800 font-medium leading-tight truncate">
             {p.skills.join(" • ")}
           </p>
         </div>
@@ -644,13 +644,13 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     if (secKey === "education" && p.education?.length) {
       return (
         <div key={secKey} className="space-y-0.5">
-          <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+          <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
           {p.education.slice(0, 2).map((ed, idx) => (
-            <div key={idx} className="flex items-center justify-between text-[6px]">
+            <div key={idx} className="flex items-center justify-between text-[5.5px]">
               <div className="truncate">
                 <span className="font-bold text-zinc-900">{ed.institution}</span> — <span className="text-zinc-600">{ed.degree}</span>
               </div>
-              <span className="text-[5.5px] text-zinc-500 font-medium shrink-0 ml-1">{ed.years}</span>
+              <span className="text-[5px] text-zinc-500 font-medium shrink-0 ml-1">{ed.years}</span>
             </div>
           ))}
         </div>
@@ -660,15 +660,15 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     if (secKey === "experience" && p.experience?.length) {
       return (
         <div key={secKey} className="space-y-0.5">
-          <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+          <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
           {p.experience.slice(0, 2).map((exp, idx) => (
             <div key={idx} className="space-y-0.5">
-              <div className="flex items-center justify-between text-[6px] font-bold text-zinc-900">
+              <div className="flex items-center justify-between text-[5.5px] font-bold text-zinc-900">
                 <span className="truncate">{exp.role} — {exp.company}</span>
-                <span className="text-[5.5px] text-zinc-500 shrink-0 ml-1">{exp.years}</span>
+                <span className="text-[5px] text-zinc-500 shrink-0 ml-1">{exp.years}</span>
               </div>
               {exp.bullets.slice(0, 2).map((b, bi) => (
-                <p key={bi} className="text-[5.5px] text-zinc-600 leading-tight truncate">• {b}</p>
+                <p key={bi} className="text-[5px] text-zinc-600 leading-tight truncate">• {b}</p>
               ))}
             </div>
           ))}
@@ -679,11 +679,11 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     if (secKey === "projects" && p.projects?.length) {
       return (
         <div key={secKey} className="space-y-0.5">
-          <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+          <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
           {p.projects.slice(0, 2).map((proj, idx) => (
             <div key={idx} className="space-y-0.5">
-              <p className="text-[6px] font-bold text-zinc-900 truncate">{proj.title} <span className="text-[5.5px] font-normal text-zinc-500">[{proj.tech}]</span></p>
-              <p className="text-[5.5px] text-zinc-600 leading-tight truncate">• {proj.description}</p>
+              <p className="text-[5.5px] font-bold text-zinc-900 truncate">{proj.title} <span className="text-[5px] font-normal text-zinc-500">[{proj.tech}]</span></p>
+              <p className="text-[5px] text-zinc-600 leading-tight truncate">• {proj.description}</p>
             </div>
           ))}
         </div>
@@ -693,8 +693,8 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     if (secKey === "certifications" && p.certifications?.length) {
       return (
         <div key={secKey} className="space-y-0.5">
-          <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          <div className="space-y-0.5 text-[5.5px] text-zinc-600">
+          <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+          <div className="space-y-0.5 text-[5px] text-zinc-600">
             {p.certifications.slice(0, 2).map((cert, idx) => (
               <p key={idx} className="truncate">• {cert}</p>
             ))}
@@ -706,8 +706,8 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     if (secKey === "achievements" && p.achievements?.length) {
       return (
         <div key={secKey} className="space-y-0.5">
-          <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          <div className="space-y-0.5 text-[5.5px] text-zinc-600">
+          <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+          <div className="space-y-0.5 text-[5px] text-zinc-600">
             {p.achievements.slice(0, 2).map((ach, idx) => (
               <p key={idx} className="truncate">• {ach}</p>
             ))}
@@ -722,46 +722,48 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
   // ── 1. SIDEBAR LAYOUT (Side Photo Panel / Modern Sidebar) ──
   if (tmpl.headerStyle === "side_panel" || tmpl.photoPlacement === "sidebar") {
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-0 overflow-hidden select-none relative flex text-[7px] leading-tight">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-0 overflow-hidden select-none relative flex text-[6.5px] leading-tight">
         {/* Left Solid Colored Sidebar */}
-        <div className="w-[34%] p-2 flex flex-col space-y-2 shrink-0 text-white" style={{ backgroundColor: accent }}>
-          {isPhoto ? (
-            <div className="flex flex-col items-center text-center space-y-1 mb-0.5">
-              <img
-                src={p.photoUrl}
-                alt={p.name}
-                className="w-10 h-10 rounded-full object-cover border border-white/80 shrink-0"
-              />
-              <span className="text-[7.5px] font-bold text-white leading-none tracking-tight block mt-0.5 truncate max-w-full">{p.name}</span>
-              <span className="text-[5.5px] text-white/80 font-medium block truncate max-w-full">{p.title}</span>
-            </div>
-          ) : (
-            <div className="border-b border-white/30 pb-1 mb-0.5">
-              <span className="text-[8.5px] font-extrabold text-white block uppercase tracking-tight truncate">{p.name}</span>
-              <span className="text-[5.5px] text-white/80 font-medium block truncate">{p.title}</span>
-            </div>
-          )}
+        <div className="w-[34%] p-2 flex flex-col justify-between shrink-0 text-white" style={{ backgroundColor: accent }}>
+          <div className="space-y-2">
+            {isPhoto ? (
+              <div className="flex flex-col items-center text-center space-y-1 mb-0.5">
+                <img
+                  src={p.photoUrl}
+                  alt={p.name}
+                  className="w-10 h-10 rounded-full object-cover border border-white/80 shrink-0"
+                />
+                <span className="text-[7.5px] font-bold text-white leading-none tracking-tight block mt-0.5 truncate max-w-full">{p.name}</span>
+                <span className="text-[5.5px] text-white/80 font-medium block truncate max-w-full">{p.title}</span>
+              </div>
+            ) : (
+              <div className="border-b border-white/30 pb-1 mb-0.5">
+                <span className="text-[8.5px] font-extrabold text-white block uppercase tracking-tight truncate">{p.name}</span>
+                <span className="text-[5.5px] text-white/80 font-medium block truncate">{p.title}</span>
+              </div>
+            )}
 
-          {/* Details / Contact Block */}
-          <div className="space-y-0.5 text-[5.5px] text-white/90">
-            <span className="text-[5px] font-extrabold uppercase tracking-wider block text-white/70 border-b border-white/20 pb-0.5">CONTACT</span>
-            <p className="truncate">📍 {p.location}</p>
-            <p className="truncate">✉️ {p.email}</p>
-            <p className="truncate">📞 {p.phone}</p>
-          </div>
+            {/* Details / Contact Block */}
+            <div className="space-y-0.5 text-[5.5px] text-white/90">
+              <span className="text-[5px] font-extrabold uppercase tracking-wider block text-white/70 border-b border-white/20 pb-0.5">CONTACT</span>
+              <p className="truncate">📍 {p.location}</p>
+              <p className="truncate">✉️ {p.email}</p>
+              <p className="truncate">📞 {p.phone}</p>
+            </div>
 
-          {/* Skills Block */}
-          <div className="space-y-0.5 text-[5.5px] text-white/90">
-            <span className="text-[5px] font-extrabold uppercase tracking-wider block text-white/70 border-b border-white/20 pb-0.5">TECHNICAL SKILLS</span>
-            <div className="space-y-0.5">
-              {p.skills.slice(0, 5).map((sk, i) => (
-                <p key={i} className="truncate">• {sk}</p>
-              ))}
+            {/* Skills Block */}
+            <div className="space-y-0.5 text-[5.5px] text-white/90">
+              <span className="text-[5px] font-extrabold uppercase tracking-wider block text-white/70 border-b border-white/20 pb-0.5">TECHNICAL SKILLS</span>
+              <div className="space-y-0.5">
+                {p.skills.slice(0, 5).map((sk, i) => (
+                  <p key={i} className="truncate">• {sk}</p>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Education Mini Block */}
-          <div className="space-y-0.5 text-[5.5px] text-white/90">
+          <div className="space-y-0.5 text-[5.5px] text-white/90 pt-1">
             <span className="text-[5px] font-extrabold uppercase tracking-wider block text-white/70 border-b border-white/20 pb-0.5">EDUCATION</span>
             {p.education.slice(0, 1).map((ed, i) => (
               <div key={i} className="space-y-0.5">
@@ -773,11 +775,11 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         </div>
 
         {/* Right Main Body Content */}
-        <div className="flex-1 p-2.5 flex flex-col space-y-1.5 min-w-0 bg-white">
+        <div className="flex-1 p-2 flex flex-col justify-between min-w-0 bg-white">
           {!isPhoto && (
             <div className="pb-1 border-b border-zinc-200">
-              <h2 className="text-[9.5px] font-extrabold text-zinc-900 uppercase tracking-tight">{p.name}</h2>
-              <p className="text-[6.5px] text-zinc-600 font-semibold">{p.title}</p>
+              <h2 className="text-[9px] font-extrabold text-zinc-900 uppercase tracking-tight">{p.name}</h2>
+              <p className="text-[6px] text-zinc-600 font-semibold">{p.title}</p>
             </div>
           )}
 
@@ -797,13 +799,13 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
   // ── 2. TIMELINE LAYOUT (Timeline Professional) ──
   if (tmpl.headerStyle === "timeline") {
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2.5 overflow-hidden select-none relative flex flex-col space-y-1.5 text-[7px] leading-tight">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2 overflow-hidden select-none relative flex flex-col justify-between text-[6.5px] leading-tight">
         <div className="pb-1 border-b border-zinc-200">
-          <h2 className="text-[9.5px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
-          <p className="text-[6px] text-zinc-700 font-bold">{p.title}</p>
-          <p className="text-[5.5px] text-zinc-500 mt-0.5">{p.email} | {p.phone} | {p.location}</p>
+          <h2 className="text-[9px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
+          <p className="text-[5.5px] text-zinc-700 font-bold">{p.title}</p>
+          <p className="text-[5px] text-zinc-500 mt-0.5">{p.email} | {p.phone} | {p.location}</p>
         </div>
-        <div className="space-y-1.5 flex-1 min-w-0 pl-2 border-l border-zinc-300 ml-1 relative">
+        <div className="flex-1 min-w-0 pl-2 border-l border-zinc-300 ml-1 relative flex flex-col justify-between py-0.5">
           {sectionsToDisplay.map((sec) => (
             <div key={sec.key} className="relative">
               <div className="absolute -left-[11px] top-1 w-1.5 h-1.5 rounded-full bg-zinc-800 border border-white shrink-0" />
@@ -822,19 +824,19 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
   // ── 3. DUAL BLOCK LAYOUT (Dual Section 50/50) ──
   if (tmpl.headerStyle === "dual_block") {
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2.5 overflow-hidden select-none relative flex flex-col space-y-1.5 text-[7px] leading-tight">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2 overflow-hidden select-none relative flex flex-col justify-between text-[6.5px] leading-tight">
         <div className="pb-1 border-b border-zinc-200 text-center">
-          <h2 className="text-[9.5px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
-          <p className="text-[6px] text-zinc-700 font-bold">{p.title}</p>
-          <p className="text-[5.5px] text-zinc-500 mt-0.5">{p.email} • {p.phone} • {p.location}</p>
+          <h2 className="text-[9px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
+          <p className="text-[5.5px] text-zinc-700 font-bold">{p.title}</p>
+          <p className="text-[5px] text-zinc-500 mt-0.5">{p.email} • {p.phone} • {p.location}</p>
         </div>
-        <div className="grid grid-cols-2 gap-2 flex-1 min-w-0">
-          <div className="space-y-1.5 border-r border-zinc-200 pr-1.5">
+        <div className="grid grid-cols-2 gap-2 flex-1 min-w-0 py-0.5">
+          <div className="border-r border-zinc-200 pr-1.5 flex flex-col justify-between">
             {renderSectionBlock("education", "EDUCATION")}
             {renderSectionBlock("skills", "TECHNICAL SKILLS")}
             {renderSectionBlock("certifications", "CERTIFICATIONS")}
           </div>
-          <div className="space-y-1.5 pl-0.5">
+          <div className="pl-0.5 flex flex-col justify-between">
             {renderSectionBlock("summary", "PROFILE SUMMARY")}
             {renderSectionBlock("experience", "EMPLOYMENT HISTORY")}
             {renderSectionBlock("projects", "KEY PROJECTS")}
@@ -852,13 +854,13 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
   if (tmpl.headerStyle === "numbered") {
     let secCounter = 1;
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2.5 overflow-hidden select-none relative flex flex-col space-y-1.5 text-[7px] leading-tight">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2 overflow-hidden select-none relative flex flex-col justify-between text-[6.5px] leading-tight">
         <div className="pb-1 border-b border-zinc-300 text-center">
-          <h2 className="text-[9.5px] font-serif font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
-          <p className="text-[6px] font-serif text-zinc-700 italic">{p.title}</p>
-          <p className="text-[5.5px] text-zinc-500 mt-0.5">{p.email} | {p.phone} | {p.location}</p>
+          <h2 className="text-[9px] font-serif font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
+          <p className="text-[5.5px] font-serif text-zinc-700 italic">{p.title}</p>
+          <p className="text-[5px] text-zinc-500 mt-0.5">{p.email} | {p.phone} | {p.location}</p>
         </div>
-        <div className="space-y-1.5 flex-1 min-w-0">
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
           {sectionsToDisplay.map((sec) => {
             const numLabel = `${secCounter++}.0  ${sec.label}`;
             return renderSectionBlock(sec.key, numLabel);
@@ -875,26 +877,26 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
   // ── 5. CENTERED / PROFILE CARD LAYOUT (Student Profile Card / Academic) ──
   if (tmpl.headerStyle === "centered" || tmpl.headerStyle === "profile_card") {
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2.5 overflow-hidden select-none relative flex flex-col space-y-1.5 text-[7px] leading-tight">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2 overflow-hidden select-none relative flex flex-col justify-between text-[6.5px] leading-tight">
         {/* Centered Header */}
         <div className="flex flex-col items-center text-center space-y-0.5 pb-1 border-b border-zinc-200">
           {isPhoto && (
             <img
               src={p.photoUrl}
               alt={p.name}
-              className="w-10 h-10 rounded-full object-cover border border-zinc-300 shadow-2xs shrink-0 mb-0.5"
+              className="w-9 h-9 rounded-full object-cover border border-zinc-300 shadow-2xs shrink-0 mb-0.5"
               style={{ borderColor: accent }}
             />
           )}
           <div>
-            <h2 className="text-[9.5px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
-            <p className="text-[6px] text-zinc-600 font-semibold">{p.title}</p>
-            <p className="text-[5.5px] text-zinc-500 mt-0.5">{p.email} • {p.phone} • {p.location}</p>
+            <h2 className="text-[9px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
+            <p className="text-[5.5px] text-zinc-600 font-semibold">{p.title}</p>
+            <p className="text-[5px] text-zinc-500 mt-0.5">{p.email} • {p.phone} • {p.location}</p>
           </div>
         </div>
 
         {/* Dynamic Full Content Sections */}
-        <div className="space-y-1.5 flex-1 min-w-0">
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
           {sectionsToDisplay.map((sec) => renderSectionBlock(sec.key, sec.label))}
         </div>
 
@@ -909,36 +911,36 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
   // ── 6. STANDARD / BANNER LAYOUT (Executive Banner, Corporate Portrait, Modern Minimal) ──
   return (
-    <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2.5 overflow-hidden select-none relative flex flex-col space-y-1.5 text-[7px] leading-tight">
+    <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2 overflow-hidden select-none relative flex flex-col justify-between text-[6.5px] leading-tight">
       {/* Header Row */}
       <div className="flex items-center justify-between gap-2 pb-1 border-b border-zinc-200">
         {tmpl.photoPlacement === "top_left" && isPhoto && (
           <img
             src={p.photoUrl}
             alt={p.name}
-            className="w-10 h-10 rounded-md object-cover border shadow-2xs shrink-0"
+            className="w-9 h-9 rounded-md object-cover border shadow-2xs shrink-0"
             style={{ borderColor: accent }}
           />
         )}
 
         <div className="flex-1 min-w-0">
-          <h2 className="text-[9.5px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
-          <p className="text-[6px] text-zinc-700 font-bold truncate">{p.title}</p>
-          <p className="text-[5.5px] text-zinc-500 truncate mt-0.5">{p.email} | {p.phone} | {p.location}</p>
+          <h2 className="text-[9px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
+          <p className="text-[5.5px] text-zinc-700 font-bold truncate">{p.title}</p>
+          <p className="text-[5px] text-zinc-500 truncate mt-0.5">{p.email} | {p.phone} | {p.location}</p>
         </div>
 
         {(tmpl.photoPlacement === "top_right" || tmpl.photoPlacement === "inline") && isPhoto && (
           <img
             src={p.photoUrl}
             alt={p.name}
-            className="w-10 h-10 rounded-md object-cover border shadow-2xs shrink-0"
+            className="w-9 h-9 rounded-md object-cover border shadow-2xs shrink-0"
             style={{ borderColor: accent }}
           />
         )}
       </div>
 
       {/* Dynamic Sections in Template Order */}
-      <div className="space-y-1.5 flex-1 min-w-0">
+      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
         {sectionsToDisplay.map((sec) => renderSectionBlock(sec.key, sec.label))}
       </div>
 
