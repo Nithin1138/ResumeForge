@@ -9,6 +9,7 @@ import { getLocalSession } from "@/lib/authClient";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BRANCH_SKILL_CONFIGS, DEFAULT_BRANCH_CONFIG } from "@/lib/branchConfig";
 import { NORMALIZATION_MAP } from "@/lib/skillsEngine";
+import { TEMPLATES_CONFIG, TemplateDefinition } from "@/lib/templatesConfig";
 
 // Curated popular suggestions for each skill block
 const SOFT_SKILLS_SUGGESTIONS = ["Technical Writing", "Public Speaking", "Team Collaboration", "Agile Methodology", "Problem Solving", "Leadership", "Time Management", "Critical Thinking"];
@@ -2065,206 +2066,101 @@ export default function BuildPage() {
       setIsDraggingPhoto(false);
     };
 
-    const templatesList = [
-      {
-        id: "modern",
-        name: "Professional",
-        tag: "Two-Column ATS",
-        desc: "A touch of personality with a well-organized resume structure.",
-        supportsPhoto: false,
-        preview: (
-          <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-3 shadow-sm border border-zinc-200 flex gap-2.5 overflow-hidden select-none relative">
-            {/* Left dark sidebar */}
-            <div className="w-1/3 bg-[#01696f] text-white p-2 flex flex-col space-y-1.5 rounded-xs shrink-0">
-              <div className="w-6 h-6 rounded-full bg-white/20 border border-white/40 flex items-center justify-center self-center my-0.5">
-                <User className="w-3 h-3 text-white" />
-              </div>
-              <div className="w-3/4 h-1 bg-white/80 rounded-xs self-center" />
-              <div className="w-full h-[0.5px] bg-white/30 my-0.5" />
-              <div className="w-1/2 h-1 bg-white/60 rounded-xs" />
-              <div className="space-y-1">
-                <div className="w-full h-0.5 bg-white/40 rounded-xs" />
-                <div className="w-4/5 h-0.5 bg-white/40 rounded-xs" />
-                <div className="w-3/4 h-0.5 bg-white/40 rounded-xs" />
-              </div>
-              <div className="w-1/2 h-1 bg-white/60 rounded-xs mt-1" />
-              <div className="space-y-1">
-                <div className="w-full h-0.5 bg-white/40 rounded-xs" />
-                <div className="w-4/5 h-0.5 bg-white/40 rounded-xs" />
-              </div>
+function renderTemplateWireframe(tmpl: TemplateDefinition) {
+  const accent = tmpl.accentColor || "#01696f";
+  const isPhoto = tmpl.supportsPhoto;
+
+  if (tmpl.id === "photo_side_panel" || tmpl.id === "modern") {
+    return (
+      <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-2 shadow-xs border border-zinc-200 flex gap-2 overflow-hidden select-none relative">
+        <div className="w-1/3 p-1.5 flex flex-col space-y-1.5 rounded-xs shrink-0" style={{ backgroundColor: accent, color: "white" }}>
+          {isPhoto ? (
+            <div className="w-5 h-5 rounded-full bg-white/20 border border-white/40 flex items-center justify-center self-center my-0.5">
+              <User className="w-2.5 h-2.5 text-white" />
             </div>
-            {/* Right content */}
-            <div className="flex-1 flex flex-col space-y-1.5 pt-0.5 min-w-0">
-              <div className="w-2/3 h-2 bg-zinc-800 rounded-xs" />
-              <div className="w-full h-[0.5px] bg-zinc-200" />
-              <div className="w-1/3 h-1.5 bg-[#01696f] rounded-xs" />
-              <div className="space-y-1">
-                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-                <div className="w-11/12 h-0.5 bg-zinc-300 rounded-xs" />
-              </div>
-              <div className="w-1/3 h-1.5 bg-[#01696f] rounded-xs mt-1" />
-              <div className="space-y-1">
-                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-                <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
-              </div>
-            </div>
-            <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
-            </div>
+          ) : (
+            <div className="w-full h-1 bg-white/80 rounded-2xs" />
+          )}
+          <div className="w-3/4 h-1 bg-white/80 rounded-2xs self-center" />
+          <div className="w-full h-[0.5px] bg-white/30 my-0.5" />
+          <div className="space-y-1">
+            <div className="w-full h-0.5 bg-white/40 rounded-2xs" />
+            <div className="w-4/5 h-0.5 bg-white/40 rounded-2xs" />
           </div>
-        )
-      },
-      {
-        id: "classic",
-        name: "Corporate",
-        tag: "Classic Serif",
-        desc: "Professional and elegant resume template with clean timeline structure.",
-        supportsPhoto: false,
-        preview: (
-          <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-3 shadow-sm border border-zinc-200 flex flex-col items-center space-y-1.5 overflow-hidden select-none relative">
-            <div className="w-6 h-6 rounded-full bg-zinc-100 border border-zinc-300 flex items-center justify-center mb-0.5">
-              <User className="w-3 h-3 text-zinc-600" />
-            </div>
-            <div className="w-1/2 h-2.5 bg-zinc-800 rounded-xs text-center" />
-            <div className="w-3/4 h-1 bg-zinc-400 rounded-xs" />
-            <div className="w-full h-[0.5px] bg-zinc-700 my-0.5" />
-            <div className="w-full space-y-1 text-left">
-              <div className="w-1/4 h-1.5 bg-zinc-700 rounded-xs" />
-              <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-              <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-              <div className="w-5/6 h-0.5 bg-zinc-300 rounded-xs" />
-            </div>
-            <div className="w-full space-y-1 text-left mt-1">
-              <div className="w-1/4 h-1.5 bg-zinc-700 rounded-xs" />
-              <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-              <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
-            </div>
-            <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
-            </div>
+        </div>
+        <div className="flex-1 flex flex-col space-y-1.5 pt-0.5 min-w-0">
+          <div className="w-2/3 h-2 bg-zinc-800 rounded-2xs" />
+          <div className="w-full h-[0.5px] bg-zinc-200" />
+          <div className="w-1/3 h-1.5 rounded-2xs" style={{ backgroundColor: accent }} />
+          <div className="space-y-1">
+            <div className="w-full h-0.5 bg-zinc-300 rounded-2xs" />
+            <div className="w-11/12 h-0.5 bg-zinc-300 rounded-2xs" />
           </div>
-        )
-      },
-      {
-        id: "minimal",
-        name: "Clear",
-        tag: "Header Banner",
-        desc: "Striking modern header, professional two column template structure.",
-        supportsPhoto: false,
-        preview: (
-          <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-0 shadow-sm border border-zinc-200 flex flex-col overflow-hidden select-none relative">
-            <div className="w-full bg-[#10b981] text-white p-2.5 flex items-center space-x-2 shrink-0">
-              <div className="w-5 h-5 rounded-full bg-white/30 border border-white flex items-center justify-center shrink-0">
-                <User className="w-3 h-3 text-white" />
-              </div>
-              <div className="space-y-0.5 min-w-0 flex-1">
-                <div className="w-3/4 h-2 bg-white rounded-xs" />
-                <div className="w-1/2 h-1 bg-white/70 rounded-xs" />
-              </div>
-            </div>
-            <div className="p-2.5 flex gap-2.5 flex-1">
-              <div className="w-1/3 border-r border-zinc-200 pr-2 space-y-1">
-                <div className="w-2/3 h-1.5 bg-emerald-600 rounded-xs" />
-                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-                <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
-                <div className="w-2/3 h-1.5 bg-emerald-600 rounded-xs mt-2" />
-                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-              </div>
-              <div className="flex-1 space-y-1">
-                <div className="w-1/2 h-1.5 bg-emerald-600 rounded-xs" />
-                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-                <div className="w-11/12 h-0.5 bg-zinc-300 rounded-xs" />
-              </div>
-            </div>
-            <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
-            </div>
+        </div>
+        <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
+          <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
+          <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (tmpl.id === "photo_student_card" || tmpl.id === "academic_premium") {
+    return (
+      <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-3 shadow-xs border border-zinc-200 flex flex-col items-center space-y-1.5 overflow-hidden select-none relative">
+        {isPhoto ? (
+          <div className="w-6 h-6 rounded-full border-2 flex items-center justify-center mb-0.5" style={{ borderColor: accent, backgroundColor: `${accent}15` }}>
+            <User className="w-3 h-3" style={{ color: accent }} />
           </div>
-        )
-      },
-      {
-        id: "photo_modern",
-        name: "Balanced",
-        tag: "Contrasting Sidebar",
-        desc: "Modern and eye-catching resume template. Beautiful contrasting structure.",
-        supportsPhoto: true,
-        preview: (
-          <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-2.5 shadow-sm border border-zinc-200 flex gap-2.5 overflow-hidden select-none relative">
-            <div className="flex-1 space-y-1.5 pt-0.5">
-              <div className="flex items-center space-x-1.5">
-                <div className="w-5 h-5 rounded-full bg-zinc-100 border border-zinc-300 flex items-center justify-center shrink-0">
-                  <User className="w-3 h-3 text-zinc-600" />
-                </div>
-                <div className="w-2/3 h-2 bg-zinc-800 rounded-xs" />
-              </div>
-              <div className="w-full h-[0.5px] bg-zinc-200" />
-              <div className="w-1/2 h-1.5 bg-zinc-700 rounded-xs" />
-              <div className="space-y-1">
-                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-                <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
-              </div>
-            </div>
-            <div className="w-1/3 bg-[#1e3a8a] text-white p-2 rounded-xs space-y-1.5 shrink-0">
-              <div className="w-full h-1 bg-white/80 rounded-xs" />
-              <div className="w-full h-0.5 bg-white/40 rounded-xs" />
-              <div className="w-4/5 h-0.5 bg-white/40 rounded-xs" />
-              <div className="w-full h-1 bg-white/80 rounded-xs mt-2" />
-              <div className="w-full h-0.5 bg-white/40 rounded-xs" />
-            </div>
-            <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
-            </div>
+        ) : null}
+        <div className="w-1/2 h-2 rounded-2xs" style={{ backgroundColor: accent }} />
+        <div className="w-3/4 h-0.5 bg-zinc-400 rounded-2xs" />
+        <div className="w-full h-[0.5px] bg-zinc-300 my-0.5" />
+        <div className="w-full space-y-1 text-left">
+          <div className="w-1/4 h-1.5 rounded-2xs" style={{ backgroundColor: accent }} />
+          <div className="w-full h-0.5 bg-zinc-300 rounded-2xs" />
+          <div className="w-5/6 h-0.5 bg-zinc-300 rounded-2xs" />
+        </div>
+        <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
+          <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
+          <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-2.5 shadow-xs border border-zinc-200 flex flex-col space-y-1.5 overflow-hidden select-none relative">
+      <div className="flex items-center space-x-2">
+        {isPhoto && (
+          <div className="w-5 h-5 rounded-md border flex items-center justify-center shrink-0" style={{ borderColor: accent, backgroundColor: `${accent}15` }}>
+            <User className="w-2.5 h-2.5" style={{ color: accent }} />
           </div>
-        )
-      },
-      {
-        id: "photo_executive",
-        name: "Essential",
-        tag: "Fresh Balance",
-        desc: "Perfect balance of fresh and functional resume template design.",
-        supportsPhoto: true,
-        preview: (
-          <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-3 shadow-sm border border-zinc-200 flex flex-col space-y-1.5 overflow-hidden select-none relative">
-            <div className="flex items-center space-x-2">
-              <div className="w-6 h-6 rounded-md bg-amber-500/20 border border-amber-600 flex items-center justify-center shrink-0">
-                <User className="w-3 h-3 text-amber-700" />
-              </div>
-              <div className="space-y-0.5">
-                <div className="w-20 h-2 bg-zinc-800 rounded-xs" />
-                <div className="w-12 h-1 bg-amber-600 rounded-xs" />
-              </div>
-            </div>
-            <div className="w-full h-[0.5px] bg-zinc-200" />
-            <div className="flex gap-2">
-              <div className="w-1/3 space-y-1">
-                <div className="w-full h-1 bg-zinc-700 rounded-xs" />
-                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-              </div>
-              <div className="flex-1 space-y-1">
-                <div className="w-full h-1 bg-zinc-700 rounded-xs" />
-                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
-              </div>
-            </div>
-            <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-              <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
-            </div>
-          </div>
-        )
-      },
-    ];
+        )}
+        <div className="space-y-0.5 flex-1 min-w-0">
+          <div className="w-2/3 h-2 rounded-2xs" style={{ backgroundColor: accent }} />
+          <div className="w-1/2 h-0.5 bg-zinc-400 rounded-2xs" />
+        </div>
+      </div>
+      <div className="w-full h-[0.5px] bg-zinc-200 my-0.5" />
+      <div className="space-y-1.5 flex-1">
+        <div className="w-1/3 h-1.5 rounded-2xs" style={{ backgroundColor: accent }} />
+        <div className="w-full h-0.5 bg-zinc-300 rounded-2xs" />
+        <div className="w-full h-0.5 bg-zinc-300 rounded-2xs" />
+        <div className="w-4/5 h-0.5 bg-zinc-300 rounded-2xs" />
+      </div>
+      <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
+        <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
+        <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
+      </div>
+    </div>
+  );
+}
 
     const isPhotoTemplate = formData.options.hasPhoto;
     const filterTab = isPhotoTemplate ? "photo" : "plain";
 
-    const filteredTemplates = templatesList.filter(t => filterTab === "photo" ? t.supportsPhoto : !t.supportsPhoto);
+    const filteredTemplates = TEMPLATES_CONFIG.filter(t => filterTab === "photo" ? t.supportsPhoto : !t.supportsPhoto);
 
     return (
       <div className="space-y-8">
@@ -2307,7 +2203,7 @@ export default function BuildPage() {
                   onClick={() => {
                     updateOptions({
                       hasPhoto: true,
-                      templateId: "photo_modern"
+                      templateId: "photo_executive"
                     });
                   }}
                   className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
@@ -2322,7 +2218,7 @@ export default function BuildPage() {
               </div>
             </div>
 
-            {/* Photo Upload Panel (embedded cleanly inside Left Card with full Drag & Drop support) */}
+            {/* Photo Upload Panel (embedded cleanly inside Left Card) */}
             {filterTab === "photo" ? (
               <label
                 onDragOver={handlePhotoDragOver}
@@ -2485,21 +2381,21 @@ export default function BuildPage() {
           </div>
         </div>
 
-        {/* ── TEMPLATE SELECTION GALLERY ── */}
+        {/* ── TEMPLATE SELECTION GALLERY (10 Plain or 10 Photo Templates) ── */}
         <div className="border-t border-border/40 pt-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-5 w-1 rounded-full bg-primary" />
               <h3 className="text-sm font-extrabold text-text uppercase tracking-wider">
-                3. Available {filterTab === "photo" ? "Photo" : "Plain"} Templates
+                3. Select {filterTab === "photo" ? "Photo-Based" : "Plain ATS"} Template ({filteredTemplates.length} Options)
               </h3>
             </div>
             <span className="text-xs text-primary font-bold hidden sm:inline">
-              Selected: {templatesList.find(t => t.id === (formData.options.templateId || "modern"))?.name}
+              Selected: {TEMPLATES_CONFIG.find(t => t.id === (formData.options.templateId || "modern"))?.name}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTemplates.map((tmpl) => {
               const isSelected = (formData.options.templateId || "modern") === tmpl.id;
               return (
@@ -2511,7 +2407,7 @@ export default function BuildPage() {
                       hasPhoto: tmpl.supportsPhoto ? true : false
                     });
                   }}
-                  className={`border rounded-2xl p-3.5 cursor-pointer transition-all relative flex flex-col justify-between space-y-3 bg-surface ${
+                  className={`border rounded-2xl p-4 cursor-pointer transition-all relative flex flex-col justify-between space-y-3 bg-surface ${
                     isSelected
                       ? "border-primary ring-2 ring-primary/30 shadow-md"
                       : "border-border hover:border-primary/50 hover:shadow-xs"
@@ -2524,17 +2420,30 @@ export default function BuildPage() {
                     </div>
                   )}
 
-                  {/* A4 Aspect Ratio Document Preview */}
-                  {tmpl.preview}
+                  {/* A4 Aspect Ratio Document Wireframe Preview */}
+                  {renderTemplateWireframe(tmpl)}
 
-                  {/* Title & Desc directly inside card */}
-                  <div className="px-0.5 space-y-0.5">
-                    <h4 className={`text-sm font-bold transition-colors ${isSelected ? "text-primary" : "text-text"}`}>
-                      {tmpl.name}
-                    </h4>
+                  {/* Title & Description */}
+                  <div className="px-0.5 space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <h4 className={`text-sm font-bold transition-colors ${isSelected ? "text-primary" : "text-text"}`}>
+                        {tmpl.name}
+                      </h4>
+                      <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-primary/10 text-primary shrink-0">
+                        {tmpl.tag}
+                      </span>
+                    </div>
                     <p className="text-xs text-text-muted leading-relaxed font-normal">
                       {tmpl.desc}
                     </p>
+                    <div className="pt-1 border-t border-border/30 flex items-center justify-between text-[10px] text-text-muted">
+                      <span>Best for: <strong className="text-text font-semibold">{tmpl.bestFor}</strong></span>
+                      {tmpl.atsFriendly && (
+                        <span className="text-success font-bold flex items-center gap-0.5">
+                          ✓ ATS Safe
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -2544,15 +2453,6 @@ export default function BuildPage() {
       </div>
     );
   };
-
-  if (!isHydrated) {
-    return (
-      <div className="min-h-screen bg-bg-base flex flex-col items-center justify-center font-sans">
-        <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
-        <p className="text-text-muted font-semibold animate-pulse">Loading workspace...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans">
