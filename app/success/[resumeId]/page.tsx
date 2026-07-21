@@ -10,6 +10,7 @@ import { FullResumeOutput } from "@/types/resume";
 import { calculateDynamicMetrics } from "@/lib/atsScoring";
 import { getLocalSession } from "@/lib/authClient";
 import ResumePreviewPanel from "@/components/ResumePreviewPanel";
+import CoverLetterModal from "@/components/CoverLetterModal";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export const dynamic = 'force-dynamic';
@@ -98,6 +99,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [includeSummary, setIncludeSummary] = useState(false);
   const [includeCertifications, setIncludeCertifications] = useState(true);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
+  const [isCoverLetterModalOpen, setCoverLetterModalOpen] = useState(false);
   const [activeProjectVariants, setActiveProjectVariants] = useState<Record<number, number>>({});
   const [scoreMode, setScoreMode] = useState<"resume" | "role">("resume");
   
@@ -1375,23 +1377,42 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
         </div>
 
         {/* PRINT PREVIEW TRIGGER BANNER */}
-        <div className="bg-surface border border-border rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs print:hidden">
-          <div className="text-left space-y-1">
-            <h4 className="font-bold text-sm">Download PDF Resume Document</h4>
-            <p className="text-xs text-text-muted font-medium">Generate a clean, print-optimized document preview ready to save as PDF.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 print:hidden">
+          <div className="bg-surface border border-border rounded-2xl p-5 flex flex-col justify-between space-y-3 shadow-xs">
+            <div className="text-left space-y-1">
+              <h4 className="font-bold text-sm text-text">Download PDF Resume</h4>
+              <p className="text-xs text-text-muted font-medium">Generate a clean, print-optimized document preview ready to save as PDF.</p>
+            </div>
+            <button
+              onClick={triggerBrowserPrint}
+              className="w-full py-3 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-2 transition-colors cursor-pointer"
+            >
+              <Printer className="w-4 h-4" />
+              <span>Generate PDF Document</span>
+            </button>
           </div>
-          <button
-            onClick={triggerBrowserPrint}
-            className="px-6 py-3.5 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-full flex items-center space-x-2 transition-colors cursor-pointer"
-          >
-            <Printer className="w-4.5 h-4.5" />
-            <span>Generate PDF Document</span>
-          </button>
+
+          <div className="bg-gradient-to-br from-primary/10 via-surface to-primary/5 border border-primary/30 rounded-2xl p-5 flex flex-col justify-between space-y-3 shadow-xs">
+            <div className="text-left space-y-1">
+              <h4 className="font-bold text-sm text-primary flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4" /> AI Cover Letter Generator
+              </h4>
+              <p className="text-xs text-text-muted font-medium">Create a matching ATS cover letter tailored for any target company in seconds.</p>
+            </div>
+            <button
+              onClick={() => setCoverLetterModalOpen(true)}
+              className="w-full py-3 bg-primary text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-2 transition-colors cursor-pointer shadow-md hover:shadow-lg"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>✨ Create Cover Letter</span>
+            </button>
+          </div>
         </div>
 
         </div>
         {/* end right scrollable column */}
 
+      <CoverLetterModal isOpen={isCoverLetterModalOpen} onClose={() => setCoverLetterModalOpen(false)} resumeId={resumeId} inputData={resume?.inputData} templateId={resume?.inputData?.options?.templateId || "modern"} />
       </main>
     </div>
   );

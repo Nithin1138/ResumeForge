@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-07-20T13:00:43.437Z",
+  "cliVersion": "0.3.9",
+  "portabilityScore": 100,
+  "securityScore": 59,
+  "totalFindings": 4,
+  "findings": [
+    {
+      "key": "SEC_HARDCODED_SECRET_001::test_verify.ts",
+      "ruleId": "SEC_HARDCODED_SECRET_001",
+      "ruleName": "Hardcoded API Keys and Secrets",
+      "severity": "high",
+      "category": "security",
+      "file": "/Users/nithin/Projects/resume/test_verify.ts",
+      "message": "Variable \"token\" appears to contain a hardcoded secret"
+    },
+    {
+      "key": "SEC_MISSING_RLS_001::prisma/migrations/20260523063503_init/migration.sql",
+      "ruleId": "SEC_MISSING_RLS_001",
+      "ruleName": "Missing Row Level Security (RLS)",
+      "severity": "high",
+      "category": "security",
+      "file": "/Users/nithin/Projects/resume/prisma/migrations/20260523063503_init/migration.sql",
+      "message": "Table \"user\" is created without Row Level Security (RLS) enabled"
+    },
+    {
+      "key": "SEC_MISSING_RLS_001::prisma/migrations/20260523063503_init/migration.sql",
+      "ruleId": "SEC_MISSING_RLS_001",
+      "ruleName": "Missing Row Level Security (RLS)",
+      "severity": "high",
+      "category": "security",
+      "file": "/Users/nithin/Projects/resume/prisma/migrations/20260523063503_init/migration.sql",
+      "message": "Table \"resume\" is created without Row Level Security (RLS) enabled"
+    },
+    {
+      "key": "SEC_MISSING_RLS_001::prisma/migrations/20260523063503_init/migration.sql",
+      "ruleId": "SEC_MISSING_RLS_001",
+      "ruleName": "Missing Row Level Security (RLS)",
+      "severity": "high",
+      "category": "security",
+      "file": "/Users/nithin/Projects/resume/prisma/migrations/20260523063503_init/migration.sql",
+      "message": "Table \"waitlistemail\" is created without Row Level Security (RLS) enabled"
+    }
+  ]
+}

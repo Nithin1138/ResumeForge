@@ -10,6 +10,7 @@ import { calculateDynamicMetrics } from "@/lib/atsScoring";
 import { getLocalSession } from "@/lib/authClient";
 import ResumePreviewPanel from "@/components/ResumePreviewPanel";
 import AIVerificationSection from "@/components/AIVerificationSection";
+import CoverLetterModal from "@/components/CoverLetterModal";
 
 export default function ResultPage({ params }: { params: Promise<{ resumeId: string }> }) {
   const { resumeId } = use(params);
@@ -25,6 +26,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const [activeRoleIndex, setActiveRoleIndex] = useState(0);
   const [isVerificationModalOpen, setVerificationModalOpen] = useState(false);
   const [scoreMode, setScoreMode] = useState<"resume" | "role">("resume");
+  const [isCoverLetterModalOpen, setCoverLetterModalOpen] = useState(false);
 
   useEffect(() => {
     if (searchParams && searchParams.get("verify") === "true") {
@@ -515,6 +517,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
           )}
 
         </div>
+      <CoverLetterModal isOpen={isCoverLetterModalOpen} onClose={() => setCoverLetterModalOpen(false)} resumeId={resumeId} inputData={resume?.inputData} />
       </main>
 
 
