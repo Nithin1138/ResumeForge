@@ -207,54 +207,50 @@ export default function CoverLetterModal({
 
   if (readOnly) {
     return (
-      <div className="fixed inset-0 bg-[#525659] z-50 overflow-y-auto flex flex-col items-center animate-fade-in font-sans">
-        {/* PDF Reader Top Control Bar */}
-        <div className="w-full bg-[#323639] border-b border-[#202124] text-white px-4 py-3 flex items-center justify-between sticky top-0 z-50 shadow-md">
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={onClose}
-              className="px-3 py-1.5 rounded-md bg-[#202124] hover:bg-[#4a4d51] text-xs font-bold transition-colors flex items-center space-x-1.5 text-gray-200 cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back</span>
-            </button>
-            <span className="text-xs font-semibold text-gray-300 hidden sm:inline-block">
-              {companyName ? `${companyName} — Cover Letter.pdf` : "Cover_Letter_Document.pdf"}
-            </span>
-          </div>
+      <div className="fixed inset-0 bg-[#525659] z-50 overflow-y-auto flex flex-col items-center py-6 sm:py-10 px-2 sm:px-4 animate-fade-in font-sans relative">
+        {/* Floating Action Controls Header/Pill */}
+        <div className="fixed top-4 right-4 sm:right-6 z-50 flex items-center space-x-2 bg-[#202124]/90 backdrop-blur-md p-1.5 rounded-full border border-white/10 shadow-2xl">
+          <button
+            onClick={handleCopyText}
+            disabled={!coverLetter}
+            className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-40"
+          >
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            <span className="hidden sm:inline">{copied ? "Copied" : "Copy Text"}</span>
+          </button>
 
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={handleCopyText}
-              disabled={!coverLetter}
-              className="px-3.5 py-1.5 rounded-md bg-[#202124] hover:bg-[#4a4d51] text-xs font-bold text-gray-200 transition-colors flex items-center space-x-1.5 cursor-pointer disabled:opacity-40"
-            >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copied ? "Copied" : "Copy Text"}</span>
-            </button>
+          <button
+            onClick={handlePrint}
+            disabled={!coverLetter}
+            className="px-4 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-md disabled:opacity-40"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>Download PDF</span>
+          </button>
 
-            <button
-              onClick={handlePrint}
-              disabled={!coverLetter}
-              className="px-4 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors flex items-center space-x-1.5 cursor-pointer shadow-sm disabled:opacity-40"
-            >
-              <Printer className="w-3.5 h-3.5" />
-              <span>Download PDF</span>
-            </button>
-
-            <button
-              onClick={onClose}
-              className="p-1.5 rounded-md hover:bg-[#4a4d51] text-gray-400 hover:text-white transition-colors cursor-pointer ml-1"
-              title="Close"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-all cursor-pointer"
+            title="Close Preview"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* Realistic PDF Paper Canvas */}
-        <div className="w-full flex-1 py-8 px-2 sm:px-4 flex items-center justify-center">
-          <div className="w-full max-w-[800px] bg-white text-black shadow-2xl rounded-xs overflow-hidden border border-gray-300 min-h-[1000px] p-8 sm:p-12 md:p-16 transition-all">
+        {/* Floating Back Button (Top Left) */}
+        <div className="fixed top-4 left-4 sm:left-6 z-50">
+          <button
+            onClick={onClose}
+            className="px-3.5 py-1.5 rounded-full bg-[#202124]/90 backdrop-blur-md hover:bg-[#323639] text-xs font-bold text-gray-200 border border-white/10 shadow-2xl transition-all flex items-center space-x-1.5 cursor-pointer"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back</span>
+          </button>
+        </div>
+
+        {/* Pure PDF Document Canvas - Exact replica of PDF Print View */}
+        <div className="w-full flex-1 flex items-center justify-center pt-8 pb-12">
+          <div className="w-full max-w-[800px] bg-white text-black shadow-2xl rounded-xs overflow-hidden border border-gray-300 min-h-[1050px] p-8 sm:p-12 md:p-16 transition-all my-auto">
             <CoverLetterPreview
               data={coverLetter}
               isLoading={isGenerating}
