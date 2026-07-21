@@ -2070,92 +2070,174 @@ function renderTemplateWireframe(tmpl: TemplateDefinition) {
   const accent = tmpl.accentColor || "#01696f";
   const isPhoto = tmpl.supportsPhoto;
 
-  if (tmpl.id === "photo_side_panel" || tmpl.id === "modern") {
+  // Format readable section titles to display in order (e.g. SKILLS -> PROJECTS -> EDUCATION)
+  const sectionsToDisplay = tmpl.sectionOrder.slice(0, 4).map((s) => {
+    const labels: Record<string, string> = {
+      summary: "SUMMARY",
+      education: "EDUCATION",
+      skills: "TECHNICAL SKILLS",
+      projects: "PROJECTS",
+      experience: "EXPERIENCE & WORK",
+      achievements: "ACHIEVEMENTS",
+      certifications: "CERTIFICATIONS",
+    };
+    return { key: s, label: labels[s] || s.toUpperCase() };
+  });
+
+  // Render Sidebar Layout (e.g., Side Photo Panel / Contrasting Sidebar)
+  if (tmpl.headerStyle === "side_panel" || tmpl.photoPlacement === "sidebar") {
     return (
-      <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-2 shadow-xs border border-zinc-200 flex gap-2 overflow-hidden select-none relative">
-        <div className="w-1/3 p-1.5 flex flex-col space-y-1.5 rounded-xs shrink-0" style={{ backgroundColor: accent, color: "white" }}>
+      <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-2 shadow-xs border border-zinc-200 flex gap-2 overflow-hidden select-none relative text-[8px] leading-tight">
+        {/* Left Accent Sidebar */}
+        <div className="w-1/3 p-1.5 flex flex-col space-y-2 rounded-xs shrink-0" style={{ backgroundColor: accent, color: "white" }}>
           {isPhoto ? (
-            <div className="w-5 h-5 rounded-full bg-white/20 border border-white/40 flex items-center justify-center self-center my-0.5">
-              <User className="w-2.5 h-2.5 text-white" />
+            <div className="w-6 h-6 rounded-full bg-white/20 border border-white/40 flex items-center justify-center self-center my-0.5 shrink-0">
+              <User className="w-3.5 h-3.5 text-white" />
             </div>
           ) : (
-            <div className="w-full h-1 bg-white/80 rounded-2xs" />
+            <div className="text-[7.5px] font-bold text-center border-b border-white/30 pb-0.5 tracking-tight">ALEX MORGAN</div>
           )}
-          <div className="w-3/4 h-1 bg-white/80 rounded-2xs self-center" />
-          <div className="w-full h-[0.5px] bg-white/30 my-0.5" />
-          <div className="space-y-1">
-            <div className="w-full h-0.5 bg-white/40 rounded-2xs" />
-            <div className="w-4/5 h-0.5 bg-white/40 rounded-2xs" />
+          <div className="text-[6.5px] font-medium text-white/90 space-y-0.5">
+            <p className="truncate">📍 India</p>
+            <p className="truncate">✉️ alex@dev.com</p>
+            <p className="truncate">📞 +91 9876543210</p>
+          </div>
+          <div className="border-t border-white/30 pt-1 space-y-1">
+            <span className="text-[6px] font-bold block uppercase tracking-wider text-white/90">TECHNICAL SKILLS</span>
+            <div className="text-[5.5px] text-white/80 space-y-0.5">
+              <p className="truncate">• React, Next.js</p>
+              <p className="truncate">• Node.js, Python</p>
+              <p className="truncate">• TypeScript, SQL</p>
+            </div>
           </div>
         </div>
+
+        {/* Right Body Content */}
         <div className="flex-1 flex flex-col space-y-1.5 pt-0.5 min-w-0">
-          <div className="w-2/3 h-2 bg-zinc-800 rounded-2xs" />
+          <div>
+            <div className="text-[9px] font-bold text-zinc-900 tracking-tight">ALEX MORGAN</div>
+            <div className="text-[6.5px] text-zinc-500 font-medium">Software Engineer &amp; Full Stack Developer</div>
+          </div>
           <div className="w-full h-[0.5px] bg-zinc-200" />
-          <div className="w-1/3 h-1.5 rounded-2xs" style={{ backgroundColor: accent }} />
-          <div className="space-y-1">
-            <div className="w-full h-0.5 bg-zinc-300 rounded-2xs" />
-            <div className="w-11/12 h-0.5 bg-zinc-300 rounded-2xs" />
+          
+          {/* Dynamic Sections */}
+          <div className="space-y-1.5">
+            {sectionsToDisplay.map((sec) => (
+              <div key={sec.key} className="space-y-0.5">
+                <span className="text-[6.5px] font-extrabold uppercase tracking-wider block" style={{ color: accent }}>
+                  {sec.label}
+                </span>
+                <div className="text-[5.5px] text-zinc-600 space-y-0.5 leading-none">
+                  <p className="truncate"><strong>• Core Stack:</strong> Optimized web performance by 40%</p>
+                  <p className="truncate">• Built scalable REST APIs with Node &amp; PostgreSQL</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+
         <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-          <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-          <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
+          <span className="px-1 py-0.5 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
+          <span className="px-1 py-0.5 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
         </div>
       </div>
     );
   }
 
-  if (tmpl.id === "photo_student_card" || tmpl.id === "academic_premium") {
+  // Render Centered / Profile Card Header
+  if (tmpl.headerStyle === "centered" || tmpl.headerStyle === "profile_card") {
     return (
-      <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-3 shadow-xs border border-zinc-200 flex flex-col items-center space-y-1.5 overflow-hidden select-none relative">
-        {isPhoto ? (
-          <div className="w-6 h-6 rounded-full border-2 flex items-center justify-center mb-0.5" style={{ borderColor: accent, backgroundColor: `${accent}15` }}>
+      <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-2.5 shadow-xs border border-zinc-200 flex flex-col space-y-1.5 overflow-hidden select-none relative text-[8px] leading-tight">
+        {/* Centered Header */}
+        <div className="flex flex-col items-center text-center space-y-0.5 pb-1 border-b border-zinc-200">
+          {isPhoto && (
+            <div className="w-6 h-6 rounded-full border-2 flex items-center justify-center mb-0.5 shrink-0" style={{ borderColor: accent, backgroundColor: `${accent}15` }}>
+              <User className="w-3.5 h-3.5" style={{ color: accent }} />
+            </div>
+          )}
+          <div className="text-[9.5px] font-extrabold text-zinc-900 tracking-tight uppercase" style={{ color: accent }}>
+            ALEX MORGAN
+          </div>
+          <div className="text-[6.5px] text-zinc-600 font-medium">
+            alex@email.com • +91 98765 43210 • LinkedIn • GitHub
+          </div>
+        </div>
+
+        {/* Dynamic Sections in Template Order */}
+        <div className="space-y-1.5 flex-1">
+          {sectionsToDisplay.map((sec) => (
+            <div key={sec.key} className="space-y-0.5">
+              <div className="flex items-center justify-between border-b border-zinc-200 pb-0.5">
+                <span className="text-[6.5px] font-extrabold uppercase tracking-wider" style={{ color: accent }}>
+                  {sec.label}
+                </span>
+              </div>
+              <div className="text-[5.5px] text-zinc-600 space-y-0.5 leading-tight">
+                <p className="truncate"><strong>IIT Madras</strong> — B.Tech Computer Science (CGPA: 9.2)</p>
+                <p className="truncate">• Developed AI-powered automation workflow platform</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
+          <span className="px-1 py-0.5 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
+          <span className="px-1 py-0.5 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Render Header Banner / Left Header
+  return (
+    <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-2.5 shadow-xs border border-zinc-200 flex flex-col space-y-1.5 overflow-hidden select-none relative text-[8px] leading-tight">
+      {/* Header Row */}
+      <div className="flex items-center justify-between gap-2 pb-1 border-b border-zinc-200">
+        {tmpl.photoPlacement === "top_left" && isPhoto && (
+          <div className="w-5.5 h-5.5 rounded-md border flex items-center justify-center shrink-0" style={{ borderColor: accent, backgroundColor: `${accent}15` }}>
             <User className="w-3 h-3" style={{ color: accent }} />
           </div>
-        ) : null}
-        <div className="w-1/2 h-2 rounded-2xs" style={{ backgroundColor: accent }} />
-        <div className="w-3/4 h-0.5 bg-zinc-400 rounded-2xs" />
-        <div className="w-full h-[0.5px] bg-zinc-300 my-0.5" />
-        <div className="w-full space-y-1 text-left">
-          <div className="w-1/4 h-1.5 rounded-2xs" style={{ backgroundColor: accent }} />
-          <div className="w-full h-0.5 bg-zinc-300 rounded-2xs" />
-          <div className="w-5/6 h-0.5 bg-zinc-300 rounded-2xs" />
+        )}
+        <div className="flex-1 min-w-0">
+          <div className="text-[9.5px] font-extrabold text-zinc-900 tracking-tight uppercase" style={{ color: accent }}>
+            ALEX MORGAN
+          </div>
+          <div className="text-[6px] text-zinc-600 font-medium truncate">
+            alex@email.com | +91 98765 43210 | GitHub | LinkedIn
+          </div>
         </div>
-        <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-          <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-          <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-full aspect-[1/1.38] bg-white text-zinc-800 rounded-lg p-2.5 shadow-xs border border-zinc-200 flex flex-col space-y-1.5 overflow-hidden select-none relative">
-      <div className="flex items-center space-x-2">
-        {isPhoto && (
-          <div className="w-5 h-5 rounded-md border flex items-center justify-center shrink-0" style={{ borderColor: accent, backgroundColor: `${accent}15` }}>
-            <User className="w-2.5 h-2.5" style={{ color: accent }} />
+        {tmpl.photoPlacement === "top_right" && isPhoto && (
+          <div className="w-5.5 h-5.5 rounded-md border flex items-center justify-center shrink-0" style={{ borderColor: accent, backgroundColor: `${accent}15` }}>
+            <User className="w-3 h-3" style={{ color: accent }} />
           </div>
         )}
-        <div className="space-y-0.5 flex-1 min-w-0">
-          <div className="w-2/3 h-2 rounded-2xs" style={{ backgroundColor: accent }} />
-          <div className="w-1/2 h-0.5 bg-zinc-400 rounded-2xs" />
-        </div>
       </div>
-      <div className="w-full h-[0.5px] bg-zinc-200 my-0.5" />
+
+      {/* Dynamic Sections in Template Order */}
       <div className="space-y-1.5 flex-1">
-        <div className="w-1/3 h-1.5 rounded-2xs" style={{ backgroundColor: accent }} />
-        <div className="w-full h-0.5 bg-zinc-300 rounded-2xs" />
-        <div className="w-full h-0.5 bg-zinc-300 rounded-2xs" />
-        <div className="w-4/5 h-0.5 bg-zinc-300 rounded-2xs" />
+        {sectionsToDisplay.map((sec) => (
+          <div key={sec.key} className="space-y-0.5">
+            <div className="border-b border-zinc-200 pb-0.5">
+              <span className="text-[6.5px] font-extrabold uppercase tracking-wider block" style={{ color: accent }}>
+                {sec.label}
+              </span>
+            </div>
+            <div className="text-[5.5px] text-zinc-600 space-y-0.5 leading-tight">
+              <p className="truncate"><strong>Full Stack Web App:</strong> Next.js, TypeScript, PostgreSQL</p>
+              <p className="truncate">• Engineered high throughput API pipelines with 99.9% uptime</p>
+            </div>
+          </div>
+        ))}
       </div>
+
       <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-        <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
-        <span className="px-1.5 py-0.5 text-[7px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
+        <span className="px-1 py-0.5 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">PDF</span>
+        <span className="px-1 py-0.5 text-[6px] font-bold bg-zinc-100 text-zinc-500 rounded-2xs border border-zinc-200">DOCX</span>
       </div>
     </div>
   );
 }
+
 
     const isPhotoTemplate = formData.options.hasPhoto;
     const filterTab = isPhotoTemplate ? "photo" : "plain";
