@@ -19,7 +19,7 @@ interface PersonaData {
   achievements?: string[];
 }
 
-// ── REALISTIC INDIAN PERSONAS (Packed with content just like a real resume, leaving zero empty space) ──
+// ── REALISTIC INDIAN PERSONAS (Expanded with extra entries for dynamic page-fill scaling) ──
 const INDIAN_PERSONAS: Record<string, PersonaData> = {
   modern: {
     name: "Aarav Sharma",
@@ -33,6 +33,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
     education: [
       { institution: "IIT Bombay", degree: "B.Tech Computer Science", years: "2015 – 2019" },
       { institution: "Delhi Public School, R.K. Puram", degree: "CBSE Class XII (PCM) - 95.8%", years: "2013 – 2015" },
+      { institution: "St. Xavier's School", degree: "CBSE Class X - 10 CGPA", years: "2011 – 2013" },
     ],
     experience: [
       {
@@ -42,7 +43,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         bullets: [
           "Architected Big Billion Days checkout engine processing 120,000 requests/sec with 99.99% uptime.",
           "Reduced database query latency by 45% through Redis caching and PostgreSQL index optimization.",
-          "Designed multi-PSP failover payment gateway handler reducing checkout drop-off rates by 14%.",
+          "Designed multi-PSP failover payment gateway handler reducing checkout drop-offs by 14%.",
           "Mentored 8 junior software engineers and led agile sprint planning reviews.",
         ],
       },
@@ -56,13 +57,23 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
           "Migrated legacy APIs from Node.js to Go, improving request throughput by 65%.",
         ],
       },
+      {
+        company: "Infosys R&D",
+        role: "Systems Associate",
+        years: "2018 – 2019",
+        bullets: [
+          "Developed backend REST services and automated unit testing modules.",
+          "Improved test suite coverage from 55% to 88% using JUnit and Mockito frameworks.",
+        ],
+      },
     ],
     projects: [
       { title: "Distributed Payment Gateway Adapter", tech: "Java 17, Spring Boot, AWS", description: "Multi-PSP failover service handling $40M daily digital transactions with automatic reconciliation." },
       { title: "Real-time Order Tracking Engine", tech: "Node.js, Kafka, Redis", description: "Reduced order tracking API latency from 450ms to 42ms via WebSockets." },
+      { title: "Cloud Log Aggregator Service", tech: "Golang, Elasticsearch, Kibana", description: "Centralized monitoring system collecting logs from 120+ microservices in real-time." },
     ],
-    certifications: ["AWS Certified Solutions Architect – Associate", "Oracle Certified Professional Java SE 17", "Certified ScrumMaster (CSM)"],
-    achievements: ["Flipkart Tech Innovation Award 2023", "National Cyber Olympiad Rank 14", "ACM ICPC Regional Qualifier"],
+    certifications: ["AWS Certified Solutions Architect – Associate", "Oracle Certified Professional Java SE 17", "Certified ScrumMaster (CSM)", "Google Cloud Cloud Architect"],
+    achievements: ["Flipkart Tech Innovation Award 2023", "National Cyber Olympiad Rank 14", "ACM ICPC Regional Qualifier", "1st Place Inter-College Hackathon"],
   },
 
   recruiter_scan: {
@@ -76,7 +87,8 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
     skills: ["React & Next.js", "TypeScript & Node.js", "GraphQL & REST APIs", "PostgreSQL & Prisma", "Docker & Kubernetes", "Tailwind CSS", "Jest & Playwright"],
     education: [
       { institution: "BITS Pilani", degree: "B.E. Computer Science", years: "2016 – 2020" },
-      { institution: "Hyderabad Public School", degree: "Class XII Science (APEAPCET Rank 245)", years: "2014 – 2016" },
+      { institution: "Hyderabad Public School", degree: "Class XII Science (PCM) - 97.4%", years: "2014 – 2016" },
+      { institution: "Chirec International School", degree: "CBSE Class X - 9.8 CGPA", years: "2012 – 2014" },
     ],
     experience: [
       {
@@ -87,6 +99,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
           "Led development of merchant onboarding dashboard used by 250,000+ Indian businesses.",
           "Optimized bundle rendering performance reducing initial page load from 3.2s to 0.9s.",
           "Created modular Design System UI component library adopted across 14 product squads.",
+          "Established automated frontend end-to-end testing pipeline using Playwright.",
         ],
       },
       {
@@ -96,6 +109,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         bullets: [
           "Developed hotel booking web app serving 5M+ monthly active travelers.",
           "Integrated UPI & Netbanking payment SDKs with zero checkout security drop-offs.",
+          "Re-architected core search filter panel reducing interactive latency by 30%.",
         ],
       },
     ],
@@ -139,6 +153,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         bullets: [
           "Built cloud database management APIs used by 500+ enterprise client databases.",
           "Implemented security patch updates and database indexing tuning configurations.",
+          "Designed modular reporting plugins reducing report generation time from 15 mins to 20 seconds.",
         ],
       },
     ],
@@ -181,6 +196,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         bullets: [
           "Launched interactive video learning module used by 2M+ school students.",
           "Improved student class completion rates by 35% through reward gamification.",
+          "Reduced churn rates by 12% via target analytics onboarding modifications.",
         ],
       },
     ],
@@ -199,11 +215,12 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98450 12345",
     location: "Chennai, TN",
     photoUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&auto=format&fit=crop&q=80",
-    summary: "AI Researcher developing Computer Vision pipelines, Large Language Model fine-tuning, and Deep Learning models for autonomous systems. Passionate about low-resource Indic language NLP.",
+    summary: "AI Researcher developing Computer Vision pipelines, Large Language Model fine-tuning, and Deep Learning models for autonomous systems. Passionate about low-resource NLP.",
     skills: ["PyTorch & TensorFlow", "Large Language Models (LLMs)", "Computer Vision (OpenCV)", "Python & C++ CUDA", "Transformers", "Git & Linux", "MLOps & MLflow"],
     education: [
       { institution: "IIT Madras", degree: "M.S. Artificial Intelligence", years: "2018 – 2020" },
       { institution: "College of Engineering Guindy", degree: "B.E. Computer Science", years: "2014 – 2018" },
+      { institution: "SBOA Matriculation, Chennai", degree: "Class XII State Board - 98.4%", years: "2012 – 2014" },
     ],
     experience: [
       {
@@ -236,7 +253,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
     skills: ["AWS & GCP Cloud", "Kubernetes & Helm", "Terraform & IaC", "CI/CD GitHub Actions", "Prometheus & Grafana", "Bash & Python", "Ansible & Packer"],
     education: [
       { institution: "IIIT Hyderabad", degree: "B.Tech Computer Science", years: "2015 – 2019" },
-      { institution: "Chinmaya Vidyalaya, Chennai", degree: "Class XII Science", years: "2013 – 2015" },
+      { institution: "Chinmaya Vidyalaya, Chennai", degree: "Class XII Science (96.5%)", years: "2013 – 2015" },
     ],
     experience: [
       {
@@ -385,7 +402,7 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     summary: "DevSecOps Lead specializing in cloud security automation, automated penetration testing, and zero-trust identity access management.",
     skills: ["AWS Security & IAM", "Penetration Testing", "Docker Security", "Python & Bash Scripts"],
     education: [{ institution: "DTU Delhi", degree: "B.Tech Information Technology", years: "2016 – 2020" }],
-    experience: [{ company: "Razorpay Financials", role: "Senior Security Specialist", years: "2021 – Present", bullets: ["Conducted penetration testing across 50+ microservices.", "Automated CI/CD security scanning using Trivy.", "Fixed critical security vulnerabilities in payment gateway."] }],
+    experience: [{ company: "Razorpay Financials", role: "Senior Security Specialist", years: "2021 – Present", bullets: ["Conacted penetration testing across 50+ microservices.", "Automated CI/CD security scanning using Trivy.", "Fixed critical security vulnerabilities in payment gateway."] }],
     projects: [{ title: "Zero-Trust API Gateway Shield", tech: "Python, Docker, OAuth2", description: "Protected financial endpoints against high-rate DDoS and OWASP threats." }],
     certifications: ["CISSP Certified Specialist", "CEH Master"],
     achievements: ["Top Bug Bounty Hall of Fame 2022"],
@@ -475,7 +492,7 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     summary: "Product Designer crafting intuitive SaaS interfaces, developer workspaces, Behance portfolios, and Figma design systems.",
     skills: ["Figma & Design Systems", "UX Research", "Prototyping", "HTML/CSS", "Wireframing"],
     education: [{ institution: "NID Bengaluru", degree: "B.Des Digital Media", years: "2016 – 2020" }],
-    experience: [{ company: "Postman Tech", role: "Senior Product Designer", years: "2021 – Present", bullets: ["Designed API documentation workspace interface.", "Improved user onboarding completion by 28%.", "Conducted user research sessions globally."] }],
+    experience: [{ company: "Postman Tech", role: "Senior Product Designer", years: "2021 – Present", bullets: ["Designed API documentation workspace interface.", "Improved user onboarding completion by 28%.", "Conacted user research sessions globally."] }],
     projects: [{ title: "Developer API Canvas Workspace", tech: "Figma, React", description: "Workspace UI utilized by 10M+ software engineers globally." }],
     certifications: ["Nielsen Norman UX Master"],
     achievements: ["Behance Featured Portfolio 2023"],
@@ -599,6 +616,32 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
   // ── Helper to render a section block with clean, un-overflowed typography ──
   const renderSectionBlock = (secKey: string, secLabel: string) => {
+    // Determine bounds dynamically according to how many sections are displayed in the current template format
+    // This allows compact/sparse templates to expand details to fill space, and prevents high-density layouts from overflowing!
+    const sectionCount = tmpl.sectionOrder.length;
+    
+    // Default bounds
+    let expLimit = 2;
+    let bulletLimit = 2;
+    let projLimit = 2;
+    let certLimit = 2;
+    let achLimit = 2;
+
+    if (tmpl.id === "silicon_valley" || tmpl.id === "tech_spec" || tmpl.id === "technical_matrix" || tmpl.id === "minimal_grid" || sectionCount <= 5) {
+      // Extremely compact layout/templates: expand items to fill the A4 page preview cleanly
+      expLimit = 3;
+      bulletLimit = 3;
+      projLimit = 3;
+      certLimit = 3;
+      achLimit = 3;
+    } else if (sectionCount === 6) {
+      expLimit = 2;
+      bulletLimit = 3;
+      projLimit = 2;
+      certLimit = 2;
+      achLimit = 2;
+    }
+
     if (secKey === "summary" && p.summary) {
       return (
         <div key={secKey} className="space-y-0.5 text-left">
@@ -659,7 +702,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
       return (
         <div key={secKey} className="space-y-0.5 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          {p.education.map((ed, idx) => (
+          {p.education.slice(0, expLimit).map((ed, idx) => (
             <div key={idx} className="flex items-center justify-between text-[5.5px]">
               <div className="truncate">
                 <span className="font-bold text-zinc-900">{ed.institution}</span> — <span className="text-zinc-600">{ed.degree}</span>
@@ -675,13 +718,13 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
       return (
         <div key={secKey} className="space-y-1 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          {p.experience.map((exp, idx) => (
+          {p.experience.slice(0, expLimit).map((exp, idx) => (
             <div key={idx} className="space-y-0.5">
               <div className="flex items-center justify-between text-[5.5px] font-bold text-zinc-900">
                 <span className="truncate">{exp.role} — {exp.company}</span>
                 <span className="text-[5px] text-zinc-500 shrink-0 ml-1">{exp.years}</span>
               </div>
-              {exp.bullets.map((b, bi) => (
+              {exp.bullets.slice(0, bulletLimit).map((b, bi) => (
                 <p key={bi} className="text-[5px] text-zinc-600 leading-tight">• {b}</p>
               ))}
             </div>
@@ -694,7 +737,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
       return (
         <div key={secKey} className="space-y-1 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          {p.projects.map((proj, idx) => (
+          {p.projects.slice(0, projLimit).map((proj, idx) => (
             <div key={idx} className="space-y-0.5">
               <p className="text-[5.5px] font-bold text-zinc-900 truncate">{proj.title} <span className="text-[5px] font-normal text-zinc-500">[{proj.tech}]</span></p>
               <p className="text-[5px] text-zinc-600 leading-tight">• {proj.description}</p>
@@ -709,7 +752,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         <div key={secKey} className="space-y-0.5 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
           <div className="space-y-0.5 text-[5px] text-zinc-600">
-            {p.certifications.map((cert, idx) => (
+            {p.certifications.slice(0, certLimit).map((cert, idx) => (
               <p key={idx} className="truncate">• {cert}</p>
             ))}
           </div>
@@ -722,7 +765,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         <div key={secKey} className="space-y-0.5 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
           <div className="space-y-0.5 text-[5px] text-zinc-600">
-            {p.achievements.map((ach, idx) => (
+            {p.achievements.slice(0, achLimit).map((ach, idx) => (
               <p key={idx} className="truncate">• {ach}</p>
             ))}
           </div>
