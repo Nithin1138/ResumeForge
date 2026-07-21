@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import WalletCard from "@/components/WalletCard";
 
 interface UserProfile {
   id: string;
@@ -231,6 +232,9 @@ export default function ProfileClient({ initialUser }: { initialUser: UserProfil
             </div>
           </div>
         </div>
+
+        {/* Candidate Wallet */}
+        <WalletCard />
 
         {/* Quick Account Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">

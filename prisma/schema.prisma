@@ -28,24 +28,40 @@ model AdminConfig {
   badgeText          String  @default("Built for Indian Engineering Students")
   testimonialsJson   String  @default("[]")
   faqsJson           String  @default("[]")
+  walletDiscountPercent Int  @default(10)
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  password      String?
-  emailVerified DateTime?
-  image         String?
-  isBlocked     Boolean   @default(false)
-  referralCode  String?   @unique
-  referredBy    String?
-  accounts      Account[]
-  sessions      Session[]
-  resumes       Resume[]
-  coverLetters  CoverLetter[]
-  masterProfile MasterProfile?
-  createdAt     DateTime  @default(now())
+  id                 String    @id @default(cuid())
+  name               String?
+  email              String?   @unique
+  password           String?
+  emailVerified      DateTime?
+  image              String?
+  isBlocked          Boolean   @default(false)
+  referralCode       String?   @unique
+  referredBy         String?
+  walletBalance      Int       @default(0)
+  accounts           Account[]
+  sessions           Session[]
+  resumes            Resume[]
+  coverLetters       CoverLetter[]
+  masterProfile      MasterProfile?
+  walletTransactions WalletTransaction[]
+  createdAt          DateTime  @default(now())
+}
+
+model WalletTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String   // TOPUP or SPEND
+  amount      Int      // wallet balance added or spent (in INR)
+  paidAmount  Int      // actual money paid via Razorpay (in INR)
+  description String
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Account {

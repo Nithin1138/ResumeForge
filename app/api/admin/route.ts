@@ -736,7 +736,8 @@ export async function POST(req: NextRequest) {
         ctaText,
         badgeText,
         testimonialsJson,
-        faqsJson
+        faqsJson,
+        walletDiscountPercent
       } = body;
 
       try {
@@ -756,7 +757,8 @@ export async function POST(req: NextRequest) {
             ctaText,
             badgeText,
             testimonialsJson,
-            faqsJson
+            faqsJson,
+            walletDiscountPercent: walletDiscountPercent !== undefined ? Number(walletDiscountPercent) : 10
           },
           create: {
             id: "admin",
@@ -775,7 +777,8 @@ export async function POST(req: NextRequest) {
             ctaText,
             badgeText,
             testimonialsJson,
-            faqsJson
+            faqsJson,
+            walletDiscountPercent: walletDiscountPercent !== undefined ? Number(walletDiscountPercent) : 10
           }
         });
 

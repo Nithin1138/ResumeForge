@@ -138,6 +138,7 @@ export default function AdminPanelPage() {
   const [flashPrice, setFlashPrice] = useState(39);
   const [isReferralActive, setIsReferralActive] = useState(true);
   const [invitesRequired, setInvitesRequired] = useState(3);
+  const [walletDiscountPercent, setWalletDiscountPercent] = useState(10);
   
   // Simulator states
   const [simPrice, setSimPrice] = useState(49);
@@ -220,6 +221,7 @@ export default function AdminPanelPage() {
             setFlashPrice(data.config.flashPrice);
             setIsReferralActive(data.config.isReferralActive);
             setInvitesRequired(data.config.invitesRequired);
+            setWalletDiscountPercent(data.config.walletDiscountPercent ?? 10);
             
             // Dynamic CMS states
             setHeroHeadline(data.config.heroHeadline || "");
@@ -473,6 +475,7 @@ export default function AdminPanelPage() {
           badgeText,
           testimonialsJson: JSON.stringify(testimonialsList),
           faqsJson: JSON.stringify(faqsList),
+          walletDiscountPercent,
         }),
       });
 
@@ -1736,6 +1739,32 @@ export default function AdminPanelPage() {
                           )}
                         </button>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* CANDIDATE WALLET DISCOUNT CONTROL */}
+                  <div className="bg-surface border border-border rounded-2xl p-5 md:p-6 space-y-4 flex flex-col justify-between">
+                    <div>
+                      <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider block border-b border-border/40 pb-2">Candidate Wallet Top-Up Discount (%)</h4>
+                      <p className="text-xs text-text-muted leading-relaxed mt-2.5 font-medium">
+                        Configure the discount percentage given to candidates when they top up their wallet balance (e.g. 10% discount = pay ₹90 to get ₹100 added).
+                      </p>
+                    </div>
+
+                    <div className="space-y-4 pt-2">
+                      <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-text-muted">
+                        <span>Top-Up Discount</span>
+                        <span className="text-emerald-500 font-mono font-extrabold">{walletDiscountPercent}% Discount</span>
+                      </div>
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="50" 
+                        step="5"
+                        value={walletDiscountPercent} 
+                        onChange={(e) => setWalletDiscountPercent(Number(e.target.value))}
+                        className="w-full h-1 bg-border rounded-lg appearance-none cursor-pointer accent-emerald-500" 
+                      />
                     </div>
                   </div>
                 </div>

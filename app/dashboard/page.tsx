@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Loader2, Plus, Sparkles, BookOpen, Trash2, Edit2, Calendar, FileText, CheckCircle2, ChevronRight, Layout, Mail, User, Database, Bot, ArrowRight } from "lucide-react";
 import { LogoutButton, DeleteButton, EditTitle, CoverLetterButton, DeleteCoverLetterButton, ViewCoverLetterOutputButton, EditCoverLetterButton } from "@/components/DashboardActions";
 import { ThemeToggle } from "@/components/theme-toggle";
+import WalletCard from "@/components/WalletCard";
 
 export const dynamic = "force-dynamic";
 
@@ -138,6 +139,9 @@ export default async function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* CANDIDATE WALLET COMPONENT */}
+        <WalletCard />
 
         {/* Quick Stats Grid */}
         <div className="max-sm:flex max-sm:overflow-x-auto max-sm:snap-x max-sm:snap-mandatory max-sm:gap-4 max-sm:-mx-4 max-sm:px-4 max-sm:pb-2 grid grid-cols-1 sm:grid-cols-3 gap-6">

@@ -3,7 +3,7 @@
 import { use, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, ArrowLeft, Download, FileText, CheckCircle2, ChevronRight, AlertTriangle, Printer, Sparkles, RefreshCw, Zap, Lock, ShieldCheck, ArrowRight, Award, AlertCircle } from "lucide-react";
+import { Loader2, ArrowLeft, Download, FileText, CheckCircle2, ChevronRight, AlertTriangle, Printer, Sparkles, RefreshCw, Zap, Lock, ShieldCheck, ArrowRight, Award, AlertCircle, Wallet } from "lucide-react";
 import { motion } from "framer-motion";
 import { FullResumeOutput } from "@/types/resume";
 import { calculateDynamicMetrics } from "@/lib/atsScoring";
@@ -27,6 +27,41 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
   const [isVerificationModalOpen, setVerificationModalOpen] = useState(false);
   const [scoreMode, setScoreMode] = useState<"resume" | "role">("resume");
   const [isCoverLetterModalOpen, setCoverLetterModalOpen] = useState(false);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
+  const [isProcessingWallet, setIsProcessingWallet] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/user/wallet")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && typeof data.balance === "number") {
+          setWalletBalance(data.balance);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleWalletPayment = async () => {
+    setIsProcessingWallet(true);
+    try {
+      const res = await fetch("/api/user/wallet/pay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ resumeId }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        window.location.href = `/success/${resumeId}`;
+      } else {
+        alert(data.error || "Wallet payment failed.");
+        setIsProcessingWallet(false);
+      }
+    } catch (err: any) {
+      alert("Wallet payment error: " + err.message);
+      setIsProcessingWallet(false);
+    }
+  };
 
   useEffect(() => {
     if (searchParams && searchParams.get("verify") === "true") {
@@ -538,15 +573,12 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                 <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
                 <span>Instant payment via Razorpay. One-time fee.</span>
               </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row-reverse items-center gap-3 w-full md:w-auto">
-            {/* Real Checkout Button (Renders on the right on desktop, top on mobile) */}
+             <div className="flex flex-col sm:flex-row-reverse items-center gap-3 w-full md:w-auto">
+            {/* Direct Razorpay Checkout Button */}
             <button
               onClick={handlePayment}
-              disabled={isProcessingPayment}
-              className="px-8 py-3.5 bg-primary hover:bg-primary/95 text-white text-sm font-semibold rounded-full flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg disabled:opacity-50 w-full sm:w-auto cursor-pointer"
+              disabled={isProcessingPayment || isProcessingWallet}
+              className="px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-sm font-semibold rounded-full flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg disabled:opacity-50 w-full sm:w-auto cursor-pointer"
             >
               {isProcessingPayment ? (
                 <>
@@ -555,12 +587,37 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                 </>
               ) : (
                 <>
-                  <span>Unlock Full ATS Content</span>
+                  <span>Unlock via Razorpay (₹{price})</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
-            
+
+            {/* Candidate Wallet Payment Option (If logged-in and balance is available) */}
+            {walletBalance !== null && walletBalance >= price && (
+              <button
+                onClick={handleWalletPayment}
+                disabled={isProcessingPayment || isProcessingWallet}
+                className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-full flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg disabled:opacity-50 w-full sm:w-auto cursor-pointer border border-emerald-400/30"
+              >
+                {isProcessingWallet ? (
+                  <>
+                    <Loader2 className="w-4.5 h-4.5 animate-spin" />
+                    <span>Deducting Wallet...</span>
+                  </>
+                ) : (
+                  <>
+                    <Wallet className="w-4 h-4" />
+                    <span>Pay ₹{price} with Wallet (Bal: ₹{walletBalance})</span>
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row-reverse items-center gap-3 w-full md:w-auto">
             {/* AI Verification Button (Renders on the left on desktop, bottom on mobile) */}
             {isVerificationModalOpen ? (
               <button 
