@@ -131,6 +131,7 @@ model Resume {
   deviceType    String?  @default("desktop")
   couponCode    String?
   abandoned     Boolean  @default(false)
+  categoryTag   String?  @default("blue")
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -293,6 +294,7 @@ model CoverLetter {
   bodyParagraph     String   @db.Text
   closingParagraph  String   @db.Text
   signOff           String?  @default("Sincerely,")
+  categoryTag       String?  @default("blue")
 
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt

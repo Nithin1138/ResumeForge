@@ -42,15 +42,15 @@ export default function DesktopSidebar() {
     },
     {
       name: "Resumes",
-      href: "/dashboard#resumes",
+      href: "/myresumes",
       icon: FileText,
-      active: pathname === "/dashboard" && typeof window !== "undefined" && window.location.hash === "#resumes",
+      active: pathname.startsWith("/myresumes"),
     },
     {
       name: "Cover Pages",
-      href: "/dashboard#cover-letters",
+      href: "/mycover-letters",
       icon: Mail,
-      active: pathname === "/dashboard" && typeof window !== "undefined" && window.location.hash === "#cover-letters",
+      active: pathname.startsWith("/mycover-letters"),
     },
     {
       name: "Edit / Build",

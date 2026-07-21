@@ -73,7 +73,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { resumeName } = body;
+    const { resumeName, categoryTag } = body;
 
     const resume = await prisma.resume.findUnique({ where: { id } });
     if (!resume) {
@@ -89,14 +89,18 @@ export async function PATCH(
       }
     }
 
-    await prisma.resume.update({
+    const updated = await prisma.resume.update({
       where: { id },
-      data: { resumeName: resumeName || null },
+      data: {
+        ...(resumeName !== undefined && { resumeName: resumeName || null }),
+        ...(categoryTag !== undefined && { categoryTag: categoryTag || "blue" }),
+      },
     });
 
     revalidatePath("/dashboard");
+    revalidatePath("/myresumes");
 
-    return NextResponse.json({ success: true, message: "Resume renamed successfully." });
+    return NextResponse.json({ success: true, resume: updated, message: "Resume updated successfully." });
   } catch (error) {
     console.error("API PATCH /api/resume/[id] error:", error);
     return NextResponse.json(

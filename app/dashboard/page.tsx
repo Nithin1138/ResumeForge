@@ -81,7 +81,40 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* MY SPACE & AI COPILOT HERO BANNER CARD */}
+        {/* 1. QUICK STATS GRID (Immediately under subtext) */}
+        <div className="max-sm:flex max-sm:overflow-x-auto max-sm:snap-x max-sm:snap-mandatory max-sm:gap-4 max-sm:-mx-4 max-sm:px-4 max-sm:pb-2 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="max-sm:min-w-[75vw] max-sm:snap-start bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Resumes Formatted</span>
+              <span className="text-3xl font-black font-sans text-text">{totalBuilt}</span>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <FileText className="w-5 h-5" />
+            </div>
+          </div>
+
+          <div className="max-sm:min-w-[75vw] max-sm:snap-start bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Cover Letters Built</span>
+              <span className="text-3xl font-black font-sans text-text">{coverLetters.length}</span>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+              <Mail className="w-5 h-5" />
+            </div>
+          </div>
+
+          <div className="max-sm:min-w-[75vw] max-sm:snap-start bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Average ATS Rating</span>
+              <span className="text-3xl font-black font-sans text-text">{avgScore || "N/A"}{totalBuilt ? "%" : ""}</span>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <Sparkles className="w-5 h-5 animate-pulse" />
+            </div>
+          </div>
+        </div>
+
+        {/* 2. MY SPACE & AI COPILOT HERO BANNER CARD */}
         <div className="bg-gradient-to-r from-primary/10 via-surface to-surface border border-primary/20 rounded-3xl p-6 md:p-8 space-y-4 shadow-xs relative overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2 max-w-xl">
@@ -121,58 +154,31 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* CANDIDATE WALLET COMPONENT */}
+        {/* 3. CANDIDATE WALLET COMPONENT */}
         <WalletCard />
 
-        {/* Quick Stats Grid */}
-        <div className="max-sm:flex max-sm:overflow-x-auto max-sm:snap-x max-sm:snap-mandatory max-sm:gap-4 max-sm:-mx-4 max-sm:px-4 max-sm:pb-2 grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="max-sm:min-w-[75vw] max-sm:snap-start bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Resumes Formatted</span>
-              <span className="text-3xl font-black font-sans text-text">{totalBuilt}</span>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-              <FileText className="w-5 h-5" />
-            </div>
-          </div>
-
-          <div className="max-sm:min-w-[75vw] max-sm:snap-start bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Cover Letters Built</span>
-              <span className="text-3xl font-black font-sans text-text">{coverLetters.length}</span>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
-              <Mail className="w-5 h-5" />
-            </div>
-          </div>
-
-          {/* Stat 3 */}
-          <div className="max-sm:min-w-[75vw] max-sm:snap-start bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Average ATS Rating</span>
-              <span className="text-3xl font-black font-sans text-text">{avgScore || "N/A"}{totalBuilt ? "%" : ""}</span>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-              <Sparkles className="w-5 h-5 animate-pulse" />
-            </div>
-          </div>
-        </div>
-
-        {/* Resumes Grid */}
+        {/* 4. RECENT RESUMES (Limit 2 with View All link) */}
         <div className="space-y-4">
-          <h2 className="text-xs font-bold text-text-muted tracking-wider uppercase border-b border-border/40 pb-2">Your Saved Resumes</h2>
+          <div className="flex items-center justify-between border-b border-border/40 pb-2">
+            <h2 className="text-xs font-bold text-text-muted tracking-wider uppercase">Recent Resumes</h2>
+            <Link
+              href="/myresumes"
+              className="text-xs font-bold text-primary hover:underline flex items-center space-x-1 cursor-pointer"
+            >
+              <span>View All Resumes</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
 
           {resumes.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-              {resumes.map((resumeItem) => {
-                const isPaid = resumeItem.paymentStatus === "PAID";
+              {resumes.slice(0, 2).map((resumeItem) => {
                 let atsScore = 85;
                 try {
                   if (resumeItem.outputFull) { atsScore = JSON.parse(resumeItem.outputFull).atsScore || 85; }
                 } catch {}
                 const isGood = atsScore >= 80;
                 
-                // Color-coded ATS scores
                 const scoreColor = isGood 
                   ? "bg-success/15 border-success/30 text-success" 
                   : "bg-warning/15 border-warning/30 text-warning";
@@ -183,7 +189,6 @@ export default async function DashboardPage() {
                     className="bg-surface border border-border rounded-2xl p-4 md:p-6 flex flex-col justify-between hover:border-primary/55 transition-all duration-300 shadow-xs group"
                   >
                     <div className="space-y-4">
-                      {/* Top Row: Date & Status Badge */}
                       <div className="flex justify-between items-center">
                         <span className="text-[10px] text-text-muted font-bold flex items-center space-x-1">
                           <Calendar className="w-3.5 h-3.5" />
@@ -195,7 +200,6 @@ export default async function DashboardPage() {
                         </span>
                       </div>
 
-                      {/* Main Data: Target Role */}
                       <div className="space-y-1 text-left mt-2 md:mt-0">
                         <EditTitle id={resumeItem.id} currentTitle={resumeItem.resumeName || resumeItem.targetRole || "Untitled Resume"} />
                         <p className="max-md:hidden text-xs text-text-muted leading-relaxed font-semibold">
@@ -207,7 +211,6 @@ export default async function DashboardPage() {
                       </div>
                     </div>
 
-                    {/* Bottom Row: Actions */}
                     <div className="flex flex-row items-center justify-between border-t border-border/30 mt-4 md:mt-6 pt-3 md:pt-4 gap-4">
                       <div className="flex items-center space-x-2">
                         <DeleteButton id={resumeItem.id} />
@@ -233,33 +236,39 @@ export default async function DashboardPage() {
               })}
             </div>
           ) : (
-            /* Empty state */
-            <div className="text-center py-20 border border-dashed border-border rounded-2xl bg-surface/30">
-              <BookOpen className="w-12 h-12 text-primary/30 mx-auto mb-4" />
-              <h3 className="font-serif text-xl mb-2 text-text">No Resumes Found</h3>
-              <p className="text-sm text-text-muted max-w-sm mx-auto mb-6 font-semibold">
-                You haven&apos;t generated any ATS resume content yet. Fill out details and optimize your profile in 2 minutes.
+            <div className="text-center py-12 border border-dashed border-border rounded-2xl bg-surface/30">
+              <BookOpen className="w-10 h-10 text-primary/30 mx-auto mb-3" />
+              <h3 className="font-serif text-lg mb-1 text-text">No Resumes Built Yet</h3>
+              <p className="text-xs text-text-muted max-w-xs mx-auto mb-4 font-semibold">
+                Build your first ATS-optimized resume in under 2 minutes.
               </p>
-              <div className="flex items-center justify-center gap-3">
-                <CoverLetterButton variant="header" />
-                <Link
-                  href="/build"
-                  className="px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer shrink-0"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Start Building Resume</span>
-                </Link>
-              </div>
+              <Link
+                href="/build"
+                className="px-5 py-2.5 bg-primary text-white text-xs font-bold rounded-full inline-flex items-center space-x-2 transition-all shadow-xs cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Build Resume Now</span>
+              </Link>
             </div>
           )}
         </div>
 
-        {/* Saved Cover Letters Section */}
+        {/* 5. RECENT COVER PAGES (Limit 2 with View All link) */}
         {coverLetters.length > 0 && (
-          <div className="space-y-4 pt-4">
-            <h2 className="text-xs font-bold text-text-muted tracking-wider uppercase border-b border-border/40 pb-2">Your Saved Cover Letters</h2>
+          <div className="space-y-4 pt-2">
+            <div className="flex items-center justify-between border-b border-border/40 pb-2">
+              <h2 className="text-xs font-bold text-text-muted tracking-wider uppercase">Recent Cover Letters</h2>
+              <Link
+                href="/mycover-letters"
+                className="text-xs font-bold text-primary hover:underline flex items-center space-x-1 cursor-pointer"
+              >
+                <span>View All Cover Letters</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-              {coverLetters.map((letter) => (
+              {coverLetters.slice(0, 2).map((letter) => (
                 <div
                   key={letter.id}
                   className="bg-surface border border-border rounded-2xl p-4 md:p-6 flex flex-col justify-between hover:border-emerald-500/50 transition-all duration-300 shadow-xs"
