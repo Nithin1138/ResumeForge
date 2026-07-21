@@ -781,7 +781,7 @@ const PHOTO_PERSONAS: Record<string, PersonaData> = {
 };
 
 export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition }) {
-  const accent = tmpl.accentColor || "#01696f";
+  const accent = tmpl.accentColor || "#1e293b";
   const isPhoto = tmpl.supportsPhoto;
 
   const p = isPhoto 
@@ -815,13 +815,11 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
     if (secKey === "skills" && p.skills?.length) {
       return (
-        <div key={secKey} className="space-y-1">
+        <div key={secKey} className="space-y-0.5">
           <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          <div className="flex flex-wrap gap-1">
-            {p.skills.map((sk, idx) => (
-              <span key={idx} className="px-1.5 py-0.5 rounded-2xs text-[6px] font-semibold bg-zinc-100 text-zinc-700 border border-zinc-200/90">{sk}</span>
-            ))}
-          </div>
+          <p className="text-[6.5px] text-zinc-800 font-medium leading-relaxed">
+            {p.skills.join(" • ")}
+          </p>
         </div>
       );
     }

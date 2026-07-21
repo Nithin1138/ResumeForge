@@ -4,10 +4,10 @@ export interface TemplateDefinition {
   tag: string;
   desc: string;
   supportsPhoto: boolean;
-  sectionOrder: string[];
-  headerStyle: "centered" | "left" | "banner" | "split" | "profile_card" | "portrait_left" | "side_panel" | "badge";
+  sectionOrder: Array<"summary" | "education" | "skills" | "projects" | "experience" | "achievements" | "certifications">;
+  headerStyle: "centered" | "left" | "banner" | "side_panel" | "profile_card" | "portrait_left" | "split";
   photoPlacement: "none" | "top_right" | "top_left" | "top_center" | "sidebar" | "inline";
-  textAlignment: "left" | "center" | "justify";
+  textAlignment: "left" | "center";
   spacingDensity: "compact" | "normal" | "spacious";
   atsFriendly: boolean;
   bestFor: string;
@@ -29,6 +29,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: true,
     bestFor: "General ATS Applications & Corporate Pipeline",
+    accentColor: "#1e293b",
   },
   {
     id: "recruiter_scan",
@@ -43,6 +44,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: true,
     bestFor: "Campus Placements & Quick Scans",
+    accentColor: "#0f172a",
   },
   {
     id: "skills_first",
@@ -57,6 +59,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: true,
     bestFor: "Tech Roles & Software Engineering",
+    accentColor: "#1e3a8a",
   },
   {
     id: "project_first",
@@ -71,6 +74,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: true,
     bestFor: "Hackathons, Open Source & Independent Builders",
+    accentColor: "#18181b",
   },
   {
     id: "academic_premium",
@@ -85,6 +89,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "spacious",
     atsFriendly: true,
     bestFor: "Higher Studies, Research & Internships",
+    accentColor: "#334155",
   },
   {
     id: "one_page_dense",
@@ -99,6 +104,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "compact",
     atsFriendly: true,
     bestFor: "Experienced Freshers & Dense Profiles",
+    accentColor: "#0f172a",
   },
   {
     id: "modern_minimal",
@@ -113,6 +119,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "spacious",
     atsFriendly: true,
     bestFor: "Design Tech, Product & UI Engineering",
+    accentColor: "#1e293b",
   },
   {
     id: "impact_focused",
@@ -127,6 +134,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: true,
     bestFor: "Results-Driven Candidates & Product Roles",
+    accentColor: "#1e3a8a",
   },
   {
     id: "developer_portfolio",
@@ -141,6 +149,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: true,
     bestFor: "Full-Stack, Web Dev & Open Source Engineers",
+    accentColor: "#0f172a",
   },
   {
     id: "global_professional",
@@ -155,6 +164,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: true,
     bestFor: "MNCs, Enterprise Tech & Financial Services",
+    accentColor: "#18181b",
   },
 
   // ── GROUP B: 10 PHOTO-BASED RESUME TEMPLATES ──
@@ -171,7 +181,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: false,
     bestFor: "Executive, Management & Client-Facing Roles",
-    accentColor: "#01696f",
+    accentColor: "#1e3a8a",
   },
   {
     id: "photo_side_panel",
@@ -186,7 +196,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: false,
     bestFor: "Creative, Tech & International Applications",
-    accentColor: "#1e3a8a",
+    accentColor: "#0f172a",
   },
   {
     id: "photo_student_card",
@@ -201,7 +211,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: false,
     bestFor: "Campus Applications & Graduate Programs",
-    accentColor: "#0284c7",
+    accentColor: "#1e293b",
   },
   {
     id: "photo_corporate",
@@ -231,7 +241,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: false,
     bestFor: "Startups, UI/UX & Product Engineering",
-    accentColor: "#059669",
+    accentColor: "#0f172a",
   },
   {
     id: "photo_academic",
@@ -261,7 +271,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: false,
     bestFor: "Visual Portfolios & Modern Tech Teams",
-    accentColor: "#7c3aed",
+    accentColor: "#1e3a8a",
   },
   {
     id: "photo_clean_vertical",
@@ -276,7 +286,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "compact",
     atsFriendly: false,
     bestFor: "One-Page Photo Resumes",
-    accentColor: "#0f766e",
+    accentColor: "#1e293b",
   },
   {
     id: "photo_personal_brand",
@@ -291,7 +301,7 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     spacingDensity: "normal",
     atsFriendly: false,
     bestFor: "Personal Portfolios & Founder/Lead Roles",
-    accentColor: "#c026d3",
+    accentColor: "#0f172a",
   },
   {
     id: "photo_premium_identity",
@@ -299,14 +309,14 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     tag: "Refined Badge & High Contrast",
     desc: "Refined photo badge with bold high-contrast typography. Sleek executive finish.",
     supportsPhoto: true,
-    sectionOrder: ["summary", "skills", "projects", "education", "experience", "achievements"],
-    headerStyle: "badge",
+    sectionOrder: ["summary", "skills", "experience", "projects", "education", "achievements"],
+    headerStyle: "banner",
     photoPlacement: "top_right",
     textAlignment: "left",
     spacingDensity: "normal",
     atsFriendly: false,
-    bestFor: "Premium Job Applications & Leadership",
-    accentColor: "#1e1b4b",
+    bestFor: "High-Level Executive & Leadership",
+    accentColor: "#18181b",
   },
 ];
 
