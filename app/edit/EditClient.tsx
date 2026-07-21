@@ -144,6 +144,143 @@ function formatDateTime(isoString?: string) {
   }
 }
 
+// Universal Auto-Fill Converter for AI Parsed Data & Saved Vault Resumes
+function convertParsedResponseToResume(data: any, defaultName?: string): ResumeData {
+  if (!data) {
+    return {
+      fullName: defaultName || "",
+      email: "",
+      phone: "",
+      location: "",
+      linkedin: "",
+      github: "",
+      summary: "",
+      education: [],
+      experience: [],
+      projects: [],
+      skills: [],
+      certifications: [],
+      canvasBoxes: [],
+    };
+  }
+
+  const p = data.personal || data || {};
+  const s = data.skills?.categories || data.skills || {};
+
+  // Extract skills
+  let extractedSkills: string[] = [];
+  if (typeof s === "object" && !Array.isArray(s)) {
+    const skillParts = [
+      s.languages,
+      s.frameworks,
+      s.tools,
+      s.databases,
+      s.csConcepts,
+      s.aiAndData,
+      s.embeddedSystems,
+      s.engineeringSoftware,
+      s.designSoftware,
+      s.processEngineering,
+      s.bioinformaticsTools,
+      s.aerodynamics,
+      data.skills?.softSkills,
+    ]
+      .filter(Boolean)
+      .join(",");
+
+    extractedSkills = Array.from(new Set(skillParts.split(",").map((str: string) => str.trim()).filter(Boolean)));
+  } else if (Array.isArray(s)) {
+    extractedSkills = s;
+  } else if (typeof s === "string") {
+    extractedSkills = s.split(",").map((str) => str.trim()).filter(Boolean);
+  }
+
+  // Extract Education
+  let educationList: Array<{ id: string; school: string; degree: string; year: string; location: string; gpa: string }> = [];
+  if (Array.isArray(data.education) && data.education.length > 0) {
+    educationList = data.education.map((edu: any, i: number) => ({
+      id: "edu_" + i,
+      school: edu.school || edu.collegeName || edu.college || "",
+      degree: edu.degree || (edu.branch ? `B.Tech in ${edu.branch}` : "Degree"),
+      year: edu.year || edu.graduationYear || "",
+      location: edu.location || "",
+      gpa: edu.gpa || edu.cgpa || "",
+    }));
+  } else if (p.collegeName || p.school) {
+    educationList.push({
+      id: "edu_1",
+      school: p.collegeName || p.school,
+      degree: p.ugDegree || (p.branch ? `B.Tech in ${p.branch}` : "Degree"),
+      year: p.graduationYear || "",
+      location: p.location || "",
+      gpa: p.cgpa || "",
+    });
+    if (p.hasPG && p.pgCollegeName) {
+      educationList.push({
+        id: "edu_2",
+        school: p.pgCollegeName,
+        degree: p.pgDegreeName || (p.pgBranch ? `M.Tech in ${p.pgBranch}` : "Master's Degree"),
+        year: p.pgGraduationYear || "",
+        location: "",
+        gpa: p.pgCgpa || "",
+      });
+    }
+  }
+
+  // Extract Experience / Internships
+  let experienceList: Array<{ id: string; company: string; role: string; duration: string; location: string; points: string[] }> = [];
+  const rawExp = Array.isArray(data.experience) && data.experience.length > 0 
+    ? data.experience 
+    : (Array.isArray(data.internships) ? data.internships : []);
+
+  experienceList = rawExp.map((exp: any, i: number) => ({
+    id: "exp_" + i,
+    company: exp.company || exp.organization || "",
+    role: exp.role || exp.title || "Software Engineer",
+    duration: exp.duration || "",
+    location: exp.location || "",
+    points: Array.isArray(exp.points) 
+      ? exp.points 
+      : (exp.workDone ? [exp.workDone] : (exp.description ? [exp.description] : [])),
+  })).filter((e: any) => e.company || e.role);
+
+  // Extract Projects
+  let projectsList: Array<{ id: string; title: string; tech: string; link: string; description: string }> = [];
+  if (Array.isArray(data.projects)) {
+    projectsList = data.projects.map((proj: any, i: number) => ({
+      id: "proj_" + i,
+      title: proj.title || "Project",
+      tech: proj.techStack || proj.tech || "",
+      link: proj.link || proj.githubLink || proj.liveLink || "",
+      description: proj.description || proj.keyResult || "",
+    })).filter((pr: any) => pr.title);
+  }
+
+  // Certifications
+  let certsList: string[] = [];
+  if (data.skills?.certifications) {
+    certsList = Array.isArray(data.skills.certifications) 
+      ? data.skills.certifications 
+      : data.skills.certifications.split(",").map((c: string) => c.trim()).filter(Boolean);
+  }
+
+  return {
+    fullName: p.fullName || data.name || data.fullName || defaultName || "",
+    email: p.email || data.email || "",
+    phone: p.phone || data.phone || "",
+    location: p.location || data.location || "",
+    linkedin: p.linkedin || data.linkedin || "",
+    github: p.github || data.github || "",
+    summary: data.summary || p.summary || "",
+    education: educationList,
+    experience: experienceList,
+    projects: projectsList,
+    skills: extractedSkills,
+    certifications: certsList,
+    canvasBoxes: [],
+  };
+}
+
 export default function EditClient({ savedResumes }: { savedResumes: SavedResumeItem[] }) {
   const [startMode, setStartMode] = useState<"CHOOSE" | "EDITOR">("CHOOSE");
   const [activeTab, setActiveTab] = useState<SectionTab>("personal");
@@ -267,33 +404,9 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
   const handleSelectSavedResume = (item: SavedResumeItem) => {
     try {
       const parsed = typeof item.inputData === "string" ? JSON.parse(item.inputData) : item.inputData;
-      const p = parsed.personal || parsed;
-      const s = parsed.skills?.categories || parsed.skills || {};
+      const converted = convertParsedResponseToResume(parsed, item.resumeName || "Candidate Resume");
 
-      const extractedSkills = Array.isArray(s)
-        ? s
-        : [s.languages, s.frameworks, s.tools, s.databases, s.csConcepts]
-            .filter(Boolean)
-            .join(", ")
-            .split(",")
-            .map((str: string) => str.trim())
-            .filter(Boolean);
-
-      setResumeData({
-        fullName: p.name || p.fullName || item.resumeName || "Candidate Resume",
-        email: p.email || "",
-        phone: p.phone || "",
-        location: p.location || "",
-        linkedin: p.linkedin || "",
-        github: p.github || "",
-        summary: parsed.summary || p.summary || "",
-        education: parsed.education || DEFAULT_RESUME.education,
-        experience: parsed.experience || parsed.internships || DEFAULT_RESUME.experience,
-        projects: parsed.projects || DEFAULT_RESUME.projects,
-        skills: extractedSkills.length > 0 ? extractedSkills : DEFAULT_RESUME.skills,
-        certifications: parsed.certifications || [],
-        canvasBoxes: [],
-      });
+      setResumeData(converted);
       setSelectedResumeId(item.id);
       setIsSavedModalOpen(false);
       setStartMode("EDITOR");
@@ -327,67 +440,9 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
       }
 
       const data = await res.json();
-      const p = data.personal || {};
-      const s = data.skills?.categories || {};
+      const converted = convertParsedResponseToResume(data, file.name.replace(/\.[^/.]+$/, ""));
 
-      const extractedSkills = [
-        s.languages,
-        s.frameworks,
-        s.tools,
-        s.databases,
-        s.csConcepts,
-      ]
-        .filter(Boolean)
-        .join(", ")
-        .split(",")
-        .map((str: string) => str.trim())
-        .filter(Boolean);
-
-      const parsedEdu = p.collegeName
-        ? [
-            {
-              id: "edu_1",
-              school: p.collegeName,
-              degree: p.branch ? `B.Tech in ${p.branch}` : "Degree",
-              year: p.graduationYear || "2024",
-              location: p.location || "",
-              gpa: p.cgpa || "",
-            },
-          ]
-        : DEFAULT_RESUME.education;
-
-      const parsedExp = (data.internships || []).map((exp: any, i: number) => ({
-        id: "exp_" + i,
-        company: exp.company || "Company",
-        role: exp.role || "Software Engineer",
-        duration: exp.duration || "2023 - Present",
-        location: "",
-        points: exp.workDone ? [exp.workDone] : [],
-      }));
-
-      const parsedProjects = (data.projects || []).map((proj: any, i: number) => ({
-        id: "proj_" + i,
-        title: proj.title || "Project Title",
-        tech: proj.techStack || "",
-        link: proj.link || "",
-        description: proj.description || "",
-      }));
-
-      setResumeData({
-        fullName: p.fullName || data.name || data.fullName || file.name.replace(/\.[^/.]+$/, ""),
-        email: p.email || data.email || "",
-        phone: p.phone || data.phone || "",
-        location: p.location || data.location || "",
-        linkedin: p.linkedin || data.linkedin || "",
-        github: p.github || data.github || "",
-        summary: data.summary || "",
-        education: parsedEdu,
-        experience: parsedExp.length > 0 ? parsedExp : DEFAULT_RESUME.experience,
-        projects: parsedProjects.length > 0 ? parsedProjects : DEFAULT_RESUME.projects,
-        skills: extractedSkills.length > 0 ? extractedSkills : DEFAULT_RESUME.skills,
-        certifications: data.skills?.certifications ? [data.skills.certifications] : [],
-        canvasBoxes: [],
-      });
+      setResumeData(converted);
       setStartMode("EDITOR");
     } catch (err: any) {
       console.error("Resume file parse error:", err);
@@ -981,63 +1036,67 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                     </div>
 
                     <div className="space-y-3">
-                      {resumeData.education.map((edu, idx) => (
-                        <div key={edu.id} className="p-3 bg-bg-base rounded-2xl border border-border space-y-2 relative">
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs font-extrabold text-primary">School #{idx + 1}</span>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setResumeData({
-                                  ...resumeData,
-                                  education: resumeData.education.filter((e) => e.id !== edu.id),
-                                })
-                              }
-                              className="text-rose-500 hover:text-rose-600 p-1 cursor-pointer"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                          <input
-                            type="text"
-                            placeholder="School Name"
-                            value={edu.school}
-                            onChange={(e) =>
-                              setResumeData({
-                                ...resumeData,
-                                education: resumeData.education.map((item) => (item.id === edu.id ? { ...item, school: e.target.value } : item)),
-                              })
-                            }
-                            className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-semibold"
-                          />
-                          <div className="grid grid-cols-2 gap-2">
+                      {resumeData.education.length === 0 ? (
+                        <p className="text-xs text-text-muted italic text-center py-4">No education entries added yet.</p>
+                      ) : (
+                        resumeData.education.map((edu, idx) => (
+                          <div key={edu.id} className="p-3 bg-bg-base rounded-2xl border border-border space-y-2 relative">
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs font-extrabold text-primary">School #{idx + 1}</span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setResumeData({
+                                    ...resumeData,
+                                    education: resumeData.education.filter((e) => e.id !== edu.id),
+                                  })
+                                }
+                                className="text-rose-500 hover:text-rose-600 p-1 cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                             <input
                               type="text"
-                              placeholder="Degree"
-                              value={edu.degree}
+                              placeholder="School / College Name"
+                              value={edu.school}
                               onChange={(e) =>
                                 setResumeData({
                                   ...resumeData,
-                                  education: resumeData.education.map((item) => (item.id === edu.id ? { ...item, degree: e.target.value } : item)),
+                                  education: resumeData.education.map((item) => (item.id === edu.id ? { ...item, school: e.target.value } : item)),
                                 })
                               }
-                              className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-medium"
+                              className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-semibold"
                             />
-                            <input
-                              type="text"
-                              placeholder="Year (e.g. 2020 - 2024)"
-                              value={edu.year}
-                              onChange={(e) =>
-                                setResumeData({
-                                  ...resumeData,
-                                  education: resumeData.education.map((item) => (item.id === edu.id ? { ...item, year: e.target.value } : item)),
-                                })
-                              }
-                              className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-medium"
-                            />
+                            <div className="grid grid-cols-2 gap-2">
+                              <input
+                                type="text"
+                                placeholder="Degree / Branch"
+                                value={edu.degree}
+                                onChange={(e) =>
+                                  setResumeData({
+                                    ...resumeData,
+                                    education: resumeData.education.map((item) => (item.id === edu.id ? { ...item, degree: e.target.value } : item)),
+                                  })
+                                }
+                                className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-medium"
+                              />
+                              <input
+                                type="text"
+                                placeholder="Year (e.g. 2020 - 2024)"
+                                value={edu.year}
+                                onChange={(e) =>
+                                  setResumeData({
+                                    ...resumeData,
+                                    education: resumeData.education.map((item) => (item.id === edu.id ? { ...item, year: e.target.value } : item)),
+                                  })
+                                }
+                                className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-medium"
+                              />
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))
+                      )}
                     </div>
                   </div>
                 )}
@@ -1066,49 +1125,67 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                     </div>
 
                     <div className="space-y-3">
-                      {resumeData.experience.map((exp, idx) => (
-                        <div key={exp.id} className="p-3 bg-bg-base rounded-2xl border border-border space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs font-extrabold text-primary">Role #{idx + 1}</span>
-                            <button
-                              type="button"
-                              onClick={() =>
+                      {resumeData.experience.length === 0 ? (
+                        <p className="text-xs text-text-muted italic text-center py-4">No work experience added yet.</p>
+                      ) : (
+                        resumeData.experience.map((exp, idx) => (
+                          <div key={exp.id} className="p-3 bg-bg-base rounded-2xl border border-border space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs font-extrabold text-primary">Role #{idx + 1}</span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setResumeData({
+                                    ...resumeData,
+                                    experience: resumeData.experience.filter((e) => e.id !== exp.id),
+                                  })
+                                }
+                                className="text-rose-500 hover:text-rose-600 p-1 cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                            <input
+                              type="text"
+                              placeholder="Company Name"
+                              value={exp.company}
+                              onChange={(e) =>
                                 setResumeData({
                                   ...resumeData,
-                                  experience: resumeData.experience.filter((e) => e.id !== exp.id),
+                                  experience: resumeData.experience.map((item) => (item.id === exp.id ? { ...item, company: e.target.value } : item)),
                                 })
                               }
-                              className="text-rose-500 hover:text-rose-600 p-1 cursor-pointer"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                              className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-semibold"
+                            />
+                            <div className="grid grid-cols-2 gap-2">
+                              <input
+                                type="text"
+                                placeholder="Job Title / Role"
+                                value={exp.role}
+                                onChange={(e) =>
+                                  setResumeData({
+                                    ...resumeData,
+                                    experience: resumeData.experience.map((item) => (item.id === exp.id ? { ...item, role: e.target.value } : item)),
+                                  })
+                                }
+                                className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-medium"
+                              />
+                              <input
+                                type="text"
+                                placeholder="Duration (e.g. 2023 - Present)"
+                                value={exp.duration}
+                                onChange={(e) =>
+                                  setResumeData({
+                                    ...resumeData,
+                                    experience: resumeData.experience.map((item) => (item.id === exp.id ? { ...item, duration: e.target.value } : item)),
+                                  })
+                                }
+                                className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-medium"
+                              />
+                            </div>
                           </div>
-                          <input
-                            type="text"
-                            placeholder="Company Name"
-                            value={exp.company}
-                            onChange={(e) =>
-                              setResumeData({
-                                ...resumeData,
-                                experience: resumeData.experience.map((item) => (item.id === exp.id ? { ...item, company: e.target.value } : item)),
-                              })
-                            }
-                            className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-semibold"
-                          />
-                          <input
-                            type="text"
-                            placeholder="Job Title / Role"
-                            value={exp.role}
-                            onChange={(e) =>
-                              setResumeData({
-                                ...resumeData,
-                                experience: resumeData.experience.map((item) => (item.id === exp.id ? { ...item, role: e.target.value } : item)),
-                              })
-                            }
-                            className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-medium"
-                          />
-                        </div>
-                      ))}
+                        ))
+                      )}
                     </div>
                   </div>
                 )}
@@ -1137,49 +1214,65 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                     </div>
 
                     <div className="space-y-3">
-                      {resumeData.projects.map((proj, idx) => (
-                        <div key={proj.id} className="p-3 bg-bg-base rounded-2xl border border-border space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs font-extrabold text-primary">Project #{idx + 1}</span>
-                            <button
-                              type="button"
-                              onClick={() =>
+                      {resumeData.projects.length === 0 ? (
+                        <p className="text-xs text-text-muted italic text-center py-4">No projects added yet.</p>
+                      ) : (
+                        resumeData.projects.map((proj, idx) => (
+                          <div key={proj.id} className="p-3 bg-bg-base rounded-2xl border border-border space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs font-extrabold text-primary">Project #{idx + 1}</span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setResumeData({
+                                    ...resumeData,
+                                    projects: resumeData.projects.filter((p) => p.id !== proj.id),
+                                  })
+                                }
+                                className="text-rose-500 hover:text-rose-600 p-1 cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                            <input
+                              type="text"
+                              placeholder="Project Title"
+                              value={proj.title}
+                              onChange={(e) =>
                                 setResumeData({
                                   ...resumeData,
-                                  projects: resumeData.projects.filter((p) => p.id !== proj.id),
+                                  projects: resumeData.projects.map((item) => (item.id === proj.id ? { ...item, title: e.target.value } : item)),
                                 })
                               }
-                              className="text-rose-500 hover:text-rose-600 p-1 cursor-pointer"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                              className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-semibold"
+                            />
+                            <input
+                              type="text"
+                              placeholder="Tech Stack (e.g. Next.js, Python)"
+                              value={proj.tech}
+                              onChange={(e) =>
+                                setResumeData({
+                                  ...resumeData,
+                                  projects: resumeData.projects.map((item) => (item.id === proj.id ? { ...item, tech: e.target.value } : item)),
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-medium"
+                            />
+                            <textarea
+                              rows={2}
+                              placeholder="Description"
+                              value={proj.description}
+                              onChange={(e) =>
+                                setResumeData({
+                                  ...resumeData,
+                                  projects: resumeData.projects.map((item) => (item.id === proj.id ? { ...item, description: e.target.value } : item)),
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-medium resize-y"
+                            />
                           </div>
-                          <input
-                            type="text"
-                            placeholder="Project Title"
-                            value={proj.title}
-                            onChange={(e) =>
-                              setResumeData({
-                                ...resumeData,
-                                projects: resumeData.projects.map((item) => (item.id === proj.id ? { ...item, title: e.target.value } : item)),
-                              })
-                            }
-                            className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-semibold"
-                          />
-                          <input
-                            type="text"
-                            placeholder="Tech Stack (e.g. Next.js, Python)"
-                            value={proj.tech}
-                            onChange={(e) =>
-                              setResumeData({
-                                ...resumeData,
-                                projects: resumeData.projects.map((item) => (item.id === proj.id ? { ...item, tech: e.target.value } : item)),
-                              })
-                            }
-                            className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text font-medium"
-                          />
-                        </div>
-                      ))}
+                        ))
+                      )}
                     </div>
                   </div>
                 )}
@@ -1192,15 +1285,16 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                       <div>
                         <label className="text-[10px] font-extrabold uppercase text-text-muted block mb-1">Technical Skills (Comma separated)</label>
                         <textarea
-                          rows={3}
+                          rows={4}
                           value={resumeData.skills.join(", ")}
                           onChange={(e) =>
                             setResumeData({
                               ...resumeData,
-                              skills: e.target.value.split(",").map((s) => s.trim()),
+                              skills: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
                             })
                           }
-                          className="w-full px-3 py-2 rounded-xl bg-bg-base border border-border text-xs text-text font-medium"
+                          className="w-full px-3 py-2 rounded-xl bg-bg-base border border-border text-xs text-text font-medium resize-y"
+                          placeholder="e.g. JavaScript, React, Node.js, Python, AWS"
                         />
                       </div>
                     </div>
@@ -1301,7 +1395,7 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                     </div>
                   )}
 
-                  {/* Experience */}
+                  {/* Work Experience */}
                   {resumeData.experience.length > 0 && (
                     <div className="mb-4">
                       <h2 className="text-xs font-bold uppercase tracking-wider text-teal-800 border-b border-gray-200 pb-1 mb-2">
@@ -1315,6 +1409,11 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                               <span className="text-[10px] text-gray-500 font-medium">{exp.duration}</span>
                             </div>
                             <div className="text-[11px] font-semibold text-teal-700">{exp.company}</div>
+                            {exp.points.map((pt, pi) => (
+                              <p key={pi} className="text-[10px] text-gray-700 pl-2 border-l-2 border-teal-500/30 font-medium">
+                                {pt}
+                              </p>
+                            ))}
                           </div>
                         ))}
                       </div>
@@ -1335,6 +1434,26 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                               <span className="text-[11px] text-gray-600 block">{edu.degree}</span>
                             </div>
                             <span className="text-[10px] text-gray-500 font-medium">{edu.year}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Key Projects */}
+                  {resumeData.projects.length > 0 && (
+                    <div className="mb-4">
+                      <h2 className="text-xs font-bold uppercase tracking-wider text-teal-800 border-b border-gray-200 pb-1 mb-2">
+                        Key Projects
+                      </h2>
+                      <div className="space-y-2">
+                        {resumeData.projects.map((proj) => (
+                          <div key={proj.id} className="space-y-0.5">
+                            <div className="flex justify-between items-baseline">
+                              <span className="text-xs font-bold text-gray-900">{proj.title}</span>
+                              {proj.tech && <span className="text-[10px] text-teal-700 font-semibold">{proj.tech}</span>}
+                            </div>
+                            {proj.description && <p className="text-[10px] text-gray-700">{proj.description}</p>}
                           </div>
                         ))}
                       </div>
