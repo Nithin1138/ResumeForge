@@ -1424,32 +1424,28 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     return { key: s, label: labels[s] || s.toUpperCase() };
   });
 
-  const sectionCount = tmpl.sectionOrder.length;
-  // Dynamically set spacing: fewer sections get larger spacing gaps to distribute layout beautifully
-  const listGap = sectionCount <= 5 ? "space-y-4" : (sectionCount === 6 ? "space-y-3" : "space-y-2.5");
+    const sectionCount = tmpl.sectionOrder.length;
+    // Dynamically set spacing: fewer sections get larger spacing gaps to distribute layout beautifully
+    const listGap = sectionCount <= 5 ? "space-y-4" : (sectionCount === 6 ? "space-y-3" : "space-y-2.5");
 
-  // ── Helper to render a section block with clean, un-overflowed typography ──
-  const renderSectionBlock = (secKey: string, secLabel: string) => {
-    // Dynamically adjust bullet limits to fill up space
-    let expLimit = 2;
-    let bulletLimit = 2;
-    let projLimit = 2;
-    let certLimit = 2;
-    let achLimit = 2;
+    // ── Helper to render a section block with clean, un-overflowed typography ──
+    const renderSectionBlock = (secKey: string, secLabel: string) => {
+      // Calibrate bounds dynamically based on section count to prevent bottom overflow
+      let expLimit = 2;
+      let bulletLimit = 2;
+      let projLimit = 2;
+      let certLimit = 2;
+      let achLimit = 2;
 
-    if (tmpl.id === "silicon_valley" || tmpl.id === "tech_spec" || tmpl.id === "technical_matrix" || tmpl.id === "product_engineer" || tmpl.id === "minimal_grid" || sectionCount <= 5) {
-      expLimit = 3;
-      bulletLimit = 3;
-      projLimit = 3;
-      certLimit = 3;
-      achLimit = 3;
-    } else if (sectionCount === 6) {
-      expLimit = 2;
-      bulletLimit = 3;
-      projLimit = 2;
-      certLimit = 3;
-      achLimit = 3;
-    }
+      if (sectionCount >= 7) {
+        // High density: reduce bullets to 1 to fit A4 frame perfectly
+        bulletLimit = 1;
+      } else if (sectionCount <= 5) {
+        // Fewer sections: keep a solid balance
+        expLimit = 2;
+        bulletLimit = 2;
+        projLimit = 2;
+      }
 
     if (secKey === "summary" && p.summary) {
       return (
