@@ -19,7 +19,7 @@ interface PersonaData {
   achievements?: string[];
 }
 
-// ── BALANCED INDIAN PERSONAS (Calibrated to fill 100% A4 page height cleanly without overflow or empty space) ──
+// ── REALISTIC INDIAN PERSONAS (Packed with content just like a real resume, leaving zero empty space) ──
 const INDIAN_PERSONAS: Record<string, PersonaData> = {
   modern: {
     name: "Aarav Sharma",
@@ -28,11 +28,11 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98765 43210",
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
-    summary: "Senior Software Engineer with 6+ years of experience building high-throughput microservices, distributed cloud systems, and real-time backend platforms at scale.",
-    skills: ["Java, Spring Boot", "Microservices & REST", "Kafka & Redis", "AWS & Docker", "SQL & MongoDB"],
+    summary: "Senior Software Engineer with 6+ years of experience building high-throughput microservices, distributed cloud systems, and real-time backend platforms at scale. Expert in Spring Boot, AWS, Kafka, and containerized deployments.",
+    skills: ["Java, Spring Boot", "Microservices & REST", "Kafka & Redis", "AWS & Docker", "SQL & MongoDB", "Kubernetes & Helm", "Git & CI/CD Pipelines"],
     education: [
       { institution: "IIT Bombay", degree: "B.Tech Computer Science", years: "2015 – 2019" },
-      { institution: "Delhi Public School, R.K. Puram", degree: "CBSE Class XII (PCM)", years: "2013 – 2015" },
+      { institution: "Delhi Public School, R.K. Puram", degree: "CBSE Class XII (PCM) - 95.8%", years: "2013 – 2015" },
     ],
     experience: [
       {
@@ -41,7 +41,9 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         years: "2021 – Present",
         bullets: [
           "Architected Big Billion Days checkout engine processing 120,000 requests/sec with 99.99% uptime.",
-          "Reduced database query latency by 45% through Redis caching and index optimization.",
+          "Reduced database query latency by 45% through Redis caching and PostgreSQL index optimization.",
+          "Designed multi-PSP failover payment gateway handler reducing checkout drop-off rates by 14%.",
+          "Mentored 8 junior software engineers and led agile sprint planning reviews.",
         ],
       },
       {
@@ -50,15 +52,17 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         years: "2019 – 2021",
         bullets: [
           "Built real-time delivery tracking service handling 2M+ active daily orders.",
+          "Implemented Kafka message queues eliminating order drop issues during peak meal hours.",
+          "Migrated legacy APIs from Node.js to Go, improving request throughput by 65%.",
         ],
       },
     ],
     projects: [
-      { title: "Distributed Payment Gateway Adapter", tech: "Java 17, Spring Boot", description: "Multi-PSP failover service handling $40M daily transactions." },
-      { title: "Real-time Order Tracking Engine", tech: "Node.js, Redis", description: "Reduced tracking API latency from 450ms to 42ms." },
+      { title: "Distributed Payment Gateway Adapter", tech: "Java 17, Spring Boot, AWS", description: "Multi-PSP failover service handling $40M daily digital transactions with automatic reconciliation." },
+      { title: "Real-time Order Tracking Engine", tech: "Node.js, Kafka, Redis", description: "Reduced order tracking API latency from 450ms to 42ms via WebSockets." },
     ],
-    certifications: ["AWS Certified Solutions Architect", "Oracle Certified Java Professional"],
-    achievements: ["Flipkart Tech Innovation Award 2023", "National Cyber Olympiad Rank 14"],
+    certifications: ["AWS Certified Solutions Architect – Associate", "Oracle Certified Professional Java SE 17", "Certified ScrumMaster (CSM)"],
+    achievements: ["Flipkart Tech Innovation Award 2023", "National Cyber Olympiad Rank 14", "ACM ICPC Regional Qualifier"],
   },
 
   recruiter_scan: {
@@ -68,11 +72,11 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98123 45678",
     location: "Hyderabad, TS",
     photoUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
-    summary: "Full Stack Lead specializing in React/Next.js frontend systems, Node.js GraphQL APIs, and automated CI/CD cloud deployments across fintech platforms.",
-    skills: ["React & Next.js", "TypeScript & Node.js", "GraphQL & REST APIs", "PostgreSQL & Prisma", "Docker & Kubernetes"],
+    summary: "Full Stack Lead specializing in React/Next.js frontend systems, Node.js GraphQL APIs, and automated CI/CD cloud deployments across fintech platforms. Passionate about performant design systems and web accessibility.",
+    skills: ["React & Next.js", "TypeScript & Node.js", "GraphQL & REST APIs", "PostgreSQL & Prisma", "Docker & Kubernetes", "Tailwind CSS", "Jest & Playwright"],
     education: [
       { institution: "BITS Pilani", degree: "B.E. Computer Science", years: "2016 – 2020" },
-      { institution: "Hyderabad Public School", degree: "Class XII Science", years: "2014 – 2016" },
+      { institution: "Hyderabad Public School", degree: "Class XII Science (APEAPCET Rank 245)", years: "2014 – 2016" },
     ],
     experience: [
       {
@@ -80,8 +84,9 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         role: "Lead Frontend Engineer",
         years: "2021 – Present",
         bullets: [
-          "Led merchant onboarding dashboard used by 250,000+ Indian businesses.",
+          "Led development of merchant onboarding dashboard used by 250,000+ Indian businesses.",
           "Optimized bundle rendering performance reducing initial page load from 3.2s to 0.9s.",
+          "Created modular Design System UI component library adopted across 14 product squads.",
         ],
       },
       {
@@ -90,15 +95,16 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         years: "2020 – 2021",
         bullets: [
           "Developed hotel booking web app serving 5M+ monthly active travelers.",
+          "Integrated UPI & Netbanking payment SDKs with zero checkout security drop-offs.",
         ],
       },
     ],
     projects: [
-      { title: "Merchant Analytics Dashboard", tech: "React, Next.js, Tailwind", description: "Real-time revenue monitoring portal processing 10M+ logs." },
-      { title: "Automated Developer Onboarding Tool", tech: "Node.js, Docker", description: "Accelerated developer environment setup from 2 days to 15 mins." },
+      { title: "Merchant Analytics Dashboard", tech: "React, Next.js, Recharts, Tailwind", description: "Real-time revenue monitoring portal processing 10M+ transaction logs per day." },
+      { title: "Automated Developer Onboarding Tool", tech: "Node.js, Docker, GitHub Actions", description: "Accelerated developer environment setup from 2 days to 15 minutes." },
     ],
-    certifications: ["Meta Certified Front-End Developer", "Docker Certified Associate"],
-    achievements: ["Razorpay Hackathon Winner 2022", "KVPY Scholar Fellowship Winner"],
+    certifications: ["Meta Certified Front-End Developer", "Docker Certified Associate", "AWS Certified Cloud Practitioner"],
+    achievements: ["Razorpay Hackathon Winner 2022", "KVPY Scholar Fellowship Winner", "CBSE Merit Certificate for Math"],
   },
 
   skills_first: {
@@ -108,11 +114,11 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 97654 32109",
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
-    summary: "Backend Systems Architect with 8+ years designing fault-tolerant databases, distributed caching layers, and high-security enterprise banking APIs.",
-    skills: ["Go, C++, Rust", "Distributed Systems", "Kubernetes (EKS)", "PostgreSQL, Redis", "gRPC & Protobuf"],
+    summary: "Backend Systems Architect with 8+ years designing fault-tolerant databases, distributed caching layers, and high-security enterprise banking APIs. Expert in Go, microservices, and Kubernetes orchestration.",
+    skills: ["Go, C++, Rust", "Distributed Systems", "Kubernetes (EKS)", "PostgreSQL, Redis", "gRPC & Protobuf", "Docker & Linux", "Apache Kafka"],
     education: [
       { institution: "NIT Trichy", degree: "B.Tech Computer Science", years: "2013 – 2017" },
-      { institution: "National Public School", degree: "Class XII CBSE", years: "2011 – 2013" },
+      { institution: "National Public School, Indiranagar", degree: "Class XII CBSE (96.2%)", years: "2011 – 2013" },
     ],
     experience: [
       {
@@ -122,6 +128,8 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         bullets: [
           "Architected core UPI settlement system handling 45M daily UPI transactions.",
           "Designed multi-datacenter active-active database replication cluster.",
+          "Reduced cloud server infrastructure expenditure by ₹2.4 Crores annually.",
+          "Supervised a high-performing backend core infrastructure team of 14 SDEs.",
         ],
       },
       {
@@ -130,15 +138,16 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         years: "2017 – 2020",
         bullets: [
           "Built cloud database management APIs used by 500+ enterprise client databases.",
+          "Implemented security patch updates and database indexing tuning configurations.",
         ],
       },
     ],
     projects: [
-      { title: "High-Throughput Settlement Engine", tech: "Go, gRPC, Cassandra", description: "Zero-data-loss financial transaction engine processing 30k TPS." },
+      { title: "High-Throughput Settlement Engine", tech: "Go, gRPC, Cassandra", description: "Zero-data-loss financial transaction engine processing 30k TPS with strict consistency." },
       { title: "Distributed Lock Manager", tech: "Rust, Raft Consensus", description: "Fault-tolerant cluster lock coordinator with sub-millisecond lease times." },
     ],
-    certifications: ["Certified Kubernetes Administrator", "AWS Solutions Architect Pro"],
-    achievements: ["PhonePe Tech Fellow 2023", "ACM ICPC Regional Finalist"],
+    certifications: ["Certified Kubernetes Administrator (CKA)", "AWS Solutions Architect Pro", "Google Professional Cloud Architect"],
+    achievements: ["PhonePe Tech Fellow 2023", "ACM ICPC Regional Finalist", "Ranked 420 in JEE Advanced"],
   },
 
   project_first: {
@@ -148,8 +157,8 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 99887 76655",
     location: "Mumbai, MH",
     photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
-    summary: "Product Leader scaling consumer internet apps, conversion funnels, and AI features across edtech and fintech platforms.",
-    skills: ["Product Roadmap Strategy", "User Growth & Funnels", "A/B Testing & Mixpanel", "SQL Analytics", "Agile Leadership"],
+    summary: "Product Leader scaling consumer internet apps, conversion funnels, and AI features across edtech and fintech platforms. Expertise in growth strategy and data-driven product roadmaps.",
+    skills: ["Product Strategy", "Growth & Funnels", "A/B Testing & Mixpanel", "SQL Analytics", "Agile & Scrum", "User Research", "Jira & Confluence"],
     education: [
       { institution: "IIM Ahmedabad", degree: "MBA Marketing & Strategy", years: "2018 – 2020" },
       { institution: "IIT Delhi", degree: "B.Tech Electrical Engineering", years: "2014 – 2018" },
@@ -162,6 +171,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         bullets: [
           "Led Gold Subscription loyalty product growing paid subscribers from 1M to 4.5M.",
           "Increased repeat order frequency by 28% through personalized AI recommendation feeds.",
+          "Managed cross-functional team of 12 software engineers, UI/UX designers, and growth analysts.",
         ],
       },
       {
@@ -170,15 +180,16 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         years: "2020 – 2021",
         bullets: [
           "Launched interactive video learning module used by 2M+ school students.",
+          "Improved student class completion rates by 35% through reward gamification.",
         ],
       },
     ],
     projects: [
-      { title: "AI Personalized Food Recommendation Feed", tech: "Mixpanel, Python", description: "Grew average order value by ₹85 per user across 20 metro cities." },
-      { title: "Instant UPI Checkout Funnel", tech: "Figma, Amplitude", description: "Reduced checkout funnel drop-off rate from 18% to 4.2%." },
+      { title: "AI Food Recommendation Engine", tech: "Mixpanel, Python, SQL", description: "Grew average order value by ₹85 per user across 20 metro cities." },
+      { title: "Instant UPI Checkout Funnel", tech: "Figma, Amplitude", description: "Reduced checkout funnel drop-off rate from 18% to 4.2% through smart routing." },
     ],
-    certifications: ["Certified Scrum Product Owner", "Reforge Growth Series Certificate"],
-    achievements: ["IIM Ahmedabad Gold Medalist", "Product Leader of the Year 2022"],
+    certifications: ["Certified Scrum Product Owner (CSPO)", "Reforge Growth Series Certificate", "Pragmatic Institute Level VI"],
+    achievements: ["IIM Ahmedabad Gold Medalist", "Product Leader of the Year 2022", "JEE Advanced Air 189"],
   },
 
   academic_premium: {
@@ -188,8 +199,8 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98450 12345",
     location: "Chennai, TN",
     photoUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&auto=format&fit=crop&q=80",
-    summary: "AI Researcher developing Computer Vision pipelines, Large Language Model fine-tuning, and Deep Learning models for autonomous systems.",
-    skills: ["PyTorch & TensorFlow", "Large Language Models (LLMs)", "Computer Vision (OpenCV)", "Python & C++ CUDA", "Transformers & HuggingFace"],
+    summary: "AI Researcher developing Computer Vision pipelines, Large Language Model fine-tuning, and Deep Learning models for autonomous systems. Passionate about low-resource Indic language NLP.",
+    skills: ["PyTorch & TensorFlow", "Large Language Models (LLMs)", "Computer Vision (OpenCV)", "Python & C++ CUDA", "Transformers", "Git & Linux", "MLOps & MLflow"],
     education: [
       { institution: "IIT Madras", degree: "M.S. Artificial Intelligence", years: "2018 – 2020" },
       { institution: "College of Engineering Guindy", degree: "B.E. Computer Science", years: "2014 – 2018" },
@@ -202,15 +213,16 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         bullets: [
           "Developed Indic-language LLM speech model supporting 12 official Indian languages.",
           "Co-authored 8 research papers in NeurIPS, CVPR, and ACL conferences.",
+          "Filed 3 patents for low-resource NLP model compression techniques.",
         ],
       },
     ],
     projects: [
-      { title: "Multilingual Indic Speech Recognition", tech: "PyTorch, CUDA", description: "Achieved state-of-the-art 94% accuracy across 12 Indian languages." },
-      { title: "Autonomous Vehicle Obstacle Detection", tech: "TensorFlow, ROS", description: "Real-time 60 FPS object detection model running on edge hardware." },
+      { title: "Multilingual Indic Speech Recognition", tech: "PyTorch, Transformers, CUDA", description: "Achieved state-of-the-art 94% accuracy across 12 Indian languages." },
+      { title: "Autonomous Vehicle Obstacle Detection", tech: "TensorFlow, OpenCV, ROS", description: "Real-time 60 FPS object detection model running on NVIDIA Jetson edge hardware." },
     ],
-    certifications: ["DeepLearning.AI TensorFlow Developer", "NVIDIA CUDA Optimization Specialist"],
-    achievements: ["Best Paper Award at CVPR 2022", "Prime Minister's Research Fellowship"],
+    certifications: ["DeepLearning.AI TensorFlow Developer", "NVIDIA CUDA Specialist", "Google Cloud Professional MLE"],
+    achievements: ["Best Paper Award at CVPR 2022", "Prime Minister's Research Fellowship (PMRF)", "NTSE Scholar"],
   },
 
   one_page_dense: {
@@ -220,11 +232,11 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 97111 22334",
     location: "Pune, MH",
     photoUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80",
-    summary: "DevOps Lead managing multi-region AWS/GCP Kubernetes clusters, Infrastructure-as-Code automation, and zero-downtime microservice deployments.",
-    skills: ["AWS & GCP Cloud", "Kubernetes & Helm", "Terraform & Ansible", "CI/CD GitHub Actions", "Prometheus & Grafana"],
+    summary: "DevOps Lead managing multi-region AWS/GCP Kubernetes clusters, Infrastructure-as-Code automation, and zero-downtime microservice deployments across banking platforms.",
+    skills: ["AWS & GCP Cloud", "Kubernetes & Helm", "Terraform & IaC", "CI/CD GitHub Actions", "Prometheus & Grafana", "Bash & Python", "Ansible & Packer"],
     education: [
       { institution: "IIIT Hyderabad", degree: "B.Tech Computer Science", years: "2015 – 2019" },
-      { institution: "Chinmaya Vidyalaya", degree: "Class XII Science", years: "2013 – 2015" },
+      { institution: "Chinmaya Vidyalaya, Chennai", degree: "Class XII Science", years: "2013 – 2015" },
     ],
     experience: [
       {
@@ -234,6 +246,7 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         bullets: [
           "Automated Terraform deployment templates reducing cluster provisioning time from 4h to 12m.",
           "Maintained 99.999% SLA uptime across 350+ Kubernetes microservices.",
+          "Implemented automated security scanning in CI/CD pipeline blocking vulnerability releases.",
         ],
       },
       {
@@ -242,15 +255,16 @@ const INDIAN_PERSONAS: Record<string, PersonaData> = {
         years: "2019 – 2021",
         bullets: [
           "Migrated legacy enterprise workloads to AWS EKS cloud infrastructure.",
+          "Reduced cloud computing cost by 38% via Kubernetes cluster auto-scaling setup.",
         ],
       },
     ],
     projects: [
-      { title: "Multi-Region Disaster Recovery Mesh", tech: "AWS EKS, Terraform", description: "Zero-downtime regional failover infrastructure handling 20M daily active users." },
-      { title: "Automated CI/CD Vulnerability Scanner", tech: "Python, Trivy", description: "Reduced production deployment security vulnerabilities by 90%." },
+      { title: "Multi-Region Disaster Recovery Mesh", tech: "AWS EKS, Terraform, Istio", description: "Zero-downtime regional failover infrastructure handling 20M daily active users." },
+      { title: "Automated CI/CD Vulnerability Scanner", tech: "Python, Trivy, SonarQube", description: "Reduced production deployment security vulnerabilities by 90%." },
     ],
-    certifications: ["AWS Certified DevOps Engineer Pro", "Certified Kubernetes Administrator"],
-    achievements: ["Paytm Engineering Award 2023", "AWS Community Builder 2022"],
+    certifications: ["AWS Certified DevOps Engineer Pro", "Certified Kubernetes Administrator (CKA)", "Terraform Associate"],
+    achievements: ["Paytm Engineering Award 2023", "AWS Community Builder 2022", "Top 50 Women in Tech India"],
   },
 };
 
@@ -263,13 +277,13 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98765 00112",
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
-    summary: "Cloud Systems Lead with 7+ years building enterprise microservices and automated DevOps architectures.",
+    summary: "Cloud Systems Lead with 7+ years building enterprise microservices, API gateways, and automated DevOps architectures for banking sectors.",
     skills: ["AWS & Kubernetes", "Java & Spring Boot", "Docker & Terraform", "PostgreSQL & Redis"],
     education: [{ institution: "IIT Bombay", degree: "B.Tech Computer Science", years: "2015 – 2019" }],
-    experience: [{ company: "Flipkart Tech", role: "Lead Systems Architect", years: "2021 – Present", bullets: ["Scaled transaction systems to 100k requests/sec.", "Reduced infrastructure latency by 35%."] }],
-    projects: [{ title: "Cloud Payment Routing Engine", tech: "Java, AWS EKS", description: "Real-time payment adapter handling ₹50M daily GMV." }],
-    certifications: ["AWS Solutions Architect Pro"],
-    achievements: ["Flipkart Innovator Award"],
+    experience: [{ company: "Flipkart Tech", role: "Lead Systems Architect", years: "2021 – Present", bullets: ["Scaled transaction systems to 100k requests/sec.", "Reduced infrastructure latency by 35% through Redis caching.", "Mentored 10 backend engineers."] }],
+    projects: [{ title: "Cloud Payment Routing Engine", tech: "Java, AWS EKS", description: "Real-time payment adapter handling ₹50M daily GMV with multi-provider failover." }],
+    certifications: ["AWS Solutions Architect Pro", "HashiCorp Terraform Certified"],
+    achievements: ["Flipkart Innovator Award 2022"],
   },
   photo_executive: {
     name: "Aarav Sharma",
@@ -278,12 +292,12 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98111 22334",
     location: "Delhi NCR",
     photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
-    summary: "Engineering Director scaling 100+ engineer organizations and distributed cloud platforms.",
-    skills: ["Engineering Leadership", "Distributed Systems", "Go, C++, Rust", "Microservices"],
+    summary: "Engineering Director scaling 100+ SDE organizations, distributed databases, real-time telemetry, and high-frequency messaging platforms.",
+    skills: ["Engineering Leadership", "Distributed Systems", "Go, C++, Rust", "Microservices & Kubernetes"],
     education: [{ institution: "IIT Delhi", degree: "B.Tech Computer Science", years: "2012 – 2016" }],
-    experience: [{ company: "Tesla India R&D", role: "Director of Software", years: "2020 – Present", bullets: ["Scaled engineering team from 20 to 120 engineers.", "Architected telemetry platform processing 10B points."] }],
-    projects: [{ title: "Vehicle Telemetry Stream Engine", tech: "Go, Apache Kafka", description: "Stream processing infrastructure scaling to 10M devices." }],
-    certifications: ["AWS Certified DevOps Professional"],
+    experience: [{ company: "Tesla India R&D", role: "Director of Software", years: "2020 – Present", bullets: ["Scaled engineering team from 20 to 120 engineers.", "Architected telemetry platform processing 10B points.", "Delivered high-performance EV battery mapping software."] }],
+    projects: [{ title: "Vehicle Telemetry Stream Engine", tech: "Go, Apache Kafka", description: "Stream processing infrastructure scaling to 10M concurrent IoT devices." }],
+    certifications: ["AWS Certified DevOps Professional", "Certified Scrum Trainer"],
     achievements: ["Engineering Leadership Excellence Award"],
   },
   photo_side_panel: {
@@ -293,12 +307,12 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98222 33445",
     location: "Mumbai, MH",
     photoUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
-    summary: "Creative Director crafting digital mobile app experiences for leading Indian tech platforms.",
-    skills: ["Figma & Design Systems", "UI/UX Prototyping", "User Research", "Design Tokens"],
+    summary: "Creative Director crafting digital mobile app experiences and multi-platform design systems for leading Indian tech consumer brands.",
+    skills: ["Figma & Design Systems", "UI/UX Prototyping", "User Research", "Design Tokens", "Typography"],
     education: [{ institution: "NID Ahmedabad", degree: "B.Des Interaction Design", years: "2015 – 2019" }],
-    experience: [{ company: "Swiggy Design Studio", role: "Lead UI/UX Designer", years: "2021 – Present", bullets: ["Redesigned checkout flow increasing conversions by 24%.", "Created company-wide Figma design library."] }],
-    projects: [{ title: "10-Minute Grocery Delivery App", tech: "Figma, Protopie", description: "Designed mobile app ordering experience for 2M active buyers." }],
-    certifications: ["Nielsen Norman UX Certification"],
+    experience: [{ company: "Swiggy Design Studio", role: "Lead UI/UX Designer", years: "2021 – Present", bullets: ["Redesigned checkout flow increasing conversions by 24%.", "Created company-wide Figma design library and tokens.", "Conducted usability testing across 12 cities."] }],
+    projects: [{ title: "10-Minute Grocery Delivery App", tech: "Figma, Protopie", description: "Designed mobile app ordering experience for 2M active food buyers." }],
+    certifications: ["Nielsen Norman UX Certification", "HFI Certified Usability Analyst"],
     achievements: ["India Design Mark Winner"],
   },
   photo_student_card: {
@@ -308,13 +322,13 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98333 44556",
     location: "Hyderabad, TS",
     photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
-    summary: "High-performing Computer Science graduate with strong algorithms, backend systems, and competitive coding background.",
-    skills: ["Python & C++", "Data Structures", "SQL & DBMS", "React & Node.js"],
+    summary: "High-performing Computer Science graduate with strong algorithms, backend systems, and competitive coding background. Winner of national coding hackathons.",
+    skills: ["Python & C++", "Data Structures", "SQL & DBMS", "React & Node.js", "Git & Github"],
     education: [{ institution: "BITS Pilani", degree: "B.E. Computer Science", years: "2020 – 2024" }],
-    experience: [{ company: "Amazon India", role: "SDE Intern", years: "2023 – 2024", bullets: ["Built automated catalog validation tool saving 40 engineering hours weekly."] }],
-    projects: [{ title: "Peer-to-Peer Code Review Portal", tech: "React, Node.js, Socket.io", description: "Real-time collaborative code editor used by 500+ students." }],
+    experience: [{ company: "Amazon India", role: "SDE Intern", years: "2023 – 2024", bullets: ["Built automated catalog validation tool saving 40 SDE hours weekly.", "Integrated security scanners checking 1,000 packages/sec.", "Wrote unit tests achieving 94% code coverage."] }],
+    projects: [{ title: "Peer-to-Peer Code Review Portal", tech: "React, Node.js, Socket.io", description: "Real-time collaborative code editor used by 500+ university students." }],
     certifications: ["AWS Certified Cloud Practitioner"],
-    achievements: ["ACM ICPC Regional Rank 12"],
+    achievements: ["ACM ICPC Regional Rank 12", "Smart India Hackathon Winner 2022"],
   },
   photo_corporate: {
     name: "Aditya Reddy",
@@ -323,13 +337,13 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98444 55667",
     location: "Mumbai, MH",
     photoUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&auto=format&fit=crop&q=80",
-    summary: "Corporate Finance Specialist managing investment portfolio strategy and financial risk assessment.",
-    skills: ["Financial Modeling", "Corporate Valuation", "M&A Analytics", "Bloomberg Terminal"],
+    summary: "Corporate Finance Specialist managing investment portfolio strategy, corporate valuation, and financial risk assessment for enterprise banking.",
+    skills: ["Financial Modeling", "Corporate Valuation", "M&A Analytics", "Bloomberg Terminal", "Excel Macros"],
     education: [{ institution: "IIM Ahmedabad", degree: "MBA Finance", years: "2017 – 2019" }],
-    experience: [{ company: "Goldman Sachs India", role: "Senior Financial Analyst", years: "2020 – Present", bullets: ["Executed ₹500 Cr M&A advisory transactions.", "Built financial valuation models for tech startups."] }],
+    experience: [{ company: "Goldman Sachs India", role: "Senior Financial Analyst", years: "2020 – Present", bullets: ["Executed ₹500 Cr M&A advisory transactions in India.", "Built financial valuation models for tech consumer startups.", "Presented strategic recommendations to board members."] }],
     projects: [{ title: "Automated Credit Risk Scoring Engine", tech: "Python, Financial Models", description: "Reduced loan default risk evaluation turnaround from 3 days to 4 hours." }],
     certifications: ["CFA Charterholder Level 3"],
-    achievements: ["Goldman Sachs Leadership Award"],
+    achievements: ["Goldman Sachs Leadership Award", "IIM Gold Medalist"],
   },
   photo_creative_tech: {
     name: "Kavya Iyer",
@@ -338,11 +352,11 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98555 66778",
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80",
-    summary: "Product Engineer combining modern WebGL creative frontend animations with scalable GraphQL APIs.",
-    skills: ["React & Three.js", "TypeScript & Node.js", "GraphQL & Prisma", "Tailwind CSS"],
+    summary: "Product Engineer combining modern WebGL creative frontend animations with scalable GraphQL microservices and databases.",
+    skills: ["React & Three.js", "TypeScript & Node.js", "GraphQL & Prisma", "Tailwind CSS", "PostgreSQL"],
     education: [{ institution: "IIIT Hyderabad", degree: "B.Tech Computer Science", years: "2016 – 2020" }],
-    experience: [{ company: "CRED Tech", role: "Senior Frontend Engineer", years: "2021 – Present", bullets: ["Built interactive 3D payment success animations.", "Optimized web vitals score to 98/100."] }],
-    projects: [{ title: "3D Interactive Design Studio", tech: "Three.js, React, WebGL", description: "Browser-based 3D model editor processing 50k monthly sessions." }],
+    experience: [{ company: "CRED Tech", role: "Senior Frontend Engineer", years: "2021 – Present", bullets: ["Built interactive 3D payment success animations in app.", "Optimized web vitals score to 98/100 globally.", "Implemented accessible UI components (WCAG)."] }],
+    projects: [{ title: "3D Interactive Design Studio", tech: "Three.js, React, WebGL", description: "Browser-based 3D model editor processing 50k monthly interactive sessions." }],
     certifications: ["Meta Certified Front-End Developer"],
     achievements: ["CRED Hackathon Champion 2023"],
   },
@@ -353,11 +367,11 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98666 77889",
     location: "Kolkata, WB",
     photoUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80",
-    summary: "Academic AI researcher publishing papers in deep learning, neural speech synthesis, and natural language processing.",
-    skills: ["PyTorch & TensorFlow", "NLP & Transformers", "Python & CUDA", "LaTeX Research Papers"],
+    summary: "Academic AI researcher publishing papers in deep learning, neural speech synthesis, and low-resource NLP speech systems.",
+    skills: ["PyTorch & TensorFlow", "NLP & Transformers", "Python & CUDA", "LaTeX Scientific Papers"],
     education: [{ institution: "IIT Kharagpur", degree: "M.Tech AI & Data Science", years: "2018 – 2020" }],
-    experience: [{ company: "IISc Research R&D", role: "Research Associate", years: "2020 – Present", bullets: ["Published 4 peer-reviewed paper in IEEE & NeurIPS.", "Trained multilingual transformer speech synthesis models."] }],
-    projects: [{ title: "Indic Natural Speech Synthesizer", tech: "PyTorch, CUDA", description: "Neural speech model generating natural audio across 8 Indian languages." }],
+    experience: [{ company: "IISc Research R&D", role: "Research Associate", years: "2020 – Present", bullets: ["Published 4 peer-reviewed papers in IEEE & NeurIPS.", "Trained multilingual transformer speech synthesis models.", "Secured research funding from Science Research Board."] }],
+    projects: [{ title: "Indic Natural Speech Synthesizer", tech: "PyTorch, CUDA", description: "Neural speech model generating natural audio across 8 Indian regional languages." }],
     certifications: ["DeepLearning.AI AI Specialist"],
     achievements: ["Prime Minister's Research Fellow"],
   },
@@ -368,13 +382,13 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98777 88990",
     location: "Gurgaon, HR",
     photoUrl: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&auto=format&fit=crop&q=80",
-    summary: "DevSecOps Lead specializing in cloud security automation, penetration testing, and zero-trust identity architectures.",
-    skills: ["AWS Security & IAM", "Penetration Testing", "Docker Security", "Python & Bash"],
+    summary: "DevSecOps Lead specializing in cloud security automation, automated penetration testing, and zero-trust identity access management.",
+    skills: ["AWS Security & IAM", "Penetration Testing", "Docker Security", "Python & Bash Scripts"],
     education: [{ institution: "DTU Delhi", degree: "B.Tech Information Technology", years: "2016 – 2020" }],
-    experience: [{ company: "Razorpay Financials", role: "Senior Security Specialist", years: "2021 – Present", bullets: ["Conducted security audits across 50+ microservices.", "Automated CI/CD security scanning."] }],
-    projects: [{ title: "Zero-Trust API Gateway Shield", tech: "Python, Docker, OAuth2", description: "Protected financial endpoints against DDoS and OWASP threats." }],
+    experience: [{ company: "Razorpay Financials", role: "Senior Security Specialist", years: "2021 – Present", bullets: ["Conducted penetration testing across 50+ microservices.", "Automated CI/CD security scanning using Trivy.", "Fixed critical security vulnerabilities in payment gateway."] }],
+    projects: [{ title: "Zero-Trust API Gateway Shield", tech: "Python, Docker, OAuth2", description: "Protected financial endpoints against high-rate DDoS and OWASP threats." }],
     certifications: ["CISSP Certified Specialist", "CEH Master"],
-    achievements: ["Top Bug Bounty Hall of Fame"],
+    achievements: ["Top Bug Bounty Hall of Fame 2022"],
   },
   photo_clean_vertical: {
     name: "Siddharth Gupta",
@@ -383,11 +397,11 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98888 99001",
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&auto=format&fit=crop&q=80",
-    summary: "Embedded Firmware Engineer writing real-time micro-controller C/C++ drivers and automotive CAN bus protocols.",
-    skills: ["Embedded C/C++", "FreeRTOS & ESP32", "STM32 & ARM Cortex", "CAN Bus & MQTT"],
+    summary: "Embedded Firmware Engineer writing real-time micro-controller C/C++ drivers, RTOS kernels, and automotive CAN bus communication systems.",
+    skills: ["Embedded C/C++", "FreeRTOS & ESP32", "STM32 & ARM Cortex", "CAN Bus & MQTT Protocols"],
     education: [{ institution: "BITS Pilani, Goa", degree: "B.E. Electronics", years: "2016 – 2020" }],
-    experience: [{ company: "Ather Energy", role: "Senior Firmware Engineer", years: "2021 – Present", bullets: ["Developed Battery Management System (BMS) firmware.", "Reduced MCU power consumption by 22%."] }],
-    projects: [{ title: "Smart EV Battery Telemetry Unit", tech: "ESP32, FreeRTOS, C++", description: "Real-time IoT device sending battery metrics to cloud." }],
+    experience: [{ company: "Ather Energy", role: "Senior Firmware Engineer", years: "2021 – Present", bullets: ["Developed Battery Management System (BMS) cell firmware.", "Optimized FreeRTOS task schedules reducing power by 22%.", "Designed safety diagnostic systems for battery packs."] }],
+    projects: [{ title: "Smart EV Battery Telemetry Unit", tech: "ESP32, FreeRTOS, C++", description: "Real-time cellular IoT device sending BMS metrics to AWS cloud." }],
     certifications: ["ARM Accredited Engineer"],
     achievements: ["Ather Hardware Innovation Award"],
   },
@@ -398,13 +412,13 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 98999 00112",
     location: "Mumbai, MH",
     photoUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80",
-    summary: "Brand Strategist crafting personal identities, executive portfolios, and visual media campaigns for consumer brands.",
+    summary: "Brand Strategist crafting personal identities, executive portfolios, and visual media design guidelines for startup founders.",
     skills: ["Brand Strategy & Identity", "Figma & Illustrator", "Visual Storytelling", "Copywriting"],
     education: [{ institution: "NID Ahmedabad", degree: "B.Des Graphic Design", years: "2015 – 2019" }],
-    experience: [{ company: "Ogilvy India", role: "Lead Brand Strategist", years: "2020 – Present", bullets: ["Led rebranding for leading D2C ecommerce startup.", "Created digital brand guidelines."] }],
-    projects: [{ title: "D2C Brand Identity Overhaul", tech: "Figma, Illustrator", description: "Increased brand recognition and web store conversions by 40%." }],
+    experience: [{ company: "Ogilvy India", role: "Lead Brand Strategist", years: "2020 – Present", bullets: ["Led digital rebranding for top D2C consumer startup.", "Created brand guidelines adopted across marketing teams.", "Won awards for visual identity campaign designs."] }],
+    projects: [{ title: "D2C Brand Identity Overhaul", tech: "Figma, Illustrator", description: "Unified brand aesthetics and increased web store conversions by 40%." }],
     certifications: ["Adobe Certified Expert"],
-    achievements: ["Kyoorius Design Gold Winner"],
+    achievements: ["Kyoorius Design Gold Winner 2022"],
   },
   photo_premium_identity: {
     name: "Rahul Deshmukh",
@@ -413,11 +427,11 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 99000 11223",
     location: "Pune, MH",
     photoUrl: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=200&auto=format&fit=crop&q=80",
-    summary: "Engineering Manager leading 25+ developers, cloud infrastructure, and enterprise agile delivery.",
+    summary: "Engineering Manager leading 25+ developers, cloud infrastructure, and enterprise agile Scrum delivery across banking systems.",
     skills: ["Engineering Management", "Agile & Scrum Delivery", "System Architecture", "Team Mentorship"],
     education: [{ institution: "VJTI Mumbai", degree: "B.Tech Computer Engineering", years: "2011 – 2015" }],
-    experience: [{ company: "Barclays Technology", role: "Engineering Manager", years: "2019 – Present", bullets: ["Managed 3 engineering squads building payments engine.", "Reduced production bug rates by 45%."] }],
-    projects: [{ title: "Enterprise Payments Core", tech: "Java, AWS", description: "High-volume banking core servicing 5M daily merchant transactions." }],
+    experience: [{ company: "Barclays Technology", role: "Engineering Manager", years: "2019 – Present", bullets: ["Managed 3 engineering squads building retail payments core.", "Reduced production bug rates by 45% through CI/CD pipelines.", "Delivered high-value security updates on schedule."] }],
+    projects: [{ title: "Enterprise Payments Core", tech: "Java, AWS", description: "High-volume banking core servicing 5M daily merchant credit card transactions." }],
     certifications: ["Certified Scrum Master"],
     achievements: ["Barclays Leadership Fellow"],
   },
@@ -428,11 +442,11 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 99111 22334",
     location: "Mumbai, MH",
     photoUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
-    summary: "Senior Business Executive managing ₹500 Cr annual revenue operations and corporate growth.",
+    summary: "Senior Business Executive managing ₹500 Cr annual revenue operations and corporate growth strategy across conglomerate sectors.",
     skills: ["P&L Management", "Strategic Growth", "Board Governance", "M&A Advisory"],
     education: [{ institution: "IIM Calcutta", degree: "MBA Executive", years: "2012 – 2014" }],
-    experience: [{ company: "Reliance Industries", role: "VP Strategy", years: "2018 – Present", bullets: ["Drove operational efficiency saving ₹45 Crores.", "Led strategic market expansion into 15 new regions."] }],
-    projects: [{ title: "Retail Logistics Transformation", tech: "SAP S/4HANA", description: "Streamlined supply chain logistics across 2,000 retail stores." }],
+    experience: [{ company: "Reliance Industries", role: "VP Strategy", years: "2018 – Present", bullets: ["Drove operational efficiency saving ₹45 Crores.", "Led strategic market expansion into 15 new regions.", "Secured executive board approvals for operations strategy."] }],
+    projects: [{ title: "Retail Logistics Transformation", tech: "SAP S/4HANA", description: "Streamlined supply chain logistics across 2,000 retail store networks." }],
     certifications: ["Corporate Governance Certified"],
     achievements: ["ET Business Leader 2023"],
   },
@@ -443,11 +457,11 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 99222 33445",
     location: "Delhi NCR",
     photoUrl: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&auto=format&fit=crop&q=80",
-    summary: "Creative Lead producing editorial fashion campaigns, magazine typography, and brand media.",
+    summary: "Creative Lead producing editorial fashion campaigns, magazine typography, and brand media layouts for print and web.",
     skills: ["Editorial Typography", "Art Direction", "Adobe InDesign & Photoshop", "Media Production"],
     education: [{ institution: "NIFT Delhi", degree: "B.Des Fashion Communication", years: "2016 – 2020" }],
-    experience: [{ company: "Vogue India", role: "Senior Art Lead", years: "2021 – Present", bullets: ["Directed cover shoot design for 12 monthly magazine issues.", "Managed digital social campaigns."] }],
-    projects: [{ title: "Digital Magazine Interactive Edition", tech: "Adobe InDesign, WebGL", description: "Created interactive digital edition generating 1.2M readers." }],
+    experience: [{ company: "Vogue India", role: "Senior Art Lead", years: "2021 – Present", bullets: ["Directed cover shoot design for 12 monthly magazine issues.", "Managed digital marketing creative assets for social media.", "Curated visual content for brand launches."] }],
+    projects: [{ title: "Digital Magazine Interactive Edition", tech: "Adobe InDesign, WebGL", description: "Created interactive digital edition generating 1.2M online readers." }],
     certifications: ["Adobe Certified Expert"],
     achievements: ["Vogue Excellence Award 2022"],
   },
@@ -458,11 +472,11 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 99333 44556",
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1548142813-c348350df52b?w=200&auto=format&fit=crop&q=80",
-    summary: "Product Designer crafting intuitive SaaS interfaces, Behance portfolios, and Figma design tokens.",
-    skills: ["Figma & Design Systems", "UX Research", "Prototyping", "HTML/CSS"],
+    summary: "Product Designer crafting intuitive SaaS interfaces, developer workspaces, Behance portfolios, and Figma design systems.",
+    skills: ["Figma & Design Systems", "UX Research", "Prototyping", "HTML/CSS", "Wireframing"],
     education: [{ institution: "NID Bengaluru", degree: "B.Des Digital Media", years: "2016 – 2020" }],
-    experience: [{ company: "Postman Tech", role: "Senior Product Designer", years: "2021 – Present", bullets: ["Designed API documentation workspace interface.", "Improved user onboarding completion by 28%."] }],
-    projects: [{ title: "Developer API Canvas", tech: "Figma, React", description: "Workspace UI utilized by 10M+ software engineers globally." }],
+    experience: [{ company: "Postman Tech", role: "Senior Product Designer", years: "2021 – Present", bullets: ["Designed API documentation workspace interface.", "Improved user onboarding completion by 28%.", "Conducted user research sessions globally."] }],
+    projects: [{ title: "Developer API Canvas Workspace", tech: "Figma, React", description: "Workspace UI utilized by 10M+ software engineers globally." }],
     certifications: ["Nielsen Norman UX Master"],
     achievements: ["Behance Featured Portfolio 2023"],
   },
@@ -472,11 +486,11 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     email: "varun.s@ciso.in",
     phone: "+91 99444 55667",
     location: "Hyderabad, TS",
-    photoUrl: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=200&auto=format&fit=crop&q=80",
-    summary: "CISO managing enterprise cybersecurity infrastructure, compliance frameworks, and threat intelligence.",
+    photoUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
+    summary: "CISO managing enterprise cybersecurity infrastructure, security operations center (SOC), and cloud compliance frameworks.",
     skills: ["Enterprise Cyber Security", "SOC Operations", "ISO 27001", "Threat Mitigation"],
     education: [{ institution: "IIT Hyderabad", degree: "M.Tech Cybersecurity", years: "2013 – 2015" }],
-    experience: [{ company: "Infosys Security", role: "CISO Advisory Lead", years: "2019 – Present", bullets: ["Protected cloud infrastructure across 100+ enterprise clients.", "Achieved ISO 27001 audit compliance."] }],
+    experience: [{ company: "Infosys Security", role: "CISO Advisory Lead", years: "2019 – Present", bullets: ["Protected cloud infrastructure across 100+ enterprise clients.", "Achieved ISO 27001 audit compliance.", "Conducted incident response threat mitigation drills."] }],
     projects: [{ title: "Global SOC Alert Triage Engine", tech: "Python, SIEM", description: "Automated cyber threat triage reducing response time by 80%." }],
     certifications: ["CISM & CISSP Certified"],
     achievements: ["CISO Leader Award 2023"],
@@ -488,10 +502,10 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 99555 66778",
     location: "Bengaluru, KA",
     photoUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
-    summary: "Tech Founder building AI consumer products, raising seed funding, and managing YC startup growth.",
+    summary: "Tech Founder building AI consumer products, raising venture seed funding, and managing YC startup growth strategies.",
     skills: ["Product Strategy", "Seed Fundraising", "AI Product Development", "Growth Funnels"],
     education: [{ institution: "IIT Madras", degree: "B.Tech Computer Science", years: "2015 – 2019" }],
-    experience: [{ company: "Krutrim AI (YC W22)", role: "Co-Founder & CEO", years: "2021 – Present", bullets: ["Built Indic LLM app serving 500k active monthly users.", "Raised $2.5M seed funding from top VC funds."] }],
+    experience: [{ company: "Krutrim AI (YC W22)", role: "Co-Founder & CEO", years: "2021 – Present", bullets: ["Built Indic LLM app serving 500k active monthly users.", "Raised $2.5M seed funding from top VC funds.", "Managed team of 15 SDEs and ML researchers."] }],
     projects: [{ title: "Multilingual Indic AI Assistant", tech: "Python, PyTorch", description: "Consumer AI voice assistant processing 1M daily conversations." }],
     certifications: ["Y Combinator Founder W22"],
     achievements: ["Forbes 30 Under 30 Asia"],
@@ -503,11 +517,11 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     phone: "+91 99666 77889",
     location: "Kolkata, WB",
     photoUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=80",
-    summary: "Technology Journalist and Editorial Lead publishing long-form investigative tech journalism and corporate profiles.",
+    summary: "Technology Journalist and Editorial Lead publishing investigative tech journalism, business profiles, and reports.",
     skills: ["Tech Journalism", "Editorial Writing", "Media Strategy", "Investigative Research"],
     education: [{ institution: "St. Xavier's College", degree: "B.A. Mass Communication", years: "2014 – 2017" }],
-    experience: [{ company: "The Economic Times", role: "Senior Tech Editor", years: "2020 – Present", bullets: ["Published 150+ investigative tech startup stories.", "Managed weekly technology editorial column."] }],
-    projects: [{ title: "Indian Startup Ecosystem Report", tech: "Data Analytics, Journalism", description: "Comprehensive report cited by top VC investors and media." }],
+    experience: [{ company: "The Economic Times", role: "Senior Tech Editor", years: "2020 – Present", bullets: ["Published 150+ investigative tech startup stories.", "Managed weekly technology editorial column.", "Conducted interviews with top tech startup CEOs."] }],
+    projects: [{ title: "Indian Startup Ecosystem Report", tech: "Data Analytics, Journalism", description: "Comprehensive report cited by top VC investors and media platforms." }],
     certifications: ["Ramnath Goenka Excellence in Journalism"],
     achievements: ["Press Club Award 2022"],
   },
@@ -521,8 +535,8 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     summary: "Dashboard Engineer specializing in real-time web UI analytics portals, data visualization, and micro-frontends.",
     skills: ["React & Next.js", "D3.js & Recharts", "TypeScript & Tailwind", "Dashboard UI"],
     education: [{ institution: "NIT Calicut", degree: "B.Tech Computer Science", years: "2016 – 2020" }],
-    experience: [{ company: "Freshworks Inc", role: "Senior UI Engineer", years: "2021 – Present", bullets: ["Built customer support analytics dashboard used by 60k businesses.", "Reduced chart rendering lag by 60%."] }],
-    projects: [{ title: "Real-Time Telemetry Dashboard", tech: "React, D3.js, WebSockets", description: "Live monitoring console processing 10k data points per second." }],
+    experience: [{ company: "Freshworks Inc", role: "Senior UI Engineer", years: "2021 – Present", bullets: ["Built customer support analytics dashboard used by 60k businesses.", "Reduced chart rendering lag by 60% through custom canvas.", "Coordinated front-end sprint delivery cycles."] }],
+    projects: [{ title: "Real-Time Telemetry Dashboard", tech: "React, D3.js, WebSockets", description: "Live monitoring console processing 10k telemetry data points per second." }],
     certifications: ["Meta Certified Front-End Developer"],
     achievements: ["Freshworks Hackathon Winner"],
   },
@@ -536,8 +550,8 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     summary: "Global Software Engineer matching European hiring standards, building cross-border cloud platforms.",
     skills: ["Java, Go & Python", "Europass CV Standards", "Cloud Architecture", "Multilingual (English, German)"],
     education: [{ institution: "TU Munich / IIT Madras", degree: "M.Sc Computer Science", years: "2017 – 2019" }],
-    experience: [{ company: "SAP SE Germany", role: "Senior Cloud Architect", years: "2020 – Present", bullets: ["Architected SAP BTP cloud microservices.", "Led cross-border engineering teams across EU & India."] }],
-    projects: [{ title: "Global ERP Data Connector", tech: "Go, Kubernetes, SAP BTP", description: "Enterprise data bridge connecting European & Asian subsidiaries." }],
+    experience: [{ company: "SAP SE Germany", role: "Senior Cloud Architect", years: "2020 – Present", bullets: ["Architected SAP BTP cloud microservices.", "Led cross-border engineering teams across EU & India.", "Designed high-security authorization connectors."] }],
+    projects: [{ title: "Global ERP Data Connector", tech: "Go, Kubernetes, SAP BTP", description: "Enterprise data bridge connecting European & Asian cloud databases." }],
     certifications: ["SAP Certified Cloud Architect"],
     achievements: ["SAP European Tech Fellow"],
   },
@@ -551,7 +565,7 @@ const PHOTO_INDIAN_PERSONAS: Record<string, PersonaData> = {
     summary: "Strategy Consultant advising Fortune 500 executives on digital transformation, operational efficiency, and market entry.",
     skills: ["Strategy Consulting", "Digital Transformation", "Financial Valuation", "Executive Presentations"],
     education: [{ institution: "IIM Bangalore", degree: "MBA Strategy", years: "2017 – 2019" }],
-    experience: [{ company: "McKinsey & Company", role: "Engagement Manager", years: "2020 – Present", bullets: ["Advised CXOs of top 5 Indian private banks on digital banking strategy.", "Led team of 6 management consultants."] }],
+    experience: [{ company: "McKinsey & Company", role: "Engagement Manager", years: "2020 – Present", bullets: ["Advised CXOs of top 5 Indian private banks on digital banking strategy.", "Led team of 6 management consultants on client projects.", "Delivered operating model designs reducing overheads by 18%."] }],
     projects: [{ title: "Private Bank Digital Strategy", tech: "McKinsey Benchmarking", description: "Created digital roadmap increasing retail banking revenues by ₹120 Crores." }],
     certifications: ["McKinsey Certified Engagement Lead"],
     achievements: ["IIM Bangalore Gold Medalist"],
@@ -587,9 +601,9 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
   const renderSectionBlock = (secKey: string, secLabel: string) => {
     if (secKey === "summary" && p.summary) {
       return (
-        <div key={secKey} className="space-y-0.5">
+        <div key={secKey} className="space-y-0.5 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          <p className="text-[5.5px] text-zinc-600 leading-snug line-clamp-2">{p.summary}</p>
+          <p className="text-[5.5px] text-zinc-600 leading-snug">{p.summary}</p>
         </div>
       );
     }
@@ -600,16 +614,16 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         const group1 = p.skills.slice(0, mid);
         const group2 = p.skills.slice(mid);
         return (
-          <div key={secKey} className="space-y-0.5">
+          <div key={secKey} className="space-y-0.5 text-left">
             <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
             <div className="space-y-0.5 text-[5.5px]">
               <div className="truncate">
-                <span className="font-bold text-zinc-900">Core: </span>
+                <span className="font-bold text-zinc-900">Core Stack: </span>
                 <span className="text-zinc-600">{group1.join(", ")}</span>
               </div>
               {group2.length > 0 && (
                 <div className="truncate">
-                  <span className="font-bold text-zinc-900">Tools: </span>
+                  <span className="font-bold text-zinc-900">Tools &amp; Libraries: </span>
                   <span className="text-zinc-600">{group2.join(", ")}</span>
                 </div>
               )}
@@ -620,10 +634,10 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
       if (tmpl.id === "recruiter_scan" || tmpl.id === "photo_side_panel" || tmpl.id === "impact_focused" || tmpl.id === "timeline_prof") {
         return (
-          <div key={secKey} className="space-y-0.5">
+          <div key={secKey} className="space-y-0.5 text-left">
             <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
             <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[5.5px] text-zinc-700">
-              {p.skills.slice(0, 4).map((sk, idx) => (
+              {p.skills.map((sk, idx) => (
                 <span key={idx} className="truncate">• {sk}</span>
               ))}
             </div>
@@ -632,7 +646,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
       }
 
       return (
-        <div key={secKey} className="space-y-0.5">
+        <div key={secKey} className="space-y-0.5 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
           <p className="text-[5.5px] text-zinc-800 font-medium leading-tight truncate">
             {p.skills.join(" • ")}
@@ -643,9 +657,9 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
     if (secKey === "education" && p.education?.length) {
       return (
-        <div key={secKey} className="space-y-0.5">
+        <div key={secKey} className="space-y-0.5 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          {p.education.slice(0, 2).map((ed, idx) => (
+          {p.education.map((ed, idx) => (
             <div key={idx} className="flex items-center justify-between text-[5.5px]">
               <div className="truncate">
                 <span className="font-bold text-zinc-900">{ed.institution}</span> — <span className="text-zinc-600">{ed.degree}</span>
@@ -659,16 +673,16 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
     if (secKey === "experience" && p.experience?.length) {
       return (
-        <div key={secKey} className="space-y-0.5">
+        <div key={secKey} className="space-y-1 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          {p.experience.slice(0, 2).map((exp, idx) => (
+          {p.experience.map((exp, idx) => (
             <div key={idx} className="space-y-0.5">
               <div className="flex items-center justify-between text-[5.5px] font-bold text-zinc-900">
                 <span className="truncate">{exp.role} — {exp.company}</span>
                 <span className="text-[5px] text-zinc-500 shrink-0 ml-1">{exp.years}</span>
               </div>
-              {exp.bullets.slice(0, 2).map((b, bi) => (
-                <p key={bi} className="text-[5px] text-zinc-600 leading-tight truncate">• {b}</p>
+              {exp.bullets.map((b, bi) => (
+                <p key={bi} className="text-[5px] text-zinc-600 leading-tight">• {b}</p>
               ))}
             </div>
           ))}
@@ -678,12 +692,12 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
     if (secKey === "projects" && p.projects?.length) {
       return (
-        <div key={secKey} className="space-y-0.5">
+        <div key={secKey} className="space-y-1 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
-          {p.projects.slice(0, 2).map((proj, idx) => (
+          {p.projects.map((proj, idx) => (
             <div key={idx} className="space-y-0.5">
               <p className="text-[5.5px] font-bold text-zinc-900 truncate">{proj.title} <span className="text-[5px] font-normal text-zinc-500">[{proj.tech}]</span></p>
-              <p className="text-[5px] text-zinc-600 leading-tight truncate">• {proj.description}</p>
+              <p className="text-[5px] text-zinc-600 leading-tight">• {proj.description}</p>
             </div>
           ))}
         </div>
@@ -692,10 +706,10 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
     if (secKey === "certifications" && p.certifications?.length) {
       return (
-        <div key={secKey} className="space-y-0.5">
+        <div key={secKey} className="space-y-0.5 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
           <div className="space-y-0.5 text-[5px] text-zinc-600">
-            {p.certifications.slice(0, 2).map((cert, idx) => (
+            {p.certifications.map((cert, idx) => (
               <p key={idx} className="truncate">• {cert}</p>
             ))}
           </div>
@@ -705,10 +719,10 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
     if (secKey === "achievements" && p.achievements?.length) {
       return (
-        <div key={secKey} className="space-y-0.5">
+        <div key={secKey} className="space-y-0.5 text-left">
           <h3 className="text-[7px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
           <div className="space-y-0.5 text-[5px] text-zinc-600">
-            {p.achievements.slice(0, 2).map((ach, idx) => (
+            {p.achievements.map((ach, idx) => (
               <p key={idx} className="truncate">• {ach}</p>
             ))}
           </div>
@@ -725,7 +739,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
       <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-0 overflow-hidden select-none relative flex text-[6.5px] leading-tight">
         {/* Left Solid Colored Sidebar */}
         <div className="w-[34%] p-2 flex flex-col justify-between shrink-0 text-white" style={{ backgroundColor: accent }}>
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {isPhoto ? (
               <div className="flex flex-col items-center text-center space-y-1 mb-0.5">
                 <img
@@ -755,7 +769,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
             <div className="space-y-0.5 text-[5.5px] text-white/90">
               <span className="text-[5px] font-extrabold uppercase tracking-wider block text-white/70 border-b border-white/20 pb-0.5">TECHNICAL SKILLS</span>
               <div className="space-y-0.5">
-                {p.skills.slice(0, 5).map((sk, i) => (
+                {p.skills.slice(0, 6).map((sk, i) => (
                   <p key={i} className="truncate">• {sk}</p>
                 ))}
               </div>
@@ -765,7 +779,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
           {/* Education Mini Block */}
           <div className="space-y-0.5 text-[5.5px] text-white/90 pt-1">
             <span className="text-[5px] font-extrabold uppercase tracking-wider block text-white/70 border-b border-white/20 pb-0.5">EDUCATION</span>
-            {p.education.slice(0, 1).map((ed, i) => (
+            {p.education.map((ed, i) => (
               <div key={i} className="space-y-0.5">
                 <p className="font-bold text-white truncate">{ed.institution}</p>
                 <p className="text-white/80 text-[5px] truncate">{ed.degree}</p>
@@ -775,7 +789,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         </div>
 
         {/* Right Main Body Content */}
-        <div className="flex-1 p-2 flex flex-col justify-between min-w-0 bg-white">
+        <div className="flex-1 p-2.5 flex flex-col space-y-2.5 min-w-0 bg-white">
           {!isPhoto && (
             <div className="pb-1 border-b border-zinc-200">
               <h2 className="text-[9px] font-extrabold text-zinc-900 uppercase tracking-tight">{p.name}</h2>
@@ -799,13 +813,13 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
   // ── 2. TIMELINE LAYOUT (Timeline Professional) ──
   if (tmpl.headerStyle === "timeline") {
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2 overflow-hidden select-none relative flex flex-col justify-between text-[6.5px] leading-tight">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2.5 text-[6.5px] leading-tight">
         <div className="pb-1 border-b border-zinc-200">
           <h2 className="text-[9px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
           <p className="text-[5.5px] text-zinc-700 font-bold">{p.title}</p>
           <p className="text-[5px] text-zinc-500 mt-0.5">{p.email} | {p.phone} | {p.location}</p>
         </div>
-        <div className="flex-1 min-w-0 pl-2 border-l border-zinc-300 ml-1 relative flex flex-col justify-between py-0.5">
+        <div className="flex-1 min-w-0 pl-2 border-l border-zinc-300 ml-1 relative flex flex-col space-y-2.5 py-0.5">
           {sectionsToDisplay.map((sec) => (
             <div key={sec.key} className="relative">
               <div className="absolute -left-[11px] top-1 w-1.5 h-1.5 rounded-full bg-zinc-800 border border-white shrink-0" />
@@ -824,19 +838,19 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
   // ── 3. DUAL BLOCK LAYOUT (Dual Section 50/50) ──
   if (tmpl.headerStyle === "dual_block") {
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2 overflow-hidden select-none relative flex flex-col justify-between text-[6.5px] leading-tight">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2.5 text-[6.5px] leading-tight">
         <div className="pb-1 border-b border-zinc-200 text-center">
           <h2 className="text-[9px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
           <p className="text-[5.5px] text-zinc-700 font-bold">{p.title}</p>
           <p className="text-[5px] text-zinc-500 mt-0.5">{p.email} • {p.phone} • {p.location}</p>
         </div>
-        <div className="grid grid-cols-2 gap-2 flex-1 min-w-0 py-0.5">
-          <div className="border-r border-zinc-200 pr-1.5 flex flex-col justify-between">
+        <div className="grid grid-cols-2 gap-2.5 flex-1 min-w-0 py-0.5">
+          <div className="border-r border-zinc-200 pr-1.5 flex flex-col space-y-2.5">
             {renderSectionBlock("education", "EDUCATION")}
             {renderSectionBlock("skills", "TECHNICAL SKILLS")}
             {renderSectionBlock("certifications", "CERTIFICATIONS")}
           </div>
-          <div className="pl-0.5 flex flex-col justify-between">
+          <div className="pl-0.5 flex flex-col space-y-2.5">
             {renderSectionBlock("summary", "PROFILE SUMMARY")}
             {renderSectionBlock("experience", "EMPLOYMENT HISTORY")}
             {renderSectionBlock("projects", "KEY PROJECTS")}
@@ -854,13 +868,13 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
   if (tmpl.headerStyle === "numbered") {
     let secCounter = 1;
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2 overflow-hidden select-none relative flex flex-col justify-between text-[6.5px] leading-tight">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2.5 text-[6.5px] leading-tight">
         <div className="pb-1 border-b border-zinc-300 text-center">
           <h2 className="text-[9px] font-serif font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
           <p className="text-[5.5px] font-serif text-zinc-700 italic">{p.title}</p>
           <p className="text-[5px] text-zinc-500 mt-0.5">{p.email} | {p.phone} | {p.location}</p>
         </div>
-        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+        <div className="flex-1 min-w-0 flex flex-col space-y-2.5 py-0.5">
           {sectionsToDisplay.map((sec) => {
             const numLabel = `${secCounter++}.0  ${sec.label}`;
             return renderSectionBlock(sec.key, numLabel);
@@ -877,7 +891,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
   // ── 5. CENTERED / PROFILE CARD LAYOUT (Student Profile Card / Academic) ──
   if (tmpl.headerStyle === "centered" || tmpl.headerStyle === "profile_card") {
     return (
-      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2 overflow-hidden select-none relative flex flex-col justify-between text-[6.5px] leading-tight">
+      <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2.5 text-[6.5px] leading-tight">
         {/* Centered Header */}
         <div className="flex flex-col items-center text-center space-y-0.5 pb-1 border-b border-zinc-200">
           {isPhoto && (
@@ -896,7 +910,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
         </div>
 
         {/* Dynamic Full Content Sections */}
-        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+        <div className="flex-1 min-w-0 flex flex-col space-y-2.5 py-0.5">
           {sectionsToDisplay.map((sec) => renderSectionBlock(sec.key, sec.label))}
         </div>
 
@@ -911,7 +925,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
 
   // ── 6. STANDARD / BANNER LAYOUT (Executive Banner, Corporate Portrait, Modern Minimal) ──
   return (
-    <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-2 overflow-hidden select-none relative flex flex-col justify-between text-[6.5px] leading-tight">
+    <div className="w-full aspect-[1/1.41] bg-white text-zinc-900 shadow-xs border border-zinc-200 rounded-md p-3 overflow-hidden select-none relative flex flex-col space-y-2.5 text-[6.5px] leading-tight">
       {/* Header Row */}
       <div className="flex items-center justify-between gap-2 pb-1 border-b border-zinc-200">
         {tmpl.photoPlacement === "top_left" && isPhoto && (
@@ -923,7 +937,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
           />
         )}
 
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 text-left">
           <h2 className="text-[9px] font-extrabold uppercase tracking-tight" style={{ color: accent }}>{p.name}</h2>
           <p className="text-[5.5px] text-zinc-700 font-bold truncate">{p.title}</p>
           <p className="text-[5px] text-zinc-500 truncate mt-0.5">{p.email} | {p.phone} | {p.location}</p>
@@ -940,7 +954,7 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
       </div>
 
       {/* Dynamic Sections in Template Order */}
-      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+      <div className="flex-1 min-w-0 flex flex-col space-y-2.5 py-0.5">
         {sectionsToDisplay.map((sec) => renderSectionBlock(sec.key, sec.label))}
       </div>
 
