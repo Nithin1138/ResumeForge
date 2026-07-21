@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { X, Sparkles, Copy, Check, Printer, Loader2, Building2, Briefcase, Sliders, FileText, User, GraduationCap, ChevronDown, ChevronUp, ArrowRight, MapPin } from "lucide-react";
-import { useSession } from "next-auth/react";
 import CoverLetterPreview, { CoverLetterData } from "./CoverLetterPreview";
 
 interface CoverLetterModalProps {
@@ -28,8 +27,6 @@ export default function CoverLetterModal({
   initialCompany,
   initialRole,
 }: CoverLetterModalProps) {
-  const sessionRes = useSession();
-  const session = sessionRes?.data;
   const isDirectMode = !resumeId && (!inputData || !inputData?.personal?.fullName);
 
   // Resume vs Direct Candidate Details (NO hardcoded Aarav Sharma dummy defaults)
@@ -89,34 +86,35 @@ export default function CoverLetterModal({
       return;
     }
 
-    // 3. If logged in, fetch details from My Space profile API
-    if (session?.user?.email) {
-      fetch("/api/user/my-space")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.profile) {
-            const p = data.profile;
-            setCandidateName((prev: string) => prev || p.fullName || data.userName || "");
-            setCandidateEmail((prev: string) => prev || data.userEmail || "");
-            setCandidatePhone((prev: string) => prev || p.phone || "");
-            setCandidateLocation((prev: string) => prev || p.location || "");
-            setCandidateCollege((prev: string) => prev || p.college || "");
-            setCandidateBranch((prev: string) => prev || p.branch || "");
-            try {
-              const projs = JSON.parse(p.projectsJson || "[]");
-              if (projs.length > 0 && projs[0].title) {
-                setCandidateProject((prev: string) => prev || projs[0].title);
-              }
-            } catch {}
-          } else if (session?.user) {
-            const u = session.user;
-            setCandidateName((prev: string) => prev || u.name || "");
-            setCandidateEmail((prev: string) => prev || u.email || "");
-          }
-        })
-        .catch(() => {});
-    }
-  }, [isOpen, session, inputData, initialCoverLetter, initialCandidateName, initialCompany, initialRole]);
+    // 3. Fetch candidate profile details from My Space API
+    fetch("/api/user/my-space")
+      .then((res) => {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then((data) => {
+        if (!data) return;
+        if (data.profile) {
+          const p = data.profile;
+          setCandidateName((prev: string) => prev || p.fullName || data.userName || "");
+          setCandidateEmail((prev: string) => prev || data.userEmail || "");
+          setCandidatePhone((prev: string) => prev || p.phone || "");
+          setCandidateLocation((prev: string) => prev || p.location || "");
+          setCandidateCollege((prev: string) => prev || p.college || "");
+          setCandidateBranch((prev: string) => prev || p.branch || "");
+          try {
+            const projs = JSON.parse(p.projectsJson || "[]");
+            if (projs.length > 0 && projs[0].title) {
+              setCandidateProject((prev: string) => prev || projs[0].title);
+            }
+          } catch {}
+        } else if (data.userName || data.userEmail) {
+          setCandidateName((prev: string) => prev || data.userName || "");
+          setCandidateEmail((prev: string) => prev || data.userEmail || "");
+        }
+      })
+      .catch(() => {});
+  }, [isOpen, inputData, initialCoverLetter, initialCandidateName, initialCompany, initialRole]);
 
   if (!isOpen) return null;
 
@@ -124,8 +122,8 @@ export default function CoverLetterModal({
     setIsGenerating(true);
     try {
       const activeDetails = isDirectMode ? {
-        fullName: candidateName.trim() || (session?.user?.name || "Candidate"),
-        email: candidateEmail.trim() || (session?.user?.email || ""),
+        fullName: candidateName.trim() || "Candidate",
+        email: candidateEmail.trim() || "",
         phone: candidatePhone.trim() || "",
         location: candidateLocation.trim() || "",
         collegeName: candidateCollege.trim() || "Engineering Institute",
