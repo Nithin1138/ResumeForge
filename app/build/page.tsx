@@ -2565,7 +2565,7 @@ export default function BuildPage() {
         </div>
       )}
       {/* Header */}
-      <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-40 glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between backdrop-blur-md bg-surface/90 shadow-2xs">
         <div className="flex items-center space-x-2">
           <Link href="/" className="flex items-center justify-center">
             <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
