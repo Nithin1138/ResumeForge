@@ -122,7 +122,7 @@ export function CoverLetterButton({
 }: {
   resumeId?: string;
   inputData?: any;
-  variant?: "header" | "card" | "navbar";
+  variant?: "header" | "card";
   className?: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -132,23 +132,10 @@ export function CoverLetterButton({
       {variant === "header" && (
         <button
           onClick={() => setIsOpen(true)}
-          className={`px-5 py-3.5 bg-gradient-to-r from-emerald-600 via-primary to-emerald-600 hover:opacity-95 text-white text-xs font-extrabold rounded-full inline-flex items-center justify-center space-x-1.5 transition-all shadow-xs hover:shadow-md cursor-pointer border border-emerald-400/30 ${className}`}
+          className={`px-6 py-3.5 bg-surface border border-border hover:border-primary/50 text-text hover:text-primary text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer shrink-0 ${className}`}
         >
-          <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+          <Sparkles className="w-4 h-4 text-primary" />
           <span>Build Cover Letter</span>
-          <span className="text-[9px] bg-amber-300 text-zinc-950 font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider ml-1">
-            FREE
-          </span>
-        </button>
-      )}
-
-      {variant === "navbar" && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className={`px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 text-xs font-bold rounded-full inline-flex items-center justify-center space-x-1 transition-all cursor-pointer ${className}`}
-        >
-          <Sparkles className="w-3.5 h-3.5 text-primary" />
-          <span>Cover Letter</span>
         </button>
       )}
 

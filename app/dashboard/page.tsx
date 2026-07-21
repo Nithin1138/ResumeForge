@@ -46,7 +46,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans">
-      {/* Navbar */}
+      {/* Top Navbar */}
       <header className="glass-panel border-b border-border/40 max-md:px-4 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Link href="/" className="flex items-center justify-center">
@@ -77,7 +77,7 @@ export default async function DashboardPage() {
       {/* Main Panel Content */}
       <main className="max-w-5xl mx-auto w-full px-4 md:px-6 py-6 md:py-10 space-y-8 flex-1">
         
-        {/* Header Block with Cover Letter Button to the Left of Build New Resume */}
+        {/* Header Block: Cover Letter Button directly to the left of Build New Resume */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-3xl font-serif tracking-tight text-text flex items-center gap-2">
@@ -88,8 +88,7 @@ export default async function DashboardPage() {
               Manage your engineering resume outputs, check ATS score statistics, and run modifications.
             </p>
           </div>
-          
-          {/* Action Buttons: Cover Letter at LEFT of Build New Resume */}
+
           <div className="flex items-center gap-3">
             <CoverLetterButton variant="header" />
             <Link
@@ -217,10 +216,10 @@ export default async function DashboardPage() {
                 <CoverLetterButton variant="header" />
                 <Link
                   href="/build"
-                  className="px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs"
+                  className="px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer shrink-0"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Build New Resume</span>
+                  <span>Start Building Resume</span>
                 </Link>
               </div>
             </div>
