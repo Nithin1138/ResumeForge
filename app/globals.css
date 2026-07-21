@@ -234,6 +234,7 @@ html {
   contain-intrinsic-size: auto 600px;
 }
 
+
 /* Strict Print Settings */
 @page {
   size: A4;
@@ -254,5 +255,35 @@ html {
   }
   canvas {
     display: none !important;
+  }
+  
+  /* Single Page Cover Letter Print Target Rules */
+  body.printing-cover-letter * {
+    visibility: hidden !important;
+  }
+  body.printing-cover-letter #cover-letter-document,
+  body.printing-cover-letter #cover-letter-document * {
+    visibility: visible !important;
+  }
+  body.printing-cover-letter #cover-letter-document {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 16mm 18mm !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: white !important;
+    color: black !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    overflow: hidden !important;
+    z-index: 999999 !important;
   }
 }

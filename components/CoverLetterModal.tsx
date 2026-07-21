@@ -103,7 +103,14 @@ export default function CoverLetterModal({
   };
 
   const handlePrint = () => {
+    document.body.classList.add("printing-cover-letter");
+    const originalTitle = document.title;
+    document.title = "";
     window.print();
+    setTimeout(() => {
+      document.title = originalTitle;
+      document.body.classList.remove("printing-cover-letter");
+    }, 500);
   };
 
   const activeCandidateName = isDirectMode ? candidateName : defaultName;
