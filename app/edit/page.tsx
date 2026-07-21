@@ -16,7 +16,7 @@ export default async function EditPage() {
     where: { email: session.user.email },
     include: {
       resumes: {
-        orderBy: { createdAt: "desc" },
+        orderBy: { updatedAt: "desc" },
       },
     },
   });
@@ -30,6 +30,7 @@ export default async function EditPage() {
     resumeName: r.resumeName,
     targetRole: r.targetRole,
     createdAt: r.createdAt.toISOString(),
+    updatedAt: (r.updatedAt || r.createdAt).toISOString(),
     inputData: r.inputData,
   }));
 
