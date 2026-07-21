@@ -95,6 +95,9 @@ const initialFormData: ResumeFormData = {
     projectVariants: "1 version",
     targetRoles: ["", "", ""],
     noProjects: false,
+    templateId: "modern",
+    hasPhoto: false,
+    photoUrl: "",
   },
 };
 

@@ -86,6 +86,9 @@ export interface FinalOptions {
   projectVariants: "1 version" | "3 versions";
   targetRoles?: string[];
   noProjects?: boolean;
+  templateId?: string;
+  hasPhoto?: boolean;
+  photoUrl?: string;
 }
 
 export interface ResumeFormData {

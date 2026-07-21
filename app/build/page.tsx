@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useFormStore } from "@/stores/formStore";
-import { ArrowLeft, ArrowRight, Plus, Trash2, Loader2, Sparkles, Check, ChevronDown, X, Cloud, CloudOff, RotateCcw, User, Code2, Rocket, Briefcase, Wand2, Zap, ArrowUp, ArrowDown, Archive } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, Trash2, Loader2, Sparkles, Check, ChevronDown, X, Cloud, CloudOff, RotateCcw, User, Code2, Rocket, Briefcase, Wand2, Zap, ArrowUp, ArrowDown, Archive, Layout, Camera, Upload, Image as ImageIcon } from "lucide-react";
 import { getLocalSession } from "@/lib/authClient";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BRANCH_SKILL_CONFIGS, DEFAULT_BRANCH_CONFIG } from "@/lib/branchConfig";
@@ -652,6 +652,15 @@ export default function BuildPage() {
       });
     }
 
+    if (step === 6) {
+      if (formData.options.projectVariants === "3 versions") {
+        const roles = formData.options.targetRoles || [];
+        if (!roles[0] || !roles[1] || !roles[2]) {
+          errors.targetRoles = "Please select all 3 target roles";
+        }
+      }
+    }
+
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -683,7 +692,7 @@ export default function BuildPage() {
   };
 
   const handleSubmit = async () => {
-    if (!validateStep(5)) return;
+    if (!validateStep(6)) return;
 
     setIsGenerating(true);
     setGenerationStep(0);
@@ -1950,16 +1959,16 @@ export default function BuildPage() {
   const renderStep5 = () => (
     <div className="space-y-6">
       <div className="border-b border-border/60 pb-4">
-        <h2 className="text-xl font-bold font-sans">ATS & Keyword Optimizations</h2>
+        <h2 className="text-xl font-bold font-sans">ATS &amp; Keyword Optimizations</h2>
         <p className="text-sm text-text-muted">Specify details to align the resume bullets exactly with your target job description.</p>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         <div>
           <label className="block text-sm font-semibold mb-2">Paste Job Description (Optional — for keyword matching)</label>
           <textarea
-            rows={4}
-            className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+            rows={8}
+            className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm leading-relaxed"
             placeholder="Copy and paste the qualifications, skills, and details from the job advertisement here..."
             value={formData.options.jobDescription}
             onChange={(e) => updateOptions({ jobDescription: e.target.value })}
@@ -2002,10 +2011,205 @@ export default function BuildPage() {
             ))}
           </div>
         </div>
-        {/* Old Achievements Section removed */}
+      </div>
+    </div>
+  );
 
-        {/* Project Variants */}
-        <div className="border-t border-border/40 pt-5">
+  // Step 6: Template & Photo Options
+  const renderStep6 = () => {
+    const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+          alert("Photo size must be less than 5MB");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          updateOptions({
+            hasPhoto: true,
+            photoUrl: reader.result as string,
+            // Auto-switch to photo template if on standard template
+            templateId: (formData.options.templateId === "photo_executive" || formData.options.templateId === "photo_modern") 
+              ? formData.options.templateId 
+              : "photo_modern"
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    const templatesList = [
+      {
+        id: "modern",
+        name: "Modern ATS Standard",
+        tag: "Default (Recommended)",
+        desc: "Single-column clean layout. Highest ATS recruiter score.",
+        supportsPhoto: false,
+      },
+      {
+        id: "classic",
+        name: "Classic Professional",
+        tag: "Corporate",
+        desc: "Traditional serif headings and balanced line spacing.",
+        supportsPhoto: false,
+      },
+      {
+        id: "minimal",
+        name: "Minimal Technical",
+        tag: "Developer Streamlined",
+        desc: "Compact typography optimized for dense tech stacks & OSS.",
+        supportsPhoto: false,
+      },
+      {
+        id: "photo_modern",
+        name: "Modern Photo Badge",
+        tag: "With Photo",
+        desc: "Contemporary design with header photo badge & accent layout.",
+        supportsPhoto: true,
+      },
+      {
+        id: "photo_executive",
+        name: "Executive Photo Sidebar",
+        tag: "With Photo",
+        desc: "Left profile column featuring photo slot + right detail area.",
+        supportsPhoto: true,
+      },
+    ];
+
+    return (
+      <div className="space-y-8">
+        <div className="border-b border-border/60 pb-4">
+          <h2 className="text-xl font-bold font-sans">Template &amp; Output Customization</h2>
+          <p className="text-sm text-text-muted">Choose your template style, photo preferences, and variation count.</p>
+        </div>
+
+        {/* ── TEMPLATE SELECTION ── */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="block text-sm font-semibold text-text">Select Resume Template</label>
+            <span className="text-xs text-primary font-bold">
+              Currently using: {templatesList.find(t => t.id === (formData.options.templateId || "modern"))?.name}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {templatesList.map((tmpl) => {
+              const isSelected = (formData.options.templateId || "modern") === tmpl.id;
+              return (
+                <div
+                  key={tmpl.id}
+                  onClick={() => {
+                    updateOptions({
+                      templateId: tmpl.id,
+                      hasPhoto: tmpl.supportsPhoto ? (formData.options.hasPhoto ?? true) : formData.options.hasPhoto
+                    });
+                  }}
+                  className={`border rounded-2xl p-4 cursor-pointer transition-all relative flex flex-col justify-between space-y-3 ${
+                    isSelected
+                      ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm"
+                      : "border-border bg-surface hover:border-primary/40"
+                  }`}
+                >
+                  <div>
+                    <div className="flex justify-between items-start mb-2">
+                      <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                        isSelected ? "bg-primary text-white" : "bg-primary/10 text-primary"
+                      }`}>
+                        {tmpl.tag}
+                      </span>
+                      {isSelected && <Check className="w-4 h-4 text-primary shrink-0" />}
+                    </div>
+
+                    <h4 className="text-sm font-bold text-text mt-1">{tmpl.name}</h4>
+                    <p className="text-xs text-text-muted leading-relaxed mt-1">{tmpl.desc}</p>
+                  </div>
+
+                  {tmpl.supportsPhoto && (
+                    <div className="flex items-center gap-1.5 text-[11px] font-semibold text-primary">
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>Supports Photo</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── PHOTO IN RESUME OPTION & UPLOAD ── */}
+        <div className="border-t border-border/40 pt-6 space-y-4">
+          <label className="flex items-center space-x-3 cursor-pointer p-4 rounded-xl border border-border/60 hover:border-primary/40 bg-surface transition-colors">
+            <input
+              type="checkbox"
+              className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
+              checked={formData.options.hasPhoto || false}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                updateOptions({
+                  hasPhoto: checked,
+                  ...(!checked && { photoUrl: "" }),
+                  ...(checked && (formData.options.templateId === "modern" || formData.options.templateId === "classic" || formData.options.templateId === "minimal") && { templateId: "photo_modern" })
+                });
+              }}
+            />
+            <div>
+              <span className="text-sm font-semibold text-text">Need photo in resume?</span>
+              <span className="text-xs text-text-muted block mt-0.5">Check this box to upload your headshot and use photo-compatible templates.</span>
+            </div>
+          </label>
+
+          {formData.options.hasPhoto && (
+            <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 space-y-4">
+              <h4 className="text-xs font-extrabold text-primary uppercase tracking-wider flex items-center gap-2">
+                <Camera className="w-4 h-4" />
+                Upload Profile Photo
+              </h4>
+
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                {formData.options.photoUrl ? (
+                  <div className="relative group shrink-0">
+                    <img
+                      src={formData.options.photoUrl}
+                      alt="Uploaded profile photo"
+                      className="w-24 h-24 rounded-2xl object-cover border-2 border-primary shadow-md"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => updateOptions({ photoUrl: "", hasPhoto: false })}
+                      className="absolute -top-2 -right-2 bg-error text-white p-1 rounded-full shadow-md hover:scale-110 transition-transform cursor-pointer"
+                      title="Remove photo"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-primary/40 bg-surface flex flex-col items-center justify-center text-text-muted shrink-0">
+                    <ImageIcon className="w-8 h-8 text-primary/40 mb-1" />
+                    <span className="text-[10px] font-bold">No Photo</span>
+                  </div>
+                )}
+
+                <div className="flex-1 space-y-2 text-center md:text-left">
+                  <label className="inline-flex items-center space-x-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-xl cursor-pointer transition-all shadow-sm">
+                    <Upload className="w-4 h-4" />
+                    <span>{formData.options.photoUrl ? "Change Photo" : "Upload Headshot Image"}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                    />
+                  </label>
+                  <p className="text-xs text-text-muted">Supports JPG, PNG, WEBP. Maximum file size: 5MB.</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── PROJECT VARIATIONS ── */}
+        <div className="border-t border-border/40 pt-6 space-y-4">
           <label className="block text-sm font-semibold mb-2">How many variations of project bullets do you want?</label>
           <div className="flex space-x-6">
             {[
@@ -2024,7 +2228,7 @@ export default function BuildPage() {
               </label>
             ))}
           </div>
-          
+
           {formData.options.projectVariants === "3 versions" && (
             <div className="mt-4 p-4 bg-primary/5 rounded-xl border border-primary/20 space-y-3">
               <label className="block text-xs font-bold text-primary">Specify the 3 target roles to tailor for:</label>
@@ -2077,12 +2281,15 @@ export default function BuildPage() {
                   </div>
                 );
               })()}
+              {validationErrors.targetRoles && (
+                <p className="text-xs text-error font-semibold mt-1">{validationErrors.targetRoles}</p>
+              )}
             </div>
           )}
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   if (!isHydrated) {
     return (
@@ -2174,7 +2381,7 @@ export default function BuildPage() {
       <div className="flex flex-col lg:flex-row w-full min-h-[calc(100vh-73px)] bg-bg-base">
         {/* Mobile horizontal steps (hidden on large screens) */}
         <div className="lg:hidden w-full overflow-x-auto px-4 py-4 hide-scrollbar border-b border-border/40 bg-surface/50">
-          <div className="flex items-center justify-between relative min-w-[300px]">
+          <div className="flex items-center justify-between relative min-w-[360px]">
             {/* Progress bar background line */}
             <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[2px] bg-border/60 -z-10" />
             
@@ -2183,7 +2390,8 @@ export default function BuildPage() {
               { stepNum: 2, name: "Skills" },
               { stepNum: 3, name: "Projects" },
               { stepNum: 4, name: "Other" },
-              { stepNum: 5, name: "Optimize" }
+              { stepNum: 5, name: "Optimize" },
+              { stepNum: 6, name: "Template" }
             ].map((s) => {
               const isCompleted = activeStep > s.stepNum;
               const isActive = activeStep === s.stepNum;
@@ -2230,12 +2438,12 @@ export default function BuildPage() {
               <div className="mt-5">
                 <div className="flex justify-between items-center mb-1.5">
                   <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Progress</span>
-                  <span className="text-[10px] font-bold text-primary">{Math.round(((activeStep - 1) / 4) * 100)}%</span>
+                  <span className="text-[10px] font-bold text-primary">{Math.round(((activeStep - 1) / 5) * 100)}%</span>
                 </div>
                 <div className="h-1.5 rounded-full bg-border/60 overflow-hidden">
                   <div
                     className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
-                    style={{ width: `${Math.round(((activeStep - 1) / 4) * 100)}%` }}
+                    style={{ width: `${Math.round(((activeStep - 1) / 5) * 100)}%` }}
                   />
                 </div>
               </div>
@@ -2253,6 +2461,7 @@ export default function BuildPage() {
                   { stepNum: 3, name: "Projects", desc: "Engineering portfolio", icon: Rocket },
                   { stepNum: 4, name: "Other", desc: "Internships, roles, achievements", icon: Briefcase },
                   { stepNum: 5, name: "Optimize", desc: "ATS & job keywords", icon: Wand2 },
+                  { stepNum: 6, name: "Template", desc: "Layout & photo options", icon: Layout },
                 ].map((s) => {
                   const isCompleted = activeStep > s.stepNum;
                   const isActive = activeStep === s.stepNum;
@@ -2321,6 +2530,7 @@ export default function BuildPage() {
                   {activeStep === 3 && "Every project needs a measurable result. Think: \"reduced load time by 40%\"."}
                   {activeStep === 4 && "Even 1 internship listed can double your shortlisting rate."}
                   {activeStep === 5 && "Paste the actual job description for the highest ATS match score."}
+                  {activeStep === 6 && "Select a photo template if applying for creative or executive roles."}
                 </p>
               </div>
             </div>
@@ -2335,6 +2545,7 @@ export default function BuildPage() {
             {activeStep === 3 && renderStep3()}
             {activeStep === 4 && renderStep4()}
             {activeStep === 5 && renderStep5()}
+            {activeStep === 6 && renderStep6()}
           </div>
 
           {/* Sticky Footer Nav */}
@@ -2351,7 +2562,7 @@ export default function BuildPage() {
 
               <div className="flex items-center space-x-4">
                 <div className="flex flex-col items-end hidden sm:flex">
-                  <span className="text-xs text-text-muted font-bold tracking-widest uppercase mb-0.5">Step {activeStep} of 5</span>
+                  <span className="text-xs text-text-muted font-bold tracking-widest uppercase mb-0.5">Step {activeStep} of 6</span>
                   <div className="flex items-center space-x-1.5 text-[10px] font-semibold">
                     {draftStatus === "saving" && (
                       <span className="flex items-center space-x-1 text-text-muted animate-pulse">
@@ -2379,7 +2590,7 @@ export default function BuildPage() {
                     )}
                   </div>
                 </div>
-                {activeStep < 5 ? (
+                {activeStep < 6 ? (
                   <button
                     onClick={handleNext}
                     className="px-6 py-3 md:py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-full flex items-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer"
