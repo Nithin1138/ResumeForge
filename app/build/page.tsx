@@ -2041,116 +2041,200 @@ export default function BuildPage() {
     const templatesList = [
       {
         id: "modern",
-        name: "Modern ATS Standard",
-        tag: "Default",
-        desc: "Single-column clean layout. Highest ATS recruiter score.",
+        name: "Professional",
+        tag: "Two-Column ATS",
+        desc: "A touch of personality with a well-organized resume structure.",
         supportsPhoto: false,
+        dots: ["#01696f", "#854d0e", "#991b1b", "#3b0764", "#1e3a8a"],
         preview: (
-          <div className="w-full h-32 bg-white dark:bg-zinc-900 border border-border rounded-lg p-2.5 flex flex-col space-y-1.5 shadow-xs overflow-hidden select-none">
-            <div className="w-1/2 h-2.5 bg-primary/80 rounded-xs" />
-            <div className="w-3/4 h-1.5 bg-zinc-300 dark:bg-zinc-700 rounded-xs" />
-            <div className="w-full h-[1px] bg-border my-1" />
-            <div className="w-1/3 h-2 bg-primary/40 rounded-xs mt-1" />
-            <div className="space-y-1 pt-0.5">
-              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
-              <div className="w-11/12 h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
-              <div className="w-4/5 h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+          <div className="w-full aspect-[1/1.414] bg-white text-zinc-800 rounded-xs p-2.5 shadow-sm border border-zinc-200 flex gap-2 overflow-hidden select-none relative">
+            {/* Left dark sidebar */}
+            <div className="w-1/3 bg-[#01696f] text-white p-1.5 flex flex-col space-y-1.5 rounded-2xs">
+              <div className="w-6 h-6 rounded-full bg-white/20 border border-white/40 flex items-center justify-center self-center my-0.5">
+                <User className="w-3 h-3 text-white" />
+              </div>
+              <div className="w-3/4 h-1 bg-white/80 rounded-xs self-center" />
+              <div className="w-full h-[0.5px] bg-white/30 my-0.5" />
+              <div className="w-1/2 h-1 bg-white/60 rounded-xs" />
+              <div className="space-y-0.5">
+                <div className="w-full h-0.5 bg-white/40 rounded-xs" />
+                <div className="w-4/5 h-0.5 bg-white/40 rounded-xs" />
+                <div className="w-3/4 h-0.5 bg-white/40 rounded-xs" />
+              </div>
+              <div className="w-1/2 h-1 bg-white/60 rounded-xs mt-1" />
+              <div className="space-y-0.5">
+                <div className="w-full h-0.5 bg-white/40 rounded-xs" />
+                <div className="w-5/6 h-0.5 bg-white/40 rounded-xs" />
+              </div>
+            </div>
+            {/* Right content */}
+            <div className="flex-1 flex flex-col space-y-1.5 pt-1 min-w-0">
+              <div className="w-2/3 h-2 bg-zinc-800 rounded-xs" />
+              <div className="w-full h-[0.5px] bg-zinc-300" />
+              <div className="w-1/3 h-1.5 bg-[#01696f] rounded-xs" />
+              <div className="space-y-0.5">
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-11/12 h-0.5 bg-zinc-300 rounded-xs" />
+              </div>
+              <div className="w-1/3 h-1.5 bg-[#01696f] rounded-xs mt-1" />
+              <div className="space-y-0.5">
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
+              </div>
+            </div>
+            <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
+              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-200 text-zinc-600 rounded-2xs">PDF</span>
+              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-200 text-zinc-600 rounded-2xs">DOCX</span>
             </div>
           </div>
         )
       },
       {
         id: "classic",
-        name: "Classic Professional",
-        tag: "Corporate",
-        desc: "Traditional serif headings and balanced line spacing.",
+        name: "Corporate",
+        tag: "Classic Serif",
+        desc: "Professional and elegant resume template with clean timeline structure.",
         supportsPhoto: false,
+        dots: ["#18181b", "#475569", "#1e293b", "#334155"],
         preview: (
-          <div className="w-full h-32 bg-white dark:bg-zinc-900 border border-border rounded-lg p-2.5 flex flex-col items-center space-y-1.5 shadow-xs overflow-hidden select-none">
-            <div className="w-2/3 h-2.5 bg-zinc-800 dark:bg-zinc-200 rounded-xs" />
-            <div className="w-1/2 h-1.5 bg-zinc-400 dark:bg-zinc-600 rounded-xs" />
-            <div className="w-full h-[1.5px] bg-zinc-800 dark:bg-zinc-200 my-1" />
-            <div className="w-full space-y-1 text-left pt-0.5">
-              <div className="w-1/4 h-2 bg-zinc-700 dark:bg-zinc-300 rounded-xs" />
-              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
-              <div className="w-5/6 h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+          <div className="w-full aspect-[1/1.414] bg-white text-zinc-800 rounded-xs p-3 shadow-sm border border-zinc-200 flex flex-col items-center space-y-1.5 overflow-hidden select-none relative">
+            <div className="w-5 h-5 rounded-full bg-zinc-200 border border-zinc-400 flex items-center justify-center mb-0.5">
+              <User className="w-2.5 h-2.5 text-zinc-600" />
+            </div>
+            <div className="w-1/2 h-2 bg-zinc-800 rounded-xs text-center" />
+            <div className="w-3/4 h-1 bg-zinc-400 rounded-xs" />
+            <div className="w-full h-[0.5px] bg-zinc-800 my-1" />
+            <div className="w-full space-y-1 text-left">
+              <div className="w-1/4 h-1.5 bg-zinc-700 rounded-xs" />
+              <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+              <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+              <div className="w-5/6 h-0.5 bg-zinc-300 rounded-xs" />
+            </div>
+            <div className="w-full space-y-1 text-left mt-1">
+              <div className="w-1/4 h-1.5 bg-zinc-700 rounded-xs" />
+              <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+              <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
+            </div>
+            <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
+              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-200 text-zinc-600 rounded-2xs">PDF</span>
+              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-200 text-zinc-600 rounded-2xs">DOCX</span>
             </div>
           </div>
         )
       },
       {
         id: "minimal",
-        name: "Minimal Technical",
-        tag: "Developer",
-        desc: "Compact typography optimized for dense tech stacks & OSS.",
+        name: "Clear",
+        tag: "Header Banner",
+        desc: "Striking modern header, professional two column template structure.",
         supportsPhoto: false,
+        dots: ["#10b981", "#f59e0b", "#3b82f6", "#a855f7", "#e11d48"],
         preview: (
-          <div className="w-full h-32 bg-white dark:bg-zinc-900 border border-border rounded-lg p-2.5 flex flex-col space-y-1.5 shadow-xs overflow-hidden select-none">
-            <div className="flex justify-between items-center w-full">
-              <div className="w-1/3 h-2.5 bg-emerald-600 rounded-xs" />
-              <div className="w-1/4 h-1.5 bg-zinc-400 rounded-xs" />
+          <div className="w-full aspect-[1/1.414] bg-white text-zinc-800 rounded-xs p-0 shadow-sm border border-zinc-200 flex flex-col overflow-hidden select-none relative">
+            {/* Top green banner */}
+            <div className="w-full bg-[#10b981] text-white p-2 flex items-center space-x-2 shrink-0">
+              <div className="w-5 h-5 rounded-full bg-white/30 border border-white flex items-center justify-center shrink-0">
+                <User className="w-2.5 h-2.5 text-white" />
+              </div>
+              <div className="space-y-0.5 min-w-0 flex-1">
+                <div className="w-3/4 h-1.5 bg-white rounded-xs" />
+                <div className="w-1/2 h-1 bg-white/70 rounded-xs" />
+              </div>
             </div>
-            <div className="flex gap-1">
-              <div className="w-8 h-2 bg-emerald-500/20 rounded-xs" />
-              <div className="w-8 h-2 bg-emerald-500/20 rounded-xs" />
-              <div className="w-8 h-2 bg-emerald-500/20 rounded-xs" />
+            {/* Body 2-col */}
+            <div className="p-2 flex gap-2 flex-1">
+              <div className="w-1/3 border-r border-zinc-200 pr-1.5 space-y-1">
+                <div className="w-2/3 h-1 bg-emerald-600 rounded-xs" />
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-2/3 h-1 bg-emerald-600 rounded-xs mt-1.5" />
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <div className="w-1/2 h-1 bg-emerald-600 rounded-xs" />
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-11/12 h-0.5 bg-zinc-300 rounded-xs" />
+              </div>
             </div>
-            <div className="w-full h-[1px] bg-border my-0.5" />
-            <div className="w-full space-y-1">
-              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
-              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
-              <div className="w-3/4 h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+            <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
+              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-200 text-zinc-600 rounded-2xs">PDF</span>
+              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-200 text-zinc-600 rounded-2xs">DOCX</span>
             </div>
           </div>
         )
       },
       {
         id: "photo_modern",
-        name: "Modern Photo Badge",
-        tag: "With Photo",
-        desc: "Contemporary design with header photo badge & accent layout.",
+        name: "Balanced",
+        tag: "Contrasting Sidebar",
+        desc: "Modern and eye-catching resume template. Beautiful contrasting structure.",
         supportsPhoto: true,
         preview: (
-          <div className="w-full h-32 bg-white dark:bg-zinc-900 border border-border rounded-lg p-2.5 flex flex-col space-y-1.5 shadow-xs overflow-hidden select-none">
-            <div className="flex justify-between items-start w-full">
-              <div className="space-y-1 w-2/3">
-                <div className="w-3/4 h-2.5 bg-primary rounded-xs" />
-                <div className="w-1/2 h-1.5 bg-zinc-400 rounded-xs" />
+          <div className="w-full aspect-[1/1.414] bg-white text-zinc-800 rounded-xs p-2 shadow-sm border border-zinc-200 flex gap-2 overflow-hidden select-none relative">
+            <div className="flex-1 space-y-1.5 pt-1">
+              <div className="flex items-center space-x-1.5">
+                <div className="w-5 h-5 rounded-full bg-zinc-200 border border-zinc-400 flex items-center justify-center shrink-0">
+                  <User className="w-2.5 h-2.5 text-zinc-600" />
+                </div>
+                <div className="w-2/3 h-2 bg-zinc-800 rounded-xs" />
               </div>
-              <div className="w-6 h-6 rounded-full bg-primary/30 border border-primary flex items-center justify-center shrink-0">
-                <Camera className="w-3 h-3 text-primary" />
+              <div className="w-full h-[0.5px] bg-zinc-200" />
+              <div className="w-1/2 h-1 bg-zinc-700 rounded-xs" />
+              <div className="space-y-0.5">
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
               </div>
             </div>
-            <div className="w-full h-[1px] bg-border my-0.5" />
-            <div className="w-full space-y-1">
-              <div className="w-1/3 h-2 bg-primary/40 rounded-xs" />
-              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
-              <div className="w-5/6 h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+            <div className="w-1/3 bg-[#1e3a8a] text-white p-1.5 rounded-2xs space-y-1.5">
+              <div className="w-full h-1 bg-white/80 rounded-xs" />
+              <div className="w-full h-0.5 bg-white/40 rounded-xs" />
+              <div className="w-4/5 h-0.5 bg-white/40 rounded-xs" />
+              <div className="w-full h-1 bg-white/80 rounded-xs mt-1" />
+              <div className="w-full h-0.5 bg-white/40 rounded-xs" />
+            </div>
+            <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
+              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-200 text-zinc-600 rounded-2xs">PDF</span>
+              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-200 text-zinc-600 rounded-2xs">DOCX</span>
             </div>
           </div>
         )
       },
       {
         id: "photo_executive",
-        name: "Executive Photo Sidebar",
-        tag: "With Photo",
-        desc: "Left profile column featuring photo slot + right detail area.",
+        name: "Essential",
+        tag: "Fresh Balance",
+        desc: "Perfect balance of fresh and functional resume template design.",
         supportsPhoto: true,
         preview: (
-          <div className="w-full h-32 bg-white dark:bg-zinc-900 border border-border rounded-lg p-2 flex gap-2 shadow-xs overflow-hidden select-none">
-            <div className="w-1/3 h-full bg-primary/10 rounded-md p-1.5 flex flex-col items-center space-y-1.5 border border-primary/20 shrink-0">
-              <div className="w-6 h-6 rounded-full bg-primary/30 border border-primary flex items-center justify-center">
-                <Camera className="w-3 h-3 text-primary" />
+          <div className="w-full aspect-[1/1.414] bg-white text-zinc-800 rounded-xs p-2.5 shadow-sm border border-zinc-200 flex flex-col space-y-1.5 overflow-hidden select-none relative">
+            <div className="flex items-center space-x-2">
+              <div className="w-6 h-6 rounded-md bg-amber-500/20 border border-amber-600 flex items-center justify-center shrink-0">
+                <User className="w-3 h-3 text-amber-700" />
               </div>
-              <div className="w-full h-1 bg-primary/40 rounded-xs" />
-              <div className="w-full h-1 bg-primary/20 rounded-xs" />
+              <div className="space-y-0.5">
+                <div className="w-24 h-2 bg-zinc-800 rounded-xs" />
+                <div className="w-16 h-1 bg-amber-600 rounded-xs" />
+              </div>
             </div>
-            <div className="flex-1 flex flex-col space-y-1.5 pt-0.5 min-w-0">
-              <div className="w-3/4 h-2.5 bg-zinc-800 dark:bg-zinc-200 rounded-xs" />
-              <div className="w-1/2 h-1.5 bg-zinc-400 rounded-xs" />
-              <div className="w-full h-[1px] bg-border" />
-              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
-              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+            <div className="w-full h-[0.5px] bg-zinc-200" />
+            <div className="flex gap-2">
+              <div className="w-1/3 space-y-1">
+                <div className="w-full h-1 bg-zinc-700 rounded-xs" />
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-4/5 h-0.5 bg-zinc-300 rounded-xs" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <div className="w-full h-1 bg-zinc-700 rounded-xs" />
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+                <div className="w-full h-0.5 bg-zinc-300 rounded-xs" />
+              </div>
+            </div>
+            <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
+              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-200 text-zinc-600 rounded-2xs">PDF</span>
+              <span className="px-1 py-0.2 text-[6px] font-bold bg-zinc-200 text-zinc-600 rounded-2xs">DOCX</span>
             </div>
           </div>
         )
@@ -2231,7 +2315,7 @@ export default function BuildPage() {
           </div>
         </div>
 
-        {/* ── MIDDLE: TEMPLATE SELECTION WITH DOCUMENT PREVIEWS ── */}
+        {/* ── MIDDLE: TEMPLATE SELECTION GALLERY MATCHING SCREENSHOT ── */}
         <div className="border-t border-border/40 pt-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -2243,7 +2327,7 @@ export default function BuildPage() {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {templatesList.map((tmpl) => {
               const isSelected = (formData.options.templateId || "modern") === tmpl.id;
               return (
@@ -2255,37 +2339,46 @@ export default function BuildPage() {
                       hasPhoto: tmpl.supportsPhoto ? (formData.options.hasPhoto ?? true) : formData.options.hasPhoto
                     });
                   }}
-                  className={`border rounded-2xl p-4 cursor-pointer transition-all relative flex flex-col justify-between space-y-3 ${
-                    isSelected
-                      ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-md scale-[1.01]"
-                      : "border-border bg-surface hover:border-primary/40 hover:shadow-xs"
-                  }`}
+                  className="group cursor-pointer space-y-3"
                 >
-                  <div className="space-y-3">
-                    {/* Document Preview Box */}
-                    {tmpl.preview}
-
-                    <div className="flex justify-between items-start pt-1">
-                      <div>
-                        <h4 className="text-sm font-bold text-text">{tmpl.name}</h4>
-                        <p className="text-xs text-text-muted leading-relaxed mt-0.5">{tmpl.desc}</p>
+                  {/* Card Shell containing A4 document */}
+                  <div
+                    className={`bg-slate-100 dark:bg-zinc-800/60 p-4 rounded-2xl border transition-all duration-200 relative ${
+                      isSelected
+                        ? "border-primary ring-2 ring-primary/20 shadow-md scale-[1.01]"
+                        : "border-border/60 hover:border-primary/40 hover:shadow-sm"
+                    }`}
+                  >
+                    {/* Selected badge */}
+                    {isSelected && (
+                      <div className="absolute top-2.5 right-2.5 bg-primary text-white p-1 rounded-full shadow-md z-10">
+                        <Check className="w-3.5 h-3.5" />
                       </div>
-                    </div>
+                    )}
+
+                    {/* Visual A4 Document Preview */}
+                    {tmpl.preview}
                   </div>
 
-                  <div className="flex items-center justify-between border-t border-border/40 pt-2.5 mt-2">
-                    <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                      isSelected ? "bg-primary text-white" : "bg-primary/10 text-primary"
-                    }`}>
-                      {tmpl.tag}
-                    </span>
-                    {isSelected ? (
-                      <span className="text-xs font-bold text-primary flex items-center gap-1">
-                        <Check className="w-3.5 h-3.5" /> Selected
-                      </span>
-                    ) : (
-                      <span className="text-xs text-text-muted hover:text-primary transition-colors">Select</span>
-                    )}
+                  {/* Palette Dots below Document Card */}
+                  <div className="flex items-center space-x-1.5 px-1 pt-1">
+                    {tmpl.dots?.map((dotColor, idx) => (
+                      <span
+                        key={idx}
+                        className="w-3 h-3 rounded-full border border-white/20 shadow-2xs"
+                        style={{ backgroundColor: dotColor }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Title and Description Below Card */}
+                  <div className="px-1 space-y-0.5">
+                    <h4 className={`text-base font-bold transition-colors ${isSelected ? "text-primary" : "text-text group-hover:text-primary"}`}>
+                      {tmpl.name}
+                    </h4>
+                    <p className="text-xs text-text-muted leading-relaxed font-normal">
+                      {tmpl.desc}
+                    </p>
                   </div>
                 </div>
               );
