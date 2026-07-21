@@ -36,6 +36,25 @@ export async function GET(req: NextRequest) {
         const inputData = JSON.parse(latestResume.inputData || "{}");
         const personal = inputData.personal || {};
 
+        let extractedSkills: string[] = [];
+        let extractedCertifications: string[] = [];
+
+        if (Array.isArray(inputData.skills)) {
+          extractedSkills = inputData.skills;
+        } else if (inputData.skills && typeof inputData.skills === "object") {
+          const cats = inputData.skills.categories || {};
+          Object.values(cats).forEach((val: any) => {
+            if (Array.isArray(val)) extractedSkills.push(...val);
+            else if (typeof val === "string") extractedSkills.push(...val.split(",").map((v: string) => v.trim()));
+          });
+          if (inputData.skills.softSkills && typeof inputData.skills.softSkills === "string") {
+            extractedSkills.push(...inputData.skills.softSkills.split(",").map((v: string) => v.trim()));
+          }
+          if (inputData.skills.certifications && typeof inputData.skills.certifications === "string") {
+            extractedCertifications.push(...inputData.skills.certifications.split(",").map((v: string) => v.trim()));
+          }
+        }
+
         masterProfile = await prisma.masterProfile.create({
           data: {
             userId: user.id,
@@ -50,10 +69,10 @@ export async function GET(req: NextRequest) {
             branch: personal.branch || latestResume.branch || "",
             cgpa: personal.cgpa || latestResume.cgpa || "",
             summary: inputData.summary || "",
-            skillsJson: JSON.stringify(inputData.skills || []),
-            projectsJson: JSON.stringify(inputData.projects || []),
-            experiencesJson: JSON.stringify(inputData.experience || []),
-            certificationsJson: JSON.stringify(inputData.certifications || []),
+            skillsJson: JSON.stringify(extractedSkills.filter(Boolean)),
+            projectsJson: JSON.stringify(Array.isArray(inputData.projects) ? inputData.projects : []),
+            experiencesJson: JSON.stringify(Array.isArray(inputData.internships) ? inputData.internships : (Array.isArray(inputData.experience) ? inputData.experience : [])),
+            certificationsJson: JSON.stringify(extractedCertifications.filter(Boolean)),
             customFieldsJson: JSON.stringify([
               { key: "Target Role", value: latestResume.targetRole || "Software Engineer" },
               { key: "Preferred Location", value: "Bengaluru / Remote" },

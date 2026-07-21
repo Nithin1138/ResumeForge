@@ -133,10 +133,55 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         setSummary(p.summary || "");
         setCustomNotes(p.customNotes || "");
 
-        try { setSkills(JSON.parse(p.skillsJson || "[]")); } catch { setSkills([]); }
-        try { setProjects(JSON.parse(p.projectsJson || "[]")); } catch { setProjects([]); }
-        try { setExperiences(JSON.parse(p.experiencesJson || "[]")); } catch { setExperiences([]); }
-        try { setCertifications(JSON.parse(p.certificationsJson || "[]")); } catch { setCertifications([]); }
+        try {
+          const s = JSON.parse(p.skillsJson || "[]");
+          if (Array.isArray(s)) {
+            setSkills(s);
+          } else if (s && typeof s === "object") {
+            const extracted: string[] = [];
+            if (s.categories && typeof s.categories === "object") {
+              Object.values(s.categories).forEach((val: any) => {
+                if (Array.isArray(val)) extracted.push(...val);
+                else if (typeof val === "string") extracted.push(...val.split(",").map((v: string) => v.trim()));
+              });
+            }
+            if (s.softSkills && typeof s.softSkills === "string") {
+              extracted.push(...s.softSkills.split(",").map((v: string) => v.trim()));
+            }
+            setSkills(extracted.filter(Boolean));
+          } else {
+            setSkills([]);
+          }
+        } catch {
+          setSkills([]);
+        }
+
+        try {
+          const pr = JSON.parse(p.projectsJson || "[]");
+          setProjects(Array.isArray(pr) ? pr : []);
+        } catch {
+          setProjects([]);
+        }
+
+        try {
+          const ex = JSON.parse(p.experiencesJson || "[]");
+          setExperiences(Array.isArray(ex) ? ex : []);
+        } catch {
+          setExperiences([]);
+        }
+
+        try {
+          const cr = JSON.parse(p.certificationsJson || "[]");
+          if (Array.isArray(cr)) {
+            setCertifications(cr);
+          } else if (typeof cr === "string") {
+            setCertifications(cr.split(",").map((c: string) => c.trim()).filter(Boolean));
+          } else {
+            setCertifications([]);
+          }
+        } catch {
+          setCertifications([]);
+        }
         
         try {
           const parsedCF = JSON.parse(p.customFieldsJson || "[]");
@@ -146,6 +191,8 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
               key: item.key || item.name || "Custom Detail",
               value: item.value || item.val || "",
             })));
+          } else {
+            setCustomFields([]);
           }
         } catch {
           setCustomFields([]);
@@ -765,7 +812,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                 )}
 
                 <div className="flex flex-wrap gap-2 pt-1">
-                  {skills.filter(s => matchesSearch(s)).map((skill, idx) => (
+                  {(Array.isArray(skills) ? skills : []).filter(s => matchesSearch(s)).map((skill, idx) => (
                     <span
                       key={idx}
                       onClick={() => copyToClipboard(skill, `Skill-${skill}`)}
@@ -829,7 +876,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
                 {/* Custom Fields List */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                  {customFields.filter(cf => matchesSearch(cf.key) || matchesSearch(cf.value)).map((cf) => (
+                  {(Array.isArray(customFields) ? customFields : []).filter(cf => matchesSearch(cf.key) || matchesSearch(cf.value)).map((cf) => (
                     <div
                       key={cf.id}
                       onClick={() => copyToClipboard(cf.value, cf.key)}
@@ -884,7 +931,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                 </div>
 
                 <div className="space-y-4">
-                  {projects.filter(p => matchesSearch(p.title) || matchesSearch(p.techStack) || matchesSearch(p.description)).map((proj) => (
+                  {(Array.isArray(projects) ? projects : []).filter(p => matchesSearch(p.title) || matchesSearch(p.techStack) || matchesSearch(p.description)).map((proj) => (
                     <div key={proj.id} className="p-4 border border-border rounded-2xl bg-bg-base space-y-3 relative group">
                       <button
                         onClick={() => handleRemoveProject(proj.id)}
@@ -961,7 +1008,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                 </div>
 
                 <div className="space-y-4">
-                  {experiences.filter(e => matchesSearch(e.role) || matchesSearch(e.company) || matchesSearch(e.description)).map((exp) => (
+                  {(Array.isArray(experiences) ? experiences : []).filter(e => matchesSearch(e.role) || matchesSearch(e.company) || matchesSearch(e.description)).map((exp) => (
                     <div key={exp.id} className="p-4 border border-border rounded-2xl bg-bg-base space-y-3 relative group">
                       <button
                         onClick={() => handleRemoveExperience(exp.id)}
