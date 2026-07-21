@@ -110,9 +110,13 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
     try {
       setLoading(true);
       const res = await fetch("/api/user/my-space");
+      if (!res.ok) {
+        setLoading(false);
+        return;
+      }
       const data = await res.json();
       
-      if (data.profile) {
+      if (data && data.profile) {
         const p = data.profile;
         setFullName(p.fullName || data.userName || "");
         setPhone(p.phone || "");
