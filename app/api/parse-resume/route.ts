@@ -37,7 +37,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const file = formData.get("file") as File | null;
+    const file = (formData.get("file") || formData.get("resume")) as File | null;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });

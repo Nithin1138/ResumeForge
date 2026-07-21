@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { 
   FileText, 
   Upload, 
@@ -18,16 +19,12 @@ import {
   Move, 
   Maximize2, 
   ArrowLeft, 
-  Save, 
   Download, 
-  Type, 
   X, 
   Layers, 
   Edit3, 
-  RotateCcw,
-  Building2,
-  Calendar,
-  ExternalLink
+  Search,
+  Calendar
 } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 
@@ -37,6 +34,8 @@ export interface SavedResumeItem {
   targetRole: string | null;
   createdAt: string;
   inputData: string;
+  branch?: string | null;
+  college?: string | null;
 }
 
 export interface CanvasBox {
@@ -132,6 +131,13 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
   const [resumeData, setResumeData] = useState<ResumeData>(DEFAULT_RESUME);
   const [selectedResumeId, setSelectedResumeId] = useState<string | null>(null);
 
+  // Saved Resumes list & modal state
+  const [resumesList, setResumesList] = useState<SavedResumeItem[]>(savedResumes);
+  const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
+  const [savedSearchQuery, setSavedSearchQuery] = useState("");
+  const [loadingResumes, setLoadingResumes] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
   // Parsing & File state
   const [isParsing, setIsParsing] = useState(false);
   const [parseError, setParseError] = useState<string | null>(null);
@@ -150,6 +156,28 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
   });
 
   const previewContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+    fetchUserResumes();
+  }, []);
+
+  const fetchUserResumes = async () => {
+    setLoadingResumes(true);
+    try {
+      const res = await fetch("/api/user/resumes");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.resumes)) {
+          setResumesList(data.resumes);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to fetch saved resumes:", e);
+    } finally {
+      setLoadingResumes(false);
+    }
+  };
 
   // Start Options Handlers
   const handleStartBlank = () => {
@@ -174,26 +202,40 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
 
   const handleSelectSavedResume = (item: SavedResumeItem) => {
     try {
-      const parsed = JSON.parse(item.inputData);
+      const parsed = typeof item.inputData === "string" ? JSON.parse(item.inputData) : item.inputData;
+      const p = parsed.personal || parsed;
+      const s = parsed.skills?.categories || parsed.skills || {};
+
+      const extractedSkills = Array.isArray(s)
+        ? s
+        : [s.languages, s.frameworks, s.tools, s.databases, s.csConcepts]
+            .filter(Boolean)
+            .join(", ")
+            .split(",")
+            .map((str: string) => str.trim())
+            .filter(Boolean);
+
       setResumeData({
-        fullName: parsed.name || parsed.fullName || "Candidate Resume",
-        email: parsed.email || "",
-        phone: parsed.phone || "",
-        location: parsed.location || "",
-        linkedin: parsed.linkedin || "",
-        github: parsed.github || "",
-        summary: parsed.summary || "",
+        fullName: p.name || p.fullName || item.resumeName || "Candidate Resume",
+        email: p.email || "",
+        phone: p.phone || "",
+        location: p.location || "",
+        linkedin: p.linkedin || "",
+        github: p.github || "",
+        summary: parsed.summary || p.summary || "",
         education: parsed.education || DEFAULT_RESUME.education,
-        experience: parsed.experience || DEFAULT_RESUME.experience,
+        experience: parsed.experience || parsed.internships || DEFAULT_RESUME.experience,
         projects: parsed.projects || DEFAULT_RESUME.projects,
-        skills: parsed.skills ? (Array.isArray(parsed.skills) ? parsed.skills : parsed.skills.split(",")) : DEFAULT_RESUME.skills,
+        skills: extractedSkills.length > 0 ? extractedSkills : DEFAULT_RESUME.skills,
         certifications: parsed.certifications || [],
         canvasBoxes: [],
       });
       setSelectedResumeId(item.id);
+      setIsSavedModalOpen(false);
       setStartMode("EDITOR");
     } catch {
       setResumeData(DEFAULT_RESUME);
+      setIsSavedModalOpen(false);
       setStartMode("EDITOR");
     }
   };
@@ -206,6 +248,7 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
     setParseError(null);
 
     const formData = new FormData();
+    formData.append("file", file);
     formData.append("resume", file);
 
     try {
@@ -214,26 +257,76 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Failed to parse resume file");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to parse resume file");
+      }
 
       const data = await res.json();
+      const p = data.personal || {};
+      const s = data.skills?.categories || {};
+
+      const extractedSkills = [
+        s.languages,
+        s.frameworks,
+        s.tools,
+        s.databases,
+        s.csConcepts,
+      ]
+        .filter(Boolean)
+        .join(", ")
+        .split(",")
+        .map((str: string) => str.trim())
+        .filter(Boolean);
+
+      const parsedEdu = p.collegeName
+        ? [
+            {
+              id: "edu_1",
+              school: p.collegeName,
+              degree: p.branch ? `B.Tech in ${p.branch}` : "Degree",
+              year: p.graduationYear || "2024",
+              location: p.location || "",
+              gpa: p.cgpa || "",
+            },
+          ]
+        : DEFAULT_RESUME.education;
+
+      const parsedExp = (data.internships || []).map((exp: any, i: number) => ({
+        id: "exp_" + i,
+        company: exp.company || "Company",
+        role: exp.role || "Software Engineer",
+        duration: exp.duration || "2023 - Present",
+        location: "",
+        points: exp.workDone ? [exp.workDone] : [],
+      }));
+
+      const parsedProjects = (data.projects || []).map((proj: any, i: number) => ({
+        id: "proj_" + i,
+        title: proj.title || "Project Title",
+        tech: proj.techStack || "",
+        link: proj.link || "",
+        description: proj.description || "",
+      }));
+
       setResumeData({
-        fullName: data.name || data.fullName || file.name.replace(/\.[^/.]+$/, ""),
-        email: data.email || "",
-        phone: data.phone || "",
-        location: data.location || "",
-        linkedin: data.linkedin || "",
-        github: data.github || "",
+        fullName: p.fullName || data.name || data.fullName || file.name.replace(/\.[^/.]+$/, ""),
+        email: p.email || data.email || "",
+        phone: p.phone || data.phone || "",
+        location: p.location || data.location || "",
+        linkedin: p.linkedin || data.linkedin || "",
+        github: p.github || data.github || "",
         summary: data.summary || "",
-        education: data.education || DEFAULT_RESUME.education,
-        experience: data.experience || DEFAULT_RESUME.experience,
-        projects: data.projects || DEFAULT_RESUME.projects,
-        skills: data.skills || DEFAULT_RESUME.skills,
-        certifications: data.certifications || [],
+        education: parsedEdu,
+        experience: parsedExp.length > 0 ? parsedExp : DEFAULT_RESUME.experience,
+        projects: parsedProjects.length > 0 ? parsedProjects : DEFAULT_RESUME.projects,
+        skills: extractedSkills.length > 0 ? extractedSkills : DEFAULT_RESUME.skills,
+        certifications: data.skills?.certifications ? [data.skills.certifications] : [],
         canvasBoxes: [],
       });
       setStartMode("EDITOR");
     } catch (err: any) {
+      console.error("Resume file parse error:", err);
       setParseError(err.message || "Could not parse file. You can start blank or edit manually.");
     } finally {
       setIsParsing(false);
@@ -338,6 +431,95 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
     }));
   };
 
+  const filteredSavedResumes = resumesList.filter((item) => {
+    const nameMatch = (item.resumeName || "").toLowerCase().includes(savedSearchQuery.toLowerCase());
+    const roleMatch = (item.targetRole || "").toLowerCase().includes(savedSearchQuery.toLowerCase());
+    return nameMatch || roleMatch;
+  });
+
+  // Modal for Saved Resumes Selection
+  const savedResumesModal = isSavedModalOpen ? (
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-[99999] flex items-center justify-center p-4 animate-fade-in font-sans">
+      <div className="bg-surface border border-border rounded-3xl p-6 w-full max-w-xl space-y-4 shadow-2xl relative max-h-[85vh] flex flex-col">
+        <div className="flex items-center justify-between border-b border-border/40 pb-3 shrink-0">
+          <div className="flex items-center space-x-2">
+            <FileText className="w-5 h-5 text-emerald-500" />
+            <h3 className="font-bold text-lg text-text">Select Saved Resume to Edit</h3>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsSavedModalOpen(false)}
+            className="text-text-muted hover:text-text cursor-pointer p-1"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Search Input */}
+        <div className="relative shrink-0">
+          <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search saved resumes by title or role..."
+            value={savedSearchQuery}
+            onChange={(e) => setSavedSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 rounded-xl bg-bg-base border border-border text-xs text-text focus:outline-none focus:border-primary font-medium"
+          />
+        </div>
+
+        {/* Resumes List */}
+        <div className="flex-1 overflow-y-auto space-y-2.5 pr-1 min-h-[250px]">
+          {loadingResumes ? (
+            <div className="py-12 text-center text-xs text-text-muted flex items-center justify-center space-x-2">
+              <Loader2 className="w-4 h-4 animate-spin text-primary" />
+              <span>Fetching saved resumes...</span>
+            </div>
+          ) : filteredSavedResumes.length === 0 ? (
+            <div className="py-12 text-center text-xs text-text-muted space-y-2">
+              <FileText className="w-8 h-8 text-text-muted/40 mx-auto" />
+              <p>No saved resumes match your search.</p>
+              <Link href="/myresumes" className="text-primary font-bold hover:underline inline-block">
+                View My Resumes Collection
+              </Link>
+            </div>
+          ) : (
+            filteredSavedResumes.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => handleSelectSavedResume(item)}
+                className="p-3.5 rounded-2xl bg-bg-base hover:bg-primary/10 border border-border hover:border-primary/40 transition-all flex items-center justify-between cursor-pointer group"
+              >
+                <div className="space-y-1 truncate pr-3">
+                  <h4 className="font-bold text-xs text-text group-hover:text-primary transition-colors truncate">
+                    {item.resumeName || item.targetRole || "Engineering Resume"}
+                  </h4>
+                  <div className="flex items-center space-x-2 text-[10px] text-text-muted font-medium">
+                    <Calendar className="w-3 h-3" />
+                    <span>
+                      {new Date(item.createdAt).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-bold shadow-2xs group-hover:bg-primary/90 transition-all shrink-0 flex items-center space-x-1"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Select</span>
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <AppLayout>
       <div className="space-y-6 animate-fade-in font-sans">
@@ -379,38 +561,34 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
               </div>
 
               {/* Option B: Select Saved Resume */}
-              <div className="bg-surface border-2 border-border/80 rounded-3xl p-6 space-y-4 flex flex-col justify-between">
+              <div 
+                onClick={() => setIsSavedModalOpen(true)}
+                className="group bg-surface border-2 border-border/80 hover:border-emerald-500/60 rounded-3xl p-6 space-y-4 cursor-pointer transition-all hover:shadow-md flex flex-col justify-between"
+              >
                 <div className="space-y-3">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <FileText className="w-6 h-6" />
                   </div>
                   <h3 className="text-lg font-bold text-text">Edit Saved Resume</h3>
                   <p className="text-xs text-text-muted">
-                    Select one of your previously saved ATS resumes from your account vault.
+                    Select from your saved resumes in your resume collection.
                   </p>
-
-                  {savedResumes.length === 0 ? (
-                    <p className="text-[11px] text-text-muted italic pt-2">No saved resumes found yet.</p>
-                  ) : (
-                    <div className="space-y-2 max-h-36 overflow-y-auto pr-1">
-                      {savedResumes.slice(0, 4).map((item) => (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={() => handleSelectSavedResume(item)}
-                          className="w-full p-2 rounded-xl bg-bg-base hover:bg-primary/10 hover:text-primary text-left text-xs font-bold border border-border/40 transition-all truncate flex items-center justify-between cursor-pointer"
-                        >
-                          <span className="truncate">{item.resumeName || item.targetRole || "Saved Resume"}</span>
-                          <Edit3 className="w-3.5 h-3.5 shrink-0 opacity-60 ml-1" />
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 block pt-1">
+                    {resumesList.length} Saved Resumes Available
+                  </span>
                 </div>
+
+                <button 
+                  type="button" 
+                  className="w-full py-2.5 bg-emerald-500/10 group-hover:bg-emerald-600 text-emerald-600 group-hover:text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5"
+                >
+                  <Search className="w-3.5 h-3.5" />
+                  <span>Select Saved Resume</span>
+                </button>
               </div>
 
               {/* Option C: Upload & Parse */}
-              <label className="group bg-surface border-2 border-dashed border-border/80 hover:border-primary rounded-3xl p-6 space-y-4 cursor-pointer transition-all hover:shadow-md flex flex-col justify-between relative">
+              <label className="group bg-surface border-2 border-dashed border-border/80 hover:border-sky-500/60 rounded-3xl p-6 space-y-4 cursor-pointer transition-all hover:shadow-md flex flex-col justify-between relative">
                 <input
                   type="file"
                   accept=".pdf,.docx,.doc"
@@ -1044,6 +1222,9 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
             </div>
           </div>
         )}
+
+        {/* Modal for Saved Resumes Selection */}
+        {mounted && savedResumesModal && createPortal(savedResumesModal, document.body)}
       </div>
     </AppLayout>
   );
