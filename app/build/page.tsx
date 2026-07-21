@@ -2017,25 +2017,53 @@ export default function BuildPage() {
 
   // Step 6: Template & Photo Options
   const renderStep6 = () => {
+    const [isDraggingPhoto, setIsDraggingPhoto] = useState(false);
+
+    const processPhotoFile = (file: File) => {
+      if (!file.type.startsWith("image/")) {
+        alert("Please upload an image file (JPG, PNG, WEBP)");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Photo size must be less than 5MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updateOptions({
+          hasPhoto: true,
+          photoUrl: reader.result as string,
+          templateId: (formData.options.templateId === "photo_executive" || formData.options.templateId === "photo_modern") 
+            ? formData.options.templateId 
+            : "photo_modern"
+        });
+      };
+      reader.readAsDataURL(file);
+    };
+
     const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (file) {
-        if (file.size > 5 * 1024 * 1024) {
-          alert("Photo size must be less than 5MB");
-          return;
-        }
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          updateOptions({
-            hasPhoto: true,
-            photoUrl: reader.result as string,
-templateId: (formData.options.templateId === "photo_executive" || formData.options.templateId === "photo_modern") 
-              ? formData.options.templateId 
-              : "photo_modern"
-          });
-        };
-        reader.readAsDataURL(file);
-      }
+      if (file) processPhotoFile(file);
+    };
+
+    const handlePhotoDrop = (e: React.DragEvent<HTMLLabelElement | HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDraggingPhoto(false);
+      const file = e.dataTransfer.files?.[0];
+      if (file) processPhotoFile(file);
+    };
+
+    const handlePhotoDragOver = (e: React.DragEvent<HTMLLabelElement | HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!isDraggingPhoto) setIsDraggingPhoto(true);
+    };
+
+    const handlePhotoDragLeave = (e: React.DragEvent<HTMLLabelElement | HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDraggingPhoto(false);
     };
 
     const templatesList = [
@@ -2295,9 +2323,18 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
               </div>
             </div>
 
-            {/* Photo Upload Panel (embedded cleanly inside Left Card) */}
+            {/* Photo Upload Panel (embedded cleanly inside Left Card with full Drag & Drop support) */}
             {filterTab === "photo" ? (
-              <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-3 transition-all">
+              <label
+                onDragOver={handlePhotoDragOver}
+                onDragLeave={handlePhotoDragLeave}
+                onDrop={handlePhotoDrop}
+                className={`p-3.5 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer ${
+                  isDraggingPhoto
+                    ? "bg-primary/10 border-2 border-dashed border-primary ring-2 ring-primary/20 scale-[1.01]"
+                    : "bg-primary/5 border border-primary/20 hover:border-primary/40"
+                }`}
+              >
                 <div className="flex items-center space-x-3 min-w-0">
                   {formData.options.photoUrl ? (
                     <div className="relative shrink-0">
@@ -2308,8 +2345,11 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
                       />
                       <button
                         type="button"
-                        onClick={() => updateOptions({ photoUrl: "" })}
-                        className="absolute -top-1 -right-1 bg-error text-white p-0.5 rounded-full shadow-xs hover:scale-110 transition-transform"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateOptions({ photoUrl: "" });
+                        }}
+                        className="absolute -top-1 -right-1 bg-error text-white p-0.5 rounded-full shadow-xs hover:scale-110 transition-transform cursor-pointer"
                       >
                         <X className="w-2.5 h-2.5" />
                       </button>
@@ -2320,17 +2360,21 @@ templateId: (formData.options.templateId === "photo_executive" || formData.optio
                     </div>
                   )}
                   <div className="min-w-0">
-                    <span className="text-xs font-bold text-primary block truncate">Headshot Photo</span>
-                    <span className="text-[10px] text-text-muted block truncate">JPG, PNG, WEBP (&lt;5MB)</span>
+                    <span className="text-xs font-bold text-primary block truncate">
+                      {isDraggingPhoto ? "Drop Image Here..." : "Drag & Drop Headshot"}
+                    </span>
+                    <span className="text-[10px] text-text-muted block truncate">
+                      {isDraggingPhoto ? "Release to upload" : "or click to browse image (Max 5MB)"}
+                    </span>
                   </div>
                 </div>
 
-                <label className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg cursor-pointer transition-all shadow-2xs shrink-0 flex items-center gap-1.5">
+                <div className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-2xs shrink-0 flex items-center gap-1.5">
                   <Upload className="w-3.5 h-3.5" />
-                  <span>{formData.options.photoUrl ? "Change" : "Upload"}</span>
+                  <span>{formData.options.photoUrl ? "Change" : "Browse"}</span>
                   <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
-                </label>
-              </div>
+                </div>
+              </label>
             ) : (
               <p className="text-[11px] text-text-muted leading-relaxed px-0.5">
                 Standard single/two-column ATS layout optimized for recruiter scanning without photo overhead.
