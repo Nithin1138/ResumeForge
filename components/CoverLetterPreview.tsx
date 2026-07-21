@@ -150,13 +150,7 @@ export default function CoverLetterPreview({
           </p>
         </div>
 
-        {/* Small watermark/badge */}
-        <div className="flex justify-between items-center text-[10px] text-zinc-400 font-medium pt-1">
-          <span>Formatted with ATSLift matching engine</span>
-          <span className="uppercase font-bold tracking-wider" style={{ color: accent }}>
-            {tmpl.name} Style
-          </span>
-        </div>
+
       </div>
     </div>
   );
