@@ -2381,11 +2381,15 @@ export default function BuildPage() {
                     <p className="text-xs text-text-muted leading-relaxed font-normal">
                       {tmpl.desc}
                     </p>
-                    <div className="pt-1 border-t border-border/30 flex items-center justify-between text-[10px] text-text-muted">
-                      <span>Best for: <strong className="text-text font-semibold">{tmpl.bestFor}</strong></span>
-                      {tmpl.atsFriendly && (
-                        <span className="text-success font-bold flex items-center gap-0.5">
-                          ✓ ATS Safe
+                    <div className="pt-2 border-t border-border/30 flex items-center justify-between text-[11px] text-text-muted font-medium">
+                      <span className="truncate">Best for: <strong className="text-text font-semibold">{tmpl.bestFor}</strong></span>
+                      {tmpl.atsFriendly ? (
+                        <span className="px-1.5 py-0.5 rounded-md text-[9px] font-extrabold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 shrink-0">
+                          99% ATS
+                        </span>
+                      ) : (
+                        <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-primary/10 text-primary border border-primary/20 shrink-0">
+                          Photo Layout
                         </span>
                       )}
                     </div>
