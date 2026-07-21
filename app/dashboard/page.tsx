@@ -236,14 +236,10 @@ export default async function DashboardPage() {
                       </div>
 
                       <Link
-                        href={isPaid ? `/success/${resumeItem.id}?sandbox=true` : `/result/${resumeItem.id}`}
-                        className={`flex-1 min-h-[44px] px-5 py-2.5 rounded-full text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-xs ${
-                          isPaid 
-                            ? "bg-success text-white hover:bg-success/90" 
-                            : "bg-primary text-white hover:bg-primary/90"
-                        }`}
+                        href={`/success/${resumeItem.id}?sandbox=true`}
+                        className="flex-1 min-h-[44px] px-5 py-2.5 rounded-full text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-xs bg-primary text-white hover:bg-primary/90 cursor-pointer"
                       >
-                        <span>{isPaid ? "View Output" : "Unlock Output"}</span>
+                        <span>View Output</span>
                         <ChevronRight className="w-4 h-4" />
                       </Link>
                     </div>
