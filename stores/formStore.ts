@@ -53,6 +53,7 @@ const initialFormData: ResumeFormData = {
     fullName: "",
     email: "",
     collegeName: "",
+    ugDegree: "",
     branch: "",
     graduationYear: "",
     cgpa: "",

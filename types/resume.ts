@@ -10,6 +10,7 @@ export interface PersonalInfo {
   fullName: string;
   email: string;
   collegeName: string;
+  ugDegree?: string;    // e.g. B.E., B.Tech, B.Sc
   branch: string;
   graduationYear: string;
   cgpa: string;

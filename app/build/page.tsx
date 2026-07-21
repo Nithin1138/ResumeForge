@@ -883,6 +883,25 @@ export default function BuildPage() {
           </div>
 
           <div>
+            <label className="block text-sm font-semibold mb-2">Degree</label>
+            <select
+              className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+              value={formData.personal.ugDegree || ""}
+              onChange={(e) => updatePersonal({ ugDegree: e.target.value })}
+            >
+              <option value="">Select degree</option>
+              <option value="B.E.">B.E. (Bachelor of Engineering)</option>
+              <option value="B.Tech">B.Tech (Bachelor of Technology)</option>
+              <option value="B.Sc">B.Sc (Bachelor of Science)</option>
+              <option value="BCA">BCA (Bachelor of Computer Applications)</option>
+              <option value="BBA">BBA (Bachelor of Business Administration)</option>
+              <option value="B.Com">B.Com (Bachelor of Commerce)</option>
+              <option value="B.Arch">B.Arch (Bachelor of Architecture)</option>
+              <option value="Other">Other Degree</option>
+            </select>
+          </div>
+
+          <div>
             <label className="block text-sm font-semibold mb-2">Branch / Specialization</label>
             <select
               className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
@@ -933,22 +952,60 @@ export default function BuildPage() {
           </div>
         </div>
 
-        {/* PG toggle */}
-        <label className="flex items-center space-x-3 cursor-pointer w-max">
-          <input
-            type="checkbox"
-            className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25"
-            checked={formData.personal.hasPG || false}
-            onChange={(e) => {
-              updatePersonal({
-                hasPG: e.target.checked,
-                ...(!e.target.checked && { pgDegreeName: "", pgCollegeName: "", pgBranch: "", pgGraduationYear: "", pgCgpa: "" })
-              });
-            }}
-          />
-          <span className="text-sm font-semibold text-text">Add Post Graduation (PG) details <span className="text-text-muted font-normal text-xs">(Optional)</span></span>
-        </label>
+        {/* Optional toggles in 2-col grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
 
+          {/* PG toggle */}
+          <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors">
+            <input
+              type="checkbox"
+              className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
+              checked={formData.personal.hasPG || false}
+              onChange={(e) => {
+                updatePersonal({
+                  hasPG: e.target.checked,
+                  ...(!e.target.checked && { pgDegreeName: "", pgCollegeName: "", pgBranch: "", pgGraduationYear: "", pgCgpa: "" })
+                });
+              }}
+            />
+            <span className="text-sm font-semibold text-text">Post Graduation (PG) <span className="text-text-muted font-normal text-xs block">(Optional)</span></span>
+          </label>
+
+          {/* 12th toggle */}
+          <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors">
+            <input
+              type="checkbox"
+              className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
+              checked={formData.personal.has12th || false}
+              onChange={(e) => {
+                updatePersonal({
+                  has12th: e.target.checked,
+                  ...(!e.target.checked && { school12thName: "", marks12th: "", board12th: "", passYear12th: "" })
+                });
+              }}
+            />
+            <span className="text-sm font-semibold text-text">12th / HSC <span className="text-text-muted font-normal text-xs block">(Optional)</span></span>
+          </label>
+
+          {/* 10th toggle */}
+          <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors">
+            <input
+              type="checkbox"
+              className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
+              checked={formData.personal.has10th || false}
+              onChange={(e) => {
+                updatePersonal({
+                  has10th: e.target.checked,
+                  ...(!e.target.checked && { school10thName: "", marks10th: "", board10th: "", passYear10th: "" })
+                });
+              }}
+            />
+            <span className="text-sm font-semibold text-text">10th / SSLC <span className="text-text-muted font-normal text-xs block">(Optional)</span></span>
+          </label>
+
+        </div>
+
+        {/* PG expanded */}
         {formData.personal.hasPG && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-primary/5 p-5 rounded-2xl border border-primary/20">
             <div className="md:col-span-2">
@@ -1023,22 +1080,7 @@ export default function BuildPage() {
           </div>
         )}
 
-        {/* 12th toggle */}
-        <label className="flex items-center space-x-3 cursor-pointer w-max">
-          <input
-            type="checkbox"
-            className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25"
-            checked={formData.personal.has12th || false}
-            onChange={(e) => {
-              updatePersonal({
-                has12th: e.target.checked,
-                ...(!e.target.checked && { school12thName: "", marks12th: "", board12th: "", passYear12th: "" })
-              });
-            }}
-          />
-          <span className="text-sm font-semibold text-text">Add 12th / HSC details <span className="text-text-muted font-normal text-xs">(Optional)</span></span>
-        </label>
-
+        {/* 12th expanded */}
         {formData.personal.has12th && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-primary/5 p-5 rounded-2xl border border-primary/20">
             <div className="md:col-span-2">
@@ -1049,7 +1091,7 @@ export default function BuildPage() {
               <input
                 type="text"
                 className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                placeholder="e.g. St. Joseph&apos;s Higher Secondary School"
+                placeholder="e.g. St. Joseph's Higher Secondary School"
                 value={formData.personal.school12thName || ""}
                 onChange={(e) => updatePersonal({ school12thName: e.target.value })}
               />
@@ -1092,22 +1134,7 @@ export default function BuildPage() {
           </div>
         )}
 
-        {/* 10th toggle */}
-        <label className="flex items-center space-x-3 cursor-pointer w-max">
-          <input
-            type="checkbox"
-            className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25"
-            checked={formData.personal.has10th || false}
-            onChange={(e) => {
-              updatePersonal({
-                has10th: e.target.checked,
-                ...(!e.target.checked && { school10thName: "", marks10th: "", board10th: "", passYear10th: "" })
-              });
-            }}
-          />
-          <span className="text-sm font-semibold text-text">Add 10th / SSLC details <span className="text-text-muted font-normal text-xs">(Optional)</span></span>
-        </label>
-
+        {/* 10th expanded */}
         {formData.personal.has10th && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-primary/5 p-5 rounded-2xl border border-primary/20">
             <div className="md:col-span-2">
@@ -1118,7 +1145,7 @@ export default function BuildPage() {
               <input
                 type="text"
                 className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                placeholder="e.g. St. Joseph&apos;s High School"
+                placeholder="e.g. St. Joseph's High School"
                 value={formData.personal.school10thName || ""}
                 onChange={(e) => updatePersonal({ school10thName: e.target.value })}
               />
