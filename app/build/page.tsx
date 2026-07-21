@@ -222,6 +222,7 @@ export default function BuildPage() {
   }, []);
 
   const [isParsing, setIsParsing] = useState(false);
+  const [isDraggingPhoto, setIsDraggingPhoto] = useState(false);
 
   const [isCodingProfileModalOpen, setIsCodingProfileModalOpen] = useState(false);
   const [editingCodingProfileIndex, setEditingCodingProfileIndex] = useState<number | null>(null);
@@ -2017,8 +2018,6 @@ export default function BuildPage() {
 
   // Step 6: Template & Photo Options
   const renderStep6 = () => {
-    const [isDraggingPhoto, setIsDraggingPhoto] = useState(false);
-
     const processPhotoFile = (file: File) => {
       if (!file.type.startsWith("image/")) {
         alert("Please upload an image file (JPG, PNG, WEBP)");
