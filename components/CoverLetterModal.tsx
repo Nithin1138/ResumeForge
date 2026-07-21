@@ -123,8 +123,8 @@ export default function CoverLetterModal({
             <div>
               <h3 className="text-base font-extrabold text-text flex items-center gap-2">
                 AI Cover Letter Generator
-                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                  {isDirectMode ? "Standalone Mode" : "Matching Theme"}
+                <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 border border-emerald-500/30">
+                  {isDirectMode ? "100% Free Tool" : "100% Free Included"}
                 </span>
               </h3>
               <p className="text-xs text-text-muted">

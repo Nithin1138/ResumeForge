@@ -570,7 +570,10 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
             className="px-4 py-2 bg-gradient-to-r from-primary via-emerald-600 to-primary hover:opacity-95 text-white font-extrabold text-xs rounded-full flex items-center space-x-1.5 shadow-md hover:shadow-lg hover:scale-105 transition-all cursor-pointer ring-2 ring-primary/40"
           >
             <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-            <span>✨ Build Cover Letter</span>
+            <span>✨ Build Free Cover Letter</span>
+            <span className="text-[9px] bg-amber-300 text-zinc-950 font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider ml-1 shadow-xs">
+              FREE
+            </span>
           </button>
           {session && (
             <Link href="/dashboard" className="text-xs font-bold text-primary hover:underline">
@@ -1401,17 +1404,22 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
 
           <div className="bg-gradient-to-br from-primary/10 via-surface to-primary/5 border border-primary/30 rounded-2xl p-5 flex flex-col justify-between space-y-3 shadow-xs">
             <div className="text-left space-y-1">
-              <h4 className="font-bold text-sm text-primary flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4" /> AI Cover Letter Generator
-              </h4>
-              <p className="text-xs text-text-muted font-medium">Create a matching ATS cover letter tailored for any target company in seconds.</p>
+              <div className="flex items-center justify-between">
+                <h4 className="font-bold text-sm text-primary flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4" /> AI Cover Letter Generator
+                </h4>
+                <span className="text-[10px] font-black text-emerald-600 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  Included Free
+                </span>
+              </div>
+              <p className="text-xs text-text-muted font-medium">Create a matching ATS cover letter tailored for any target company in seconds — included 100% free with your resume.</p>
             </div>
             <button
               onClick={() => setCoverLetterModalOpen(true)}
               className="w-full py-3 bg-primary text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-2 transition-colors cursor-pointer shadow-md hover:shadow-lg"
             >
               <Sparkles className="w-4 h-4" />
-              <span>✨ Create Cover Letter</span>
+              <span>✨ Create Free Cover Letter</span>
             </button>
           </div>
         </div>
