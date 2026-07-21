@@ -49,7 +49,7 @@ export default async function DashboardPage() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans">
+    <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans relative">
       {/* Top Navbar */}
       <header className="glass-panel border-b border-border/40 max-md:px-4 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
@@ -66,30 +66,17 @@ export default async function DashboardPage() {
             <Database className="w-3.5 h-3.5" />
             <span>My Space</span>
           </Link>
-          <Link href="/profile" className="hidden md:flex items-center space-x-2 text-right group cursor-pointer">
-            <div>
-              <div className="text-sm font-bold text-text group-hover:text-primary transition-colors">{user.name || session.user.email?.split("@")[0]}</div>
-              <div className="text-[10px] text-text-muted font-semibold">{session.user.email}</div>
-            </div>
-          </Link>
-          <Link href="/profile" className="max-md:w-10 max-md:h-10 w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-sm tracking-widest overflow-hidden hover:ring-2 hover:ring-primary/40 transition-all cursor-pointer" title="View Profile">
-            {session.user.image ? (
-              <img src={session.user.image} alt={user.name || "User"} className="w-full h-full object-cover" />
-            ) : (
-              (user.name || session.user.email || "U").charAt(0).toUpperCase()
-            )}
-          </Link>
-          <Link href="/profile" className="px-3 py-1.5 rounded-full border border-border/60 text-xs font-bold hover:bg-surface text-text-muted hover:text-text transition-all flex items-center space-x-1.5 cursor-pointer" title="Profile">
+          <Link href="/profile" className="px-3.5 py-1.5 rounded-full border border-border/60 text-xs font-bold hover:bg-surface text-text-muted hover:text-text transition-all flex items-center space-x-1.5 cursor-pointer" title="Profile">
             <User className="w-3.5 h-3.5 text-primary" />
-            <span className="hidden sm:inline">Profile</span>
+            <span>Profile</span>
           </Link>
           <ThemeToggle />
           <LogoutButton />
         </div>
       </header>
 
-      {/* Main Panel Content */}
-      <main className="max-w-5xl mx-auto w-full px-4 md:px-6 py-6 md:py-10 space-y-8 flex-1">
+      {/* Main Panel Content - Full Page Layout */}
+      <main className="w-full px-4 md:px-10 lg:px-14 py-8 space-y-8 flex-1">
         
         {/* Header Block: Cover Letter Button directly to the left of Build New Resume */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -324,6 +311,29 @@ export default async function DashboardPage() {
           </div>
         )}
       </main>
+
+      {/* Left Bottom User Profile Badge */}
+      <div className="fixed bottom-6 left-6 z-40">
+        <Link
+          href="/profile"
+          className="bg-surface/95 backdrop-blur-md border border-border/80 hover:border-primary/50 rounded-2xl px-4 py-2.5 flex items-center space-x-3 shadow-lg hover:shadow-xl transition-all group cursor-pointer"
+          title="View & Manage Profile"
+        >
+          <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs tracking-widest overflow-hidden shrink-0 group-hover:scale-105 transition-transform">
+            {session.user.image ? (
+              <img src={session.user.image} alt={user.name || "User"} className="w-full h-full object-cover" />
+            ) : (
+              (user.name || session.user.email || "U").charAt(0).toUpperCase()
+            )}
+          </div>
+          <div className="text-left pr-1">
+            <div className="text-xs font-bold text-text group-hover:text-primary transition-colors flex items-center space-x-1">
+              <span>{user.name || session.user.email?.split("@")[0]}</span>
+            </div>
+            <div className="text-[10px] text-text-muted font-semibold">{session.user.email}</div>
+          </div>
+        </Link>
+      </div>
 
       {/* Mobile FAB */}
       <Link
