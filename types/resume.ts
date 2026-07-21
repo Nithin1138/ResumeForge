@@ -25,7 +25,20 @@ export interface PersonalInfo {
   pgCgpa?: string;
   pgDegreeName?: string;
   codingProfiles?: CodingProfile[];
+  // 12th
+  has12th?: boolean;
+  school12thName?: string;
+  marks12th?: string;        // percentage or CGPA string
+  board12th?: string;        // e.g. CBSE, ICSE, State board
+  passYear12th?: string;
+  // 10th
+  has10th?: boolean;
+  school10thName?: string;
+  marks10th?: string;
+  board10th?: string;
+  passYear10th?: string;
 }
+
 
 export interface SkillsInfo {
   categories: Record<string, string>;
