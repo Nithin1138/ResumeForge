@@ -2029,7 +2029,6 @@ export default function BuildPage() {
           updateOptions({
             hasPhoto: true,
             photoUrl: reader.result as string,
-            // Auto-switch to photo template if on standard template
             templateId: (formData.options.templateId === "photo_executive" || formData.options.templateId === "photo_modern") 
               ? formData.options.templateId 
               : "photo_modern"
@@ -2043,9 +2042,22 @@ export default function BuildPage() {
       {
         id: "modern",
         name: "Modern ATS Standard",
-        tag: "Default (Recommended)",
+        tag: "Default",
         desc: "Single-column clean layout. Highest ATS recruiter score.",
         supportsPhoto: false,
+        preview: (
+          <div className="w-full h-32 bg-white dark:bg-zinc-900 border border-border rounded-lg p-2.5 flex flex-col space-y-1.5 shadow-xs overflow-hidden select-none">
+            <div className="w-1/2 h-2.5 bg-primary/80 rounded-xs" />
+            <div className="w-3/4 h-1.5 bg-zinc-300 dark:bg-zinc-700 rounded-xs" />
+            <div className="w-full h-[1px] bg-border my-1" />
+            <div className="w-1/3 h-2 bg-primary/40 rounded-xs mt-1" />
+            <div className="space-y-1 pt-0.5">
+              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+              <div className="w-11/12 h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+              <div className="w-4/5 h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+            </div>
+          </div>
+        )
       },
       {
         id: "classic",
@@ -2053,13 +2065,44 @@ export default function BuildPage() {
         tag: "Corporate",
         desc: "Traditional serif headings and balanced line spacing.",
         supportsPhoto: false,
+        preview: (
+          <div className="w-full h-32 bg-white dark:bg-zinc-900 border border-border rounded-lg p-2.5 flex flex-col items-center space-y-1.5 shadow-xs overflow-hidden select-none">
+            <div className="w-2/3 h-2.5 bg-zinc-800 dark:bg-zinc-200 rounded-xs" />
+            <div className="w-1/2 h-1.5 bg-zinc-400 dark:bg-zinc-600 rounded-xs" />
+            <div className="w-full h-[1.5px] bg-zinc-800 dark:bg-zinc-200 my-1" />
+            <div className="w-full space-y-1 text-left pt-0.5">
+              <div className="w-1/4 h-2 bg-zinc-700 dark:bg-zinc-300 rounded-xs" />
+              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+              <div className="w-5/6 h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+            </div>
+          </div>
+        )
       },
       {
         id: "minimal",
         name: "Minimal Technical",
-        tag: "Developer Streamlined",
+        tag: "Developer",
         desc: "Compact typography optimized for dense tech stacks & OSS.",
         supportsPhoto: false,
+        preview: (
+          <div className="w-full h-32 bg-white dark:bg-zinc-900 border border-border rounded-lg p-2.5 flex flex-col space-y-1.5 shadow-xs overflow-hidden select-none">
+            <div className="flex justify-between items-center w-full">
+              <div className="w-1/3 h-2.5 bg-emerald-600 rounded-xs" />
+              <div className="w-1/4 h-1.5 bg-zinc-400 rounded-xs" />
+            </div>
+            <div className="flex gap-1">
+              <div className="w-8 h-2 bg-emerald-500/20 rounded-xs" />
+              <div className="w-8 h-2 bg-emerald-500/20 rounded-xs" />
+              <div className="w-8 h-2 bg-emerald-500/20 rounded-xs" />
+            </div>
+            <div className="w-full h-[1px] bg-border my-0.5" />
+            <div className="w-full space-y-1">
+              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+              <div className="w-3/4 h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+            </div>
+          </div>
+        )
       },
       {
         id: "photo_modern",
@@ -2067,6 +2110,25 @@ export default function BuildPage() {
         tag: "With Photo",
         desc: "Contemporary design with header photo badge & accent layout.",
         supportsPhoto: true,
+        preview: (
+          <div className="w-full h-32 bg-white dark:bg-zinc-900 border border-border rounded-lg p-2.5 flex flex-col space-y-1.5 shadow-xs overflow-hidden select-none">
+            <div className="flex justify-between items-start w-full">
+              <div className="space-y-1 w-2/3">
+                <div className="w-3/4 h-2.5 bg-primary rounded-xs" />
+                <div className="w-1/2 h-1.5 bg-zinc-400 rounded-xs" />
+              </div>
+              <div className="w-6 h-6 rounded-full bg-primary/30 border border-primary flex items-center justify-center shrink-0">
+                <Camera className="w-3 h-3 text-primary" />
+              </div>
+            </div>
+            <div className="w-full h-[1px] bg-border my-0.5" />
+            <div className="w-full space-y-1">
+              <div className="w-1/3 h-2 bg-primary/40 rounded-xs" />
+              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+              <div className="w-5/6 h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+            </div>
+          </div>
+        )
       },
       {
         id: "photo_executive",
@@ -2074,6 +2136,24 @@ export default function BuildPage() {
         tag: "With Photo",
         desc: "Left profile column featuring photo slot + right detail area.",
         supportsPhoto: true,
+        preview: (
+          <div className="w-full h-32 bg-white dark:bg-zinc-900 border border-border rounded-lg p-2 flex gap-2 shadow-xs overflow-hidden select-none">
+            <div className="w-1/3 h-full bg-primary/10 rounded-md p-1.5 flex flex-col items-center space-y-1.5 border border-primary/20 shrink-0">
+              <div className="w-6 h-6 rounded-full bg-primary/30 border border-primary flex items-center justify-center">
+                <Camera className="w-3 h-3 text-primary" />
+              </div>
+              <div className="w-full h-1 bg-primary/40 rounded-xs" />
+              <div className="w-full h-1 bg-primary/20 rounded-xs" />
+            </div>
+            <div className="flex-1 flex flex-col space-y-1.5 pt-0.5 min-w-0">
+              <div className="w-3/4 h-2.5 bg-zinc-800 dark:bg-zinc-200 rounded-xs" />
+              <div className="w-1/2 h-1.5 bg-zinc-400 rounded-xs" />
+              <div className="w-full h-[1px] bg-border" />
+              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+              <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+            </div>
+          </div>
+        )
       },
     ];
 
@@ -2084,16 +2164,86 @@ export default function BuildPage() {
           <p className="text-sm text-text-muted">Choose your template style, photo preferences, and variation count.</p>
         </div>
 
-        {/* ── TEMPLATE SELECTION ── */}
+        {/* ── TOP: PHOTO IN RESUME & UPLOAD ── */}
         <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="h-5 w-1 rounded-full bg-primary" />
+            <h3 className="text-sm font-extrabold text-text uppercase tracking-wider">1. Profile Photo Options</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label className="flex items-center space-x-3 cursor-pointer p-4 rounded-2xl border border-border/60 hover:border-primary/40 bg-surface transition-colors">
+              <input
+                type="checkbox"
+                className="w-4.5 h-4.5 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
+                checked={formData.options.hasPhoto || false}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  updateOptions({
+                    hasPhoto: checked,
+                    ...(!checked && { photoUrl: "" }),
+                    ...(checked && (formData.options.templateId === "modern" || formData.options.templateId === "classic" || formData.options.templateId === "minimal") && { templateId: "photo_modern" })
+                  });
+                }}
+              />
+              <div>
+                <span className="text-sm font-bold text-text">Need photo in resume?</span>
+                <span className="text-xs text-text-muted block mt-0.5">Enable headshot photo upload for photo-based templates.</span>
+              </div>
+            </label>
+
+            {formData.options.hasPhoto && (
+              <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4">
+                <div className="flex items-center space-x-3">
+                  {formData.options.photoUrl ? (
+                    <div className="relative shrink-0">
+                      <img
+                        src={formData.options.photoUrl}
+                        alt="Profile preview"
+                        className="w-12 h-12 rounded-xl object-cover border-2 border-primary shadow-xs"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => updateOptions({ photoUrl: "", hasPhoto: false })}
+                        className="absolute -top-1.5 -right-1.5 bg-error text-white p-0.5 rounded-full shadow-xs hover:scale-110 transition-transform"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-xl border border-dashed border-primary/40 bg-surface flex items-center justify-center shrink-0">
+                      <Camera className="w-5 h-5 text-primary/50" />
+                    </div>
+                  )}
+                  <div>
+                    <span className="text-xs font-bold text-primary block">Headshot Photo</span>
+                    <span className="text-[10px] text-text-muted block">JPG, PNG, WEBP (Max 5MB)</span>
+                  </div>
+                </div>
+
+                <label className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-xl cursor-pointer transition-all shadow-xs shrink-0 flex items-center gap-1.5">
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>{formData.options.photoUrl ? "Change" : "Upload"}</span>
+                  <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                </label>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ── MIDDLE: TEMPLATE SELECTION WITH DOCUMENT PREVIEWS ── */}
+        <div className="border-t border-border/40 pt-6 space-y-4">
           <div className="flex items-center justify-between">
-            <label className="block text-sm font-semibold text-text">Select Resume Template</label>
-            <span className="text-xs text-primary font-bold">
-              Currently using: {templatesList.find(t => t.id === (formData.options.templateId || "modern"))?.name}
+            <div className="flex items-center gap-3">
+              <div className="h-5 w-1 rounded-full bg-primary" />
+              <h3 className="text-sm font-extrabold text-text uppercase tracking-wider">2. Select Resume Template</h3>
+            </div>
+            <span className="text-xs text-primary font-bold hidden sm:inline">
+              Selected: {templatesList.find(t => t.id === (formData.options.templateId || "modern"))?.name}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {templatesList.map((tmpl) => {
               const isSelected = (formData.options.templateId || "modern") === tmpl.id;
               return (
@@ -2107,185 +2257,136 @@ export default function BuildPage() {
                   }}
                   className={`border rounded-2xl p-4 cursor-pointer transition-all relative flex flex-col justify-between space-y-3 ${
                     isSelected
-                      ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm"
-                      : "border-border bg-surface hover:border-primary/40"
+                      ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-md scale-[1.01]"
+                      : "border-border bg-surface hover:border-primary/40 hover:shadow-xs"
                   }`}
                 >
-                  <div>
-                    <div className="flex justify-between items-start mb-2">
-                      <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                        isSelected ? "bg-primary text-white" : "bg-primary/10 text-primary"
-                      }`}>
-                        {tmpl.tag}
-                      </span>
-                      {isSelected && <Check className="w-4 h-4 text-primary shrink-0" />}
-                    </div>
+                  <div className="space-y-3">
+                    {/* Document Preview Box */}
+                    {tmpl.preview}
 
-                    <h4 className="text-sm font-bold text-text mt-1">{tmpl.name}</h4>
-                    <p className="text-xs text-text-muted leading-relaxed mt-1">{tmpl.desc}</p>
+                    <div className="flex justify-between items-start pt-1">
+                      <div>
+                        <h4 className="text-sm font-bold text-text">{tmpl.name}</h4>
+                        <p className="text-xs text-text-muted leading-relaxed mt-0.5">{tmpl.desc}</p>
+                      </div>
+                    </div>
                   </div>
 
-                  {tmpl.supportsPhoto && (
-                    <div className="flex items-center gap-1.5 text-[11px] font-semibold text-primary">
-                      <Camera className="w-3.5 h-3.5" />
-                      <span>Supports Photo</span>
-                    </div>
-                  )}
+                  <div className="flex items-center justify-between border-t border-border/40 pt-2.5 mt-2">
+                    <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                      isSelected ? "bg-primary text-white" : "bg-primary/10 text-primary"
+                    }`}>
+                      {tmpl.tag}
+                    </span>
+                    {isSelected ? (
+                      <span className="text-xs font-bold text-primary flex items-center gap-1">
+                        <Check className="w-3.5 h-3.5" /> Selected
+                      </span>
+                    ) : (
+                      <span className="text-xs text-text-muted hover:text-primary transition-colors">Select</span>
+                    )}
+                  </div>
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* ── PHOTO IN RESUME OPTION & UPLOAD ── */}
+        {/* ── BOTTOM: PROJECT VARIATIONS & TARGET ROLES ── */}
         <div className="border-t border-border/40 pt-6 space-y-4">
-          <label className="flex items-center space-x-3 cursor-pointer p-4 rounded-xl border border-border/60 hover:border-primary/40 bg-surface transition-colors">
-            <input
-              type="checkbox"
-              className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
-              checked={formData.options.hasPhoto || false}
-              onChange={(e) => {
-                const checked = e.target.checked;
-                updateOptions({
-                  hasPhoto: checked,
-                  ...(!checked && { photoUrl: "" }),
-                  ...(checked && (formData.options.templateId === "modern" || formData.options.templateId === "classic" || formData.options.templateId === "minimal") && { templateId: "photo_modern" })
-                });
-              }}
-            />
-            <div>
-              <span className="text-sm font-semibold text-text">Need photo in resume?</span>
-              <span className="text-xs text-text-muted block mt-0.5">Check this box to upload your headshot and use photo-compatible templates.</span>
-            </div>
-          </label>
-
-          {formData.options.hasPhoto && (
-            <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 space-y-4">
-              <h4 className="text-xs font-extrabold text-primary uppercase tracking-wider flex items-center gap-2">
-                <Camera className="w-4 h-4" />
-                Upload Profile Photo
-              </h4>
-
-              <div className="flex flex-col md:flex-row items-center gap-6">
-                {formData.options.photoUrl ? (
-                  <div className="relative group shrink-0">
-                    <img
-                      src={formData.options.photoUrl}
-                      alt="Uploaded profile photo"
-                      className="w-24 h-24 rounded-2xl object-cover border-2 border-primary shadow-md"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => updateOptions({ photoUrl: "", hasPhoto: false })}
-                      className="absolute -top-2 -right-2 bg-error text-white p-1 rounded-full shadow-md hover:scale-110 transition-transform cursor-pointer"
-                      title="Remove photo"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-primary/40 bg-surface flex flex-col items-center justify-center text-text-muted shrink-0">
-                    <ImageIcon className="w-8 h-8 text-primary/40 mb-1" />
-                    <span className="text-[10px] font-bold">No Photo</span>
-                  </div>
-                )}
-
-                <div className="flex-1 space-y-2 text-center md:text-left">
-                  <label className="inline-flex items-center space-x-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-xl cursor-pointer transition-all shadow-sm">
-                    <Upload className="w-4 h-4" />
-                    <span>{formData.options.photoUrl ? "Change Photo" : "Upload Headshot Image"}</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handlePhotoUpload}
-                      className="hidden"
-                    />
-                  </label>
-                  <p className="text-xs text-text-muted">Supports JPG, PNG, WEBP. Maximum file size: 5MB.</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* ── PROJECT VARIATIONS ── */}
-        <div className="border-t border-border/40 pt-6 space-y-4">
-          <label className="block text-sm font-semibold mb-2">How many variations of project bullets do you want?</label>
-          <div className="flex space-x-6">
-            {[
-              { label: "1 standard version", val: "1 version" },
-              { label: "3 versions for different roles (₹99)", val: "3 versions" }
-            ].map((opt, idx) => (
-              <label key={idx} className="flex items-center space-x-2 text-sm font-medium cursor-pointer">
-                <input
-                  type="radio"
-                  name="variants"
-                  className="accent-primary"
-                  checked={formData.options.projectVariants === opt.val}
-                  onChange={() => updateOptions({ projectVariants: opt.val as any })}
-                />
-                <span>{opt.label}</span>
-              </label>
-            ))}
+          <div className="flex items-center gap-3">
+            <div className="h-5 w-1 rounded-full bg-primary" />
+            <h3 className="text-sm font-extrabold text-text uppercase tracking-wider">3. Project Bullet Variations</h3>
           </div>
 
-          {formData.options.projectVariants === "3 versions" && (
-            <div className="mt-4 p-4 bg-primary/5 rounded-xl border border-primary/20 space-y-3">
-              <label className="block text-xs font-bold text-primary">Specify the 3 target roles to tailor for:</label>
-              {(() => {
-                const branch = formData.personal.branch;
-                const suggestions: Record<string, string[]> = {
-                  "CSE": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Mobile App Developer", "Cloud Engineer", "Site Reliability Engineer (SRE)", "Machine Learning Engineer", "Security Engineer", "QA Engineer", "Database Administrator", "Product Manager", "Business Analyst", "UX/UI Designer"],
-                  "IT": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Cloud Engineer", "Network Engineer", "IT Consultant", "Systems Analyst", "Database Administrator", "Information Security Analyst", "Cloud Architect", "QA Engineer", "Scrum Master", "Product Manager"],
-                  "AI & DS": ["Data Scientist", "Machine Learning Engineer", "AI Researcher", "Data Analyst", "Data Engineer", "NLP Engineer", "Computer Vision Engineer", "MLOps Engineer", "Business Intelligence Analyst", "Big Data Engineer", "AI Product Manager", "Deep Learning Engineer", "Robotics Engineer"],
-                  "Cyber Security": ["Security Analyst", "Penetration Tester", "Security Engineer", "Ethical Hacker", "Information Security Consultant", "Cyber Security Architect", "Incident Responder", "Cloud Security Engineer", "SOC Analyst", "Cryptographer", "Forensics Investigator", "Vulnerability Assessor", "IAM Engineer"],
-                  "ECE": ["Embedded Software Engineer", "VLSI Design Engineer", "Hardware Engineer", "Network Engineer", "Systems Engineer", "Software Engineer", "Telecommunications Engineer", "RF Engineer", "IoT Engineer", "FPGA Engineer", "Application Engineer", "Hardware Verification Engineer", "Field Engineer", "Firmware Engineer"],
-                  "EEE": ["Electrical Engineer", "Power Systems Engineer", "Control Systems Engineer", "Electronics Engineer", "Software Engineer", "Renewable Energy Engineer", "Grid Engineer", "Automation Engineer", "Instrumentation Engineer", "Test Engineer", "Project Engineer", "Robotics Engineer", "Design Engineer"],
-                  "Mechanical": ["Mechanical Engineer", "Design Engineer", "Manufacturing Engineer", "Thermal Engineer", "Automotive Engineer", "HVAC Engineer", "CAD Designer", "Production Engineer", "Quality Engineer", "Supply Chain Analyst", "Robotics Engineer", "Mechatronics Engineer", "Piping Engineer", "Aerospace Engineer"],
-                  "Civil": ["Civil Engineer", "Structural Engineer", "Construction Manager", "Geotechnical Engineer", "Transportation Engineer", "Environmental Engineer", "Urban Planner", "Water Resources Engineer", "Surveying Engineer", "Site Engineer", "CAD Technician", "Estimator", "BIM Engineer"],
-                  "Chemical": ["Chemical Engineer", "Process Engineer", "Process Design Engineer", "Production Engineer", "R&D Engineer", "Quality Control Engineer", "Plant Engineer", "Biochemical Engineer", "Materials Engineer", "Safety Engineer", "Petrochemical Engineer", "Energy Engineer"],
-                  "Biotechnology": ["Biotechnologist", "Bioinformatics Scientist", "Research Associate", "Clinical Research Associate", "Biomedical Engineer", "Bioprocess Engineer", "Geneticist", "Pharmaceutical Engineer", "Quality Assurance Specialist", "Data Analyst", "Microbiologist", "Regulatory Affairs Specialist"],
-                  "Aerospace": ["Aerospace Engineer", "Aerodynamics Engineer", "Propulsion Engineer", "Avionics Engineer", "Flight Test Engineer", "Spacecraft Engineer", "Systems Engineer", "Stress Engineer", "Materials Engineer", "Aircraft Designer", "Quality Engineer", "UAV Engineer"],
-                };
-                const rolesList = suggestions[branch] || ["Software Engineer", "Data Analyst", "Product Manager", "Business Analyst", "System Analyst", "Consultant"];
-                const currentRoles = formData.options.targetRoles || ["", "", ""];
-
-                return (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {[0, 1, 2].map((i) => (
-                      <div key={i} className="relative">
-                        <select
-                          className="w-full px-3 py-2 border border-border/50 rounded-lg bg-bg-base focus:ring-1 focus:ring-primary focus:border-transparent outline-none text-xs font-medium appearance-none pr-8 cursor-pointer"
-                          value={currentRoles[i] || ""}
-                          onChange={(e) => {
-                            const newRoles = [...currentRoles];
-                            newRoles[i] = e.target.value;
-                            updateOptions({ targetRoles: newRoles });
-                          }}
-                        >
-                          <option value="" disabled>Select Target Role {i + 1}</option>
-                          {rolesList.map(role => {
-                            const isDuplicate = currentRoles.includes(role) && currentRoles[i] !== role;
-                            return (
-                              <option key={role} value={role} disabled={isDuplicate}>
-                                {role} {isDuplicate ? "(Already Selected)" : ""}
-                              </option>
-                            );
-                          })}
-                        </select>
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">
-                          <ChevronDown className="w-3.5 h-3.5" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })()}
-              {validationErrors.targetRoles && (
-                <p className="text-xs text-error font-semibold mt-1">{validationErrors.targetRoles}</p>
-              )}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 bg-surface p-5 rounded-2xl border border-border">
+            <div className="space-y-3">
+              <label className="block text-sm font-semibold text-text">How many variations of project bullets do you want?</label>
+              <div className="flex flex-col sm:flex-row gap-3">
+                {[
+                  { label: "1 standard version", val: "1 version" },
+                  { label: "3 versions for different roles (₹99)", val: "3 versions" }
+                ].map((opt, idx) => (
+                  <label
+                    key={idx}
+                    className={`flex-1 flex items-center space-x-2.5 p-3 rounded-xl border cursor-pointer transition-all ${
+                      formData.options.projectVariants === opt.val
+                        ? "border-primary bg-primary/5 text-primary font-bold"
+                        : "border-border hover:border-primary/40 text-text-muted"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="variants"
+                      className="accent-primary"
+                      checked={formData.options.projectVariants === opt.val}
+                      onChange={() => updateOptions({ projectVariants: opt.val as any })}
+                    />
+                    <span className="text-xs">{opt.label}</span>
+                  </label>
+                ))}
+              </div>
             </div>
-          )}
+
+            {formData.options.projectVariants === "3 versions" && (
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-primary">Specify the 3 target roles to tailor for:</label>
+                {(() => {
+                  const branch = formData.personal.branch;
+                  const suggestions: Record<string, string[]> = {
+                    "CSE": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Mobile App Developer", "Cloud Engineer", "Site Reliability Engineer (SRE)", "Machine Learning Engineer", "Security Engineer", "QA Engineer", "Database Administrator", "Product Manager", "Business Analyst", "UX/UI Designer"],
+                    "IT": ["Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "DevOps Engineer", "Cloud Engineer", "Network Engineer", "IT Consultant", "Systems Analyst", "Database Administrator", "Information Security Analyst", "Cloud Architect", "QA Engineer", "Scrum Master", "Product Manager"],
+                    "AI & DS": ["Data Scientist", "Machine Learning Engineer", "AI Researcher", "Data Analyst", "Data Engineer", "NLP Engineer", "Computer Vision Engineer", "MLOps Engineer", "Business Intelligence Analyst", "Big Data Engineer", "AI Product Manager", "Deep Learning Engineer", "Robotics Engineer"],
+                    "Cyber Security": ["Security Analyst", "Penetration Tester", "Security Engineer", "Ethical Hacker", "Information Security Consultant", "Cyber Security Architect", "Incident Responder", "Cloud Security Engineer", "SOC Analyst", "Cryptographer", "Forensics Investigator", "Vulnerability Assessor", "IAM Engineer"],
+                    "ECE": ["Embedded Software Engineer", "VLSI Design Engineer", "Hardware Engineer", "Network Engineer", "Systems Engineer", "Software Engineer", "Telecommunications Engineer", "RF Engineer", "IoT Engineer", "FPGA Engineer", "Application Engineer", "Hardware Verification Engineer", "Field Engineer", "Firmware Engineer"],
+                    "EEE": ["Electrical Engineer", "Power Systems Engineer", "Control Systems Engineer", "Electronics Engineer", "Software Engineer", "Renewable Energy Engineer", "Grid Engineer", "Automation Engineer", "Instrumentation Engineer", "Test Engineer", "Project Engineer", "Robotics Engineer", "Design Engineer"],
+                    "Mechanical": ["Mechanical Engineer", "Design Engineer", "Manufacturing Engineer", "Thermal Engineer", "Automotive Engineer", "HVAC Engineer", "CAD Designer", "Production Engineer", "Quality Engineer", "Supply Chain Analyst", "Robotics Engineer", "Mechatronics Engineer", "Piping Engineer", "Aerospace Engineer"],
+                    "Civil": ["Civil Engineer", "Structural Engineer", "Construction Manager", "Geotechnical Engineer", "Transportation Engineer", "Environmental Engineer", "Urban Planner", "Water Resources Engineer", "Surveying Engineer", "Site Engineer", "CAD Technician", "Estimator", "BIM Engineer"],
+                    "Chemical": ["Chemical Engineer", "Process Engineer", "Process Design Engineer", "Production Engineer", "R&D Engineer", "Quality Control Engineer", "Plant Engineer", "Biochemical Engineer", "Materials Engineer", "Safety Engineer", "Petrochemical Engineer", "Energy Engineer"],
+                    "Biotechnology": ["Biotechnologist", "Bioinformatics Scientist", "Research Associate", "Clinical Research Associate", "Biomedical Engineer", "Bioprocess Engineer", "Geneticist", "Pharmaceutical Engineer", "Quality Assurance Specialist", "Data Analyst", "Microbiologist", "Regulatory Affairs Specialist"],
+                    "Aerospace": ["Aerospace Engineer", "Aerodynamics Engineer", "Propulsion Engineer", "Avionics Engineer", "Flight Test Engineer", "Spacecraft Engineer", "Systems Engineer", "Stress Engineer", "Materials Engineer", "Aircraft Designer", "Quality Engineer", "UAV Engineer"],
+                  };
+                  const rolesList = suggestions[branch] || ["Software Engineer", "Data Analyst", "Product Manager", "Business Analyst", "System Analyst", "Consultant"];
+                  const currentRoles = formData.options.targetRoles || ["", "", ""];
+
+                  return (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      {[0, 1, 2].map((i) => (
+                        <div key={i} className="relative">
+                          <select
+                            className="w-full px-3 py-2 border border-border/50 rounded-lg bg-bg-base focus:ring-1 focus:ring-primary focus:border-transparent outline-none text-xs font-medium appearance-none pr-8 cursor-pointer"
+                            value={currentRoles[i] || ""}
+                            onChange={(e) => {
+                              const newRoles = [...currentRoles];
+                              newRoles[i] = e.target.value;
+                              updateOptions({ targetRoles: newRoles });
+                            }}
+                          >
+                            <option value="" disabled>Role {i + 1}</option>
+                            {rolesList.map(role => {
+                              const isDuplicate = currentRoles.includes(role) && currentRoles[i] !== role;
+                              return (
+                                <option key={role} value={role} disabled={isDuplicate}>
+                                  {role} {isDuplicate ? "(Already Selected)" : ""}
+                                </option>
+                              );
+                            })}
+                          </select>
+                          <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+                {validationErrors.targetRoles && (
+                  <p className="text-xs text-error font-semibold mt-1">{validationErrors.targetRoles}</p>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
