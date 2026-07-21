@@ -103,13 +103,31 @@ export default function CoverLetterModal({
   };
 
   const handlePrint = () => {
+    const docNode = document.getElementById("cover-letter-document");
+    if (!docNode) return;
+
+    let printTarget = document.getElementById("cover-letter-print-target");
+    if (printTarget) {
+      printTarget.remove();
+    }
+
+    printTarget = document.createElement("div");
+    printTarget.id = "cover-letter-print-target";
+    printTarget.innerHTML = docNode.outerHTML;
+    document.body.appendChild(printTarget);
     document.body.classList.add("printing-cover-letter");
+
     const originalTitle = document.title;
     document.title = "";
+
     window.print();
+
     setTimeout(() => {
       document.title = originalTitle;
       document.body.classList.remove("printing-cover-letter");
+      if (printTarget) {
+        printTarget.remove();
+      }
     }, 500);
   };
 
