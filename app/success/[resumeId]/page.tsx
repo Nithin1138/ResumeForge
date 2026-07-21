@@ -564,7 +564,14 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
           </span>
         </div>
         
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3 sm:space-x-4">
+          <button
+            onClick={() => setCoverLetterModalOpen(true)}
+            className="px-4 py-2 bg-gradient-to-r from-primary via-emerald-600 to-primary hover:opacity-95 text-white font-extrabold text-xs rounded-full flex items-center space-x-1.5 shadow-md hover:shadow-lg hover:scale-105 transition-all cursor-pointer ring-2 ring-primary/40"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+            <span>✨ Build Cover Letter</span>
+          </button>
           {session && (
             <Link href="/dashboard" className="text-xs font-bold text-primary hover:underline">
               Dashboard
