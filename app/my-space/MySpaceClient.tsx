@@ -33,6 +33,7 @@ import {
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoutButton } from "@/components/DashboardActions";
 import HeaderWalletBadge from "@/components/HeaderWalletBadge";
+import AppLayout from "@/components/AppLayout";
 
 interface ProjectItem {
   id: string;
@@ -381,31 +382,8 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   };
 
   return (
-    <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans">
-      {/* Header Navbar */}
-      <header className="glass-panel border-b border-border/40 max-md:px-4 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <Link href="/dashboard" className="flex items-center space-x-2 text-text-muted hover:text-text transition-colors text-xs font-bold mr-2">
-            <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Back to Dashboard</span>
-          </Link>
-          <div className="h-4 w-px bg-border/60 max-sm:hidden" />
-          <Link href="/" className="flex items-center space-x-2">
-            <img src="/logo.png" alt="ATSLift Logo" className="w-7 h-7 rounded-md object-contain logo-rotated" />
-            <span className="font-bold text-base tracking-tight text-text">
-              ATS<span className="text-primary font-medium font-serif italic">Lift</span>
-            </span>
-          </Link>
-        </div>
-
-        <div className="flex items-center space-x-3">
-          <HeaderWalletBadge />
-          <ThemeToggle />
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-5xl mx-auto w-full px-4 md:px-6 py-6 md:py-10 space-y-8 flex-1">
+    <AppLayout>
+      <div className="space-y-8">
         
         {/* Title Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/40 pb-6">
@@ -1215,7 +1193,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           </div>
         )}
 
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 }

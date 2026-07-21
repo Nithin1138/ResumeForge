@@ -8,6 +8,7 @@ import { LogoutButton, DeleteButton, EditTitle, CoverLetterButton, DeleteCoverLe
 import { ThemeToggle } from "@/components/theme-toggle";
 import WalletCard from "@/components/WalletCard";
 import HeaderWalletBadge from "@/components/HeaderWalletBadge";
+import AppLayout from "@/components/AppLayout";
 
 export const dynamic = "force-dynamic";
 
@@ -53,30 +54,8 @@ export default async function DashboardPage() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans relative">
-      {/* Top Navbar */}
-      <header className="glass-panel border-b border-border/40 max-md:px-4 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Link href="/" className="flex items-center justify-center">
-            <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
-          </Link>
-          <span className="font-bold text-lg tracking-tight text-text">
-            ATS<span className="text-primary font-medium font-serif italic">Lift</span>
-          </span>
-        </div>
-
-        <div className="flex items-center space-x-2.5 sm:space-x-3">
-          <HeaderWalletBadge />
-          <Link href="/my-space" className="px-3.5 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-primary text-xs font-bold hover:bg-primary/20 transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs" title="My Space Vault & AI Assistant">
-            <Database className="w-3.5 h-3.5" />
-            <span>My Space</span>
-          </Link>
-          <ThemeToggle />
-        </div>
-      </header>
-
-      {/* Main Panel Content */}
-      <main className="max-w-5xl mx-auto w-full px-4 md:px-6 py-6 md:py-10 space-y-8 flex-1">
+    <AppLayout>
+      <div className="space-y-8">
         
         {/* Header Block: Cover Letter Button directly to the left of Build New Resume */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -318,38 +297,7 @@ export default async function DashboardPage() {
             </div>
           </div>
         )}
-      </main>
-
-      {/* Left Bottom User Profile Badge */}
-      <div className="fixed bottom-6 left-6 z-40">
-        <Link
-          href="/profile"
-          className="bg-surface/95 backdrop-blur-md border border-border/80 hover:border-primary/50 rounded-2xl px-4 py-2.5 flex items-center space-x-3 shadow-lg hover:shadow-xl transition-all group cursor-pointer"
-          title="View & Manage Profile"
-        >
-          <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs tracking-widest overflow-hidden shrink-0 group-hover:scale-105 transition-transform">
-            {session.user.image ? (
-              <img src={session.user.image} alt={user.name || "User"} className="w-full h-full object-cover" />
-            ) : (
-              (user.name || session.user.email || "U").charAt(0).toUpperCase()
-            )}
-          </div>
-          <div className="text-left pr-1">
-            <div className="text-xs font-bold text-text group-hover:text-primary transition-colors flex items-center space-x-1">
-              <span>{user.name || session.user.email?.split("@")[0]}</span>
-            </div>
-            <div className="text-[10px] text-text-muted font-semibold">{session.user.email}</div>
-          </div>
-        </Link>
       </div>
-
-      {/* Mobile FAB */}
-      <Link
-        href="/build"
-        className="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(1,105,111,0.4)] z-50 hover:scale-105 active:scale-95 transition-transform"
-      >
-        <Plus className="w-6 h-6" />
-      </Link>
-    </div>
+    </AppLayout>
   );
 }
