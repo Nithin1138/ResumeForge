@@ -814,6 +814,77 @@ export function TemplatePreviewWireframe({ tmpl }: { tmpl: TemplateDefinition })
     }
 
     if (secKey === "skills" && p.skills?.length) {
+      // 1. Categorized format with bold labels (for skills_first, developer_portfolio, photo_creative_tech, photo_academic)
+      if (tmpl.id === "skills_first" || tmpl.id === "developer_portfolio" || tmpl.id === "photo_creative_tech" || tmpl.id === "photo_academic") {
+        const mid = Math.ceil(p.skills.length / 2);
+        const group1 = p.skills.slice(0, mid);
+        const group2 = p.skills.slice(mid);
+        return (
+          <div key={secKey} className="space-y-1">
+            <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+            <div className="space-y-0.5 text-[6.5px]">
+              <div>
+                <span className="font-bold text-zinc-900">Languages & Tools: </span>
+                <span className="text-zinc-600">{group1.join(", ")}</span>
+              </div>
+              {group2.length > 0 && (
+                <div>
+                  <span className="font-bold text-zinc-900">Frameworks & Methodologies: </span>
+                  <span className="text-zinc-600">{group2.join(", ")}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      // 2. Vertical 2-Column Bullet Grid (for recruiter_scan, photo_side_panel, impact_focused)
+      if (tmpl.id === "recruiter_scan" || tmpl.id === "photo_side_panel" || tmpl.id === "impact_focused") {
+        return (
+          <div key={secKey} className="space-y-0.5">
+            <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+            <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[6.5px] text-zinc-700">
+              {p.skills.map((sk, idx) => (
+                <span key={idx} className="truncate">• {sk}</span>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      // 3. Comma-Separated Clean Flow (for academic_premium, photo_split_hero, modern_minimal)
+      if (tmpl.id === "academic_premium" || tmpl.id === "photo_split_hero" || tmpl.id === "modern_minimal") {
+        return (
+          <div key={secKey} className="space-y-0.5">
+            <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+            <p className="text-[6.5px] text-zinc-700 font-normal leading-relaxed">
+              {p.skills.join(", ")}
+            </p>
+          </div>
+        );
+      }
+
+      // 4. Two-Column Compact Block (for one_page_dense, global_professional, photo_corporate)
+      if (tmpl.id === "one_page_dense" || tmpl.id === "global_professional" || tmpl.id === "photo_corporate") {
+        const mid = Math.ceil(p.skills.length / 2);
+        return (
+          <div key={secKey} className="space-y-0.5">
+            <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>
+            <div className="flex justify-between text-[6.5px]">
+              <div className="w-[48%] space-y-0.5">
+                <span className="font-bold text-zinc-900 block">Core Competencies:</span>
+                <p className="text-zinc-600 truncate">{p.skills.slice(0, mid).join(", ")}</p>
+              </div>
+              <div className="w-[48%] space-y-0.5">
+                <span className="font-bold text-zinc-900 block">Tools & Tech:</span>
+                <p className="text-zinc-600 truncate">{p.skills.slice(mid).join(", ")}</p>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // 5. Default Dot-Separated Line (`•`) for modern (Classic ATS) and executive photo templates
       return (
         <div key={secKey} className="space-y-0.5">
           <h3 className="text-[7.5px] font-extrabold uppercase tracking-wider border-b border-zinc-200 pb-0.5" style={{ color: accent }}>{secLabel}</h3>

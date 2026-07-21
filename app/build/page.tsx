@@ -2308,6 +2308,8 @@ export default function BuildPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTemplates.map((tmpl) => {
               const isSelected = (formData.options.templateId || "modern") === tmpl.id;
+              const isAutoCard = tmpl.isAutoSelect;
+
               return (
                 <div
                   key={tmpl.id}
@@ -2317,12 +2319,23 @@ export default function BuildPage() {
                       hasPhoto: tmpl.supportsPhoto ? true : false
                     });
                   }}
-                  className={`border rounded-2xl p-4 cursor-pointer transition-all relative flex flex-col justify-between space-y-3 bg-surface ${
-                    isSelected
-                      ? "border-primary ring-2 ring-primary/30 shadow-md"
-                      : "border-border hover:border-primary/50 hover:shadow-xs"
+                  className={`border rounded-2xl p-4 cursor-pointer transition-all relative flex flex-col justify-between space-y-3 ${
+                    isAutoCard
+                      ? isSelected
+                        ? "bg-surface border-primary ring-2 ring-primary/40 shadow-lg"
+                        : "bg-surface border-primary/60 hover:border-primary shadow-xs hover:shadow-md"
+                      : isSelected
+                      ? "bg-surface border-primary ring-2 ring-primary/30 shadow-md"
+                      : "bg-surface border-border hover:border-primary/50 hover:shadow-xs"
                   }`}
                 >
+                  {/* Top Auto-Select Banner */}
+                  {isAutoCard && (
+                    <div className="absolute -top-3 left-4 right-4 bg-gradient-to-r from-primary via-primary/90 to-accent text-white text-[10px] font-extrabold px-3 py-1 rounded-full text-center shadow-xs flex items-center justify-center gap-1 z-10 tracking-wide uppercase">
+                      <span>✨ TRUST ATSLIFT AUTO-SELECT (BEST CHOICE)</span>
+                    </div>
+                  )}
+
                   {/* Selected check badge */}
                   {isSelected && (
                     <div className="absolute top-2.5 right-2.5 bg-primary text-white p-1 rounded-full shadow-md z-10">
@@ -2331,7 +2344,9 @@ export default function BuildPage() {
                   )}
 
                   {/* A4 Aspect Ratio Document Wireframe Preview */}
-                  <TemplatePreviewWireframe tmpl={tmpl} />
+                  <div className={isAutoCard ? "mt-2" : ""}>
+                    <TemplatePreviewWireframe tmpl={tmpl} />
+                  </div>
 
                   {/* Title & Description */}
                   <div className="px-0.5 space-y-1.5">
@@ -2339,7 +2354,9 @@ export default function BuildPage() {
                       <h4 className={`text-sm font-bold transition-colors ${isSelected ? "text-primary" : "text-text"}`}>
                         {tmpl.name}
                       </h4>
-                      <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-primary/10 text-primary shrink-0">
+                      <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full shrink-0 ${
+                        isAutoCard ? "bg-primary text-white" : "bg-primary/10 text-primary"
+                      }`}>
                         {tmpl.tag}
                       </span>
                     </div>
