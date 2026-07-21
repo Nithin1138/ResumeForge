@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import TagSelector from "@/components/TagSelector";
+import CreateTagButton from "@/components/CreateTagButton";
 import { CustomTag, getCustomTags } from "@/lib/userTags";
 import { DeleteCoverLetterButton, ViewCoverLetterOutputButton, CoverLetterButton } from "@/components/DashboardActions";
 
@@ -152,6 +153,8 @@ export default function MyCoverLettersClient({ initialLetters }: { initialLetter
                 <span>{cat.name}</span>
               </button>
             ))}
+
+            <CreateTagButton onTagCreated={handleTagsChanged} />
           </div>
         </div>
 

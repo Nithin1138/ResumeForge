@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import TagSelector from "@/components/TagSelector";
+import CreateTagButton from "@/components/CreateTagButton";
 import { CustomTag, getCustomTags } from "@/lib/userTags";
 import { EditTitle, DeleteButton } from "@/components/DashboardActions";
 
@@ -159,6 +160,8 @@ export default function MyResumesClient({ initialResumes }: { initialResumes: Re
                 <span>{cat.name}</span>
               </button>
             ))}
+
+            <CreateTagButton onTagCreated={handleTagsChanged} />
           </div>
         </div>
 
