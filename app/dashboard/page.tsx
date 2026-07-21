@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, Layout, Mail, User } from "lucide-react";
+import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, Layout, Mail, User, Database, Bot, ArrowRight } from "lucide-react";
 import { LogoutButton, DeleteButton, EditTitle, CoverLetterButton } from "@/components/DashboardActions";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -62,6 +62,10 @@ export default async function DashboardPage() {
         </div>
 
         <div className="flex items-center space-x-3">
+          <Link href="/my-space" className="px-3.5 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-primary text-xs font-bold hover:bg-primary/20 transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs" title="My Space Vault & AI Assistant">
+            <Database className="w-3.5 h-3.5" />
+            <span>My Space</span>
+          </Link>
           <Link href="/profile" className="hidden md:flex items-center space-x-2 text-right group cursor-pointer">
             <div>
               <div className="text-sm font-bold text-text group-hover:text-primary transition-colors">{user.name || session.user.email?.split("@")[0]}</div>
@@ -108,6 +112,46 @@ export default async function DashboardPage() {
               <Plus className="w-4 h-4" />
               <span>Build New Resume</span>
             </Link>
+          </div>
+        </div>
+
+        {/* MY SPACE & AI COPILOT HERO BANNER CARD */}
+        <div className="bg-gradient-to-r from-primary/10 via-surface to-surface border border-primary/20 rounded-3xl p-6 md:p-8 space-y-4 shadow-xs relative overflow-hidden">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div className="space-y-2 max-w-xl">
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-primary/20 text-primary uppercase tracking-wider">
+                  New Feature
+                </span>
+                <span className="text-xs text-text-muted font-bold flex items-center space-x-1">
+                  <Database className="w-3.5 h-3.5 text-primary" />
+                  <span>Personal Data Vault & AI Copilot</span>
+                </span>
+              </div>
+              <h2 className="font-serif font-bold text-2xl text-text">
+                My Space & Application Answer Assistant
+              </h2>
+              <p className="text-xs text-text-muted font-medium leading-relaxed">
+                All your college details, CGPA, projects, and skills are stored in your private vault. Company asking additional application questions? Ask our AI assistant right here—it answers instantly using your real profile.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <Link
+                href="/my-space"
+                className="px-5 py-3 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center space-x-2 transition-all shadow-xs cursor-pointer"
+              >
+                <Database className="w-4 h-4" />
+                <span>Open My Space Vault</span>
+              </Link>
+              <Link
+                href="/my-space?tab=copilot"
+                className="px-5 py-3 bg-surface border border-primary/40 text-primary hover:bg-primary/5 text-xs font-bold rounded-full inline-flex items-center space-x-2 transition-all cursor-pointer"
+              >
+                <Bot className="w-4 h-4" />
+                <span>Ask AI Assistant</span>
+              </Link>
+            </div>
           </div>
         </div>
 

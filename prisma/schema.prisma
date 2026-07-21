@@ -44,6 +44,7 @@ model User {
   sessions      Session[]
   resumes       Resume[]
   coverLetters  CoverLetter[]
+  masterProfile MasterProfile?
   createdAt     DateTime  @default(now())
 }
 
@@ -282,4 +283,30 @@ model CoverLetter {
 
   @@index([userId])
   @@index([resumeId])
+}
+
+model MasterProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fullName           String?
+  phone              String?
+  location           String?
+  college            String?
+  branch             String?
+  cgpa               String?
+  graduationYear     String?
+  summary            String?  @db.Text
+
+  skillsJson         String   @default("[]")
+  projectsJson       String   @default("[]")
+  experiencesJson    String   @default("[]")
+  certificationsJson String   @default("[]")
+  customNotes        String?  @db.Text
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([userId])
 }
