@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Sparkles, Copy, Check, Printer, Loader2, Building2, Briefcase, Sliders, FileText, User, GraduationCap, ChevronDown, ChevronUp, ArrowRight, MapPin } from "lucide-react";
+import { X, Sparkles, Copy, Check, Printer, Loader2, Building2, Briefcase, Sliders, FileText, User, GraduationCap, ChevronDown, ChevronUp, ArrowRight, MapPin, ArrowLeft } from "lucide-react";
 import CoverLetterPreview, { CoverLetterData } from "./CoverLetterPreview";
 
 interface CoverLetterModalProps {
@@ -203,19 +203,71 @@ export default function CoverLetterModal({
     }, 150);
   };
 
+  if (!isOpen) return null;
+
+  if (readOnly) {
+    return (
+      <div className="fixed inset-0 bg-[#525659] z-50 overflow-y-auto flex flex-col items-center animate-fade-in font-sans">
+        {/* PDF Reader Top Control Bar */}
+        <div className="w-full bg-[#323639] border-b border-[#202124] text-white px-4 py-3 flex items-center justify-between sticky top-0 z-50 shadow-md">
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={onClose}
+              className="px-3 py-1.5 rounded-md bg-[#202124] hover:bg-[#4a4d51] text-xs font-bold transition-colors flex items-center space-x-1.5 text-gray-200 cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back</span>
+            </button>
+            <span className="text-xs font-semibold text-gray-300 hidden sm:inline-block">
+              {companyName ? `${companyName} — Cover Letter.pdf` : "Cover_Letter_Document.pdf"}
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleCopyText}
+              disabled={!coverLetter}
+              className="px-3.5 py-1.5 rounded-md bg-[#202124] hover:bg-[#4a4d51] text-xs font-bold text-gray-200 transition-colors flex items-center space-x-1.5 cursor-pointer disabled:opacity-40"
+            >
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copied ? "Copied" : "Copy Text"}</span>
+            </button>
+
+            <button
+              onClick={handlePrint}
+              disabled={!coverLetter}
+              className="px-4 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors flex items-center space-x-1.5 cursor-pointer shadow-sm disabled:opacity-40"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>Download PDF</span>
+            </button>
+
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-md hover:bg-[#4a4d51] text-gray-400 hover:text-white transition-colors cursor-pointer ml-1"
+              title="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Realistic PDF Paper Canvas */}
+        <div className="w-full flex-1 py-8 px-2 sm:px-4 flex items-center justify-center">
+          <div className="w-full max-w-[800px] bg-white text-black shadow-2xl rounded-xs overflow-hidden border border-gray-300 min-h-[1000px] p-8 sm:p-12 md:p-16 transition-all">
+            <CoverLetterPreview
+              data={coverLetter}
+              isLoading={isGenerating}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 md:p-6 z-50 animate-fade-in overflow-y-auto">
-      <div className={`bg-surface border border-border/80 rounded-2xl w-full ${readOnly ? "max-w-3xl" : "max-w-5xl"} max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto relative`}>
-        {/* Close button for readOnly mode */}
-        {readOnly && (
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-full bg-surface hover:bg-bg-base border border-border text-text-muted hover:text-text transition-all cursor-pointer z-50 shadow-md"
-            title="Close Preview"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
+      <div className="bg-surface border border-border/80 rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto relative">
 
         {/* Header Bar */}
         {!readOnly && (
