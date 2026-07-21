@@ -57,8 +57,7 @@ export default async function DashboardPage() {
           </span>
         </div>
 
-        <div className="flex items-center space-x-3 sm:space-x-4">
-          <CoverLetterButton variant="navbar" className="hidden sm:inline-flex" />
+        <div className="flex items-center space-x-4">
           <div className="hidden md:block text-right">
             <div className="text-sm font-bold text-text">{user.name || session.user.email?.split("@")[0]}</div>
             <div className="text-[10px] text-text-muted font-semibold">{session.user.email}</div>
@@ -78,7 +77,7 @@ export default async function DashboardPage() {
       {/* Main Panel Content */}
       <main className="max-w-5xl mx-auto w-full px-4 md:px-6 py-6 md:py-10 space-y-8 flex-1">
         
-        {/* Header Block */}
+        {/* Header Block with Cover Letter Button to the Left of Build New Resume */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-3xl font-serif tracking-tight text-text flex items-center gap-2">
@@ -89,11 +88,13 @@ export default async function DashboardPage() {
               Manage your engineering resume outputs, check ATS score statistics, and run modifications.
             </p>
           </div>
-          <div className="flex items-center gap-2.5 max-md:w-full">
-            <CoverLetterButton variant="header" className="max-md:flex-1" />
+          
+          {/* Action Buttons: Cover Letter at LEFT of Build New Resume */}
+          <div className="flex items-center gap-3">
+            <CoverLetterButton variant="header" />
             <Link
               href="/build"
-              className="max-md:hidden px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer shrink-0"
+              className="px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer shrink-0"
             >
               <Plus className="w-4 h-4" />
               <span>Build New Resume</span>
@@ -144,10 +145,8 @@ export default async function DashboardPage() {
               {resumes.map((resumeItem) => {
                 const isPaid = resumeItem.paymentStatus === "PAID";
                 let atsScore = 85;
-                let parsedInputData = null;
                 try {
                   if (resumeItem.outputFull) { atsScore = JSON.parse(resumeItem.outputFull).atsScore || 85; }
-                  if (resumeItem.inputData) { parsedInputData = JSON.parse(resumeItem.inputData); }
                 } catch {}
                 const isGood = atsScore >= 80;
                 
@@ -187,11 +186,8 @@ export default async function DashboardPage() {
                     </div>
 
                     {/* Bottom Row: Actions */}
-                    <div className="flex flex-row items-center justify-between border-t border-border/30 mt-4 md:mt-6 pt-3 md:pt-4 gap-2.5">
-                      <div className="flex items-center gap-2">
-                        <DeleteButton id={resumeItem.id} />
-                        <CoverLetterButton variant="card" resumeId={resumeItem.id} inputData={parsedInputData} />
-                      </div>
+                    <div className="flex flex-row items-center justify-between border-t border-border/30 mt-4 md:mt-6 pt-3 md:pt-4 gap-4">
+                      <DeleteButton id={resumeItem.id} />
 
                       <Link
                         href={isPaid ? `/success/${resumeItem.id}?sandbox=true` : `/result/${resumeItem.id}`}
@@ -217,14 +213,14 @@ export default async function DashboardPage() {
               <p className="text-sm text-text-muted max-w-sm mx-auto mb-6 font-semibold">
                 You haven&apos;t generated any ATS resume content yet. Fill out details and optimize your profile in 2 minutes.
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <div className="flex items-center justify-center gap-3">
                 <CoverLetterButton variant="header" />
                 <Link
                   href="/build"
-                  className="max-md:w-full max-md:min-h-[44px] px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs"
+                  className="px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Start Building Resume</span>
+                  <span>Build New Resume</span>
                 </Link>
               </div>
             </div>
