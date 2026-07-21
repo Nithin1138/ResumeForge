@@ -887,7 +887,7 @@ export default function BuildPage() {
             <select
               className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
               value={formData.personal.ugDegree || ""}
-              onChange={(e) => updatePersonal({ ugDegree: e.target.value })}
+              onChange={(e) => updatePersonal({ ugDegree: e.target.value, branch: "" })}
             >
               <option value="">Select degree</option>
               <option value="B.E.">B.E. (Bachelor of Engineering)</option>
@@ -909,16 +909,98 @@ export default function BuildPage() {
               onChange={(e) => updatePersonal({ branch: e.target.value })}
             >
               <option value="">Select branch</option>
-              <option value="CSE">Computer Science &amp; Engineering (CSE)</option>
-              <option value="ECE">Electronics &amp; Communication Engineering (ECE)</option>
-              <option value="EEE">Electrical &amp; Electronics Engineering (EEE)</option>
-              <option value="IT">Information Technology (IT)</option>
-              <option value="Mechanical">Mechanical Engineering</option>
-              <option value="Civil">Civil Engineering</option>
-              <option value="Chemical">Chemical Engineering</option>
-              <option value="Biotechnology">Biotechnology</option>
-              <option value="Aerospace">Aerospace Engineering</option>
-              <option value="Other">Other Branch</option>
+              {((degree: string) => {
+                const map: Record<string, { label: string; value: string }[]> = {
+                  "B.E.": [
+                    { label: "Computer Science & Engineering (CSE)", value: "CSE" },
+                    { label: "Electronics & Communication Engineering (ECE)", value: "ECE" },
+                    { label: "Electrical & Electronics Engineering (EEE)", value: "EEE" },
+                    { label: "Information Technology (IT)", value: "IT" },
+                    { label: "Artificial Intelligence & Data Science (AI & DS)", value: "AI & DS" },
+                    { label: "Cyber Security", value: "Cyber Security" },
+                    { label: "Mechanical Engineering", value: "Mechanical" },
+                    { label: "Civil Engineering", value: "Civil" },
+                    { label: "Chemical Engineering", value: "Chemical" },
+                    { label: "Biotechnology", value: "Biotechnology" },
+                    { label: "Aerospace Engineering", value: "Aerospace" },
+                    { label: "Other Engineering Branch", value: "Other" },
+                  ],
+                  "B.Tech": [
+                    { label: "Computer Science & Engineering (CSE)", value: "CSE" },
+                    { label: "Electronics & Communication Engineering (ECE)", value: "ECE" },
+                    { label: "Electrical & Electronics Engineering (EEE)", value: "EEE" },
+                    { label: "Information Technology (IT)", value: "IT" },
+                    { label: "Artificial Intelligence & Data Science (AI & DS)", value: "AI & DS" },
+                    { label: "Cyber Security", value: "Cyber Security" },
+                    { label: "Mechanical Engineering", value: "Mechanical" },
+                    { label: "Civil Engineering", value: "Civil" },
+                    { label: "Chemical Engineering", value: "Chemical" },
+                    { label: "Biotechnology", value: "Biotechnology" },
+                    { label: "Aerospace Engineering", value: "Aerospace" },
+                    { label: "Other B.Tech Branch", value: "Other" },
+                  ],
+                  "B.Sc": [
+                    { label: "Computer Science / IT", value: "CSE" },
+                    { label: "Data Science & Analytics", value: "AI & DS" },
+                    { label: "Mathematics & Statistics", value: "Mathematics" },
+                    { label: "Physics", value: "Physics" },
+                    { label: "Chemistry", value: "Chemistry" },
+                    { label: "Biotechnology / Microbiology", value: "Biotechnology" },
+                    { label: "Electronics", value: "ECE" },
+                    { label: "Other B.Sc Stream", value: "Other" },
+                  ],
+                  "BCA": [
+                    { label: "General Computer Applications", value: "CSE" },
+                    { label: "Data Analytics & Data Science", value: "AI & DS" },
+                    { label: "Cloud Computing & Cyber Security", value: "Cyber Security" },
+                    { label: "Software Development & Web Technologies", value: "IT" },
+                    { label: "Other BCA Specialization", value: "Other" },
+                  ],
+                  "BBA": [
+                    { label: "General Management", value: "Management" },
+                    { label: "Finance & Accounting", value: "Finance" },
+                    { label: "Marketing & Sales", value: "Marketing" },
+                    { label: "Human Resources (HR)", value: "HR" },
+                    { label: "Business Analytics / Digital Marketing", value: "Business Analytics" },
+                    { label: "International Business", value: "International Business" },
+                    { label: "Other BBA Stream", value: "Other" },
+                  ],
+                  "B.Com": [
+                    { label: "General Commerce", value: "Commerce" },
+                    { label: "Accounting & Finance", value: "Finance" },
+                    { label: "Computer Applications", value: "IT" },
+                    { label: "Banking & Insurance", value: "Banking" },
+                    { label: "Taxation & Auditing", value: "Taxation" },
+                    { label: "Other B.Com Stream", value: "Other" },
+                  ],
+                  "B.Arch": [
+                    { label: "General Architecture", value: "Architecture" },
+                    { label: "Interior Design", value: "Interior Design" },
+                    { label: "Landscape Architecture", value: "Landscape" },
+                    { label: "Urban Planning & Development", value: "Urban Planning" },
+                    { label: "Other Architecture Stream", value: "Other" },
+                  ],
+                };
+                const options = map[degree] || [
+                  { label: "Computer Science & Engineering (CSE)", value: "CSE" },
+                  { label: "Electronics & Communication Engineering (ECE)", value: "ECE" },
+                  { label: "Electrical & Electronics Engineering (EEE)", value: "EEE" },
+                  { label: "Information Technology (IT)", value: "IT" },
+                  { label: "Artificial Intelligence & Data Science (AI & DS)", value: "AI & DS" },
+                  { label: "Cyber Security", value: "Cyber Security" },
+                  { label: "Mechanical Engineering", value: "Mechanical" },
+                  { label: "Civil Engineering", value: "Civil" },
+                  { label: "Chemical Engineering", value: "Chemical" },
+                  { label: "Biotechnology", value: "Biotechnology" },
+                  { label: "Aerospace Engineering", value: "Aerospace" },
+                  { label: "Other Branch", value: "Other" },
+                ];
+                return options.map((opt) => (
+                  <option key={opt.label} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ));
+              })(formData.personal.ugDegree || "")}
             </select>
             {validationErrors.branch && <p className="text-xs text-error mt-1 font-semibold">{validationErrors.branch}</p>}
           </div>
