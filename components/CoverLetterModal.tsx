@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Sparkles, Copy, Check, Printer, Loader2, Building2, Briefcase, Sliders, FileText, User, GraduationCap, ChevronDown, ChevronUp, ArrowRight, MapPin, ArrowLeft } from "lucide-react";
 import CoverLetterPreview, { CoverLetterData } from "./CoverLetterPreview";
 
@@ -55,11 +56,15 @@ export default function CoverLetterModal({
   const [tone, setTone] = useState("Professional & Executive");
   const [jobDescription, setJobDescription] = useState("");
   
-  // Accordion Step State (By default: Section 1 is open)
   const [activeAccordion, setActiveAccordion] = useState<number>(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [coverLetter, setCoverLetter] = useState<CoverLetterData | null>(initialCoverLetter || null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -203,66 +208,71 @@ export default function CoverLetterModal({
     }, 150);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   if (readOnly) {
-    return (
-      <div className="fixed inset-0 bg-[#525659] z-50 overflow-y-auto flex flex-col items-center py-6 sm:py-10 px-2 sm:px-4 animate-fade-in font-sans relative">
-        {/* Floating Action Controls Header/Pill */}
-        <div className="fixed top-4 right-4 sm:right-6 z-50 flex items-center space-x-2 bg-[#202124]/90 backdrop-blur-md p-1.5 rounded-full border border-white/10 shadow-2xl">
-          <button
-            onClick={handleCopyText}
-            disabled={!coverLetter}
-            className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-40"
-          >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-            <span className="hidden sm:inline">{copied ? "Copied" : "Copy Text"}</span>
-          </button>
+    return createPortal(
+      <div className="fixed inset-0 bg-black/75 backdrop-blur-xs z-[9999] overflow-y-auto flex items-center justify-center p-3 sm:p-6 animate-fade-in font-sans">
+        <div className="bg-[#525659] border border-white/15 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto relative">
+          
+          {/* Header Bar inside Window */}
+          <div className="w-full bg-[#323639] border-b border-[#202124] text-white px-4 py-3 flex items-center justify-between shrink-0 shadow-md">
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={onClose}
+                className="px-3.5 py-1.5 rounded-full bg-[#202124] hover:bg-[#4a4d51] text-xs font-bold transition-all flex items-center space-x-1.5 text-gray-200 cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+            </div>
 
-          <button
-            onClick={handlePrint}
-            disabled={!coverLetter}
-            className="px-4 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-md disabled:opacity-40"
-          >
-            <Printer className="w-3.5 h-3.5" />
-            <span>Download PDF</span>
-          </button>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={handleCopyText}
+                disabled={!coverLetter}
+                className="px-3.5 py-1.5 rounded-full bg-[#202124] hover:bg-[#4a4d51] text-xs font-bold text-gray-200 transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-40"
+              >
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span className="hidden sm:inline">{copied ? "Copied" : "Copy Text"}</span>
+              </button>
 
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-all cursor-pointer"
-            title="Close Preview"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
+              <button
+                onClick={handlePrint}
+                disabled={!coverLetter}
+                className="px-4 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-md disabled:opacity-40"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Download PDF</span>
+              </button>
 
-        {/* Floating Back Button (Top Left) */}
-        <div className="fixed top-4 left-4 sm:left-6 z-50">
-          <button
-            onClick={onClose}
-            className="px-3.5 py-1.5 rounded-full bg-[#202124]/90 backdrop-blur-md hover:bg-[#323639] text-xs font-bold text-gray-200 border border-white/10 shadow-2xl transition-all flex items-center space-x-1.5 cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back</span>
-          </button>
-        </div>
+              <button
+                onClick={onClose}
+                className="p-1.5 rounded-full hover:bg-[#4a4d51] text-gray-400 hover:text-white transition-all cursor-pointer ml-1"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
 
-        {/* Pure PDF Document Canvas - Exact replica of PDF Print View */}
-        <div className="w-full flex-1 flex items-center justify-center pt-8 pb-12">
-          <div className="w-full max-w-[800px] bg-white text-black shadow-2xl rounded-xs overflow-hidden border border-gray-300 min-h-[1050px] p-8 sm:p-12 md:p-16 transition-all my-auto">
-            <CoverLetterPreview
-              data={coverLetter}
-              isLoading={isGenerating}
-            />
+          {/* PDF Paper View inside Window */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-8 flex items-center justify-center">
+            <div className="w-full max-w-[760px] bg-white text-black shadow-2xl rounded-xs overflow-hidden border border-gray-300 min-h-[900px] p-6 sm:p-10 md:p-14 my-auto">
+              <CoverLetterPreview
+                data={coverLetter}
+                isLoading={isGenerating}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </div>,
+      document.body
     );
   }
 
-  return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 md:p-6 z-50 animate-fade-in overflow-y-auto">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 md:p-6 z-[9999] animate-fade-in overflow-y-auto">
       <div className="bg-surface border border-border/80 rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto relative">
 
         {/* Header Bar */}
@@ -597,6 +607,7 @@ export default function CoverLetterModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
