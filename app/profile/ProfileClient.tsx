@@ -164,13 +164,6 @@ export default function ProfileClient({ initialUser }: { initialUser: UserProfil
 
         <div className="flex items-center space-x-3">
           <ThemeToggle />
-          <button
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            className="px-3.5 py-1.5 rounded-full border border-border/60 text-xs font-bold hover:bg-surface text-text-muted hover:text-text transition-all flex items-center space-x-1.5"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Sign Out</span>
-          </button>
         </div>
       </header>
 
@@ -219,13 +212,23 @@ export default function ProfileClient({ initialUser }: { initialUser: UserProfil
               </div>
             </div>
 
-            <Link
-              href="/dashboard"
-              className="px-5 py-2.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md shrink-0 cursor-pointer"
-            >
-              <Layout className="w-3.5 h-3.5" />
-              <span>Go to Dashboard</span>
-            </Link>
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0 w-full sm:w-auto">
+              <Link
+                href="/dashboard"
+                className="px-5 py-2.5 bg-surface border border-border hover:bg-bg-base text-text hover:text-primary text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-xs cursor-pointer"
+              >
+                <Layout className="w-3.5 h-3.5 text-primary" />
+                <span>Dashboard</span>
+              </Link>
+
+              <button
+                onClick={() => signOut({ callbackUrl: "/login" })}
+                className="px-5 py-2.5 bg-red-500/10 hover:bg-red-500/15 text-red-600 border border-red-500/25 hover:border-red-500/40 text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-xs cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign Out</span>
+              </button>
+            </div>
           </div>
         </div>
 

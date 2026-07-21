@@ -68,12 +68,7 @@ export default async function DashboardPage() {
             <Database className="w-3.5 h-3.5" />
             <span>My Space</span>
           </Link>
-          <Link href="/profile" className="px-3.5 py-1.5 rounded-full border border-border/60 text-xs font-bold hover:bg-surface text-text-muted hover:text-text transition-all flex items-center space-x-1.5 cursor-pointer" title="Profile">
-            <User className="w-3.5 h-3.5 text-primary" />
-            <span>Profile</span>
-          </Link>
           <ThemeToggle />
-          <LogoutButton />
         </div>
       </header>
 

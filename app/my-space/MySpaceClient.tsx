@@ -352,7 +352,6 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
         <div className="flex items-center space-x-3">
           <ThemeToggle />
-          <LogoutButton />
         </div>
       </header>
 
