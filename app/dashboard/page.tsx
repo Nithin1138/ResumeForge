@@ -75,8 +75,8 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      {/* Main Panel Content - Full Page Layout */}
-      <main className="w-full px-4 md:px-10 lg:px-14 py-8 space-y-8 flex-1">
+      {/* Main Panel Content */}
+      <main className="max-w-5xl mx-auto w-full px-4 md:px-6 py-6 md:py-10 space-y-8 flex-1">
         
         {/* Header Block: Cover Letter Button directly to the left of Build New Resume */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

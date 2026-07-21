@@ -350,8 +350,8 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         </div>
       </header>
 
-      {/* Main Content - Full Page Layout */}
-      <main className="w-full px-4 md:px-10 lg:px-14 py-8 space-y-8 flex-1">
+      {/* Main Content */}
+      <main className="max-w-5xl mx-auto w-full px-4 md:px-6 py-6 md:py-10 space-y-8 flex-1">
         
         {/* Title Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/40 pb-6">
