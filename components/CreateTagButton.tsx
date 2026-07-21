@@ -11,7 +11,7 @@ interface CreateTagButtonProps {
 
 export default function CreateTagButton({ onTagCreated }: CreateTagButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [tagName, setTagName] = useState("");
+  const [tagName, setTagName] = useState("New Tag");
   const [selectedPalette, setSelectedPalette] = useState("emerald");
   const [mounted, setMounted] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -38,7 +38,7 @@ export default function CreateTagButton({ onTagCreated }: CreateTagButtonProps) 
 
     addCustomTag(tagName, selectedPalette);
     onTagCreated();
-    setTagName("");
+    setTagName("New Tag");
     setIsOpen(false);
   };
 
@@ -67,10 +67,11 @@ export default function CreateTagButton({ onTagCreated }: CreateTagButtonProps) 
             <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider block">Tag Name</label>
             <input
               type="text"
-              placeholder="e.g. Data Science, SWE, AI/ML..."
+              placeholder="Type tag name here..."
               value={tagName}
               onChange={(e) => setTagName(e.target.value)}
               autoFocus
+              onFocus={(e) => e.target.select()} // Auto-select "New Tag" on focus so user can overwrite it instantly
               className="w-full px-3.5 py-2.5 rounded-xl bg-bg-base border border-border text-xs text-text focus:outline-none focus:border-primary font-medium"
             />
           </div>
@@ -110,7 +111,10 @@ export default function CreateTagButton({ onTagCreated }: CreateTagButtonProps) 
     <>
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          setTagName("New Tag");
+          setIsOpen(true);
+        }}
         className="px-3.5 py-1.5 rounded-full border border-dashed border-primary/60 hover:border-primary bg-primary/10 hover:bg-primary/20 text-primary text-xs font-extrabold flex items-center space-x-1.5 transition-all cursor-pointer shadow-2xs shrink-0"
         title="Create a custom category tag"
       >

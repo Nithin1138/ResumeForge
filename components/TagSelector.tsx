@@ -60,7 +60,7 @@ export default function TagSelector({ currentTag, onSelectTag, onTagsChanged }: 
 
   const handleOpenCreate = () => {
     setEditingTagId(null);
-    setTagName("");
+    setTagName("New Tag");
     setSelectedPalette("emerald");
     setIsFormOpen(true);
   };
@@ -98,7 +98,7 @@ export default function TagSelector({ currentTag, onSelectTag, onTagsChanged }: 
 
     if (onTagsChanged) onTagsChanged();
     setIsFormOpen(false);
-    setTagName("");
+    setTagName("New Tag");
   };
 
   return (
@@ -162,10 +162,11 @@ export default function TagSelector({ currentTag, onSelectTag, onTagsChanged }: 
 
               <input
                 type="text"
-                placeholder="Tag Name (e.g. Data Science)"
+                placeholder="Type tag name here..."
                 value={tagName}
                 onChange={(e) => setTagName(e.target.value)}
                 autoFocus
+                onFocus={(e) => e.target.select()}
                 className="w-full px-2.5 py-1.5 rounded-lg bg-surface border border-border text-xs text-text focus:outline-none focus:border-primary font-medium"
               />
 
