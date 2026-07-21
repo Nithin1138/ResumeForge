@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Sparkles, Copy, Check, Printer, Loader2, Building2, Briefcase, Sliders, FileText, User, GraduationCap, ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
+import { X, Sparkles, Copy, Check, Printer, Loader2, Building2, Briefcase, Sliders, FileText, User, GraduationCap, ChevronDown, ChevronUp, ArrowRight, MapPin } from "lucide-react";
 import CoverLetterPreview, { CoverLetterData } from "./CoverLetterPreview";
 
 interface CoverLetterModalProps {
@@ -148,7 +148,7 @@ export default function CoverLetterModal({
           <div className="lg:col-span-5 p-4 sm:p-5 space-y-3 bg-surface/50 overflow-y-auto flex flex-col justify-between">
             <div className="space-y-3">
               
-              {/* SECTION 1: CANDIDATE PROFILE (Shown in Standalone Mode, or editable in Resume Mode) */}
+              {/* SECTION 1: CANDIDATE PROFILE (Shown in Standalone Mode) */}
               {isDirectMode && (
                 <div className="border border-border/80 rounded-xl bg-bg-base/70 overflow-hidden shadow-2xs">
                   <button
@@ -163,7 +163,7 @@ export default function CoverLetterModal({
                       <div>
                         <h4 className="text-xs font-extrabold text-text uppercase tracking-wider">Candidate Profile</h4>
                         <p className="text-[10px] text-text-muted font-medium">
-                          {candidateName} • {candidateCollege || "College Details"}
+                          {candidateName} • {candidateLocation || "Location"}
                         </p>
                       </div>
                     </div>
@@ -204,6 +204,20 @@ export default function CoverLetterModal({
                             className="w-full px-3 py-2 rounded-lg border border-border bg-bg-base text-xs focus:ring-1 focus:ring-primary outline-none"
                           />
                         </div>
+                      </div>
+
+                      {/* Location Input */}
+                      <div>
+                        <label className="block text-[11px] font-bold text-text-muted mb-1 flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-primary" /> Location / City
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Bengaluru, KA or New Delhi, India"
+                          value={candidateLocation}
+                          onChange={(e) => setCandidateLocation(e.target.value)}
+                          className="w-full px-3 py-2 rounded-lg border border-border bg-bg-base text-xs focus:ring-1 focus:ring-primary outline-none"
+                        />
                       </div>
 
                       <div className="grid grid-cols-2 gap-2">
@@ -394,9 +408,9 @@ export default function CoverLetterModal({
           </div>
 
           {/* Right Live Preview Panel */}
-          <div className="lg:col-span-7 p-4 sm:p-5 bg-bg-base flex flex-col justify-start items-center overflow-y-auto">
+          <div className="lg:col-span-7 p-4 sm:p-6 bg-bg-base flex flex-col justify-start items-center overflow-y-auto">
             {coverLetter ? (
-              <div className="w-full space-y-4 flex flex-col items-center">
+              <div className="w-full space-y-4 flex flex-col items-center max-w-xl">
                 <div className="w-full flex items-center justify-between gap-2 border-b border-border/40 pb-3 shrink-0">
                   <span className="text-xs font-bold text-text-muted">
                     Document Preview ({templateId} theme)
@@ -419,7 +433,7 @@ export default function CoverLetterModal({
                   </div>
                 </div>
 
-                <div className="w-full max-w-lg shadow-2xl rounded-lg overflow-hidden border border-border/40">
+                <div className="w-full shadow-2xl rounded-lg overflow-hidden border border-border/40">
                   <CoverLetterPreview
                     data={coverLetter}
                     candidateName={activeCandidateName}
