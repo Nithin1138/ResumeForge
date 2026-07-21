@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, Layout } from "lucide-react";
+import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, Layout, Mail } from "lucide-react";
 import { LogoutButton, DeleteButton, EditTitle, CoverLetterButton } from "@/components/DashboardActions";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -20,6 +20,9 @@ export default async function DashboardPage() {
       resumes: {
         orderBy: { createdAt: "desc" },
       },
+      coverLetters: {
+        orderBy: { createdAt: "desc" },
+      },
     },
   });
 
@@ -28,6 +31,7 @@ export default async function DashboardPage() {
   }
 
   const resumes = user.resumes;
+  const coverLetters = user.coverLetters || [];
 
   // Calculate quick stats
   const totalBuilt = resumes.length;
@@ -115,11 +119,11 @@ export default async function DashboardPage() {
 
           <div className="max-sm:min-w-[75vw] max-sm:snap-start bg-surface border border-border rounded-2xl p-6 flex items-center justify-between shadow-xs">
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Unlocked Portals</span>
-              <span className="text-3xl font-black font-sans text-text">{totalPaid}</span>
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Cover Letters Built</span>
+              <span className="text-3xl font-black font-sans text-text">{coverLetters.length}</span>
             </div>
-            <div className="w-10 h-10 rounded-full bg-success/10 border border-success/20 flex items-center justify-center text-success">
-              <CheckCircle2 className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+              <Mail className="w-5 h-5" />
             </div>
           </div>
 
@@ -225,6 +229,50 @@ export default async function DashboardPage() {
             </div>
           )}
         </div>
+
+        {/* Saved Cover Letters Section */}
+        {coverLetters.length > 0 && (
+          <div className="space-y-4 pt-4">
+            <h2 className="text-xs font-bold text-text-muted tracking-wider uppercase border-b border-border/40 pb-2">Your Saved Cover Letters</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+              {coverLetters.map((letter) => (
+                <div
+                  key={letter.id}
+                  className="bg-surface border border-border rounded-2xl p-4 md:p-6 flex flex-col justify-between hover:border-emerald-500/50 transition-all duration-300 shadow-xs"
+                >
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] text-text-muted font-bold flex items-center space-x-1">
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>{new Date(letter.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                      </span>
+                      <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-md border tracking-wider uppercase bg-emerald-500/15 border-emerald-500/30 text-emerald-600">
+                        {letter.tone || "Professional"}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="font-bold text-base md:text-lg text-text line-clamp-1">
+                        {letter.companyName} — {letter.targetRole}
+                      </h3>
+                      <p className="text-xs text-text-muted font-medium mt-1">
+                        Candidate: {letter.candidateName} • {letter.candidateLocation || "India"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-border/30 mt-4 pt-3 flex items-center justify-between">
+                    <span className="text-xs text-text-muted font-semibold italic">100% Free Generated</span>
+                    <CoverLetterButton
+                      variant="header"
+                      className="!px-4 !py-2 !text-xs"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Mobile FAB */}

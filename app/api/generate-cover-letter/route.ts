@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateLlmText, hasLlmConfigured } from "@/lib/llm";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -109,7 +111,46 @@ Return ONLY raw valid JSON matching the schema described. No markdown formatting
       coverLetterData = JSON.parse(cleanedText);
     }
 
-    return NextResponse.json({ success: true, coverLetter: coverLetterData });
+    // Auto-save to PostgreSQL database if user is logged in
+    let savedCoverLetter = null;
+    try {
+      const session = await getServerSession(authOptions);
+      if (session?.user?.email) {
+        const user = await prisma.user.findUnique({
+          where: { email: session.user.email },
+        });
+        if (user) {
+          savedCoverLetter = await prisma.coverLetter.create({
+            data: {
+              userId: user.id,
+              resumeId: resumeId || null,
+              companyName: company,
+              targetRole: candidateRole,
+              tone: selectedTone,
+              candidateName,
+              candidateEmail: personal.email || user.email || "aarav.sharma@tech.in",
+              candidatePhone: personal.phone || personal.candidatePhone || null,
+              candidateLocation: personal.location || personal.city || null,
+              recipient: coverLetterData.recipient || "Hiring Manager",
+              subject: coverLetterData.subject,
+              salutation: coverLetterData.salutation,
+              openingParagraph: coverLetterData.openingParagraph,
+              bodyParagraph: coverLetterData.bodyParagraph,
+              closingParagraph: coverLetterData.closingParagraph,
+              signOff: coverLetterData.signOff,
+            },
+          });
+        }
+      }
+    } catch (saveErr) {
+      console.warn("Cover Letter database save warning:", saveErr);
+    }
+
+    return NextResponse.json({
+      success: true,
+      coverLetter: coverLetterData,
+      savedId: savedCoverLetter?.id,
+    });
   } catch (error: any) {
     console.error("Cover Letter Generation Error:", error);
     return NextResponse.json(

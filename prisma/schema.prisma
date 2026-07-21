@@ -43,6 +43,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   resumes       Resume[]
+  coverLetters  CoverLetter[]
   createdAt     DateTime  @default(now())
 }
 
@@ -116,6 +117,7 @@ model Resume {
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  coverLetters  CoverLetter[]
 
   @@index([sessionId])
   @@index([paymentStatus])
@@ -248,4 +250,36 @@ model CampusInsight {
   viralityScore      Float    @default(0.0)
   activeSeason       String
   createdAt          DateTime @default(now())
+}
+
+
+model CoverLetter {
+  id                String   @id @default(cuid())
+  userId            String?
+  user              User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resumeId          String?
+  resume            Resume?  @relation(fields: [resumeId], references: [id], onDelete: SetNull)
+
+  companyName       String
+  targetRole        String
+  tone              String   @default("Professional & Executive")
+  
+  candidateName     String
+  candidateEmail    String
+  candidatePhone    String?
+  candidateLocation String?
+
+  recipient         String?  @default("Hiring Manager")
+  subject           String?
+  salutation        String?
+  openingParagraph  String   @db.Text
+  bodyParagraph     String   @db.Text
+  closingParagraph  String   @db.Text
+  signOff           String?  @default("Sincerely,")
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([userId])
+  @@index([resumeId])
 }
