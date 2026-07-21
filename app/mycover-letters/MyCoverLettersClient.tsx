@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   Mail, 
@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import TagSelector from "@/components/TagSelector";
+import { CustomTag, getCustomTags } from "@/lib/userTags";
 import { DeleteCoverLetterButton, ViewCoverLetterOutputButton, CoverLetterButton } from "@/components/DashboardActions";
 
 export interface CoverLetterItem {
@@ -50,6 +51,15 @@ export default function MyCoverLettersClient({ initialLetters }: { initialLetter
   const [letters, setLetters] = useState<CoverLetterItem[]>(initialLetters);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [customTags, setCustomTags] = useState<CustomTag[]>([]);
+
+  useEffect(() => {
+    setCustomTags(getCustomTags());
+  }, []);
+
+  const handleTagsChanged = () => {
+    setCustomTags(getCustomTags());
+  };
 
   const handleUpdateCategory = async (id: string, newTag: string) => {
     try {
@@ -75,7 +85,10 @@ export default function MyCoverLettersClient({ initialLetters }: { initialLetter
     const candidateMatch = (l.candidateName || "").toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesSearch = companyMatch || roleMatch || candidateMatch;
-    const matchesCategory = selectedCategory === "all" || (l.categoryTag || "blue") === selectedCategory;
+    const matchesCategory =
+      selectedCategory === "all" ||
+      l.categoryTag === selectedCategory ||
+      (customTags.find((t) => t.id === selectedCategory)?.name === l.categoryTag);
 
     return matchesSearch && matchesCategory;
   });
@@ -112,7 +125,19 @@ export default function MyCoverLettersClient({ initialLetters }: { initialLetter
           </div>
 
           <div className="flex items-center space-x-2 overflow-x-auto pb-1 sm:pb-0">
-            {CATEGORIES.map((cat) => (
+            <button
+              type="button"
+              onClick={() => setSelectedCategory("all")}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
+                selectedCategory === "all"
+                  ? "bg-primary text-white border-primary shadow-xs"
+                  : "bg-surface text-text-muted hover:text-text border-border"
+              }`}
+            >
+              <span>All Cover Letters</span>
+            </button>
+
+            {customTags.map((cat) => (
               <button
                 key={cat.id}
                 type="button"
@@ -123,8 +148,8 @@ export default function MyCoverLettersClient({ initialLetters }: { initialLetter
                     : "bg-surface text-text-muted hover:text-text border-border"
                 }`}
               >
-                {cat.dot && <span className={`w-2 h-2 rounded-full ${cat.dot}`} />}
-                <span>{cat.label}</span>
+                <span className={`w-2 h-2 rounded-full ${cat.dot}`} />
+                <span>{cat.name}</span>
               </button>
             ))}
           </div>
@@ -180,6 +205,7 @@ export default function MyCoverLettersClient({ initialLetters }: { initialLetter
                     <TagSelector
                       currentTag={letter.categoryTag}
                       onSelectTag={async (newTag) => handleUpdateCategory(letter.id, newTag || "")}
+                      onTagsChanged={handleTagsChanged}
                     />
                   </div>
 

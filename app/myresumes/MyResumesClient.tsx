@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   FileText, 
@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import TagSelector from "@/components/TagSelector";
+import { CustomTag, getCustomTags } from "@/lib/userTags";
 import { EditTitle, DeleteButton } from "@/components/DashboardActions";
 
 export interface ResumeItem {
@@ -47,10 +48,17 @@ export default function MyResumesClient({ initialResumes }: { initialResumes: Re
   const [resumes, setResumes] = useState<ResumeItem[]>(initialResumes);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [customTags, setCustomTags] = useState<CustomTag[]>([]);
+
+  useEffect(() => {
+    setCustomTags(getCustomTags());
+  }, []);
+
+  const handleTagsChanged = () => {
+    setCustomTags(getCustomTags());
+  };
 
   const handleUpdateCategory = async (id: string, newTag: string) => {
-    setUpdatingId(id);
     try {
       const res = await fetch(`/api/resume/${id}`, {
         method: "PATCH",
@@ -65,8 +73,6 @@ export default function MyResumesClient({ initialResumes }: { initialResumes: Re
       }
     } catch (e) {
       console.error("Failed to update resume category:", e);
-    } finally {
-      setUpdatingId(null);
     }
   };
 
@@ -78,7 +84,10 @@ export default function MyResumesClient({ initialResumes }: { initialResumes: Re
     const collegeMatch = (r.college || "").toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesSearch = titleMatch || branchMatch || collegeMatch;
-    const matchesCategory = selectedCategory === "all" || (r.categoryTag || "blue") === selectedCategory;
+    const matchesCategory =
+      selectedCategory === "all" ||
+      r.categoryTag === selectedCategory ||
+      (customTags.find((t) => t.id === selectedCategory)?.name === r.categoryTag);
 
     return matchesSearch && matchesCategory;
   });
@@ -123,7 +132,19 @@ export default function MyResumesClient({ initialResumes }: { initialResumes: Re
 
           {/* Category Filter Pills */}
           <div className="flex items-center space-x-2 overflow-x-auto pb-1 sm:pb-0">
-            {CATEGORIES.map((cat) => (
+            <button
+              type="button"
+              onClick={() => setSelectedCategory("all")}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
+                selectedCategory === "all"
+                  ? "bg-primary text-white border-primary shadow-xs"
+                  : "bg-surface text-text-muted hover:text-text border-border"
+              }`}
+            >
+              <span>All Resumes</span>
+            </button>
+
+            {customTags.map((cat) => (
               <button
                 key={cat.id}
                 type="button"
@@ -134,8 +155,8 @@ export default function MyResumesClient({ initialResumes }: { initialResumes: Re
                     : "bg-surface text-text-muted hover:text-text border-border"
                 }`}
               >
-                {cat.dot && <span className={`w-2 h-2 rounded-full ${cat.dot}`} />}
-                <span>{cat.label}</span>
+                <span className={`w-2 h-2 rounded-full ${cat.dot}`} />
+                <span>{cat.name}</span>
               </button>
             ))}
           </div>
@@ -198,6 +219,7 @@ export default function MyResumesClient({ initialResumes }: { initialResumes: Re
                     <TagSelector
                       currentTag={resume.categoryTag}
                       onSelectTag={async (newTag) => handleUpdateCategory(resume.id, newTag || "")}
+                      onTagsChanged={handleTagsChanged}
                     />
                   </div>
 

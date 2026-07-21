@@ -18,15 +18,18 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+let globalWalletCache: number | null = null;
+
 export default function DesktopSidebar() {
   const pathname = usePathname();
-  const [walletBalance, setWalletBalance] = useState<number | null>(null);
+  const [walletBalance, setWalletBalance] = useState<number | null>(globalWalletCache);
 
   useEffect(() => {
     fetch("/api/user/wallet")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && typeof data.balance === "number") {
+          globalWalletCache = data.balance;
           setWalletBalance(data.balance);
         }
       })
@@ -82,7 +85,7 @@ export default function DesktopSidebar() {
     <aside className="hidden lg:flex flex-col w-64 border-r border-border/60 bg-surface h-screen sticky top-0 shrink-0 z-40 font-sans">
       {/* Brand Header */}
       <div className="p-6 border-b border-border/40 flex items-center justify-between">
-        <Link href="/dashboard" className="flex items-center space-x-2.5">
+        <Link href="/dashboard" prefetch={true} className="flex items-center space-x-2.5">
           <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
           <span className="font-bold text-xl tracking-tight text-text">
             ATS<span className="text-primary font-serif italic font-medium">Lift</span>
@@ -94,6 +97,7 @@ export default function DesktopSidebar() {
       <div className="p-4">
         <Link
           href="/build"
+          prefetch={true}
           className="w-full py-3 px-4 rounded-2xl bg-primary hover:bg-primary/95 text-white text-xs font-extrabold flex items-center justify-center space-x-2 shadow-sm transition-all cursor-pointer"
         >
           <Plus className="w-4 h-4" />
@@ -109,6 +113,7 @@ export default function DesktopSidebar() {
             <Link
               key={item.name}
               href={item.href}
+              prefetch={true}
               className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 item.active
                   ? "bg-primary/10 text-primary border border-primary/20 shadow-2xs"
@@ -128,19 +133,20 @@ export default function DesktopSidebar() {
 
       {/* Bottom Footer: Wallet & Theme Controls */}
       <div className="p-4 border-t border-border/40 space-y-3 bg-bg-base/30">
-        {/* Wallet Balance Pill */}
-        {walletBalance !== null && (
-          <Link
-            href="/dashboard#wallet"
-            className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between hover:bg-emerald-500/15 transition-all text-xs cursor-pointer"
-          >
-            <div className="flex items-center space-x-2">
-              <Wallet className="w-4 h-4 text-emerald-500" />
-              <span className="font-bold text-text-main">Wallet Balance</span>
-            </div>
-            <span className="font-extrabold text-emerald-600 dark:text-emerald-400">₹{walletBalance}</span>
-          </Link>
-        )}
+        {/* Wallet Balance Pill (Always rendered to avoid layout shifts) */}
+        <Link
+          href="/dashboard#wallet"
+          prefetch={true}
+          className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between hover:bg-emerald-500/15 transition-all text-xs cursor-pointer min-h-[46px]"
+        >
+          <div className="flex items-center space-x-2">
+            <Wallet className="w-4 h-4 text-emerald-500" />
+            <span className="font-bold text-text-main">Wallet Balance</span>
+          </div>
+          <span className="font-extrabold text-emerald-600 dark:text-emerald-400">
+            {walletBalance !== null ? `₹${walletBalance}` : "..."}
+          </span>
+        </Link>
 
         <div className="flex items-center justify-between pt-1">
           <span className="text-xs font-semibold text-text-muted">Appearance</span>
