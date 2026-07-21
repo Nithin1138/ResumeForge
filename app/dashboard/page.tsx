@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, Layout, Mail } from "lucide-react";
+import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, Layout, Mail, User } from "lucide-react";
 import { LogoutButton, DeleteButton, EditTitle, CoverLetterButton } from "@/components/DashboardActions";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -61,18 +61,24 @@ export default async function DashboardPage() {
           </span>
         </div>
 
-        <div className="flex items-center space-x-4">
-          <div className="hidden md:block text-right">
-            <div className="text-sm font-bold text-text">{user.name || session.user.email?.split("@")[0]}</div>
-            <div className="text-[10px] text-text-muted font-semibold">{session.user.email}</div>
-          </div>
-          <div className="max-md:w-11 max-md:h-11 w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-sm tracking-widest overflow-hidden">
+        <div className="flex items-center space-x-3">
+          <Link href="/profile" className="hidden md:flex items-center space-x-2 text-right group cursor-pointer">
+            <div>
+              <div className="text-sm font-bold text-text group-hover:text-primary transition-colors">{user.name || session.user.email?.split("@")[0]}</div>
+              <div className="text-[10px] text-text-muted font-semibold">{session.user.email}</div>
+            </div>
+          </Link>
+          <Link href="/profile" className="max-md:w-10 max-md:h-10 w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-sm tracking-widest overflow-hidden hover:ring-2 hover:ring-primary/40 transition-all cursor-pointer" title="View Profile">
             {session.user.image ? (
               <img src={session.user.image} alt={user.name || "User"} className="w-full h-full object-cover" />
             ) : (
               (user.name || session.user.email || "U").charAt(0).toUpperCase()
             )}
-          </div>
+          </Link>
+          <Link href="/profile" className="px-3 py-1.5 rounded-full border border-border/60 text-xs font-bold hover:bg-surface text-text-muted hover:text-text transition-all flex items-center space-x-1.5 cursor-pointer" title="Profile">
+            <User className="w-3.5 h-3.5 text-primary" />
+            <span className="hidden sm:inline">Profile</span>
+          </Link>
           <ThemeToggle />
           <LogoutButton />
         </div>
