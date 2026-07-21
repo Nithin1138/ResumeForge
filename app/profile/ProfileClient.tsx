@@ -24,6 +24,7 @@ import {
 import { signOut } from "next-auth/react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import WalletCard from "@/components/WalletCard";
+import HeaderWalletBadge from "@/components/HeaderWalletBadge";
 
 interface UserProfile {
   id: string;
@@ -164,6 +165,7 @@ export default function ProfileClient({ initialUser }: { initialUser: UserProfil
         </div>
 
         <div className="flex items-center space-x-3">
+          <HeaderWalletBadge />
           <ThemeToggle />
         </div>
       </header>

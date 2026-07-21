@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoutButton } from "@/components/DashboardActions";
+import HeaderWalletBadge from "@/components/HeaderWalletBadge";
 
 interface ProjectItem {
   id: string;
@@ -398,6 +399,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         </div>
 
         <div className="flex items-center space-x-3">
+          <HeaderWalletBadge />
           <ThemeToggle />
         </div>
       </header>

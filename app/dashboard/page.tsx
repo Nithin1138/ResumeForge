@@ -7,6 +7,7 @@ import { Loader2, Plus, Sparkles, BookOpen, Trash2, Edit2, Calendar, FileText, C
 import { LogoutButton, DeleteButton, EditTitle, CoverLetterButton, DeleteCoverLetterButton, ViewCoverLetterOutputButton, EditCoverLetterButton } from "@/components/DashboardActions";
 import { ThemeToggle } from "@/components/theme-toggle";
 import WalletCard from "@/components/WalletCard";
+import HeaderWalletBadge from "@/components/HeaderWalletBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +65,8 @@ export default async function DashboardPage() {
           </span>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2.5 sm:space-x-3">
+          <HeaderWalletBadge />
           <Link href="/my-space" className="px-3.5 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-primary text-xs font-bold hover:bg-primary/20 transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs" title="My Space Vault & AI Assistant">
             <Database className="w-3.5 h-3.5" />
             <span>My Space</span>
