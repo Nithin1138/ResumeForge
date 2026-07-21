@@ -2,6 +2,7 @@
 
 import React from "react";
 import { TEMPLATES_CONFIG, TemplateDefinition } from "@/lib/templatesConfig";
+import { Loader2, FileText, Sparkles } from "lucide-react";
 
 export interface CoverLetterData {
   recipient?: string;
@@ -15,7 +16,8 @@ export interface CoverLetterData {
 }
 
 interface CoverLetterPreviewProps {
-  data: CoverLetterData;
+  data?: CoverLetterData | null;
+  isLoading?: boolean;
   candidateName?: string;
   candidateEmail?: string;
   candidatePhone?: string;
@@ -27,10 +29,11 @@ interface CoverLetterPreviewProps {
 
 export default function CoverLetterPreview({
   data,
-  candidateName = "Aarav Sharma",
-  candidateEmail = "aarav.sharma@tech.in",
-  candidatePhone = "+91 98765 43210",
-  candidateLocation = "Bengaluru, KA",
+  isLoading = false,
+  candidateName,
+  candidateEmail,
+  candidatePhone,
+  candidateLocation,
   templateId = "modern",
   isEditable = false,
   onChange,
@@ -46,10 +49,40 @@ export default function CoverLetterPreview({
   });
 
   const handleFieldChange = (field: keyof CoverLetterData, val: string) => {
-    if (onChange) {
+    if (onChange && data) {
       onChange({ ...data, [field]: val });
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="w-full bg-white text-zinc-900 shadow-2xl border border-zinc-200 rounded-lg p-12 flex flex-col items-center justify-center min-h-[640px] text-center space-y-4">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+        <h3 className="font-serif text-lg font-bold text-zinc-800">Generating Single-Page Cover Letter...</h3>
+        <p className="text-xs text-zinc-500 max-w-sm">
+          Aligning target role, company requirements, and candidate background...
+        </p>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="w-full bg-white/70 text-zinc-700 border-2 border-dashed border-zinc-300 rounded-lg p-12 flex flex-col items-center justify-center min-h-[640px] text-center space-y-4">
+        <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+          <FileText className="w-7 h-7" />
+        </div>
+        <h3 className="font-serif text-xl font-bold text-zinc-800">Cover Letter Preview</h3>
+        <p className="text-xs text-zinc-500 max-w-sm font-medium leading-relaxed">
+          Fill your target application details and click <span className="font-bold text-primary">"Generate Cover Letter"</span> to construct your ATS-aligned single-page document.
+        </p>
+      </div>
+    );
+  }
+
+  const nameDisplay = candidateName || "Candidate Name";
+  const contactParts = [candidateEmail, candidatePhone, candidateLocation].filter(Boolean);
+  const contactDisplay = contactParts.length > 0 ? contactParts.join(" • ") : "email@example.com • +91 98765 43210 • Location";
 
   return (
     <div
@@ -63,10 +96,10 @@ export default function CoverLetterPreview({
             className="text-xl sm:text-2xl font-black uppercase tracking-tight"
             style={{ color: accent }}
           >
-            {candidateName}
+            {nameDisplay}
           </h1>
           <p className="text-zinc-600 font-medium text-xs mt-1">
-            {[candidateEmail, candidatePhone, candidateLocation].filter(Boolean).join(" • ")}
+            {contactDisplay}
           </p>
         </div>
 
@@ -98,59 +131,46 @@ export default function CoverLetterPreview({
 
         {/* ── SALUTATION ── */}
         <div className="mb-3.5 font-bold text-zinc-900 text-xs sm:text-sm">
-          {data.salutation || `Dear Hiring Team at ${data.company || "Company"},`}
+          {data.salutation || "Dear Hiring Manager,"}
         </div>
 
-        {/* ── BODY PARAGRAPHS (Clean Document Paper Format) ── */}
-        <div className="space-y-3.5 text-zinc-800 text-xs sm:text-[13px] leading-relaxed">
-          {/* Paragraph 1: Opening Hook */}
+        {/* ── PARAGRAPHS ── */}
+        <div className="space-y-3.5 text-zinc-800 text-xs leading-relaxed text-left">
           {isEditable ? (
-            <textarea
-              className="w-full p-2.5 border border-zinc-300 rounded-md focus:ring-2 focus:ring-primary outline-none text-xs"
-              rows={3}
-              value={data.openingParagraph || ""}
-              onChange={(e) => handleFieldChange("openingParagraph", e.target.value)}
-            />
+            <>
+              <textarea
+                rows={3}
+                value={data.openingParagraph || ""}
+                onChange={(e) => handleFieldChange("openingParagraph", e.target.value)}
+                className="w-full p-2 border border-zinc-300 rounded focus:border-zinc-500 outline-none text-xs"
+              />
+              <textarea
+                rows={5}
+                value={data.bodyParagraph || ""}
+                onChange={(e) => handleFieldChange("bodyParagraph", e.target.value)}
+                className="w-full p-2 border border-zinc-300 rounded focus:border-zinc-500 outline-none text-xs"
+              />
+              <textarea
+                rows={3}
+                value={data.closingParagraph || ""}
+                onChange={(e) => handleFieldChange("closingParagraph", e.target.value)}
+                className="w-full p-2 border border-zinc-300 rounded focus:border-zinc-500 outline-none text-xs"
+              />
+            </>
           ) : (
-            <p className="text-left font-normal">{data.openingParagraph}</p>
-          )}
-
-          {/* Paragraph 2: High Impact Engineering & Project Highlights */}
-          {isEditable ? (
-            <textarea
-              className="w-full p-2.5 border border-zinc-300 rounded-md focus:ring-2 focus:ring-primary outline-none text-xs"
-              rows={4}
-              value={data.bodyParagraph || ""}
-              onChange={(e) => handleFieldChange("bodyParagraph", e.target.value)}
-            />
-          ) : (
-            <p className="text-left font-normal">{data.bodyParagraph}</p>
-          )}
-
-          {/* Paragraph 3: Closing & Call to Action */}
-          {isEditable ? (
-            <textarea
-              className="w-full p-2.5 border border-zinc-300 rounded-md focus:ring-2 focus:ring-primary outline-none text-xs"
-              rows={3}
-              value={data.closingParagraph || ""}
-              onChange={(e) => handleFieldChange("closingParagraph", e.target.value)}
-            />
-          ) : (
-            <p className="text-left font-normal">{data.closingParagraph}</p>
+            <>
+              <p>{data.openingParagraph}</p>
+              <p>{data.bodyParagraph}</p>
+              <p>{data.closingParagraph}</p>
+            </>
           )}
         </div>
       </div>
 
-      {/* ── SIGN OFF & FOOTER ── */}
-      <div className="pt-5 border-t border-zinc-100 mt-6 shrink-0 space-y-3">
-        <div className="space-y-1">
-          <p className="text-zinc-600 font-medium text-xs">{data.signOff ? data.signOff.split("\n")[0] : "Sincerely,"}</p>
-          <p className="font-extrabold text-sm text-zinc-900" style={{ color: accent }}>
-            {candidateName}
-          </p>
-        </div>
-
-
+      {/* ── SIGN-OFF BLOCK ── */}
+      <div className="mt-6 pt-4 border-t border-zinc-200">
+        <p className="font-semibold text-zinc-700">{data.signOff || "Sincerely,"}</p>
+        <p className="font-bold text-zinc-900 text-sm mt-1">{nameDisplay}</p>
       </div>
     </div>
   );
