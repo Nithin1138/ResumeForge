@@ -2034,9 +2034,9 @@ export default function BuildPage() {
         updateOptions({
           hasPhoto: true,
           photoUrl: reader.result as string,
-          templateId: (formData.options.templateId === "photo_executive" || formData.options.templateId === "photo_modern") 
+          templateId: (formData.options.templateId && formData.options.templateId.startsWith("photo_")) 
             ? formData.options.templateId 
-            : "photo_modern"
+            : "auto_generate_photo"
         });
       };
       reader.readAsDataURL(file);
@@ -2096,7 +2096,7 @@ export default function BuildPage() {
                   onClick={() => {
                     updateOptions({
                       hasPhoto: false,
-                      templateId: "modern"
+                      templateId: "auto_generate_plain"
                     });
                   }}
                   className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
@@ -2113,7 +2113,7 @@ export default function BuildPage() {
                   onClick={() => {
                     updateOptions({
                       hasPhoto: true,
-                      templateId: "photo_executive"
+                      templateId: "auto_generate_photo"
                     });
                   }}
                   className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
@@ -2301,13 +2301,14 @@ export default function BuildPage() {
               </h3>
             </div>
             <span className="text-xs text-primary font-bold hidden sm:inline">
-              Selected: {TEMPLATES_CONFIG.find(t => t.id === (formData.options.templateId || "modern"))?.name}
+              Selected: {TEMPLATES_CONFIG.find(t => t.id === (formData.options.templateId || (filterTab === "photo" ? "auto_generate_photo" : "auto_generate_plain")))?.name}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTemplates.map((tmpl) => {
-              const isSelected = (formData.options.templateId || "modern") === tmpl.id;
+              const activeId = formData.options.templateId || (filterTab === "photo" ? "auto_generate_photo" : "auto_generate_plain");
+              const isSelected = activeId === tmpl.id;
               const isAutoCard = tmpl.isAutoGenerateCard;
 
               return (
