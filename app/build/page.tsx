@@ -1034,241 +1034,242 @@ export default function BuildPage() {
           </div>
         </div>
 
-        {/* Optional toggles in 2-col grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+        {/* Optional Education Details (PG, 12th, 10th) */}
+        <div className="space-y-4 pt-1">
+          {/* PG Option & Details */}
+          <div className="space-y-3">
+            <label className="flex items-center space-x-3 cursor-pointer p-3.5 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors">
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
+                checked={formData.personal.hasPG || false}
+                onChange={(e) => {
+                  updatePersonal({
+                    hasPG: e.target.checked,
+                    ...(!e.target.checked && { pgDegreeName: "", pgCollegeName: "", pgBranch: "", pgGraduationYear: "", pgCgpa: "" })
+                  });
+                }}
+              />
+              <span className="text-sm font-semibold text-text">Add Post Graduation (PG) details <span className="text-text-muted font-normal text-xs ml-1">(Optional)</span></span>
+            </label>
 
-          {/* PG toggle */}
-          <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors">
-            <input
-              type="checkbox"
-              className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
-              checked={formData.personal.hasPG || false}
-              onChange={(e) => {
-                updatePersonal({
-                  hasPG: e.target.checked,
-                  ...(!e.target.checked && { pgDegreeName: "", pgCollegeName: "", pgBranch: "", pgGraduationYear: "", pgCgpa: "" })
-                });
-              }}
-            />
-            <span className="text-sm font-semibold text-text">Post Graduation (PG) <span className="text-text-muted font-normal text-xs block">(Optional)</span></span>
-          </label>
+            {formData.personal.hasPG && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-primary/5 p-5 rounded-2xl border border-primary/20 mt-2">
+                <div className="md:col-span-2">
+                  <h4 className="text-xs font-extrabold text-primary uppercase tracking-wider">Post Graduation (PG) Details</h4>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">PG Degree</label>
+                  <select
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm font-medium"
+                    value={formData.personal.pgDegreeName || ""}
+                    onChange={(e) => updatePersonal({ pgDegreeName: e.target.value })}
+                  >
+                    <option value="">Select PG degree</option>
+                    <option value="M.Tech">M.Tech (Master of Technology)</option>
+                    <option value="M.E.">M.E. (Master of Engineering)</option>
+                    <option value="MS">MS (Master of Science)</option>
+                    <option value="MBA">MBA (Master of Business Administration)</option>
+                    <option value="MCA">MCA (Master of Computer Applications)</option>
+                    <option value="M.Sc">M.Sc (Master of Science)</option>
+                    <option value="Other">Other PG Degree</option>
+                  </select>
+                  {validationErrors.pgDegreeName && <p className="text-xs text-error mt-1 font-semibold">{validationErrors.pgDegreeName}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">PG Branch / Specialization</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                    placeholder="e.g. Data Science, VLSI Design, MBA Systems"
+                    value={formData.personal.pgBranch || ""}
+                    onChange={(e) => updatePersonal({ pgBranch: e.target.value })}
+                  />
+                  {validationErrors.pgBranch && <p className="text-xs text-error mt-1 font-semibold">{validationErrors.pgBranch}</p>}
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold mb-2">PG College Name</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                    placeholder="e.g. Indian Institute of Technology (IIT), Madras"
+                    value={formData.personal.pgCollegeName || ""}
+                    onChange={(e) => updatePersonal({ pgCollegeName: e.target.value })}
+                  />
+                  {validationErrors.pgCollegeName && <p className="text-xs text-error mt-1 font-semibold">{validationErrors.pgCollegeName}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">PG Graduation Year</label>
+                  <select
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm font-medium"
+                    value={formData.personal.pgGraduationYear || ""}
+                    onChange={(e) => updatePersonal({ pgGraduationYear: e.target.value })}
+                    inputMode="numeric"
+                  >
+                    <option value="">Select year</option>
+                    {["2020","2021","2022","2023","2024","2025","2026","2027","2028","2029","2030"].map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                  {validationErrors.pgGraduationYear && <p className="text-xs text-error mt-1 font-semibold">{validationErrors.pgGraduationYear}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">PG CGPA (out of 10.0)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    inputMode="decimal"
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                    placeholder="e.g. 9.12"
+                    value={formData.personal.pgCgpa || ""}
+                    onChange={(e) => updatePersonal({ pgCgpa: e.target.value })}
+                  />
+                  {validationErrors.pgCgpa && <p className="text-xs text-error mt-1 font-semibold">{validationErrors.pgCgpa}</p>}
+                </div>
+              </div>
+            )}
+          </div>
 
-          {/* 12th toggle */}
-          <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors">
-            <input
-              type="checkbox"
-              className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
-              checked={formData.personal.has12th || false}
-              onChange={(e) => {
-                updatePersonal({
-                  has12th: e.target.checked,
-                  ...(!e.target.checked && { school12thName: "", marks12th: "", board12th: "", passYear12th: "" })
-                });
-              }}
-            />
-            <span className="text-sm font-semibold text-text">12th / HSC <span className="text-text-muted font-normal text-xs block">(Optional)</span></span>
-          </label>
+          {/* 12th Option & Details */}
+          <div className="space-y-3">
+            <label className="flex items-center space-x-3 cursor-pointer p-3.5 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors">
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
+                checked={formData.personal.has12th || false}
+                onChange={(e) => {
+                  updatePersonal({
+                    has12th: e.target.checked,
+                    ...(!e.target.checked && { school12thName: "", marks12th: "", board12th: "", passYear12th: "" })
+                  });
+                }}
+              />
+              <span className="text-sm font-semibold text-text">Add 12th / HSC details <span className="text-text-muted font-normal text-xs ml-1">(Optional)</span></span>
+            </label>
 
-          {/* 10th toggle */}
-          <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors">
-            <input
-              type="checkbox"
-              className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
-              checked={formData.personal.has10th || false}
-              onChange={(e) => {
-                updatePersonal({
-                  has10th: e.target.checked,
-                  ...(!e.target.checked && { school10thName: "", marks10th: "", board10th: "", passYear10th: "" })
-                });
-              }}
-            />
-            <span className="text-sm font-semibold text-text">10th / SSLC <span className="text-text-muted font-normal text-xs block">(Optional)</span></span>
-          </label>
+            {formData.personal.has12th && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-primary/5 p-5 rounded-2xl border border-primary/20 mt-2">
+                <div className="md:col-span-2">
+                  <h4 className="text-xs font-extrabold text-primary uppercase tracking-wider">12th / HSC Details</h4>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold mb-2">School Name</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                    placeholder="e.g. St. Joseph's Higher Secondary School"
+                    value={formData.personal.school12thName || ""}
+                    onChange={(e) => updatePersonal({ school12thName: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Board</label>
+                  <select
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                    value={formData.personal.board12th || ""}
+                    onChange={(e) => updatePersonal({ board12th: e.target.value })}
+                  >
+                    <option value="">Select board</option>
+                    <option value="CBSE">CBSE</option>
+                    <option value="ICSE">ICSE</option>
+                    <option value="State Board">State Board</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Passing Year</label>
+                  <select
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                    value={formData.personal.passYear12th || ""}
+                    onChange={(e) => updatePersonal({ passYear12th: e.target.value })}
+                  >
+                    <option value="">Select year</option>
+                    {["2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"].map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Marks / Percentage</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                    placeholder="e.g. 92.4%"
+                    value={formData.personal.marks12th || ""}
+                    onChange={(e) => updatePersonal({ marks12th: e.target.value })}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
 
+          {/* 10th Option & Details */}
+          <div className="space-y-3">
+            <label className="flex items-center space-x-3 cursor-pointer p-3.5 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors">
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary focus:ring-opacity-25 shrink-0"
+                checked={formData.personal.has10th || false}
+                onChange={(e) => {
+                  updatePersonal({
+                    has10th: e.target.checked,
+                    ...(!e.target.checked && { school10thName: "", marks10th: "", board10th: "", passYear10th: "" })
+                  });
+                }}
+              />
+              <span className="text-sm font-semibold text-text">Add 10th / SSLC details <span className="text-text-muted font-normal text-xs ml-1">(Optional)</span></span>
+            </label>
+
+            {formData.personal.has10th && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-primary/5 p-5 rounded-2xl border border-primary/20 mt-2">
+                <div className="md:col-span-2">
+                  <h4 className="text-xs font-extrabold text-primary uppercase tracking-wider">10th / SSLC Details</h4>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold mb-2">School Name</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                    placeholder="e.g. St. Joseph's High School"
+                    value={formData.personal.school10thName || ""}
+                    onChange={(e) => updatePersonal({ school10thName: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Board</label>
+                  <select
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                    value={formData.personal.board10th || ""}
+                    onChange={(e) => updatePersonal({ board10th: e.target.value })}
+                  >
+                    <option value="">Select board</option>
+                    <option value="CBSE">CBSE</option>
+                    <option value="ICSE">ICSE</option>
+                    <option value="State Board">State Board</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Passing Year</label>
+                  <select
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                    value={formData.personal.passYear10th || ""}
+                    onChange={(e) => updatePersonal({ passYear10th: e.target.value })}
+                  >
+                    <option value="">Select year</option>
+                    {["2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023"].map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Marks / Percentage</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
+                    placeholder="e.g. 88.6%"
+                    value={formData.personal.marks10th || ""}
+                    onChange={(e) => updatePersonal({ marks10th: e.target.value })}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-
-        {/* PG expanded */}
-        {formData.personal.hasPG && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-primary/5 p-5 rounded-2xl border border-primary/20">
-            <div className="md:col-span-2">
-              <h4 className="text-xs font-extrabold text-primary uppercase tracking-wider">Post Graduation (PG) Details</h4>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">PG Degree</label>
-              <select
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm font-medium"
-                value={formData.personal.pgDegreeName || ""}
-                onChange={(e) => updatePersonal({ pgDegreeName: e.target.value })}
-              >
-                <option value="">Select PG degree</option>
-                <option value="M.Tech">M.Tech (Master of Technology)</option>
-                <option value="M.E.">M.E. (Master of Engineering)</option>
-                <option value="MS">MS (Master of Science)</option>
-                <option value="MBA">MBA (Master of Business Administration)</option>
-                <option value="MCA">MCA (Master of Computer Applications)</option>
-                <option value="M.Sc">M.Sc (Master of Science)</option>
-                <option value="Other">Other PG Degree</option>
-              </select>
-              {validationErrors.pgDegreeName && <p className="text-xs text-error mt-1 font-semibold">{validationErrors.pgDegreeName}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">PG Branch / Specialization</label>
-              <input
-                type="text"
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                placeholder="e.g. Data Science, VLSI Design, MBA Systems"
-                value={formData.personal.pgBranch || ""}
-                onChange={(e) => updatePersonal({ pgBranch: e.target.value })}
-              />
-              {validationErrors.pgBranch && <p className="text-xs text-error mt-1 font-semibold">{validationErrors.pgBranch}</p>}
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-semibold mb-2">PG College Name</label>
-              <input
-                type="text"
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                placeholder="e.g. Indian Institute of Technology (IIT), Madras"
-                value={formData.personal.pgCollegeName || ""}
-                onChange={(e) => updatePersonal({ pgCollegeName: e.target.value })}
-              />
-              {validationErrors.pgCollegeName && <p className="text-xs text-error mt-1 font-semibold">{validationErrors.pgCollegeName}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">PG Graduation Year</label>
-              <select
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm font-medium"
-                value={formData.personal.pgGraduationYear || ""}
-                onChange={(e) => updatePersonal({ pgGraduationYear: e.target.value })}
-                inputMode="numeric"
-              >
-                <option value="">Select year</option>
-                {["2020","2021","2022","2023","2024","2025","2026","2027","2028","2029","2030"].map(y => <option key={y} value={y}>{y}</option>)}
-              </select>
-              {validationErrors.pgGraduationYear && <p className="text-xs text-error mt-1 font-semibold">{validationErrors.pgGraduationYear}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">PG CGPA (out of 10.0)</label>
-              <input
-                type="number"
-                step="0.01"
-                inputMode="decimal"
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                placeholder="e.g. 9.12"
-                value={formData.personal.pgCgpa || ""}
-                onChange={(e) => updatePersonal({ pgCgpa: e.target.value })}
-              />
-              {validationErrors.pgCgpa && <p className="text-xs text-error mt-1 font-semibold">{validationErrors.pgCgpa}</p>}
-            </div>
-          </div>
-        )}
-
-        {/* 12th expanded */}
-        {formData.personal.has12th && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-primary/5 p-5 rounded-2xl border border-primary/20">
-            <div className="md:col-span-2">
-              <h4 className="text-xs font-extrabold text-primary uppercase tracking-wider">12th / HSC Details</h4>
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-semibold mb-2">School Name</label>
-              <input
-                type="text"
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                placeholder="e.g. St. Joseph's Higher Secondary School"
-                value={formData.personal.school12thName || ""}
-                onChange={(e) => updatePersonal({ school12thName: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">Board</label>
-              <select
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                value={formData.personal.board12th || ""}
-                onChange={(e) => updatePersonal({ board12th: e.target.value })}
-              >
-                <option value="">Select board</option>
-                <option value="CBSE">CBSE</option>
-                <option value="ICSE">ICSE</option>
-                <option value="State Board">State Board</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">Passing Year</label>
-              <select
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                value={formData.personal.passYear12th || ""}
-                onChange={(e) => updatePersonal({ passYear12th: e.target.value })}
-              >
-                <option value="">Select year</option>
-                {["2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"].map(y => <option key={y} value={y}>{y}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">Marks / Percentage</label>
-              <input
-                type="text"
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                placeholder="e.g. 92.4%"
-                value={formData.personal.marks12th || ""}
-                onChange={(e) => updatePersonal({ marks12th: e.target.value })}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* 10th expanded */}
-        {formData.personal.has10th && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-primary/5 p-5 rounded-2xl border border-primary/20">
-            <div className="md:col-span-2">
-              <h4 className="text-xs font-extrabold text-primary uppercase tracking-wider">10th / SSLC Details</h4>
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-semibold mb-2">School Name</label>
-              <input
-                type="text"
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                placeholder="e.g. St. Joseph's High School"
-                value={formData.personal.school10thName || ""}
-                onChange={(e) => updatePersonal({ school10thName: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">Board</label>
-              <select
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                value={formData.personal.board10th || ""}
-                onChange={(e) => updatePersonal({ board10th: e.target.value })}
-              >
-                <option value="">Select board</option>
-                <option value="CBSE">CBSE</option>
-                <option value="ICSE">ICSE</option>
-                <option value="State Board">State Board</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">Passing Year</label>
-              <select
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                value={formData.personal.passYear10th || ""}
-                onChange={(e) => updatePersonal({ passYear10th: e.target.value })}
-              >
-                <option value="">Select year</option>
-                {["2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023"].map(y => <option key={y} value={y}>{y}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">Marks / Percentage</label>
-              <input
-                type="text"
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                placeholder="e.g. 88.6%"
-                value={formData.personal.marks10th || ""}
-                onChange={(e) => updatePersonal({ marks10th: e.target.value })}
-              />
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
