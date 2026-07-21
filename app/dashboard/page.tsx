@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Plus, Sparkles, BookOpen, Trash2, Calendar, FileText, CheckCircle2, ChevronRight, Layout, Mail, User, Database, Bot, ArrowRight } from "lucide-react";
-import { LogoutButton, DeleteButton, EditTitle, CoverLetterButton } from "@/components/DashboardActions";
+import { LogoutButton, DeleteButton, EditTitle, CoverLetterButton, DeleteCoverLetterButton, ViewCoverLetterOutputButton } from "@/components/DashboardActions";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export const dynamic = "force-dynamic";
@@ -300,12 +300,9 @@ export default async function DashboardPage() {
                     </div>
                   </div>
 
-                  <div className="border-t border-border/30 mt-4 pt-3 flex items-center justify-between">
-                    <span className="text-xs text-text-muted font-semibold italic">100% Free Generated</span>
-                    <CoverLetterButton
-                      variant="header"
-                      className="!px-4 !py-2 !text-xs"
-                    />
+                  <div className="flex flex-row items-center justify-between border-t border-border/30 mt-4 md:mt-6 pt-3 md:pt-4 gap-4">
+                    <DeleteCoverLetterButton id={letter.id} />
+                    <ViewCoverLetterOutputButton letter={letter} />
                   </div>
                 </div>
               ))}

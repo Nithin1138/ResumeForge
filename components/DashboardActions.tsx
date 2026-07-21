@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Trash2, LogOut, Edit2, Check, X, Sparkles, FileText } from "lucide-react";
+import { Loader2, Trash2, LogOut, Edit2, Check, X, Sparkles, FileText, ChevronRight } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import CoverLetterModal from "./CoverLetterModal";
@@ -42,7 +42,7 @@ export function DeleteButton({ id }: { id: string }) {
     <button
       onClick={handleDelete}
       disabled={isDeleting}
-      className="p-2.5 text-text-muted hover:text-error border border-border bg-bg-base/30 rounded-full transition-colors cursor-pointer"
+      className="p-2.5 text-text-muted hover:text-error border border-border bg-bg-base/30 rounded-full transition-colors cursor-pointer shrink-0"
       title="Delete Resume"
     >
       {isDeleting ? (
@@ -51,6 +51,78 @@ export function DeleteButton({ id }: { id: string }) {
         <Trash2 className="w-4 h-4" />
       )}
     </button>
+  );
+}
+
+export function DeleteCoverLetterButton({ id }: { id: string }) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/cover-letter/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        router.refresh();
+        return;
+      }
+    } catch (error) {
+      console.error("Delete cover letter failed:", error);
+    }
+    setIsDeleting(false);
+  };
+
+  return (
+    <button
+      onClick={handleDelete}
+      disabled={isDeleting}
+      className="p-2.5 text-text-muted hover:text-error border border-border bg-bg-base/30 rounded-full transition-colors cursor-pointer shrink-0"
+      title="Delete Cover Letter"
+    >
+      {isDeleting ? (
+        <Loader2 className="w-4 h-4 animate-spin" />
+      ) : (
+        <Trash2 className="w-4 h-4" />
+      )}
+    </button>
+  );
+}
+
+export function ViewCoverLetterOutputButton({ letter }: { letter: any }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const initialData = {
+    recipient: letter.recipient || "Hiring Manager",
+    company: letter.companyName,
+    subject: letter.subject || `Application for ${letter.targetRole}`,
+    salutation: letter.salutation || "Dear Hiring Manager,",
+    openingParagraph: letter.openingParagraph,
+    bodyParagraph: letter.bodyParagraph,
+    closingParagraph: letter.closingParagraph,
+    signOff: letter.signOff || "Sincerely,",
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="flex-1 min-h-[44px] px-5 py-2.5 rounded-full text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-xs bg-success text-white hover:bg-success/90 cursor-pointer"
+      >
+        <span>View Output</span>
+        <ChevronRight className="w-4 h-4" />
+      </button>
+
+      <CoverLetterModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        initialCoverLetter={initialData}
+        initialCandidateName={letter.candidateName}
+        initialCompany={letter.companyName}
+        initialRole={letter.targetRole}
+      />
+    </>
   );
 }
 
