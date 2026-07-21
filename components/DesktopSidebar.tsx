@@ -68,7 +68,6 @@ export default function DesktopSidebar() {
       name: "Wallet",
       href: "/dashboard#wallet",
       icon: Wallet,
-      badge: walletBalance !== null ? `₹${walletBalance}` : null,
       active: pathname === "/dashboard" && typeof window !== "undefined" && window.location.hash === "#wallet",
     },
     {
@@ -121,13 +120,7 @@ export default function DesktopSidebar() {
                 <span>{item.name}</span>
               </div>
 
-              {item.badge ? (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
-                  {item.badge}
-                </span>
-              ) : (
-                item.active && <ChevronRight className="w-3.5 h-3.5 text-primary opacity-60" />
-              )}
+              {item.active && <ChevronRight className="w-3.5 h-3.5 text-primary opacity-60" />}
             </Link>
           );
         })}
