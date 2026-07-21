@@ -12,16 +12,16 @@ export interface TemplateDefinition {
   atsFriendly: boolean;
   bestFor: string;
   accentColor?: string;
-  isAutoSelect?: boolean;
+  isAutoGenerateCard?: boolean;
 }
 
 export const TEMPLATES_CONFIG: TemplateDefinition[] = [
-  // ── GROUP A: 10 PLAIN RESUME TEMPLATES ──
+  // ── GROUP A: PLAIN RESUME TEMPLATES (1 Auto-Generate + 10 Plain Templates) ──
   {
-    id: "modern",
-    name: "Classic ATS (AI Recommended)",
-    tag: "✨ AI AUTO-SELECT",
-    desc: "Auto-selects optimal ATS layout with highest pass rate (98.4%). Standard single-column structure trusted by top recruiters.",
+    id: "auto_generate_plain",
+    name: "Auto Generate by ATSLift",
+    tag: "✨ TRUST ATSLIFT",
+    desc: "Let ATSLift automatically analyze your candidate profile, target role, and branch to select the single best template structure for maximum recruiter impact & ATS pass rate.",
     supportsPhoto: false,
     sectionOrder: ["summary", "education", "skills", "projects", "experience", "achievements", "certifications"],
     headerStyle: "centered",
@@ -29,9 +29,24 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     textAlignment: "left",
     spacingDensity: "normal",
     atsFriendly: true,
-    bestFor: "Best Overall — Recommended for 99% of Corporate Applications",
+    bestFor: "Trust ATSLift — Auto-selects top template",
     accentColor: "#1e293b",
-    isAutoSelect: true,
+    isAutoGenerateCard: true,
+  },
+  {
+    id: "modern",
+    name: "Classic ATS",
+    tag: "Single Column ATS",
+    desc: "Clean single-column layout. Top centered or left name. Standard section order for maximum ATS pass rate.",
+    supportsPhoto: false,
+    sectionOrder: ["summary", "education", "skills", "projects", "experience", "achievements", "certifications"],
+    headerStyle: "centered",
+    photoPlacement: "none",
+    textAlignment: "left",
+    spacingDensity: "normal",
+    atsFriendly: true,
+    bestFor: "General ATS Applications & Corporate Pipeline",
+    accentColor: "#1e293b",
   },
   {
     id: "recruiter_scan",
@@ -169,12 +184,12 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     accentColor: "#18181b",
   },
 
-  // ── GROUP B: 10 PHOTO-BASED RESUME TEMPLATES ──
+  // ── GROUP B: PHOTO-BASED RESUME TEMPLATES (1 Auto-Generate + 10 Photo Templates) ──
   {
-    id: "photo_executive",
-    name: "Executive Photo (AI Recommended)",
-    tag: "✨ AI AUTO-SELECT",
-    desc: "Auto-selects optimal Executive Photo layout. Clean headshot alignment with polished banner header.",
+    id: "auto_generate_photo",
+    name: "Auto Generate by ATSLift",
+    tag: "✨ TRUST ATSLIFT",
+    desc: "Let ATSLift automatically pick the perfect photo-based layout and header structure tailored to your background.",
     supportsPhoto: true,
     sectionOrder: ["summary", "skills", "projects", "education", "experience", "certifications"],
     headerStyle: "banner",
@@ -182,9 +197,24 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
     textAlignment: "left",
     spacingDensity: "normal",
     atsFriendly: false,
-    bestFor: "Best Overall Photo Template — Recommended for Executive Roles",
+    bestFor: "Trust ATSLift — Auto-selects top photo layout",
     accentColor: "#1e3a8a",
-    isAutoSelect: true,
+    isAutoGenerateCard: true,
+  },
+  {
+    id: "photo_executive",
+    name: "Executive Photo Header",
+    tag: "Top Corner Photo",
+    desc: "Professional photo in top corner. Large name banner across header.",
+    supportsPhoto: true,
+    sectionOrder: ["summary", "skills", "projects", "education", "experience", "certifications"],
+    headerStyle: "banner",
+    photoPlacement: "top_right",
+    textAlignment: "left",
+    spacingDensity: "normal",
+    atsFriendly: false,
+    bestFor: "Executive, Management & Client-Facing Roles",
+    accentColor: "#1e3a8a",
   },
   {
     id: "photo_side_panel",
@@ -324,5 +354,11 @@ export const TEMPLATES_CONFIG: TemplateDefinition[] = [
 ];
 
 export function getTemplateById(id: string): TemplateDefinition {
-  return TEMPLATES_CONFIG.find((t) => t.id === id) || TEMPLATES_CONFIG[0];
+  if (id === "auto_generate_plain") {
+    return TEMPLATES_CONFIG.find((t) => t.id === "modern") || TEMPLATES_CONFIG[1];
+  }
+  if (id === "auto_generate_photo") {
+    return TEMPLATES_CONFIG.find((t) => t.id === "photo_executive") || TEMPLATES_CONFIG[12];
+  }
+  return TEMPLATES_CONFIG.find((t) => t.id === id) || TEMPLATES_CONFIG[1];
 }

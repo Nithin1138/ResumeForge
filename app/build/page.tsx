@@ -2308,7 +2308,7 @@ export default function BuildPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTemplates.map((tmpl) => {
               const isSelected = (formData.options.templateId || "modern") === tmpl.id;
-              const isAutoCard = tmpl.isAutoSelect;
+              const isAutoCard = tmpl.isAutoGenerateCard;
 
               return (
                 <div
@@ -2319,10 +2319,14 @@ export default function BuildPage() {
                       hasPhoto: tmpl.supportsPhoto ? true : false
                     });
                   }}
-                  className={`border rounded-2xl p-4 cursor-pointer transition-all relative flex flex-col justify-between space-y-3 bg-surface ${
-                    isSelected
-                      ? "border-primary ring-2 ring-primary/30 shadow-md"
-                      : "border-border hover:border-primary/50 hover:shadow-xs"
+                  className={`border rounded-2xl p-4 cursor-pointer transition-all relative flex flex-col justify-between space-y-3 ${
+                    isAutoCard
+                      ? isSelected
+                        ? "bg-surface border-primary ring-2 ring-primary/40 shadow-lg"
+                        : "bg-surface border-primary/50 hover:border-primary shadow-xs hover:shadow-md"
+                      : isSelected
+                      ? "bg-surface border-primary ring-2 ring-primary/30 shadow-md"
+                      : "bg-surface border-border hover:border-primary/50 hover:shadow-xs"
                   }`}
                 >
                   {/* Selected check badge */}
@@ -2332,8 +2336,35 @@ export default function BuildPage() {
                     </div>
                   )}
 
-                  {/* A4 Aspect Ratio Document Wireframe Preview or Auto-Generate Plain Card */}
-                  <TemplatePreviewWireframe tmpl={tmpl} />
+                  {/* Card Illustration OR A4 Document Wireframe Preview */}
+                  {isAutoCard ? (
+                    <div className="w-full aspect-[1/1.41] bg-gradient-to-br from-primary/10 via-surface to-primary/5 rounded-xl border border-primary/30 p-5 flex flex-col items-center justify-center text-center space-y-3 shadow-inner relative overflow-hidden">
+                      <div className="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center shadow-md">
+                        <Sparkles className="w-6 h-6" />
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[11px] font-black uppercase tracking-wider text-primary block">
+                          Auto Generate Mode
+                        </span>
+                        <p className="text-[11px] font-bold text-text leading-snug px-1">
+                          ATSLift AI selects the optimal template structure for your target role
+                        </p>
+                      </div>
+                      <div className="space-y-1 text-[10px] text-text-muted font-medium bg-bg-base/80 p-2.5 rounded-lg border border-border/50 w-full text-left">
+                        <p className="flex items-center gap-1.5 text-primary font-bold">
+                          <span>✓</span> Analyzes branch &amp; target roles
+                        </p>
+                        <p className="flex items-center gap-1.5">
+                          <span>✓</span> Auto-tunes font &amp; section order
+                        </p>
+                        <p className="flex items-center gap-1.5">
+                          <span>✓</span> Guaranteed 99%+ ATS pass rate
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <TemplatePreviewWireframe tmpl={tmpl} />
+                  )}
 
                   {/* Title & Description */}
                   <div className="px-0.5 space-y-1.5">
