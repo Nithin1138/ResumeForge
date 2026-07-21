@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle, Flame, ShieldCheck, Sparkles, ChevronDown, Award, XCircle, Eye, TrendingUp, Check, Menu, X } from "lucide-react";
 import { getLocalSession } from "@/lib/authClient";
+import CoverLetterModal from "@/components/CoverLetterModal";
 import { motion, AnimatePresence } from "framer-motion";
 
 const containerVariants = {
@@ -77,6 +78,7 @@ export default function LandingPage() {
   const [mobileTab, setMobileTab] = useState<"input" | "grader">("input");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
+  const [isCoverLetterModalOpen, setCoverLetterModalOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -280,6 +282,15 @@ export default function LandingPage() {
               
               <div className="flex-1 overflow-y-auto py-6 px-6 flex flex-col space-y-6">
                 <nav className="flex flex-col space-y-4">
+                  <button 
+                    onClick={() => { setMobileMenuOpen(false); setCoverLetterModalOpen(true); }} 
+                    className="text-lg font-bold flex items-center justify-between py-2 border-b border-border/30 text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-primary" /> Cover Letter Generator
+                    </span>
+                    <ArrowRight className="w-4 h-4 opacity-50" />
+                  </button>
                   <Link 
                     href="/ats-check" 
                     onClick={() => setMobileMenuOpen(false)} 
@@ -377,6 +388,13 @@ export default function LandingPage() {
         </div>
         
         <div className="hidden md:flex items-center space-x-7">
+          <button
+            onClick={() => setCoverLetterModalOpen(true)}
+            className="text-sm font-semibold transition-all hidden sm:flex items-center space-x-1.5 cursor-pointer text-text-muted hover:text-primary"
+          >
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span>Cover Letter</span>
+          </button>
           <Link href="/ats-check" className={`text-sm font-semibold transition-all hidden sm:flex items-center space-x-1.5 ${
             landingVariant === "dashboard" ? "text-[#9f9d98] hover:text-[#00e1ec]" : "text-text-muted hover:text-primary"
           }`}>
@@ -1844,7 +1862,8 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
-    </div>
+    <CoverLetterModal isOpen={isCoverLetterModalOpen} onClose={() => setCoverLetterModalOpen(false)} />
+      </div>
     </>
   );
 }
