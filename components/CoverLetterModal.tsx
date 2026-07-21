@@ -212,15 +212,15 @@ export default function CoverLetterModal({
 
   if (readOnly) {
     return createPortal(
-      <div className="fixed inset-0 bg-black/75 backdrop-blur-xs z-[9999] overflow-y-auto flex items-center justify-center p-3 sm:p-6 animate-fade-in font-sans">
-        <div className="bg-[#525659] border border-white/15 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto relative">
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-[9999] flex items-center justify-center p-3 sm:p-6 animate-fade-in font-sans overflow-y-auto">
+        <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-3xl flex flex-col shadow-2xl overflow-hidden my-auto relative">
           
           {/* Header Bar inside Window */}
-          <div className="w-full bg-[#323639] border-b border-[#202124] text-white px-4 py-3 flex items-center justify-between shrink-0 shadow-md">
+          <div className="w-full bg-[#1e293b] text-white px-4 py-3 flex items-center justify-between shrink-0 shadow-md">
             <div className="flex items-center space-x-3">
               <button
                 onClick={onClose}
-                className="px-3.5 py-1.5 rounded-full bg-[#202124] hover:bg-[#4a4d51] text-xs font-bold transition-all flex items-center space-x-1.5 text-gray-200 cursor-pointer"
+                className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-bold transition-all flex items-center space-x-1.5 text-gray-200 cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back</span>
@@ -231,7 +231,7 @@ export default function CoverLetterModal({
               <button
                 onClick={handleCopyText}
                 disabled={!coverLetter}
-                className="px-3.5 py-1.5 rounded-full bg-[#202124] hover:bg-[#4a4d51] text-xs font-bold text-gray-200 transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-40"
+                className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-bold text-gray-200 transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-40"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 <span className="hidden sm:inline">{copied ? "Copied" : "Copy Text"}</span>
@@ -248,7 +248,7 @@ export default function CoverLetterModal({
 
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-full hover:bg-[#4a4d51] text-gray-400 hover:text-white transition-all cursor-pointer ml-1"
+                className="p-1.5 rounded-full hover:bg-white/20 text-gray-300 hover:text-white transition-all cursor-pointer ml-1"
                 title="Close"
               >
                 <X className="w-4 h-4" />
@@ -256,14 +256,12 @@ export default function CoverLetterModal({
             </div>
           </div>
 
-          {/* PDF Paper View inside Window */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-8 flex items-center justify-center">
-            <div className="w-full max-w-[760px] bg-white text-black shadow-2xl rounded-xs overflow-hidden border border-gray-300 min-h-[900px] p-6 sm:p-10 md:p-14 my-auto">
-              <CoverLetterPreview
-                data={coverLetter}
-                isLoading={isGenerating}
-              />
-            </div>
+          {/* Clean White Document Content (No grey canvas, no inner scrollbars) */}
+          <div className="p-6 sm:p-10 text-black">
+            <CoverLetterPreview
+              data={coverLetter}
+              isLoading={isGenerating}
+            />
           </div>
         </div>
       </div>,
