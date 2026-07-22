@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useDeferredValue, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { 
   Database, 
@@ -500,10 +500,12 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
     );
   }
 
-  const matchesSearch = (text: string) => {
-    if (!searchQuery.trim()) return true;
-    return text.toLowerCase().includes(searchQuery.toLowerCase());
-  };
+  const deferredSearchQuery = useDeferredValue(searchQuery);
+
+  const matchesSearch = useCallback((text: string) => {
+    if (!deferredSearchQuery.trim()) return true;
+    return text.toLowerCase().includes(deferredSearchQuery.toLowerCase());
+  }, [deferredSearchQuery]);
 
   return (
     <AppLayout>
