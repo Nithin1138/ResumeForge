@@ -558,9 +558,9 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
 
 
       {/* STICKY BOTTOM LIQUID GLASS FLOATING FOOTER */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 p-3 md:p-4 pointer-events-none">
-        <div className="max-w-6xl mx-auto bg-surface/65 dark:bg-surface/50 backdrop-blur-2xl border border-white/40 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.18)] rounded-3xl p-3.5 md:p-4 pointer-events-auto transition-all ring-1 ring-black/5">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-3.5 md:gap-4">
+      <div className="fixed bottom-0 left-0 right-0 z-40 p-3 md:p-4 pointer-events-none flex justify-center">
+        <div className="w-fit max-w-[95vw] bg-surface/80 dark:bg-surface/70 backdrop-blur-2xl border border-white/40 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.18)] rounded-3xl p-3 md:p-3.5 px-4 md:px-6 pointer-events-auto transition-all ring-1 ring-black/5">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4">
             
             {/* Left Group: Pricing Badge & AI Verification Pill (Tightly Grouped) */}
             <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-4 w-full lg:w-auto justify-between sm:justify-start">
