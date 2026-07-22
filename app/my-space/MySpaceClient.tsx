@@ -1260,41 +1260,155 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                 ) : (
                   /* READ / COPY MODE */
                   <div className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {educationList.filter(e => e.institution && (matchesSearch(e.institution) || matchesSearch(e.type) || matchesSearch(e.degree || "") || matchesSearch(e.branch || ""))).map((e) => (
                         <div
                           key={e.type}
-                          onClick={() => copyToClipboard(`${e.type}: ${e.institution} | Degree: ${e.degree || "N/A"} | Branch: ${e.branch || "N/A"} | Grade: ${e.cgpaOrPercentage} | Year: ${e.graduationYear} | Location: ${e.location || "N/A"}`, e.type)}
-                          className="p-3.5 rounded-2xl border border-border/80 bg-bg-base hover:border-primary/50 hover:shadow-sm transition-all cursor-pointer flex flex-col justify-between group relative"
+                          className="p-4 rounded-2xl border border-border/80 bg-bg-base hover:border-primary/50 hover:shadow-sm transition-all flex flex-col justify-between group relative space-y-3"
                         >
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] font-bold text-primary uppercase tracking-wider block">{e.type} Education</span>
+                          <div className="flex items-center justify-between border-b border-border/30 pb-2">
+                            <span className="text-[10px] font-bold text-primary uppercase tracking-wider block">{e.type} Education</span>
+                            <button
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                copyToClipboard(`${e.type}: ${e.institution} | Degree: ${e.degree || "N/A"} | Branch: ${e.branch || "N/A"} | Grade: ${e.cgpaOrPercentage} | Year: ${e.graduationYear} | Location: ${e.location || "N/A"}`, e.type);
+                              }}
+                              className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary/10 transition-all cursor-pointer flex items-center gap-1 text-[9px] font-bold"
+                              title="Copy full education string"
+                            >
                               {copiedKey === e.type ? (
-                                <span className="text-[9px] font-bold text-emerald-600 bg-emerald-500/10 px-1.5 py-0.5 rounded-md">Copied</span>
+                                <span className="text-emerald-600 font-extrabold">Copied Full</span>
                               ) : (
-                                <Copy className="w-3.5 h-3.5 text-text-muted group-hover:text-primary shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <>
+                                  <Copy className="w-3.5 h-3.5" />
+                                  <span>Copy All</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+
+                          <div className="space-y-2">
+                            {/* Institution */}
+                            {e.institution && (
+                              <div
+                                onClick={() => copyToClipboard(e.institution, `${e.type}-inst`)}
+                                className="p-2 rounded-lg bg-surface/50 border border-border/40 hover:border-primary/40 hover:bg-primary/5 transition-all flex items-center justify-between group/row cursor-pointer"
+                              >
+                                <div className="min-w-0 pr-2">
+                                  <span className="text-[9px] text-text-muted font-bold uppercase tracking-wider block">Institution</span>
+                                  <span className="text-xs font-bold text-text block truncate">{e.institution}</span>
+                                </div>
+                                <div className="shrink-0 pl-1">
+                                  {copiedKey === `${e.type}-inst` ? (
+                                    <Check className="w-3.5 h-3.5 text-emerald-500" />
+                                  ) : (
+                                    <Copy className="w-3.5 h-3.5 text-text-muted group-hover/row:text-primary opacity-0 group-hover/row:opacity-100 transition-opacity" />
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Degree & Branch Grid */}
+                            <div className="grid grid-cols-2 gap-2">
+                              {e.degree && (
+                                <div
+                                  onClick={() => copyToClipboard(e.degree || "", `${e.type}-deg`)}
+                                  className="p-2 rounded-lg bg-surface/50 border border-border/40 hover:border-primary/40 hover:bg-primary/5 transition-all flex items-center justify-between group/row cursor-pointer"
+                                >
+                                  <div className="min-w-0 pr-2">
+                                    <span className="text-[9px] text-text-muted font-bold uppercase tracking-wider block">Degree</span>
+                                    <span className="text-xs font-bold text-text block truncate">{e.degree}</span>
+                                  </div>
+                                  <div className="shrink-0 pl-1">
+                                    {copiedKey === `${e.type}-deg` ? (
+                                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                                    ) : (
+                                      <Copy className="w-3.5 h-3.5 text-text-muted group-hover/row:text-primary opacity-0 group-hover/row:opacity-100 transition-opacity" />
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {e.branch && (
+                                <div
+                                  onClick={() => copyToClipboard(e.branch || "", `${e.type}-branch`)}
+                                  className="p-2 rounded-lg bg-surface/50 border border-border/40 hover:border-primary/40 hover:bg-primary/5 transition-all flex items-center justify-between group/row cursor-pointer"
+                                >
+                                  <div className="min-w-0 pr-2">
+                                    <span className="text-[9px] text-text-muted font-bold uppercase tracking-wider block">Branch</span>
+                                    <span className="text-xs font-bold text-text block truncate">{e.branch}</span>
+                                  </div>
+                                  <div className="shrink-0 pl-1">
+                                    {copiedKey === `${e.type}-branch` ? (
+                                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                                    ) : (
+                                      <Copy className="w-3.5 h-3.5 text-text-muted group-hover/row:text-primary opacity-0 group-hover/row:opacity-100 transition-opacity" />
+                                    )}
+                                  </div>
+                                </div>
                               )}
                             </div>
 
-                            <div className="space-y-1">
-                              <h4 className="text-xs font-bold text-text leading-tight">{e.institution}</h4>
-                              <p className="text-[11px] text-text-muted font-semibold">
-                                {e.degree || "No Degree"} {e.branch ? `· ${e.branch}` : ""}
-                              </p>
-                              {e.location && (
-                                <p className="text-[10px] text-text-muted/80 font-medium">📍 {e.location}</p>
+                            {/* Grade & Graduation Year Grid */}
+                            <div className="grid grid-cols-2 gap-2">
+                              {e.cgpaOrPercentage && (
+                                <div
+                                  onClick={() => copyToClipboard(e.cgpaOrPercentage, `${e.type}-grade`)}
+                                  className="p-2 rounded-lg bg-surface/50 border border-border/40 hover:border-primary/40 hover:bg-primary/5 transition-all flex items-center justify-between group/row cursor-pointer"
+                                >
+                                  <div className="min-w-0 pr-2">
+                                    <span className="text-[9px] text-text-muted font-bold uppercase tracking-wider block">Grade</span>
+                                    <span className="text-xs font-bold text-text block truncate">{e.cgpaOrPercentage}</span>
+                                  </div>
+                                  <div className="shrink-0 pl-1">
+                                    {copiedKey === `${e.type}-grade` ? (
+                                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                                    ) : (
+                                      <Copy className="w-3.5 h-3.5 text-text-muted group-hover/row:text-primary opacity-0 group-hover/row:opacity-100 transition-opacity" />
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {e.graduationYear && (
+                                <div
+                                  onClick={() => copyToClipboard(e.graduationYear, `${e.type}-year`)}
+                                  className="p-2 rounded-lg bg-surface/50 border border-border/40 hover:border-primary/40 hover:bg-primary/5 transition-all flex items-center justify-between group/row cursor-pointer"
+                                >
+                                  <div className="min-w-0 pr-2">
+                                    <span className="text-[9px] text-text-muted font-bold uppercase tracking-wider block">Year</span>
+                                    <span className="text-xs font-bold text-text block truncate">{e.graduationYear}</span>
+                                  </div>
+                                  <div className="shrink-0 pl-1">
+                                    {copiedKey === `${e.type}-year` ? (
+                                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                                    ) : (
+                                      <Copy className="w-3.5 h-3.5 text-text-muted group-hover/row:text-primary opacity-0 group-hover/row:opacity-100 transition-opacity" />
+                                    )}
+                                  </div>
+                                </div>
                               )}
                             </div>
 
-                            <div className="flex items-center gap-2 pt-1.5 border-t border-border/20">
-                              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                                {e.cgpaOrPercentage}
-                              </span>
-                              <span className="text-[10px] font-bold text-text-muted">
-                                Class of {e.graduationYear}
-                              </span>
-                            </div>
+                            {/* Location */}
+                            {e.location && (
+                              <div
+                                onClick={() => copyToClipboard(e.location || "", `${e.type}-loc`)}
+                                className="p-2 rounded-lg bg-surface/50 border border-border/40 hover:border-primary/40 hover:bg-primary/5 transition-all flex items-center justify-between group/row cursor-pointer"
+                              >
+                                <div className="min-w-0 pr-2">
+                                  <span className="text-[9px] text-text-muted font-bold uppercase tracking-wider block">Location</span>
+                                  <span className="text-xs font-bold text-text block truncate">📍 {e.location}</span>
+                                </div>
+                                <div className="shrink-0 pl-1">
+                                  {copiedKey === `${e.type}-loc` ? (
+                                    <Check className="w-3.5 h-3.5 text-emerald-500" />
+                                  ) : (
+                                    <Copy className="w-3.5 h-3.5 text-text-muted group-hover/row:text-primary opacity-0 group-hover/row:opacity-100 transition-opacity" />
+                                  )}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
