@@ -965,9 +965,17 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           </div>
         )}
 
-        {/* ─── PROFILE CONTENT ─── */}
-        {activeTab === "profile" && (
-          <div className="space-y-8">
+        {/* ─── TAB CONTENT WITH SMOOTH ANIMATEPRESENCE ─── */}
+        <AnimatePresence mode="wait">
+          {activeTab === "profile" && (
+            <motion.div
+              key="profile-tab"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+              className="space-y-8"
+            >
 
             {/* SECTION 1: PERSONAL & SOCIAL PROFILES */}
             {(categoryFilter === "all" || categoryFilter === "personal") && (
@@ -2417,151 +2425,158 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
               </div>
             )}
 
-          </div>
-        )}
+            </motion.div>
+          )}
 
-        {/* TAB 2: AI APPLICATION QUESTION COPILOT */}
-        {activeTab === "copilot" && (
-          <div className="max-w-4xl mx-auto space-y-6">
-            
-            {/* Minimal Header */}
-            <div className="text-center space-y-2 py-2">
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Powered by Master Profile Vault & Gemini</span>
-              </div>
-              <h2 className="font-serif font-bold text-2xl md:text-3xl text-text">
-                Application Answer Assistant
-              </h2>
-              <p className="text-xs text-text-muted font-medium max-w-lg mx-auto leading-relaxed">
-                Paste any job application question. Our AI drafts custom answers directly using your real college details, CGPA, engineering projects, and skills.
-              </p>
-            </div>
-
-            {/* Context Inputs Bar */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
-              <div className="relative">
-                <Building2 className="w-3.5 h-3.5 text-text-muted absolute left-3.5 top-3.5 pointer-events-none" />
-                <input
-                  type="text"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="Company Name (Optional)"
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-border/80 bg-surface text-text text-xs font-medium focus:outline-none focus:border-primary transition-all shadow-xs"
-                />
-              </div>
-
-              <div className="relative">
-                <Briefcase className="w-3.5 h-3.5 text-text-muted absolute left-3.5 top-3.5 pointer-events-none" />
-                <input
-                  type="text"
-                  value={jobRole}
-                  onChange={(e) => setJobRole(e.target.value)}
-                  placeholder="Target Role (Optional)"
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-border/80 bg-surface text-text text-xs font-medium focus:outline-none focus:border-primary transition-all shadow-xs"
-                />
-              </div>
-            </div>
-
-            {/* Sleek Prompt Card */}
-            <div className="bg-surface border border-border/80 rounded-3xl p-5 md:p-6 space-y-4 shadow-sm hover:shadow-md transition-shadow relative">
+          {activeTab === "copilot" && (
+            <motion.div
+              key="copilot-tab"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+              className="max-w-4xl mx-auto space-y-6"
+            >
               
-              {/* Sample Question Chips */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider mr-1">Quick Prompts:</span>
-                {presetQuestions.map((q, idx) => (
+              {/* Minimal Header */}
+              <div className="text-center space-y-2 py-2">
+                <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Powered by Master Profile Vault & Gemini</span>
+                </div>
+                <h2 className="font-serif font-bold text-2xl md:text-3xl text-text">
+                  Application Answer Assistant
+                </h2>
+                <p className="text-xs text-text-muted font-medium max-w-lg mx-auto leading-relaxed">
+                  Paste any job application question. Our AI drafts custom answers directly using your real college details, CGPA, engineering projects, and skills.
+                </p>
+              </div>
+
+              {/* Context Inputs Bar */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
+                <div className="relative">
+                  <Building2 className="w-3.5 h-3.5 text-text-muted absolute left-3.5 top-3.5 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    placeholder="Company Name (Optional)"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-border/80 bg-surface text-text text-xs font-medium focus:outline-none focus:border-primary transition-all shadow-xs"
+                  />
+                </div>
+
+                <div className="relative">
+                  <Briefcase className="w-3.5 h-3.5 text-text-muted absolute left-3.5 top-3.5 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={jobRole}
+                    onChange={(e) => setJobRole(e.target.value)}
+                    placeholder="Target Role (Optional)"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-border/80 bg-surface text-text text-xs font-medium focus:outline-none focus:border-primary transition-all shadow-xs"
+                  />
+                </div>
+              </div>
+
+              {/* Sleek Prompt Card */}
+              <div className="bg-surface border border-border/80 rounded-3xl p-5 md:p-6 space-y-4 shadow-sm hover:shadow-md transition-shadow relative">
+                
+                {/* Sample Question Chips */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider mr-1">Quick Prompts:</span>
+                  {presetQuestions.map((q, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setQuestion(q);
+                        handleAskAi(q);
+                      }}
+                      className="px-3 py-1.5 bg-bg-base hover:bg-primary/10 border border-border/60 hover:border-primary/40 text-text-muted hover:text-primary rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5"
+                    >
+                      <Sparkles className="w-3 h-3 text-amber-500 shrink-0" />
+                      <span className="truncate max-w-[220px]">{q}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Textarea Input */}
+                <div>
+                  <textarea
+                    rows={4}
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    placeholder="Paste application question here... (e.g. 'Describe a complex technical challenge you solved using React & PostgreSQL')"
+                    className="w-full p-4 rounded-2xl border border-border/60 bg-bg-base/50 text-text text-xs font-medium focus:outline-none focus:border-primary focus:bg-surface transition-all leading-relaxed"
+                  />
+                </div>
+
+                {/* Submit Action Bar */}
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-[11px] text-text-muted font-medium hidden sm:inline">
+                    {question.length > 0 ? `${question.length} characters` : "Answers created from your private vault profile"}
+                  </span>
+
                   <button
-                    key={idx}
-                    onClick={() => {
-                      setQuestion(q);
-                      handleAskAi(q);
-                    }}
-                    className="px-3 py-1.5 bg-bg-base hover:bg-primary/10 border border-border/60 hover:border-primary/40 text-text-muted hover:text-primary rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5"
+                    onClick={() => handleAskAi()}
+                    disabled={isGenerating || !question.trim()}
+                    className="w-full sm:w-auto px-6 py-2.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer ml-auto"
                   >
-                    <Sparkles className="w-3 h-3 text-amber-500 shrink-0" />
-                    <span className="truncate max-w-[220px]">{q}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Textarea Input */}
-              <div>
-                <textarea
-                  rows={4}
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="Paste application question here... (e.g. 'Describe a complex technical challenge you solved using React & PostgreSQL')"
-                  className="w-full p-4 rounded-2xl border border-border/60 bg-bg-base/50 text-text text-xs font-medium focus:outline-none focus:border-primary focus:bg-surface transition-all leading-relaxed"
-                />
-              </div>
-
-              {/* Submit Action Bar */}
-              <div className="flex items-center justify-between pt-1">
-                <span className="text-[11px] text-text-muted font-medium hidden sm:inline">
-                  {question.length > 0 ? `${question.length} characters` : "Answers created from your private vault profile"}
-                </span>
-
-                <button
-                  onClick={() => handleAskAi()}
-                  disabled={isGenerating || !question.trim()}
-                  className="w-full sm:w-auto px-6 py-2.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer ml-auto"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Generating Answer...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-3.5 h-3.5" />
-                      <span>Generate Answer</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Generated Answer Display */}
-            {aiAnswer && (
-              <div className="bg-surface border border-primary/30 rounded-3xl p-6 space-y-4 shadow-sm relative animate-fade-in">
-                <div className="flex items-center justify-between border-b border-border/40 pb-3">
-                  <div className="flex items-center space-x-2">
-                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600">
-                      <Sparkles className="w-4 h-4" />
-                    </div>
-                    <h3 className="font-serif font-bold text-base text-text">Tailored Answer</h3>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(aiAnswer);
-                      setCopiedAnswer(true);
-                      setTimeout(() => setCopiedAnswer(false), 2000);
-                    }}
-                    className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs"
-                  >
-                    {copiedAnswer ? (
+                    {isGenerating ? (
                       <>
-                        <Check className="w-3.5 h-3.5" />
-                        <span>Copied!</span>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Generating Answer...</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3.5 h-3.5" />
-                        <span>Copy Answer</span>
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Generate Answer</span>
                       </>
                     )}
                   </button>
                 </div>
-
-                <div className="text-xs text-text leading-relaxed font-medium whitespace-pre-wrap bg-bg-base/40 p-4 rounded-2xl border border-border/40">
-                  {aiAnswer}
-                </div>
               </div>
-            )}
 
-          </div>
-        )}
+              {/* Generated Answer Display */}
+              {aiAnswer && (
+                <div className="bg-surface border border-primary/30 rounded-3xl p-6 space-y-4 shadow-sm relative animate-fade-in">
+                  <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                    <div className="flex items-center space-x-2">
+                      <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <h3 className="font-serif font-bold text-base text-text">Tailored Answer</h3>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(aiAnswer);
+                        setCopiedAnswer(true);
+                        setTimeout(() => setCopiedAnswer(false), 2000);
+                      }}
+                      className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs"
+                    >
+                      {copiedAnswer ? (
+                        <>
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Copy Answer</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="text-xs text-text leading-relaxed font-medium whitespace-pre-wrap bg-bg-base/40 p-4 rounded-2xl border border-border/40">
+                    {aiAnswer}
+                  </div>
+                </div>
+              )}
+
+            </motion.div>
+          )}
+        </AnimatePresence>
 
       </div>
     </AppLayout>

@@ -3,7 +3,9 @@
 import React from "react";
 import DesktopSidebar from "./DesktopSidebar";
 import Link from "next/link";
-import { Database, Layout, Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Database } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import HeaderWalletBadge from "./HeaderWalletBadge";
 
@@ -12,6 +14,8 @@ interface AppLayoutProps {
 }
 
 export default function AppLayout({ children }: AppLayoutProps) {
+  const pathname = usePathname();
+
   return (
     <div className="min-h-screen bg-bg-base text-text flex font-sans relative">
       {/* Desktop Left Sidebar */}
@@ -19,7 +23,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
       {/* Main Content Viewport */}
       <div className="flex-1 min-w-0 flex flex-col min-h-screen">
-        {/* Mobile Top Navbar (Hidden on desktop since DesktopSidebar is visible) */}
+        {/* Mobile Top Navbar */}
         <header className="lg:hidden glass-panel border-b border-border/40 px-4 py-3.5 flex items-center justify-between sticky top-0 z-40">
           <div className="flex items-center space-x-2">
             <Link href="/" className="flex items-center space-x-2">
@@ -44,9 +48,19 @@ export default function AppLayout({ children }: AppLayoutProps) {
           </div>
         </header>
 
-        {/* Main Body */}
-        <main className="flex-1 w-full max-w-6xl mx-auto p-4 md:p-8 animate-fade-in transition-all duration-300 ease-out">
-          {children}
+        {/* Main Body with Smooth Motion Page Transition */}
+        <main className="flex-1 w-full max-w-6xl mx-auto p-4 md:p-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
     </div>
