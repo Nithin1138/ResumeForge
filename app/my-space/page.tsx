@@ -1,5 +1,6 @@
 "use client";
 
+import React, { Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import MySpaceClient from "./MySpaceClient";
@@ -28,5 +29,13 @@ export default function MySpacePage() {
     );
   }
 
-  return <MySpaceClient userEmail={session.user.email} />;
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-bg-base text-text flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    }>
+      <MySpaceClient userEmail={session.user.email} />
+    </Suspense>
+  );
 }

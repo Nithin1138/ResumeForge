@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useDeferredValue, useCallback, useMemo } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { 
   Database, 
   Sparkles, 
@@ -88,7 +89,20 @@ interface CodingProfileItem {
 }
 
 export default function MySpaceClient({ userEmail }: { userEmail: string }) {
-  const [activeTab, setActiveTab] = useState<"profile" | "copilot">("profile");
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState<"profile" | "copilot">(
+    tabParam === "copilot" ? "copilot" : "profile"
+  );
+
+  useEffect(() => {
+    const t = searchParams.get("tab");
+    if (t === "copilot") {
+      setActiveTab("copilot");
+    } else if (t === "profile") {
+      setActiveTab("profile");
+    }
+  }, [searchParams]);
   const [viewMode, setViewMode] = useState<"view" | "edit">("view");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
