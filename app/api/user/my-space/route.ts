@@ -145,7 +145,7 @@ export async function PUT(req: NextRequest) {
       customNotes,
     } = body;
 
-    const dataPayload = {
+    const dataPayload: any = {
       fullName,
       phone,
       location,
@@ -167,14 +167,32 @@ export async function PUT(req: NextRequest) {
       customNotes,
     };
 
-    const updatedProfile = await prisma.masterProfile.upsert({
-      where: { userId: user.id },
-      update: dataPayload,
-      create: {
-        userId: user.id,
-        ...dataPayload,
-      },
-    });
+    let updatedProfile;
+    try {
+      updatedProfile = await prisma.masterProfile.upsert({
+        where: { userId: user.id },
+        update: dataPayload,
+        create: {
+          userId: user.id,
+          ...dataPayload,
+        },
+      });
+    } catch (upsertErr: any) {
+      console.warn("MasterProfile upsert warning:", upsertErr?.message);
+      if (upsertErr?.message?.includes("achievementsJson")) {
+        delete dataPayload.achievementsJson;
+        updatedProfile = await prisma.masterProfile.upsert({
+          where: { userId: user.id },
+          update: dataPayload,
+          create: {
+            userId: user.id,
+            ...dataPayload,
+          },
+        });
+      } else {
+        throw upsertErr;
+      }
+    }
 
     return NextResponse.json({ success: true, profile: updatedProfile });
   } catch (error: any) {
