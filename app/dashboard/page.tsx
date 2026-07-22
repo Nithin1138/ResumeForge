@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import WalletCard from "@/components/WalletCard";
 import HeaderWalletBadge from "@/components/HeaderWalletBadge";
 import AppLayout from "@/components/AppLayout";
+import PinnedSections from "@/components/PinnedSections";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,7 @@ export default async function DashboardPage() {
       coverLetters: {
         orderBy: { createdAt: "desc" },
       },
+      masterProfile: true,
     },
   });
 
@@ -153,6 +155,9 @@ export default async function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* 2.5 PINNED SECTIONS BLOCK */}
+        <PinnedSections profile={user.masterProfile} />
 
         {/* 3. CANDIDATE WALLET COMPONENT */}
         <WalletCard />

@@ -339,6 +339,7 @@ model MasterProfile {
   certificationsJson String   @default("[]")
   achievementsJson   String   @default("[]")
   customFieldsJson   String   @default("[]")
+  pinnedSectionsJson String   @default("[]")
   customNotes        String?  @db.Text
 
   createdAt          DateTime @default(now())

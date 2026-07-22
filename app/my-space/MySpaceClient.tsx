@@ -34,7 +34,8 @@ import {
   MapPin,
   CheckCircle2,
   Layers,
-  Menu
+  Menu,
+  Pin
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -142,6 +143,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const [customKeySelection, setCustomKeySelection] = useState("Target Role 1");
   const [newCustomLink, setNewCustomLink] = useState("");
   const [customNotes, setCustomNotes] = useState("");
+  const [pinnedSections, setPinnedSections] = useState<string[]>([]);
 
   // AI Copilot State
   const [companyName, setCompanyName] = useState("");
@@ -358,6 +360,13 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         } catch {
           setCustomFields([]);
         }
+
+        try {
+          const pinned = JSON.parse(p.pinnedSectionsJson || "[]");
+          setPinnedSections(Array.isArray(pinned) ? pinned : []);
+        } catch {
+          setPinnedSections([]);
+        }
       } else {
         setFullName(data.userName || "");
       }
@@ -406,6 +415,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           certificationsJson: JSON.stringify(certifications),
           achievementsJson: JSON.stringify(achievements),
           customFieldsJson: JSON.stringify(customFields),
+          pinnedSectionsJson: JSON.stringify(pinnedSections),
           customNotes,
         }),
       });
@@ -581,6 +591,72 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   };
   const handleUpdateCustomField = (id: string, key: string, value: string) => {
     setCustomFields(customFields.map(cf => cf.id === id ? { ...cf, key, value } : cf));
+  };
+
+  const togglePinSection = async (sectionId: string) => {
+    const isPinned = pinnedSections.includes(sectionId);
+    const updated = isPinned
+      ? pinnedSections.filter(id => id !== sectionId)
+      : [...pinnedSections, sectionId];
+    setPinnedSections(updated);
+
+    try {
+      await fetch("/api/user/my-space", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName,
+          email,
+          collegeEmail,
+          dateOfBirth,
+          phone,
+          location,
+          github,
+          linkedin,
+          portfolio,
+          noticePeriod,
+          leetcode,
+          codeforces,
+          codechef,
+          hackerrank,
+          gfg,
+          codingProfilesJson: JSON.stringify(codingProfiles),
+          college,
+          branch,
+          cgpa,
+          graduationYear,
+          educationJson: JSON.stringify(educationList),
+          summary,
+          skillsJson: JSON.stringify(skills),
+          projectsJson: JSON.stringify(projects),
+          experiencesJson: JSON.stringify(experiences),
+          certificationsJson: JSON.stringify(certifications),
+          achievementsJson: JSON.stringify(achievements),
+          customFieldsJson: JSON.stringify(customFields),
+          pinnedSectionsJson: JSON.stringify(updated),
+          customNotes,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to save pinned sections:", err);
+    }
+  };
+
+  const renderPinButton = (sectionId: string) => {
+    const isPinned = pinnedSections.includes(sectionId);
+    return (
+      <button
+        onClick={() => togglePinSection(sectionId)}
+        className={`p-1.5 rounded-lg border transition-all cursor-pointer flex items-center justify-center shrink-0 ${
+          isPinned 
+            ? "bg-amber-500/10 border-amber-500/30 text-amber-500 hover:bg-amber-500/20" 
+            : "bg-bg-base/30 border-border/40 text-text-muted hover:text-amber-500 hover:border-amber-500/30 hover:bg-amber-500/5"
+        }`}
+        title={isPinned ? "Unpin from Dashboard" : "Pin to Dashboard"}
+      >
+        <Pin className={`w-3.5 h-3.5 ${isPinned ? "fill-amber-500" : ""}`} />
+      </button>
+    );
   };
 
   // Project Handlers
@@ -792,15 +868,15 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar -mx-1 px-1">
             {[
               { id: "all", label: "All", isTab: "profile" as const },
-              { id: "personal", label: "Personal", isTab: "profile" as const },
-              { id: "coding", label: "Coding", isTab: "profile" as const },
-              { id: "academic", label: "Academics", isTab: "profile" as const },
+              { id: "personal", label: `Personal${[fullName, email, collegeEmail, phone, dateOfBirth, location, github, linkedin, noticePeriod].filter(Boolean).length ? ` · ${[fullName, email, collegeEmail, phone, dateOfBirth, location, github, linkedin, noticePeriod].filter(Boolean).length}` : ""}`, isTab: "profile" as const },
+              { id: "coding", label: `Coding${codingProfiles.filter(p => p.username).length ? ` · ${codingProfiles.filter(p => p.username).length}` : ""}`, isTab: "profile" as const },
+              { id: "academic", label: `Academics${educationList.length ? ` · ${educationList.length}` : ""}`, isTab: "profile" as const },
               { id: "skills", label: `Skills${skills.length ? ` · ${skills.length}` : ""}`, isTab: "profile" as const },
               { id: "certifications", label: `Certs${certifications.length ? ` · ${certifications.length}` : ""}`, isTab: "profile" as const },
               { id: "achievements", label: `Awards${achievements.length ? ` · ${achievements.length}` : ""}`, isTab: "profile" as const },
               { id: "projects", label: `Projects${projects.length ? ` · ${projects.length}` : ""}`, isTab: "profile" as const },
               { id: "experience", label: `Experience${experiences.length ? ` · ${experiences.length}` : ""}`, isTab: "profile" as const },
-              { id: "custom", label: "Custom", isTab: "profile" as const },
+              { id: "custom", label: `Custom${customFields.length ? ` · ${customFields.length}` : ""}`, isTab: "profile" as const },
             ].map((cat) => {
               const isActive = activeTab === "profile" && categoryFilter === cat.id;
               return (
@@ -858,11 +934,14 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
             {/* SECTION 1: PERSONAL & SOCIAL PROFILES */}
             {(categoryFilter === "all" || categoryFilter === "personal") && (
               <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-lg bg-primary/8 text-primary">
-                    <User className="w-4 h-4" />
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-lg bg-primary/8 text-primary">
+                      <User className="w-4 h-4" />
+                    </div>
+                    <h2 className="font-semibold text-[15px] text-text">Personal & Social</h2>
                   </div>
-                  <h2 className="font-semibold text-[15px] text-text">Personal & Social</h2>
+                  {renderPinButton("personal")}
                 </div>
 
                 {viewMode === "edit" ? (
@@ -1106,6 +1185,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     <span className="text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
                       {codingProfiles.filter(p => p.username).length} Active Profiles
                     </span>
+                    {renderPinButton("coding")}
                   </div>
                 </div>
 
@@ -1344,9 +1424,12 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                       <h2 className="font-semibold text-[15px] text-text">Academics & Education History</h2>
                     </div>
                   </div>
-                  <span className="text-xs text-text-muted font-bold bg-bg-base border border-border px-3 py-1 rounded-full">
-                    {educationList.filter(e => e.institution).length} Levels Completed
-                  </span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-text-muted font-bold bg-bg-base border border-border px-3 py-1 rounded-full">
+                      {educationList.filter(e => e.institution).length} Levels Completed
+                    </span>
+                    {renderPinButton("academic")}
+                  </div>
                 </div>
 
                 {viewMode === "edit" ? (
@@ -1633,7 +1716,10 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     <Code className="w-5 h-5 text-primary" />
                     <h2 className="font-serif font-bold text-lg text-text">Technical Skills Vault</h2>
                   </div>
-                  <span className="text-xs text-text-muted font-bold">{skills.length} Skills Stored</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-text-muted font-bold">{skills.length} Skills Stored</span>
+                    {renderPinButton("skills")}
+                  </div>
                 </div>
 
                 {viewMode === "edit" && (
@@ -1684,7 +1770,10 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     <Award className="w-5 h-5 text-emerald-500" />
                     <h2 className="font-serif font-bold text-lg text-text">Certifications & Licenses Vault</h2>
                   </div>
-                  <span className="text-xs text-text-muted font-bold">{certifications.length} Certifications Stored</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-text-muted font-bold">{certifications.length} Certifications Stored</span>
+                    {renderPinButton("certifications")}
+                  </div>
                 </div>
 
                 {viewMode === "edit" && (
@@ -1754,7 +1843,10 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     <Sparkles className="w-5 h-5 text-amber-500" />
                     <h2 className="font-serif font-bold text-lg text-text">Achievements & Awards Vault</h2>
                   </div>
-                  <span className="text-xs text-text-muted font-bold">{achievements.length} Achievements Stored</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-text-muted font-bold">{achievements.length} Achievements Stored</span>
+                    {renderPinButton("achievements")}
+                  </div>
                 </div>
 
                 {viewMode === "edit" && (
@@ -1828,7 +1920,10 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     <Tag className="w-5 h-5 text-primary" />
                     <h2 className="font-serif font-bold text-lg text-text">Custom Information Vault (Key-Value Pairs)</h2>
                   </div>
-                  <span className="text-xs text-text-muted font-bold">{customFields.length} Custom Fields</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-text-muted font-bold">{customFields.length} Custom Fields</span>
+                    {renderPinButton("custom")}
+                  </div>
                 </div>
 
                 {/* Add Custom Detail Form - Edit mode only */}
@@ -1985,15 +2080,18 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     <FileText className="w-5 h-5 text-primary" />
                     <h2 className="font-serif font-bold text-lg text-text">Key Engineering Projects</h2>
                   </div>
-                  {viewMode === "edit" && (
-                    <button
-                      onClick={handleAddProject}
-                      className="px-3.5 py-1.5 bg-primary/10 border border-primary/30 text-primary text-xs font-bold rounded-full hover:bg-primary/20 transition-all flex items-center space-x-1 cursor-pointer"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>Add Project</span>
-                    </button>
-                  )}
+                  <div className="flex items-center space-x-2">
+                    {viewMode === "edit" && (
+                      <button
+                        onClick={handleAddProject}
+                        className="px-3.5 py-1.5 bg-primary/10 border border-primary/30 text-primary text-xs font-bold rounded-full hover:bg-primary/20 transition-all flex items-center space-x-1 cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add Project</span>
+                      </button>
+                    )}
+                    {renderPinButton("projects")}
+                  </div>
                 </div>
 
                 <div className="space-y-4">
@@ -2146,15 +2244,18 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     <Briefcase className="w-5 h-5 text-primary" />
                     <h2 className="font-serif font-bold text-lg text-text">Experience & Internships</h2>
                   </div>
-                  {viewMode === "edit" && (
-                    <button
-                      onClick={handleAddExperience}
-                      className="px-3.5 py-1.5 bg-primary/10 border border-primary/30 text-primary text-xs font-bold rounded-full hover:bg-primary/20 transition-all flex items-center space-x-1 cursor-pointer"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>Add Experience</span>
-                    </button>
-                  )}
+                  <div className="flex items-center space-x-2">
+                    {viewMode === "edit" && (
+                      <button
+                        onClick={handleAddExperience}
+                        className="px-3.5 py-1.5 bg-primary/10 border border-primary/30 text-primary text-xs font-bold rounded-full hover:bg-primary/20 transition-all flex items-center space-x-1 cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add Experience</span>
+                      </button>
+                    )}
+                    {renderPinButton("experience")}
+                  </div>
                 </div>
 
                 <div className="space-y-4">

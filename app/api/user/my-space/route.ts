@@ -152,6 +152,7 @@ export async function PUT(req: NextRequest) {
       certificationsJson,
       achievementsJson,
       customFieldsJson,
+      pinnedSectionsJson,
       customNotes,
     } = body;
 
@@ -184,6 +185,7 @@ export async function PUT(req: NextRequest) {
       certificationsJson: typeof certificationsJson === "string" ? certificationsJson : JSON.stringify(certificationsJson || []),
       achievementsJson: typeof achievementsJson === "string" ? achievementsJson : JSON.stringify(achievementsJson || []),
       customFieldsJson: typeof customFieldsJson === "string" ? customFieldsJson : JSON.stringify(customFieldsJson || []),
+      pinnedSectionsJson: typeof pinnedSectionsJson === "string" ? pinnedSectionsJson : JSON.stringify(pinnedSectionsJson || []),
       customNotes,
     };
 
