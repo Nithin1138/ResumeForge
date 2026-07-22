@@ -666,16 +666,16 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-        {/* LEFT COLUMN: Up to 2 Compact Custom Detail Cards */}
-        <div className="space-y-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
+        {/* LEFT COLUMN: Up to 2 Custom Detail Cards (Combined Height = Right Section Card Height) */}
+        <div className="flex flex-col gap-3.5 justify-between h-full">
           {customItems.map(({ id, item }) => {
             const SecIcon = item.icon;
 
             return (
               <div 
                 key={id} 
-                className="bg-surface border border-border/80 rounded-2xl p-3.5 space-y-2.5 shadow-xs relative hover:shadow-md hover:border-border transition-all"
+                className="bg-surface border border-border/80 rounded-2xl p-4 space-y-2.5 shadow-xs relative hover:shadow-md hover:border-border transition-all flex-1 flex flex-col justify-between"
               >
                 <div className="flex items-center justify-between border-b border-border/30 pb-2">
                   <div className="flex items-center space-x-2">
@@ -694,7 +694,7 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
                   </button>
                 </div>
 
-                <div>
+                <div className="flex-1 flex flex-col justify-center my-auto">
                   {item.content}
                 </div>
               </div>
@@ -702,7 +702,7 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
           })}
 
           {customItems.length === 0 && (
-            <div className="border border-dashed border-border/60 rounded-2xl p-4 text-center text-text-muted text-xs flex flex-col items-center justify-center space-y-1">
+            <div className="border border-dashed border-border/60 rounded-2xl p-4 text-center text-text-muted text-xs flex flex-col items-center justify-center space-y-1 h-full min-h-[160px]">
               <Tag className="w-4 h-4 text-text-muted/60 mb-0.5" />
               <p className="font-bold text-text-muted">No Custom Card Pinned</p>
               <p className="text-[11px]">Pin up to 2 custom detail cards in My Space</p>
@@ -711,11 +711,11 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
         </div>
 
         {/* RIGHT COLUMN: 1 Big Profile Section Card */}
-        <div>
+        <div className="flex flex-col h-full">
           {sectionCardItem ? (
             <div 
               key={sectionCardItem.id} 
-              className="bg-surface border border-border/80 rounded-2xl p-4 md:p-5 space-y-4 relative shadow-xs hover:shadow-md hover:border-border transition-all"
+              className="bg-surface border border-border/80 rounded-2xl p-4 md:p-5 space-y-4 relative shadow-xs hover:shadow-md hover:border-border transition-all h-full flex flex-col justify-between"
             >
               <div className="flex items-center justify-between border-b border-border/30 pb-3">
                 <div className="flex items-center space-x-2.5">
@@ -734,12 +734,12 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
                 </button>
               </div>
 
-              <div>
+              <div className="flex-1">
                 {sectionCardItem.item.content}
               </div>
             </div>
           ) : (
-            <div className="border border-dashed border-border/60 rounded-2xl p-6 text-center text-text-muted text-xs flex flex-col items-center justify-center space-y-1">
+            <div className="border border-dashed border-border/60 rounded-2xl p-6 text-center text-text-muted text-xs flex flex-col items-center justify-center space-y-1 h-full min-h-[220px]">
               <User className="w-5 h-5 text-text-muted/60 mb-1" />
               <p className="font-bold text-text-muted">No Section Card Pinned</p>
               <p className="text-[11px]">Pin a profile section (e.g. Personal Details) in My Space</p>
