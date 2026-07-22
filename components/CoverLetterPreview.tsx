@@ -87,11 +87,11 @@ export default function CoverLetterPreview({
   return (
     <div
       id="cover-letter-document"
-      className="w-full bg-white text-zinc-900 shadow-2xl border border-zinc-200 rounded-lg p-6 sm:p-9 flex flex-col justify-between font-sans text-xs leading-relaxed relative select-text min-h-[640px]"
+      className="w-full max-w-[210mm] aspect-[210/297] min-h-[297mm] bg-white text-zinc-900 shadow-2xl border border-zinc-200/90 rounded-sm p-8 sm:p-12 md:p-14 flex flex-col justify-between font-sans text-xs leading-relaxed relative select-text mx-auto my-0 box-border"
     >
       {/* ── TOP HEADER (Matching Resume Template Accent & Header Style) ── */}
       <div>
-        <div className="border-b pb-3 mb-5" style={{ borderColor: `${accent}30` }}>
+        <div className="border-b pb-3 mb-6" style={{ borderColor: `${accent}30` }}>
           <h1
             className="text-xl sm:text-2xl font-black uppercase tracking-tight"
             style={{ color: accent }}
@@ -104,19 +104,19 @@ export default function CoverLetterPreview({
         </div>
 
         {/* ── DATE & RECIPIENT BLOCK ── */}
-        <div className="space-y-2.5 mb-5 text-zinc-700 text-xs">
+        <div className="space-y-2 mb-6 text-zinc-700 text-xs">
           <p className="font-semibold text-zinc-500 text-xs">{currentDate}</p>
 
-          <div className="space-y-0.5 font-medium">
+          <div className="space-y-0.5 font-medium pt-1">
             <p className="font-bold text-zinc-900">{data.recipient || "Hiring Manager"}</p>
             <p className="text-zinc-700">{data.company || "Target Company"}</p>
           </div>
 
           {/* Subject Line */}
           {data.subject && (
-            <div className="pt-1.5">
+            <div className="pt-2">
               <p
-                className="font-bold uppercase tracking-wide text-xs px-3 py-1.5 rounded-md border inline-block"
+                className="font-bold uppercase tracking-wide text-xs px-3.5 py-2 rounded-lg border inline-block max-w-full leading-snug"
                 style={{
                   color: accent,
                   borderColor: `${accent}40`,
@@ -130,12 +130,12 @@ export default function CoverLetterPreview({
         </div>
 
         {/* ── SALUTATION ── */}
-        <div className="mb-3.5 font-bold text-zinc-900 text-xs sm:text-sm">
+        <div className="mb-4 font-bold text-zinc-900 text-xs sm:text-sm">
           {data.salutation || "Dear Hiring Manager,"}
         </div>
 
         {/* ── PARAGRAPHS ── */}
-        <div className="space-y-3.5 text-zinc-800 text-xs leading-relaxed text-left">
+        <div className="space-y-4 text-zinc-800 text-xs leading-relaxed text-left font-sans">
           {isEditable ? (
             <>
               <textarea
@@ -159,16 +159,16 @@ export default function CoverLetterPreview({
             </>
           ) : (
             <>
-              <p>{data.openingParagraph}</p>
-              <p>{data.bodyParagraph}</p>
-              <p>{data.closingParagraph}</p>
+              <p className="leading-relaxed">{data.openingParagraph}</p>
+              <p className="leading-relaxed">{data.bodyParagraph}</p>
+              <p className="leading-relaxed">{data.closingParagraph}</p>
             </>
           )}
         </div>
       </div>
 
       {/* ── SIGN-OFF BLOCK ── */}
-      <div className="mt-6 pt-4 border-t border-zinc-200">
+      <div className="mt-8 pt-4 border-t border-zinc-200">
         <p className="font-semibold text-zinc-700">{data.signOff || "Sincerely,"}</p>
         <p className="font-bold text-zinc-900 text-sm mt-1">{nameDisplay}</p>
       </div>
