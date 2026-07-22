@@ -26,29 +26,56 @@ export default function ResumeModal({
     setMounted(true);
   }, []);
 
-  if (!isOpen || !mounted || !resume || !output) return null;
+  if (!isOpen || !mounted || !resume) return null;
+
+  // Safely parse inputData and output if they are JSON strings
+  const rawInputData = typeof resume.inputData === "string"
+    ? JSON.parse(resume.inputData)
+    : (resume.inputData || {});
+
+  const parsedOutput = typeof output === "string"
+    ? JSON.parse(output)
+    : (output || (resume.outputFull ? (typeof resume.outputFull === "string" ? JSON.parse(resume.outputFull) : resume.outputFull) : {}));
+
+  const normalizedResume = {
+    ...resume,
+    inputData: {
+      ...rawInputData,
+      personal: {
+        fullName: rawInputData?.personal?.fullName || resume?.title || "Candidate Name",
+        email: rawInputData?.personal?.email || "",
+        phone: rawInputData?.personal?.phone || "",
+        city: rawInputData?.personal?.city || rawInputData?.personal?.location || "",
+        linkedin: rawInputData?.personal?.linkedin || "",
+        github: rawInputData?.personal?.github || "",
+        targetRole: rawInputData?.personal?.targetRole || resume?.targetRole || "",
+        branch: rawInputData?.personal?.branch || "",
+        collegeName: rawInputData?.personal?.collegeName || "",
+      }
+    }
+  };
 
   // Format full plain text for copying
   const fullPlainTextContent = `
-${resume.inputData?.personal?.fullName?.toUpperCase() || ""}
-Email: ${resume.inputData?.personal?.email || ""}${resume.inputData?.personal?.phone ? ` | Phone: ${resume.inputData.personal.phone}` : ""}${resume.inputData?.personal?.linkedin ? ` | LinkedIn: ${resume.inputData.personal.linkedin}` : ""}
-Target: ${resume.inputData?.personal?.targetRole || ""} ${resume.inputData?.personal?.branch ? `(${resume.inputData.personal.branch})` : ""}
-Education: ${output.pgEducation ? `[PG] ${output.pgEducation.degree} - ${output.pgEducation.institution} (${output.pgEducation.year}) | CGPA: ${output.pgEducation.cgpa} ; ` : ""}[UG] ${output.education?.degree || ""} - ${output.education?.institution || ""} (${output.education?.year || ""}) | CGPA: ${output.education?.cgpa || ""}
+${normalizedResume.inputData.personal.fullName.toUpperCase()}
+Email: ${normalizedResume.inputData.personal.email}${normalizedResume.inputData.personal.phone ? ` | Phone: ${normalizedResume.inputData.personal.phone}` : ""}
+Target: ${normalizedResume.inputData.personal.targetRole} ${normalizedResume.inputData.personal.branch ? `(${normalizedResume.inputData.personal.branch})` : ""}
+Education: ${parsedOutput.pgEducation ? `[PG] ${parsedOutput.pgEducation.degree} - ${parsedOutput.pgEducation.institution} (${parsedOutput.pgEducation.year}) | CGPA: ${parsedOutput.pgEducation.cgpa} ; ` : ""}[UG] ${parsedOutput.education?.degree || ""} - ${parsedOutput.education?.institution || ""} (${parsedOutput.education?.year || ""}) | CGPA: ${parsedOutput.education?.cgpa || ""}
 
 PROFESSIONAL SUMMARY
-${output.summary || ""}
+${parsedOutput.summary || ""}
 
 TECHNICAL SKILLS
-${(output.skills || []).map((s: any) => `- ${s.category}: ${(s.skills || []).join(", ")}`).join("\n")}
+${(parsedOutput.skills || []).map((s: any) => `- ${s.category}: ${(s.skills || []).join(", ")}`).join("\n")}
 
 PROJECTS
-${(output.projects || []).map((proj: any) => `
+${(parsedOutput.projects || []).map((proj: any) => `
 ${proj.title} (${proj.techStack})
 ${proj.duration ? `Duration: ${proj.duration}\n` : ""}${(proj.bullets || []).map((b: string) => `- ${b}`).join("\n")}
 `).join("\n")}
-${(output.experience || []).length > 0 ? `
+${(parsedOutput.experience || []).length > 0 ? `
 EXPERIENCE
-${(output.experience || []).map((exp: any) => `
+${(parsedOutput.experience || []).map((exp: any) => `
 ${exp.company} - ${exp.role} (${exp.duration})
 ${(exp.bullets || []).map((b: string) => `- ${b}`).join("\n")}
 `).join("\n")}
@@ -135,25 +162,20 @@ ${(exp.bullets || []).map((b: string) => `- ${b}`).join("\n")}
         </div>
       </div>
 
-      {/* Centered Document Preview Canvas (Matches Image 2) */}
-      <div className="w-full max-w-4xl flex-1 flex flex-col items-center justify-center my-auto py-2 pb-8 overflow-visible">
+      {/* Centered Document Preview Canvas */}
+      <div className="w-full flex-1 flex flex-col items-center justify-start overflow-y-auto py-4 px-2 my-auto">
         <div 
-          className="flex items-center justify-center transition-all duration-200"
+          className="relative shadow-2xl rounded-xs bg-white text-black border border-border/40 my-auto transition-all duration-200"
           style={{ 
-            height: `${Math.round(297 * zoomScale * 3.78)}px`,
-            width: `${Math.round(210 * zoomScale * 3.78)}px`
+            width: `${Math.round(794 * zoomScale)}px`,
+            height: `${Math.round(1122 * zoomScale)}px`,
           }}
         >
-          <div 
-            className="origin-center transition-transform duration-200 shadow-2xl rounded-xs bg-white text-black overflow-hidden"
-            style={{ transform: `scale(${zoomScale})` }}
-          >
-            <ResumePreviewPanel 
-              resume={resume} 
-              output={output} 
-              locked={false} 
-            />
-          </div>
+          <ResumePreviewPanel 
+            resume={normalizedResume} 
+            output={parsedOutput} 
+            locked={false} 
+          />
         </div>
       </div>
     </div>,
