@@ -129,8 +129,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [experiences, setExperiences] = useState<ExperienceItem[]>([]);
-  const [certifications, setCertifications] = useState<string[]>([]);
+  const [certifications, setCertifications] = useState<{ name: string; year?: string }[]>([]);
   const [newCertInput, setNewCertInput] = useState("");
+  const [newCertYearInput, setNewCertYearInput] = useState("");
   const [achievements, setAchievements] = useState<string[]>([]);
   const [newAchievementInput, setNewAchievementInput] = useState("");
   
@@ -313,13 +314,16 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
         try {
           const cr = JSON.parse(p.certificationsJson || "[]");
+          let parsedCerts: { name: string; year?: string }[] = [];
           if (Array.isArray(cr)) {
-            setCertifications(cr);
+            parsedCerts = cr.map((item: any) => {
+              if (typeof item === "string") return { name: item, year: "" };
+              return { name: item.name || "", year: item.year || "" };
+            });
           } else if (typeof cr === "string") {
-            setCertifications(cr.split(",").map((c: string) => c.trim()).filter(Boolean));
-          } else {
-            setCertifications([]);
+            parsedCerts = cr.split(",").map((c: string) => ({ name: c.trim(), year: "" })).filter(c => c.name);
           }
+          setCertifications(parsedCerts);
         } catch {
           setCertifications([]);
         }
@@ -518,9 +522,11 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
   // Certification Handlers
   const handleAddCert = () => {
-    if (newCertInput.trim() && !certifications.includes(newCertInput.trim())) {
-      setCertifications([...certifications, newCertInput.trim()]);
+    const nameTrimmed = newCertInput.trim();
+    if (nameTrimmed && !certifications.some(c => c.name.toLowerCase() === nameTrimmed.toLowerCase())) {
+      setCertifications([...certifications, { name: nameTrimmed, year: newCertYearInput.trim() }]);
       setNewCertInput("");
+      setNewCertYearInput("");
     }
   };
   const handleRemoveCert = (index: number) => {
@@ -1581,19 +1587,27 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                 </div>
 
                 {viewMode === "edit" && (
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                     <input
                       type="text"
                       value={newCertInput}
                       onChange={(e) => setNewCertInput(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddCert())}
-                      placeholder="Add certification (e.g. AWS Certified Solutions Architect, Google Cloud Professional)"
+                      placeholder="Add certification (e.g. AWS Certified Solutions Architect)"
                       className="flex-1 px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                    />
+                    <input
+                      type="text"
+                      value={newCertYearInput}
+                      onChange={(e) => setNewCertYearInput(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddCert())}
+                      placeholder="Year (e.g. 2024)"
+                      className="w-full sm:w-36 px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
                     />
                     <button
                       type="button"
                       onClick={handleAddCert}
-                      className="px-4 py-2.5 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-500 transition-all cursor-pointer"
+                      className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-all cursor-pointer whitespace-nowrap"
                     >
                       Add Certification
                     </button>
@@ -1601,15 +1615,15 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                 )}
 
                 <div className="flex flex-wrap gap-2 pt-1">
-                  {(Array.isArray(certifications) ? certifications : []).filter(c => matchesSearch(c)).map((cert, idx) => (
+                  {(Array.isArray(certifications) ? certifications : []).filter(c => matchesSearch(c.name) || (c.year && matchesSearch(c.year))).map((cert, idx) => (
                     <span
                       key={idx}
-                      onClick={() => copyToClipboard(cert, `Cert-${cert}`)}
+                      onClick={() => copyToClipboard(cert.year ? `${cert.name} (${cert.year})` : cert.name, `Cert-${cert.name}`)}
                       className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold cursor-pointer hover:bg-emerald-500/20 transition-all"
                       title="Click to copy certification"
                     >
                       <Award className="w-3.5 h-3.5 shrink-0" />
-                      <span>{cert}</span>
+                      <span>{cert.name}{cert.year ? ` (${cert.year})` : ""}</span>
                       {viewMode === "edit" && (
                         <button onClick={(e) => { e.stopPropagation(); handleRemoveCert(idx); }} className="hover:text-red-500 cursor-pointer ml-1">
                           <Trash2 className="w-3.5 h-3.5 text-red-400" />
