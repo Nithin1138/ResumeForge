@@ -61,6 +61,7 @@ export default function CoverLetterModal({
   const [copied, setCopied] = useState(false);
   const [coverLetter, setCoverLetter] = useState<CoverLetterData | null>(initialCoverLetter || null);
   const [mounted, setMounted] = useState(false);
+  const [zoomScale, setZoomScale] = useState<number>(0.65);
 
   useEffect(() => {
     setMounted(true);
@@ -213,8 +214,8 @@ export default function CoverLetterModal({
   if (readOnly) {
     return createPortal(
       <div className="fixed inset-0 bg-bg-base/80 dark:bg-black/75 backdrop-blur-md z-[9999] flex flex-col items-center justify-start p-3 sm:p-6 animate-fade-in font-sans overflow-y-auto">
-        {/* Top Sticky Header Bar (Theme-aware) */}
-        <div className="w-full max-w-4xl bg-surface/90 border border-border/80 text-text px-4 py-3 rounded-2xl flex items-center justify-between shrink-0 shadow-xl mb-4 sticky top-2 z-50 backdrop-blur-md">
+        {/* Top Sticky Header Bar (Theme-aware with Zoom Controls) */}
+        <div className="w-full max-w-4xl bg-surface/90 border border-border/80 text-text px-4 py-3 rounded-2xl flex items-center justify-between shrink-0 shadow-xl mb-4 sticky top-2 z-50 backdrop-blur-md gap-2">
           <div className="flex items-center space-x-3">
             <button
               onClick={onClose}
@@ -226,6 +227,28 @@ export default function CoverLetterModal({
           </div>
 
           <div className="flex items-center space-x-2">
+            {/* Interactive Zoom Level Selector */}
+            <div className="flex items-center space-x-1 bg-bg-base/80 p-1 rounded-full border border-border/60 text-[11px] font-bold mr-1">
+              {[
+                { label: "Fit Page", val: 0.65 },
+                { label: "75%", val: 0.75 },
+                { label: "90%", val: 0.9 },
+                { label: "100%", val: 1.0 },
+              ].map((z) => (
+                <button
+                  key={z.val}
+                  onClick={() => setZoomScale(z.val)}
+                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                    zoomScale === z.val
+                      ? "bg-primary text-white shadow-xs"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                >
+                  {z.label}
+                </button>
+              ))}
+            </div>
+
             <button
               onClick={handleCopyText}
               disabled={!coverLetter}
@@ -254,13 +277,21 @@ export default function CoverLetterModal({
           </div>
         </div>
 
-        {/* Scaled Preview Canvas (Fits entire A4 page on screen without changing page layout) */}
-        <div className="w-full max-w-4xl flex items-center justify-center pb-12 overflow-visible">
-          <div className="origin-top scale-[0.62] sm:scale-[0.75] md:scale-[0.82] lg:scale-[0.85] transition-transform duration-200 shadow-2xl">
-            <CoverLetterPreview
-              data={coverLetter}
-              isLoading={isGenerating}
-            />
+        {/* Scaled Preview Canvas with Controlled Dynamic Height */}
+        <div className="w-full max-w-4xl flex flex-col items-center justify-start pb-12 overflow-visible">
+          <div 
+            className="flex items-center justify-center transition-all duration-200"
+            style={{ height: `${Math.round(297 * zoomScale * 3.78)}px` }}
+          >
+            <div 
+              className="origin-top transition-transform duration-200 shadow-2xl rounded-xs"
+              style={{ transform: `scale(${zoomScale})` }}
+            >
+              <CoverLetterPreview
+                data={coverLetter}
+                isLoading={isGenerating}
+              />
+            </div>
           </div>
         </div>
       </div>,
