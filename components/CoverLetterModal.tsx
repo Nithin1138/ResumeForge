@@ -212,13 +212,13 @@ export default function CoverLetterModal({
 
   if (readOnly) {
     return createPortal(
-      <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-xs z-[9999] flex flex-col items-center justify-start p-3 sm:p-6 animate-fade-in font-sans overflow-y-auto">
-        {/* Top Sticky Header Bar */}
-        <div className="w-full max-w-4xl bg-slate-900 border border-slate-800 text-white px-4 py-3 rounded-2xl flex items-center justify-between shrink-0 shadow-2xl mb-6 sticky top-2 z-50">
+      <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md z-[9999] flex flex-col items-center justify-start p-3 sm:p-5 animate-fade-in font-sans overflow-y-auto">
+        {/* Top Sticky Header Bar (Theme Aware) */}
+        <div className="w-full max-w-3xl bg-surface/90 backdrop-blur-md border border-border/80 text-text px-4 py-3 rounded-2xl flex items-center justify-between shrink-0 shadow-lg mb-4 sticky top-2 z-50">
           <div className="flex items-center space-x-3">
             <button
               onClick={onClose}
-              className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-bold transition-all flex items-center space-x-1.5 text-gray-200 cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-bg-base hover:bg-bg-base/80 border border-border/80 text-xs font-bold transition-all flex items-center space-x-1.5 text-text cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back</span>
@@ -229,16 +229,16 @@ export default function CoverLetterModal({
             <button
               onClick={handleCopyText}
               disabled={!coverLetter}
-              className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-bold text-gray-200 transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-40"
+              className="px-3.5 py-1.5 rounded-full bg-bg-base hover:bg-bg-base/80 border border-border/80 text-xs font-bold text-text transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-40"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
               <span className="hidden sm:inline">{copied ? "Copied" : "Copy Text"}</span>
             </button>
 
             <button
               onClick={handlePrint}
               disabled={!coverLetter}
-              className="px-4 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-md disabled:opacity-40"
+              className="px-4 py-1.5 rounded-full bg-primary hover:bg-primary/95 text-white text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-md disabled:opacity-40"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Download PDF</span>
@@ -246,7 +246,7 @@ export default function CoverLetterModal({
 
             <button
               onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-white/20 text-gray-300 hover:text-white transition-all cursor-pointer ml-1"
+              className="p-1.5 rounded-full hover:bg-bg-base text-text-muted hover:text-text transition-all cursor-pointer ml-1"
               title="Close"
             >
               <X className="w-4 h-4" />
@@ -254,12 +254,14 @@ export default function CoverLetterModal({
           </div>
         </div>
 
-        {/* Clean Paper Document Preview Canvas (No extra double borders or double padding) */}
-        <div className="w-full max-w-4xl flex items-center justify-center pb-10">
-          <CoverLetterPreview
-            data={coverLetter}
-            isLoading={isGenerating}
-          />
+        {/* Clean Paper Document Preview Canvas (Zoomed Out to fit full page in viewport) */}
+        <div className="w-full max-w-3xl flex items-center justify-center pb-6 min-h-0 flex-1">
+          <div className="max-h-[84vh] aspect-[210/297] w-full max-w-[620px] flex flex-col my-auto">
+            <CoverLetterPreview
+              data={coverLetter}
+              isLoading={isGenerating}
+            />
+          </div>
         </div>
       </div>,
       document.body
