@@ -1889,16 +1889,21 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                         <div
                           className="space-y-2 pr-8"
                         >
-                          <div className="flex items-start justify-between">
-                            <div className="space-y-1">
-                              <h3 className="font-bold text-sm text-text flex items-center gap-2">
-                                <span>{proj.title}</span>
-                                {proj.techStack && (
-                                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                                    {proj.techStack}
-                                  </span>
-                                )}
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="space-y-2 flex-1 min-w-0">
+                              <h3 className="font-bold text-sm text-text leading-snug break-words">
+                                {proj.title}
                               </h3>
+                              
+                              {proj.techStack && (
+                                <div className="flex flex-wrap gap-1.5">
+                                  {proj.techStack.split(",").map(t => t.trim()).filter(Boolean).map((tech, idx) => (
+                                    <span key={idx} className="text-[9px] font-extrabold px-2 py-0.5 rounded-md bg-primary/10 text-primary">
+                                      {tech}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
                               
                               <div className="flex items-center gap-3 pt-0.5">
                                 {proj.githubLink && (
