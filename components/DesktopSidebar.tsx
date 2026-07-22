@@ -17,6 +17,7 @@ import {
   LogOut,
   Menu
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 let globalWalletCache: number | null = null;
@@ -148,20 +149,28 @@ export default function DesktopSidebar() {
               href={item.href}
               prefetch={true}
               title={isCollapsed ? item.name : undefined}
-              className={`flex items-center rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center rounded-xl text-xs font-bold transition-colors cursor-pointer relative ${
                 isCollapsed ? "justify-center p-3" : "justify-between px-3.5 py-2.5"
               } ${
                 item.active
-                  ? "bg-primary/10 text-primary border border-primary/20 shadow-2xs"
+                  ? "text-primary font-extrabold"
                   : "text-text-muted hover:text-text-main hover:bg-bg-base/60"
               }`}
             >
-              <div className={`flex items-center ${isCollapsed ? "justify-center" : "space-x-3"}`}>
+              {item.active && (
+                <motion.div
+                  layoutId="sidebarActivePill"
+                  className="absolute inset-0 bg-primary/10 border border-primary/25 rounded-xl -z-10 shadow-2xs"
+                  transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                />
+              )}
+
+              <div className={`flex items-center ${isCollapsed ? "justify-center" : "space-x-3"} z-10`}>
                 <Icon className={`w-4.5 h-4.5 shrink-0 ${item.active ? "text-primary" : "text-text-muted"}`} />
                 {!isCollapsed && <span className="truncate">{item.name}</span>}
               </div>
 
-              {!isCollapsed && item.active && <ChevronRight className="w-3.5 h-3.5 text-primary opacity-60 shrink-0" />}
+              {!isCollapsed && item.active && <ChevronRight className="w-3.5 h-3.5 text-primary opacity-60 shrink-0 z-10" />}
             </Link>
           );
         })}
