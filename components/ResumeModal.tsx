@@ -173,7 +173,7 @@ ${(exp.bullets || []).map((b: string) => `- ${b}`).join("\n")}
         </div>
       </div>
 
-      {/* Centered Document Preview Canvas */}
+      {/* Centered Document Preview Canvas (Single Paper Sheet - No Extra Outer White Card Layer) */}
       <div className="w-full flex-1 flex flex-col items-center justify-start overflow-y-auto py-4 px-2 my-auto">
         {loading ? (
           <div className="flex flex-col items-center justify-center p-12 bg-surface border border-border rounded-2xl shadow-xl my-auto space-y-3">
@@ -182,11 +182,8 @@ ${(exp.bullets || []).map((b: string) => `- ${b}`).join("\n")}
           </div>
         ) : (
           <div 
-            className="relative shadow-2xl rounded-xs bg-white text-black border border-border/40 my-auto transition-all duration-200"
-            style={{ 
-              width: `${Math.round(794 * zoomScale)}px`,
-              minHeight: `${Math.round(1122 * zoomScale)}px`,
-            }}
+            className="w-full flex justify-center items-start my-auto transition-all duration-200"
+            style={{ zoom: zoomScale }}
           >
             <ResumePreviewPanel 
               resume={normalizedResume} 
