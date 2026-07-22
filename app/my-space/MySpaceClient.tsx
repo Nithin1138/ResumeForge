@@ -35,6 +35,7 @@ import {
   CheckCircle2,
   Layers
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoutButton } from "@/components/DashboardActions";
 import HeaderWalletBadge from "@/components/HeaderWalletBadge";
@@ -45,6 +46,7 @@ interface ProjectItem {
   title: string;
   description: string;
   techStack: string;
+  link?: string;
 }
 
 interface ExperienceItem {
@@ -119,6 +121,22 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
   useEffect(() => {
     fetchProfile();
+
+    const handleProfileUpdate = () => {
+      fetchProfile();
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("masterProfileUpdated", handleProfileUpdate);
+      window.addEventListener("storage", handleProfileUpdate);
+    }
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("masterProfileUpdated", handleProfileUpdate);
+        window.removeEventListener("storage", handleProfileUpdate);
+      }
+    };
   }, []);
 
   const fetchProfile = async () => {
@@ -280,6 +298,11 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to save profile");
+
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("masterProfileUpdated", { detail: data.profile }));
+        localStorage.setItem("masterProfileLastUpdated", Date.now().toString());
+      }
 
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
@@ -498,28 +521,42 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
             </p>
           </div>
 
-          <div className="flex items-center space-x-3 bg-surface border border-border p-1.5 rounded-2xl w-fit">
+          <div className="flex items-center space-x-2 bg-surface border border-border p-1.5 rounded-2xl w-fit relative">
             <button
               onClick={() => setActiveTab("profile")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 transition-colors relative z-10 cursor-pointer ${
                 activeTab === "profile" 
-                  ? "bg-primary text-white shadow-xs" 
+                  ? "text-primary dark:text-white" 
                   : "text-text-muted hover:text-text"
               }`}
             >
+              {activeTab === "profile" && (
+                <motion.div
+                  layoutId="spaceMainTab"
+                  className="absolute inset-0 bg-surface dark:bg-surface-dark border border-border/80 rounded-xl shadow-xs -z-10"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
               <User className="w-4 h-4" />
               <span>Master Profile Vault</span>
             </button>
 
             <button
               onClick={() => setActiveTab("copilot")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 transition-colors relative z-10 cursor-pointer ${
                 activeTab === "copilot" 
-                  ? "bg-primary text-white shadow-xs" 
+                  ? "text-primary dark:text-white" 
                   : "text-text-muted hover:text-text"
               }`}
             >
-              <Bot className="w-4 h-4" />
+              {activeTab === "copilot" && (
+                <motion.div
+                  layoutId="spaceMainTab"
+                  className="absolute inset-0 bg-surface dark:bg-surface-dark border border-border/80 rounded-xl shadow-xs -z-10"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+              <Bot className="w-4 h-4 text-primary" />
               <span>AI Application Copilot</span>
             </button>
           </div>
@@ -534,27 +571,41 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
               
               {/* Left: View / Edit Toggle & Search */}
               <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center bg-bg-base border border-border p-1 rounded-xl">
+                <div className="flex items-center bg-bg-base border border-border p-1 rounded-xl relative">
                   <button
                     onClick={() => setViewMode("view")}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer ${
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1.5 transition-colors relative z-10 cursor-pointer ${
                       viewMode === "view"
-                        ? "bg-primary text-white shadow-xs"
+                        ? "text-primary dark:text-white"
                         : "text-text-muted hover:text-text"
                     }`}
                   >
+                    {viewMode === "view" && (
+                      <motion.div
+                        layoutId="spaceViewToggle"
+                        className="absolute inset-0 bg-primary text-white rounded-lg shadow-xs -z-10"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    )}
                     <Eye className="w-3.5 h-3.5" />
                     <span>View & Copy Mode</span>
                   </button>
 
                   <button
                     onClick={() => setViewMode("edit")}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer ${
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1.5 transition-colors relative z-10 cursor-pointer ${
                       viewMode === "edit"
-                        ? "bg-primary text-white shadow-xs"
+                        ? "text-primary dark:text-white"
                         : "text-text-muted hover:text-text"
                     }`}
                   >
+                    {viewMode === "edit" && (
+                      <motion.div
+                        layoutId="spaceViewToggle"
+                        className="absolute inset-0 bg-primary text-white rounded-lg shadow-xs -z-10"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    )}
                     <Edit3 className="w-3.5 h-3.5" />
                     <span>Edit & Add Mode</span>
                   </button>
@@ -627,7 +678,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
             )}
 
             {/* Category Filter Chips */}
-            <div className="flex items-center space-x-2 overflow-x-auto pb-1 custom-scrollbar">
+            <div className="flex items-center space-x-2 overflow-x-auto pb-1 custom-scrollbar relative">
               {[
                 { id: "all", label: "All Sections", count: null },
                 { id: "personal", label: "Personal & Social", count: null },
@@ -643,12 +694,19 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                 <button
                   key={cat.id}
                   onClick={() => setCategoryFilter(cat.id)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer flex items-center space-x-1.5 relative z-10 ${
                     categoryFilter === cat.id
-                      ? "bg-primary text-white shadow-xs"
+                      ? "text-white"
                       : "bg-surface border border-border/80 text-text-muted hover:text-text hover:border-primary/40"
                   }`}
                 >
+                  {categoryFilter === cat.id && (
+                    <motion.div
+                      layoutId="spaceCategoryChip"
+                      className="absolute inset-0 bg-primary rounded-full shadow-xs -z-10"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
                   <span>{cat.label}</span>
                   {typeof cat.count === "number" && cat.count > 0 && (
                     <span className={`text-[10px] font-extrabold px-1.5 py-0.2 rounded-full ${
