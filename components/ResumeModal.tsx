@@ -183,9 +183,6 @@ ${(exp.bullets || []).map((b: string) => `- ${b}`).join("\n")}
         ) : (
           <div 
             className="flex flex-col items-center justify-start my-auto transition-all duration-200"
-            style={{ 
-              width: `${Math.round(794 * zoomScale)}px`,
-            }}
           >
             <ResumePreviewPanel 
               resume={normalizedResume} 
@@ -193,6 +190,7 @@ ${(exp.bullets || []).map((b: string) => `- ${b}`).join("\n")}
               locked={false}
               includeSummary={true}
               includeCertifications={true}
+              zoomScale={zoomScale}
             />
           </div>
         )}

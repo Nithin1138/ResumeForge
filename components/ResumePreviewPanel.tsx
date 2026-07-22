@@ -45,6 +45,7 @@ interface Props {
   liveData?: LiveResumeData | null;  // when set, overrides output for preview
   includeSummary?: boolean; // whether to show professional summary
   includeCertifications?: boolean; // whether to show certifications
+  zoomScale?: number; // explicit zoom scale for modal viewers
 }
 
 import { getTemplateById } from "@/lib/templatesConfig";
@@ -68,26 +69,37 @@ function SectionTitle({ children, accentColor }: { children: React.ReactNode; ac
 }
 
 // ── Main component ─────────────────────────────────────────────────────────
-export default function ResumePreviewPanel({ resume, output, locked, liveData, includeSummary = false, includeCertifications = true }: Props) {
+export default function ResumePreviewPanel({ 
+  resume, 
+  output, 
+  locked, 
+  liveData, 
+  includeSummary = false, 
+  includeCertifications = true,
+  zoomScale
+}: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.5);
+  const [autoScale, setAutoScale] = useState(0.5);
   const [contentHeight, setContentHeight] = useState(NATURAL_H);
 
   useEffect(() => {
+    if (zoomScale !== undefined) return;
     const el = wrapperRef.current;
     if (!el) return;
     const calc = () => {
       const { width, height } = el.getBoundingClientRect();
       const byW = width / NATURAL_W;
       const byH = height / NATURAL_H;
-      setScale(Math.min(byW, byH) * 0.97);
+      setAutoScale(Math.min(byW, byH) * 0.97);
     };
     calc();
     const ro = new ResizeObserver(calc);
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [zoomScale]);
+
+  const scale = zoomScale !== undefined ? zoomScale : autoScale;
 
   useEffect(() => {
     const el = contentRef.current;
