@@ -530,224 +530,183 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   return (
     <AppLayout>
       <div className="space-y-6">
-        
-        {/* HERO HEADER & VAULT READINESS */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-surface border border-border/80 rounded-3xl p-6 md:p-8 shadow-xs">
-          <div className="space-y-1.5 max-w-xl">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-extrabold tracking-wide uppercase">
-              <Database className="w-3.5 h-3.5" />
-              <span>Candidate Master Vault</span>
+        {/* ─── COMPACT HEADER ─── */}
+        <div className="flex flex-col gap-5">
+          {/* Row 1: Identity + Actions */}
+          <div className="flex items-center justify-between">
+            <div className="min-w-0">
+              <h1 className="text-2xl font-serif font-bold text-text truncate">
+                {fullName || "My Space"}
+              </h1>
+              <p className="text-[13px] text-text-muted font-medium mt-0.5">
+                {userEmail}{location ? ` · ${location}` : ""}
+              </p>
             </div>
-            <h1 className="text-3xl font-serif font-bold text-text">
-              {fullName || "Candidate Master Space"}
-            </h1>
-            <p className="text-xs text-text-muted font-medium leading-relaxed">
-              Your centralized candidate vault. Automatically synced across your resume editor, cover letters, and AI application tools.
-            </p>
-          </div>
 
-          {/* Readiness Meter & Global Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-            <div className="bg-bg-base/80 border border-border/80 rounded-2xl px-4 py-3 flex items-center space-x-3 shadow-inner">
-              <div className="space-y-1">
-                <span className="text-[10px] font-black uppercase text-text-muted tracking-wider block">Vault Readiness</span>
-                <span className="text-xs font-extrabold text-primary bg-primary/10 px-2.5 py-0.5 rounded-full inline-block">
-                  {completionPercentage}% Complete
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Completion Ring */}
+              <div className="relative w-10 h-10" title={`${completionPercentage}% complete`}>
+                <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none" strokeWidth="3" className="stroke-border/40" />
+                  <motion.path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none" strokeWidth="3" strokeLinecap="round" className="stroke-primary"
+                    initial={{ strokeDasharray: "0, 100" }}
+                    animate={{ strokeDasharray: `${completionPercentage}, 100` }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                  />
+                </svg>
+                <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-text">
+                  {completionPercentage}
                 </span>
               </div>
-            </div>
 
-            <div className="flex items-center space-x-2">
               <button
                 onClick={handleCopyFullVault}
-                className="px-4 py-3 bg-bg-base hover:bg-border/40 border border-border text-text text-xs font-extrabold rounded-2xl inline-flex items-center space-x-2 transition-all cursor-pointer shadow-2xs"
-                title="Copy formatted text summary of all vault details"
+                className="h-10 px-3.5 rounded-xl border border-border bg-surface hover:bg-bg-base text-text text-xs font-bold inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="Copy full profile as text"
               >
-                {copiedKey === "FULL_VAULT" ? (
-                  <>
-                    <Check className="w-4 h-4 text-emerald-500" />
-                    <span className="text-emerald-600 font-bold">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4 text-primary" />
-                    <span>Copy All</span>
-                  </>
-                )}
+                {copiedKey === "FULL_VAULT" ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                <span className="hidden sm:inline">{copiedKey === "FULL_VAULT" ? "Copied" : "Copy All"}</span>
               </button>
 
               <button
                 onClick={handleSaveProfile}
                 disabled={saving}
-                className="px-5 py-3 bg-primary hover:bg-primary/95 text-white text-xs font-extrabold rounded-2xl inline-flex items-center space-x-2 transition-all shadow-sm cursor-pointer disabled:opacity-50"
+                className="h-10 px-4 rounded-xl bg-primary hover:bg-primary/90 text-white text-xs font-bold inline-flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 shadow-sm"
               >
-                {saving ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Saving...</span>
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-4 h-4" />
-                    <span>Save Vault</span>
-                  </>
-                )}
+                {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                <span>{saving ? "Saving" : "Save"}</span>
               </button>
             </div>
           </div>
-        </div>
 
-        {/* WORKSPACE CONTROL BAR: MODE TOGGLE & SEARCH */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface border border-border/80 rounded-3xl p-4 shadow-xs">
-          
-          {/* Mode Switcher */}
-          <div className="flex items-center bg-bg-base/80 border border-border/80 p-1.5 rounded-2xl relative shadow-inner shrink-0">
-            <button
-              onClick={() => {
-                setActiveTab("profile");
-                setViewMode("view");
-              }}
-              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer ${
-                activeTab === "profile" && viewMode === "view" ? "text-white" : "text-text-muted hover:text-text"
-              }`}
-            >
-              {activeTab === "profile" && viewMode === "view" && (
-                <motion.div
-                  layoutId="spaceViewToggle"
-                  className="absolute inset-0 bg-primary rounded-xl shadow-sm -z-10"
-                  transition={{ type: "spring", stiffness: 450, damping: 30 }}
-                />
+          {/* Row 2: Mode Toggle + Search */}
+          <div className="flex items-center gap-3">
+            {/* Segmented Control */}
+            <div className="flex items-center bg-bg-base border border-border/80 p-1 rounded-xl relative shrink-0">
+              {[
+                { id: "view" as const, label: "View", icon: Eye },
+                { id: "edit" as const, label: "Edit", icon: Edit3 },
+              ].map((mode) => {
+                const isActive = activeTab === "profile" && viewMode === mode.id;
+                const ModeIcon = mode.icon;
+                return (
+                  <button
+                    key={mode.id}
+                    onClick={() => { setActiveTab("profile"); setViewMode(mode.id); }}
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all relative z-10 cursor-pointer ${
+                      isActive ? "text-white" : "text-text-muted hover:text-text"
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="modeToggle"
+                        className="absolute inset-0 bg-primary rounded-lg -z-10"
+                        transition={{ type: "spring", stiffness: 500, damping: 32 }}
+                      />
+                    )}
+                    <ModeIcon className="w-3.5 h-3.5" />
+                    <span>{mode.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Search */}
+            <div className="relative flex-1">
+              <Search className="w-3.5 h-3.5 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search anything…"
+                className="w-full pl-9 pr-7 py-2 rounded-xl border border-border/80 bg-bg-base text-text text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all placeholder:text-text-muted/60"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text cursor-pointer">
+                  <span className="text-xs font-bold">✕</span>
+                </button>
               )}
-              <Eye className="w-4 h-4" />
-              <span>View & Copy Mode</span>
-            </button>
+            </div>
+          </div>
 
-            <button
-              onClick={() => {
-                setActiveTab("profile");
-                setViewMode("edit");
-              }}
-              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer ${
-                activeTab === "profile" && viewMode === "edit" ? "text-white" : "text-text-muted hover:text-text"
-              }`}
+          {/* Row 3: Category Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar -mx-1 px-1">
+            {[
+              { id: "all", label: "All", isTab: "profile" as const },
+              { id: "personal", label: "Personal", isTab: "profile" as const },
+              { id: "coding", label: "Coding", isTab: "profile" as const },
+              { id: "academic", label: "Academics", isTab: "profile" as const },
+              { id: "skills", label: `Skills${skills.length ? ` · ${skills.length}` : ""}`, isTab: "profile" as const },
+              { id: "certifications", label: `Certs${certifications.length ? ` · ${certifications.length}` : ""}`, isTab: "profile" as const },
+              { id: "achievements", label: `Awards${achievements.length ? ` · ${achievements.length}` : ""}`, isTab: "profile" as const },
+              { id: "projects", label: `Projects${projects.length ? ` · ${projects.length}` : ""}`, isTab: "profile" as const },
+              { id: "experience", label: `Experience${experiences.length ? ` · ${experiences.length}` : ""}`, isTab: "profile" as const },
+              { id: "custom", label: "Custom", isTab: "profile" as const },
+              { id: "copilot", label: "AI Copilot", isTab: "copilot" as const },
+            ].map((cat) => {
+              const isActive = cat.isTab === "copilot" ? activeTab === "copilot" : (activeTab === "profile" && categoryFilter === cat.id);
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    if (cat.isTab === "copilot") { setActiveTab("copilot"); }
+                    else { setActiveTab("profile"); setCategoryFilter(cat.id); }
+                  }}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer relative z-10 ${
+                    isActive
+                      ? "text-white"
+                      : "text-text-muted hover:text-text hover:bg-bg-base"
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="categoryPill"
+                      className="absolute inset-0 bg-primary rounded-full -z-10"
+                      transition={{ type: "spring", stiffness: 500, damping: 32 }}
+                    />
+                  )}
+                  <span>{cat.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ─── STATUS BANNERS ─── */}
+        <AnimatePresence>
+          {saveSuccess && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="p-3.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-600 text-xs font-semibold flex items-center gap-2"
             >
-              {activeTab === "profile" && viewMode === "edit" && (
-                <motion.div
-                  layoutId="spaceViewToggle"
-                  className="absolute inset-0 bg-primary rounded-xl shadow-sm -z-10"
-                  transition={{ type: "spring", stiffness: 450, damping: 30 }}
-                />
-              )}
-              <Edit3 className="w-4 h-4" />
-              <span>Edit & Add Mode</span>
-            </button>
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative flex-1 min-w-[200px]">
-            <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search skills, handles, projects, degree..."
-              className="w-full pl-10 pr-8 py-2 rounded-2xl border border-border/80 bg-bg-base/80 text-text text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text text-xs font-bold"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* CATEGORY FILTER PILLS */}
-        <div className="flex items-center space-x-2 overflow-x-auto pb-1 no-scrollbar relative">
-          {[
-            { id: "all", label: "All Sections", count: null, isTab: "profile" },
-            { id: "personal", label: "Personal & Social", count: null, isTab: "profile" },
-            { id: "coding", label: "Coding Profiles", count: [leetcode, codeforces, codechef, hackerrank, gfg].filter(Boolean).length, isTab: "profile" },
-            { id: "academic", label: "Academics & Bio", count: null, isTab: "profile" },
-            { id: "skills", label: "Skills Vault", count: skills.length, isTab: "profile" },
-            { id: "certifications", label: "Certifications", count: certifications.length, isTab: "profile" },
-            { id: "achievements", label: "Achievements", count: achievements.length, isTab: "profile" },
-            { id: "projects", label: "Projects", count: projects.length, isTab: "profile" },
-            { id: "experience", label: "Experience", count: experiences.length, isTab: "profile" },
-            { id: "custom", label: "Custom Fields", count: customFields.length, isTab: "profile" },
-            { id: "copilot", label: "AI Copilot Assistant", count: null, isTab: "copilot" },
-          ].map((cat) => {
-            const isSelected = cat.isTab === "copilot" ? activeTab === "copilot" : (activeTab === "profile" && categoryFilter === cat.id);
-            return (
-              <button
-                key={cat.id}
-                onClick={() => {
-                  if (cat.isTab === "copilot") {
-                    setActiveTab("copilot");
-                  } else {
-                    setActiveTab("profile");
-                    setCategoryFilter(cat.id);
-                  }
-                }}
-                className={`px-4 py-2 rounded-full text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer flex items-center space-x-2 relative z-10 ${
-                  isSelected
-                    ? "text-white"
-                    : "bg-surface border border-border/80 text-text-muted hover:text-text hover:border-primary/50 shadow-2xs"
-                }`}
-              >
-                {isSelected && (
-                  <motion.div
-                    layoutId="spaceCategoryChip"
-                    className="absolute inset-0 bg-primary rounded-full shadow-sm -z-10"
-                    transition={{ type: "spring", stiffness: 450, damping: 30 }}
-                  />
-                )}
-                <span>{cat.label}</span>
-                {typeof cat.count === "number" && cat.count > 0 && (
-                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                    isSelected ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
-                  }`}>
-                    {cat.count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {saveSuccess && (
-          <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-600 text-xs font-bold flex items-center space-x-2 animate-in fade-in">
-            <CheckCircle2 className="w-5 h-5 shrink-0" />
-            <span>Master Candidate Vault saved successfully to PostgreSQL database & auto-synced across pages!</span>
-          </div>
-        )}
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <span>Profile saved and synced across all pages.</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {saveError && (
-          <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-xs font-bold animate-in fade-in">
+          <div className="p-3.5 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-xs font-semibold">
             {saveError}
           </div>
         )}
 
-        {/* MASTER PROFILE VAULT MODE */}
+        {/* ─── PROFILE CONTENT ─── */}
         {activeTab === "profile" && (
           <div className="space-y-8">
 
             {/* SECTION 1: PERSONAL & SOCIAL PROFILES */}
             {(categoryFilter === "all" || categoryFilter === "personal") && (
-              <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-6 shadow-xs">
-                <div className="border-b border-border/40 pb-3 flex items-center justify-between">
-                  <div className="flex items-center space-x-2.5">
-                    <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                      <User className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h2 className="font-serif font-bold text-lg text-text">Personal & Social Links</h2>
-                      <p className="text-xs text-text-muted font-medium">Core contact information and public developer profiles</p>
-                    </div>
+              <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-primary/8 text-primary">
+                    <User className="w-4 h-4" />
                   </div>
-                  <span className="text-xs text-text-muted font-bold bg-bg-base border border-border px-3 py-1 rounded-full">Contact & Profiles</span>
+                  <h2 className="font-semibold text-[15px] text-text">Personal & Social</h2>
                 </div>
 
                 {viewMode === "edit" ? (
@@ -887,7 +846,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
             {/* SECTION: CODING & PROBLEM SOLVING PROFILES */}
             {(categoryFilter === "all" || categoryFilter === "coding") && (
-              <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-6 shadow-xs">
+              <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
                 <div className="border-b border-border/40 pb-3 flex items-center justify-between">
                   <div className="flex items-center space-x-2.5">
                     <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500">
@@ -1030,7 +989,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
             {/* SECTION 2: ACADEMICS & CAREER BIO */}
             {(categoryFilter === "all" || categoryFilter === "academic") && (
-              <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-6 shadow-xs">
+              <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
                 <div className="border-b border-border/40 pb-3 flex items-center justify-between">
                   <div className="flex items-center space-x-2.5">
                     <div className="p-2 rounded-xl bg-primary/10 text-primary">
@@ -1172,7 +1131,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
             {/* SECTION 3: TECHNICAL SKILLS */}
             {(categoryFilter === "all" || categoryFilter === "skills") && (
-              <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-4 shadow-xs">
+              <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
                 <div className="border-b border-border/40 pb-3 flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Code className="w-5 h-5 text-primary" />
@@ -1223,7 +1182,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
             {/* CERTIFICATIONS & LICENSES VAULT */}
             {(categoryFilter === "all" || categoryFilter === "certifications") && (
-              <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-4 shadow-xs">
+              <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
                 <div className="border-b border-border/40 pb-3 flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Award className="w-5 h-5 text-emerald-500" />
@@ -1278,7 +1237,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
             {/* ACHIEVEMENTS & AWARDS VAULT */}
             {(categoryFilter === "all" || categoryFilter === "achievements") && (
-              <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-4 shadow-xs">
+              <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
                 <div className="border-b border-border/40 pb-3 flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Sparkles className="w-5 h-5 text-amber-500" />
@@ -1352,7 +1311,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
             {/* SECTION 4: CUSTOM FIELDS VAULT (ADD ANY CUSTOM DETAIL) */}
             {(categoryFilter === "all" || categoryFilter === "custom") && (
-              <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-6 shadow-xs">
+              <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
                 <div className="border-b border-border/40 pb-3 flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Tag className="w-5 h-5 text-primary" />
@@ -1434,7 +1393,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
             {/* SECTION 5: PROJECTS */}
             {(categoryFilter === "all" || categoryFilter === "projects") && (
-              <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-4 shadow-xs">
+              <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
                 <div className="border-b border-border/40 pb-3 flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <FileText className="w-5 h-5 text-primary" />
@@ -1511,7 +1470,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
             {/* SECTION 6: EXPERIENCE & INTERNSHIPS */}
             {(categoryFilter === "all" || categoryFilter === "experience") && (
-              <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-4 shadow-xs">
+              <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
                 <div className="border-b border-border/40 pb-3 flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Briefcase className="w-5 h-5 text-primary" />
