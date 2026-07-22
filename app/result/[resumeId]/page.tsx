@@ -580,8 +580,38 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
               </div>
             </div>
 
-            {/* 2. Middle Payment Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 w-full lg:w-auto">
+            {/* 2. AI Verification Toggle Pill (Adjacent to Amount) */}
+            <div className="w-full lg:w-auto flex justify-center lg:justify-start">
+              {isVerificationModalOpen ? (
+                <button
+                  onClick={() => {
+                    setVerificationModalOpen(false);
+                    router.replace(`/result/${resumeId}`, { scroll: false });
+                  }}
+                  className="w-full lg:w-auto px-4 py-2.5 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4 text-text-muted group-hover:-translate-x-1 transition-transform shrink-0" />
+                  <span>Back to ATS Score</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setVerificationModalOpen(true);
+                    router.replace(`/result/${resumeId}?verify=true`, { scroll: false });
+                  }}
+                  className="w-full lg:w-auto px-4 py-2 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs rounded-2xl transition-all flex items-center justify-center lg:justify-start space-x-2.5 shadow-2xs group cursor-pointer"
+                >
+                  <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
+                  <div className="flex flex-col text-left leading-tight">
+                    <span className="text-[10px] text-text-muted font-bold tracking-tight">Don't trust ATSlift?</span>
+                    <span className="text-xs font-extrabold text-primary underline underline-offset-2 decoration-primary/40 group-hover:decoration-primary">Verify with any AI</span>
+                  </div>
+                </button>
+              )}
+            </div>
+
+            {/* 3. Payment Action Buttons (Right Side) */}
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-2.5 w-full lg:w-auto">
               {/* Candidate Wallet Payment Option (If balance is sufficient) */}
               {walletBalance !== null && walletBalance >= price && (
                 <button
@@ -621,36 +651,6 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                   </>
                 )}
               </button>
-            </div>
-
-            {/* 3. Right AI Verification Toggle Pill */}
-            <div className="w-full lg:w-auto flex justify-end">
-              {isVerificationModalOpen ? (
-                <button
-                  onClick={() => {
-                    setVerificationModalOpen(false);
-                    router.replace(`/result/${resumeId}`, { scroll: false });
-                  }}
-                  className="w-full lg:w-auto px-4 py-2.5 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer"
-                >
-                  <ArrowLeft className="w-4 h-4 text-text-muted group-hover:-translate-x-1 transition-transform shrink-0" />
-                  <span>Back to ATS Score</span>
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    setVerificationModalOpen(true);
-                    router.replace(`/result/${resumeId}?verify=true`, { scroll: false });
-                  }}
-                  className="w-full lg:w-auto px-4 py-2 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs rounded-2xl transition-all flex items-center justify-center lg:justify-start space-x-2.5 shadow-2xs group cursor-pointer"
-                >
-                  <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
-                  <div className="flex flex-col text-left leading-tight">
-                    <span className="text-[10px] text-text-muted font-bold tracking-tight">Don't trust ATSlift?</span>
-                    <span className="text-xs font-extrabold text-primary underline underline-offset-2 decoration-primary/40 group-hover:decoration-primary">Verify with any AI</span>
-                  </div>
-                </button>
-              )}
             </div>
 
           </div>
