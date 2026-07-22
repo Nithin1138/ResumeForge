@@ -594,11 +594,14 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
     setCustomFields(customFields.map(cf => cf.id === id ? { ...cf, key, value } : cf));
   };
 
-  const togglePinSection = async (sectionId: string) => {
-    const isPinned = pinnedSections.includes(sectionId);
-    const updated = isPinned
-      ? pinnedSections.filter(id => id !== sectionId)
-      : [...pinnedSections, sectionId];
+  const togglePinSection = async (sectionId: string, altSectionId?: string) => {
+    const isPinned = pinnedSections.includes(sectionId) || (altSectionId && pinnedSections.includes(altSectionId));
+    let updated: string[];
+    if (isPinned) {
+      updated = pinnedSections.filter(id => id !== sectionId && id !== altSectionId && id !== "custom-field-undefined");
+    } else {
+      updated = [...pinnedSections.filter(id => id !== "custom-field-undefined"), sectionId];
+    }
     setPinnedSections(updated);
 
     try {
@@ -643,13 +646,13 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
     }
   };
 
-  const renderPinButton = (sectionId: string) => {
-    const isPinned = pinnedSections.includes(sectionId);
+  const renderPinButton = (sectionId: string, altSectionId?: string) => {
+    const isPinned = pinnedSections.includes(sectionId) || (altSectionId && pinnedSections.includes(altSectionId));
     return (
       <button
         onClick={(e) => {
           e.stopPropagation();
-          togglePinSection(sectionId);
+          togglePinSection(sectionId, altSectionId);
         }}
         className={`p-1.5 rounded-lg border transition-all cursor-pointer flex items-center justify-center shrink-0 ${
           isPinned 
@@ -2059,68 +2062,74 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
                 {/* Custom Fields List */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                  {(Array.isArray(customFields) ? customFields : []).filter(cf => matchesSearch(cf.key) || matchesSearch(cf.value)).map((cf) => (
-                    <div
-                      key={cf.id}
-                      onClick={() => copyToClipboard(cf.value, cf.key)}
-                      className="p-3.5 border border-border/80 rounded-2xl bg-bg-base hover:border-primary/50 transition-all cursor-pointer flex items-center justify-between group relative"
-                    >
-                      <div className="space-y-0.5 min-w-0 pr-2 flex-1">
-                        <span className="text-[10px] font-bold text-primary uppercase tracking-wider block">{cf.key}</span>
-                        <span className="text-xs font-bold text-text truncate block">{cf.value}</span>
+                  {(Array.isArray(customFields) ? customFields : []).filter(cf => matchesSearch(cf.key) || matchesSearch(cf.value)).map((cf, idx) => {
+                    const fieldId = cf.id && cf.id !== "undefined" ? cf.id.toString() : (cf.key ? `key-${cf.key.toLowerCase().replace(/\s+/g, "_")}` : idx.toString());
+                    const primaryPinId = `custom-field-${fieldId}`;
+                    const altPinId = `custom-field-${idx}`;
+
+                    return (
+                      <div
+                        key={cf.id || idx}
+                        onClick={() => copyToClipboard(cf.value, cf.key)}
+                        className="p-3.5 border border-border/80 rounded-2xl bg-bg-base hover:border-primary/50 transition-all cursor-pointer flex items-center justify-between group relative"
+                      >
+                        <div className="space-y-0.5 min-w-0 pr-2 flex-1">
+                          <span className="text-[10px] font-bold text-primary uppercase tracking-wider block">{cf.key}</span>
+                          <span className="text-xs font-bold text-text truncate block">{cf.value}</span>
+                        </div>
+
+                        <div className="flex items-center space-x-1.5 shrink-0 relative z-20">
+                          {renderPinButton(primaryPinId, altPinId)}
+                          {(cf.value.startsWith("http://") || cf.value.startsWith("https://") || cf.value.includes("github.com") || cf.value.includes("linkedin.com")) && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                let url = cf.value;
+                                if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                                  url = `https://${url}`;
+                                }
+                                window.open(url, "_blank");
+                              }}
+                              className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary/10 transition-all cursor-pointer flex items-center justify-center"
+                              title="Open Link"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+
+                          {copiedKey === cf.key ? (
+                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-1 rounded-md">
+                              Copied
+                            </span>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                copyToClipboard(cf.value, cf.key);
+                              }}
+                              className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary/10 transition-all cursor-pointer flex items-center justify-center"
+                              title="Copy Custom Field"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+
+                          {viewMode === "edit" && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRemoveCustomField(cf.id);
+                              }}
+                              className="p-1 text-text-muted hover:text-red-500 transition-colors"
+                              title="Delete Custom Field"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
                       </div>
-
-                      <div className="flex items-center space-x-1.5 shrink-0 relative z-20">
-                        {renderPinButton(`custom-field-${cf.id}`)}
-                        {(cf.value.startsWith("http://") || cf.value.startsWith("https://") || cf.value.includes("github.com") || cf.value.includes("linkedin.com")) && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              let url = cf.value;
-                              if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                                url = `https://${url}`;
-                              }
-                              window.open(url, "_blank");
-                            }}
-                            className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary/10 transition-all cursor-pointer flex items-center justify-center"
-                            title="Open Link"
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-
-                        {copiedKey === cf.key ? (
-                          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-1 rounded-md">
-                            Copied
-                          </span>
-                        ) : (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              copyToClipboard(cf.value, cf.key);
-                            }}
-                            className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary/10 transition-all cursor-pointer flex items-center justify-center"
-                            title="Copy Custom Field"
-                          >
-                            <Copy className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-
-                        {viewMode === "edit" && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemoveCustomField(cf.id);
-                            }}
-                            className="p-1 text-text-muted hover:text-red-500 transition-colors"
-                            title="Delete Custom Field"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}

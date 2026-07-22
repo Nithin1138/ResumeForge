@@ -451,12 +451,18 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
     // Individual Custom Field Card: custom-field-${id}
     if (id.startsWith("custom-field-")) {
       const fieldId = id.replace("custom-field-", "");
-      const cf = customFields.find((f, idx) => 
+      let cf = customFields.find((f, idx) => 
         f.id === fieldId || 
         f.id?.toString() === fieldId || 
         idx.toString() === fieldId ||
-        f.key?.toLowerCase() === fieldId.toLowerCase()
+        (f.key && f.key.toLowerCase() === fieldId.toLowerCase()) ||
+        (f.key && `key-${f.key.toLowerCase().replace(/\s+/g, "_")}` === fieldId)
       );
+
+      if (!cf && (fieldId === "undefined" || fieldId === "") && customFields.length > 0) {
+        cf = customFields[0];
+      }
+
       if (!cf) return null;
 
       const hasLink = cf.link || cf.value?.startsWith("http://") || cf.value?.startsWith("https://") || cf.value?.includes("github.com") || cf.value?.includes("linkedin.com");
