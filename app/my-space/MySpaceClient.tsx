@@ -136,8 +136,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const [newAchievementInput, setNewAchievementInput] = useState("");
   
   const [customFields, setCustomFields] = useState<CustomFieldItem[]>([]);
-  const [newCustomKey, setNewCustomKey] = useState("");
+  const [newCustomKey, setNewCustomKey] = useState("Target Role 1");
   const [newCustomVal, setNewCustomVal] = useState("");
+  const [customKeySelection, setCustomKeySelection] = useState("Target Role 1");
   const [customNotes, setCustomNotes] = useState("");
 
   // AI Copilot State
@@ -549,13 +550,21 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
   // Custom Field Handlers
   const handleAddCustomField = () => {
-    if (newCustomKey.trim() && newCustomVal.trim()) {
+    const key = newCustomKey.trim();
+    const value = newCustomVal.trim();
+    if (key && value) {
+      const exists = customFields.some(cf => cf.key.toLowerCase() === key.toLowerCase());
+      if (exists) {
+        alert(`A custom field with the name "${key}" already exists. Please use a unique name.`);
+        return;
+      }
       setCustomFields([
         ...customFields,
-        { id: Date.now().toString(), key: newCustomKey.trim(), value: newCustomVal.trim() },
+        { id: Date.now().toString(), key, value },
       ]);
-      setNewCustomKey("");
       setNewCustomVal("");
+      setCustomKeySelection("Target Role 1");
+      setNewCustomKey("Target Role 1");
     }
   };
   const handleRemoveCustomField = (id: string) => {
@@ -1793,28 +1802,62 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                       <span>Add Custom Detail Field (e.g., Preferred CTC, Portfolio, Achievements)</span>
                     </span>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                      <input
-                        type="text"
-                        value={newCustomKey}
-                        onChange={(e) => setNewCustomKey(e.target.value)}
-                        placeholder="Field Name (e.g., Target CTC)"
-                        className="sm:col-span-2 px-3.5 py-2 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        value={newCustomVal}
-                        onChange={(e) => setNewCustomVal(e.target.value)}
-                        placeholder="Field Value (e.g., 12-15 LPA)"
-                        className="sm:col-span-2 px-3.5 py-2 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleAddCustomField}
-                        className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all cursor-pointer"
-                      >
-                        + Add Field
-                      </button>
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                      {/* Key Selection */}
+                      <div className={`${customKeySelection === "Other" ? "sm:col-span-5" : "sm:col-span-3"} flex gap-2`}>
+                        <select
+                          value={customKeySelection}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setCustomKeySelection(val);
+                            if (val !== "Other") {
+                              setNewCustomKey(val);
+                            } else {
+                              setNewCustomKey("");
+                            }
+                          }}
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary shrink-0"
+                        >
+                          <option value="Target Role 1">Target Role 1</option>
+                          <option value="Target Role 2">Target Role 2</option>
+                          <option value="Target Role 3">Target Role 3</option>
+                          <option value="Preferred Location">Preferred Location</option>
+                          <option value="Expected CTC">Expected CTC</option>
+                          <option value="Other">Other (Custom Key)</option>
+                        </select>
+
+                        {customKeySelection === "Other" && (
+                          <input
+                            type="text"
+                            value={newCustomKey}
+                            onChange={(e) => setNewCustomKey(e.target.value)}
+                            placeholder="Key Name (e.g. Portfolio)"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary"
+                          />
+                        )}
+                      </div>
+
+                      {/* Value Input */}
+                      <div className={customKeySelection === "Other" ? "sm:col-span-5" : "sm:col-span-7"}>
+                        <input
+                          type="text"
+                          value={newCustomVal}
+                          onChange={(e) => setNewCustomVal(e.target.value)}
+                          placeholder="Field Value (e.g. Software Engineer, Bengaluru, 15 LPA)"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                        />
+                      </div>
+
+                      {/* Add Button */}
+                      <div className="sm:col-span-2">
+                        <button
+                          type="button"
+                          onClick={handleAddCustomField}
+                          className="w-full px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all cursor-pointer"
+                        >
+                          + Add Field
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
