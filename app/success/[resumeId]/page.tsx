@@ -602,6 +602,9 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
           <span className="font-bold text-lg tracking-tight text-text">
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
+          <Link href="/myresumes" className="ml-3 text-xs font-bold text-primary hover:underline hidden sm:inline">
+            My Resumes
+          </Link>
         </div>
         
         <div className="flex items-center space-x-3 sm:space-x-4">
@@ -627,9 +630,6 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
               FREE
             </span>
           </button>
-          <Link href="/myresumes" className="text-xs font-bold text-primary hover:underline hidden sm:inline">
-            My Resumes
-          </Link>
           <div className="hidden sm:flex items-center space-x-2 bg-success/15 border border-success/30 px-3 py-1.5 rounded-full text-xs font-bold text-success">
             <CheckCircle2 className="w-4 h-4" />
             <span>Unlocked ✓</span>
