@@ -531,68 +531,95 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
     <AppLayout>
       <div className="space-y-6">
         
-        {/* HERO / VAULT COMPLETION BANNER */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-surface border border-border/80 rounded-3xl p-6 md:p-8 shadow-xs">
-          <div className="space-y-2 max-w-xl">
+        {/* HERO HEADER & VAULT READINESS */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-surface border border-border/80 rounded-3xl p-6 md:p-8 shadow-xs">
+          <div className="space-y-1.5 max-w-xl">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-extrabold tracking-wide uppercase">
               <Database className="w-3.5 h-3.5" />
-              <span>Candidate Space Vault</span>
+              <span>Candidate Master Vault</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-text">
+            <h1 className="text-3xl font-serif font-bold text-text">
               {fullName || "Candidate Master Space"}
             </h1>
             <p className="text-xs text-text-muted font-medium leading-relaxed">
-              Maintain, view, and organize your master profile. Auto-synced in real-time across your resume editor, cover letters, and AI application tools.
+              Your centralized candidate vault. Automatically synced across your resume editor, cover letters, and AI application tools.
             </p>
           </div>
 
-          {/* Completion Progress Bar */}
-          <div className="bg-bg-base/80 border border-border/80 rounded-2xl p-4 md:p-5 flex flex-col justify-between min-w-[280px] space-y-3 shadow-inner">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-text-muted">Vault Readiness</span>
-              <span className="text-xs font-extrabold text-primary bg-primary/10 px-2.5 py-0.5 rounded-full">
-                {completionPercentage}% Complete
-              </span>
+          {/* Readiness Meter & Global Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+            <div className="bg-bg-base/80 border border-border/80 rounded-2xl px-4 py-3 flex items-center space-x-3 shadow-inner">
+              <div className="space-y-1">
+                <span className="text-[10px] font-black uppercase text-text-muted tracking-wider block">Vault Readiness</span>
+                <span className="text-xs font-extrabold text-primary bg-primary/10 px-2.5 py-0.5 rounded-full inline-block">
+                  {completionPercentage}% Complete
+                </span>
+              </div>
             </div>
-            <div className="w-full h-2.5 bg-border/40 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-primary to-emerald-400 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${completionPercentage}%` }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              />
-            </div>
-            <div className="flex items-center justify-between text-[11px] text-text-muted font-semibold pt-1">
-              <span>{skills.length} Skills</span>
-              <span>{[leetcode, codeforces, codechef, hackerrank, gfg].filter(Boolean).length} Handles</span>
-              <span>{projects.length} Projects</span>
+
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={handleCopyFullVault}
+                className="px-4 py-3 bg-bg-base hover:bg-border/40 border border-border text-text text-xs font-extrabold rounded-2xl inline-flex items-center space-x-2 transition-all cursor-pointer shadow-2xs"
+                title="Copy formatted text summary of all vault details"
+              >
+                {copiedKey === "FULL_VAULT" ? (
+                  <>
+                    <Check className="w-4 h-4 text-emerald-500" />
+                    <span className="text-emerald-600 font-bold">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4 text-primary" />
+                    <span>Copy All</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={handleSaveProfile}
+                disabled={saving}
+                className="px-5 py-3 bg-primary hover:bg-primary/95 text-white text-xs font-extrabold rounded-2xl inline-flex items-center space-x-2 transition-all shadow-sm cursor-pointer disabled:opacity-50"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span>Save Vault</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
 
-        {/* TOP WORKSPACE NAVIGATION & TOOLBAR */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface border border-border/80 rounded-3xl p-4 md:p-5 shadow-xs">
+        {/* WORKSPACE CONTROL BAR: MODE TOGGLE & SEARCH */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface border border-border/80 rounded-3xl p-4 shadow-xs">
           
-          {/* Main Segmented Mode Switcher */}
-          <div className="flex items-center bg-bg-base/80 border border-border/80 p-1.5 rounded-2xl relative shadow-inner shrink-0 overflow-x-auto no-scrollbar">
+          {/* Mode Switcher */}
+          <div className="flex items-center bg-bg-base/80 border border-border/80 p-1.5 rounded-2xl relative shadow-inner shrink-0">
             <button
               onClick={() => {
                 setActiveTab("profile");
                 setViewMode("view");
               }}
-              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer whitespace-nowrap ${
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer ${
                 activeTab === "profile" && viewMode === "view" ? "text-white" : "text-text-muted hover:text-text"
               }`}
             >
               {activeTab === "profile" && viewMode === "view" && (
                 <motion.div
-                  layoutId="spaceMainModePill"
+                  layoutId="spaceViewToggle"
                   className="absolute inset-0 bg-primary rounded-xl shadow-sm -z-10"
                   transition={{ type: "spring", stiffness: 450, damping: 30 }}
                 />
               )}
               <Eye className="w-4 h-4" />
-              <span>🗃️ Master Vault Deck</span>
+              <span>View & Copy Mode</span>
             </button>
 
             <button
@@ -600,48 +627,31 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                 setActiveTab("profile");
                 setViewMode("edit");
               }}
-              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer whitespace-nowrap ${
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer ${
                 activeTab === "profile" && viewMode === "edit" ? "text-white" : "text-text-muted hover:text-text"
               }`}
             >
               {activeTab === "profile" && viewMode === "edit" && (
                 <motion.div
-                  layoutId="spaceMainModePill"
+                  layoutId="spaceViewToggle"
                   className="absolute inset-0 bg-primary rounded-xl shadow-sm -z-10"
                   transition={{ type: "spring", stiffness: 450, damping: 30 }}
                 />
               )}
               <Edit3 className="w-4 h-4" />
-              <span>✍️ Fast Editor Studio</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("copilot")}
-              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer whitespace-nowrap ${
-                activeTab === "copilot" ? "text-white" : "text-text-muted hover:text-text"
-              }`}
-            >
-              {activeTab === "copilot" && (
-                <motion.div
-                  layoutId="spaceMainModePill"
-                  className="absolute inset-0 bg-primary rounded-xl shadow-sm -z-10"
-                  transition={{ type: "spring", stiffness: 450, damping: 30 }}
-                />
-              )}
-              <Bot className="w-4 h-4" />
-              <span>🤖 AI Copilot Studio</span>
+              <span>Edit & Add Mode</span>
             </button>
           </div>
 
-          {/* Live Search Bar */}
-          <div className="relative flex-1 min-w-[220px]">
+          {/* Search Bar */}
+          <div className="relative flex-1 min-w-[200px]">
             <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search skills, handles, projects, degree..."
-              className="w-full pl-10 pr-8 py-2.5 rounded-2xl border border-border/80 bg-bg-base/80 text-text text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+              className="w-full pl-10 pr-8 py-2 rounded-2xl border border-border/80 bg-bg-base/80 text-text text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
             />
             {searchQuery && (
               <button
@@ -652,44 +662,59 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
               </button>
             )}
           </div>
+        </div>
 
-          {/* Right Action Buttons */}
-          <div className="flex items-center space-x-2.5 shrink-0">
-            <button
-              onClick={handleCopyFullVault}
-              className="px-4 py-2.5 bg-bg-base hover:bg-border/40 border border-border text-text text-xs font-extrabold rounded-2xl inline-flex items-center space-x-2 transition-all cursor-pointer shadow-2xs"
-            >
-              {copiedKey === "FULL_VAULT" ? (
-                <>
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span className="text-emerald-600 font-bold">Full Profile Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4 text-primary" />
-                  <span>Copy Full Vault</span>
-                </>
-              )}
-            </button>
-
-            <button
-              onClick={handleSaveProfile}
-              disabled={saving}
-              className="px-6 py-2.5 bg-primary hover:bg-primary/95 text-white text-xs font-extrabold rounded-2xl inline-flex items-center space-x-2 transition-all shadow-sm cursor-pointer disabled:opacity-50"
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Saving...</span>
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  <span>Save Master Profile</span>
-                </>
-              )}
-            </button>
-          </div>
+        {/* CATEGORY FILTER PILLS */}
+        <div className="flex items-center space-x-2 overflow-x-auto pb-1 no-scrollbar relative">
+          {[
+            { id: "all", label: "All Sections", count: null, isTab: "profile" },
+            { id: "personal", label: "Personal & Social", count: null, isTab: "profile" },
+            { id: "coding", label: "Coding Profiles", count: [leetcode, codeforces, codechef, hackerrank, gfg].filter(Boolean).length, isTab: "profile" },
+            { id: "academic", label: "Academics & Bio", count: null, isTab: "profile" },
+            { id: "skills", label: "Skills Vault", count: skills.length, isTab: "profile" },
+            { id: "certifications", label: "Certifications", count: certifications.length, isTab: "profile" },
+            { id: "achievements", label: "Achievements", count: achievements.length, isTab: "profile" },
+            { id: "projects", label: "Projects", count: projects.length, isTab: "profile" },
+            { id: "experience", label: "Experience", count: experiences.length, isTab: "profile" },
+            { id: "custom", label: "Custom Fields", count: customFields.length, isTab: "profile" },
+            { id: "copilot", label: "AI Copilot Assistant", count: null, isTab: "copilot" },
+          ].map((cat) => {
+            const isSelected = cat.isTab === "copilot" ? activeTab === "copilot" : (activeTab === "profile" && categoryFilter === cat.id);
+            return (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  if (cat.isTab === "copilot") {
+                    setActiveTab("copilot");
+                  } else {
+                    setActiveTab("profile");
+                    setCategoryFilter(cat.id);
+                  }
+                }}
+                className={`px-4 py-2 rounded-full text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer flex items-center space-x-2 relative z-10 ${
+                  isSelected
+                    ? "text-white"
+                    : "bg-surface border border-border/80 text-text-muted hover:text-text hover:border-primary/50 shadow-2xs"
+                }`}
+              >
+                {isSelected && (
+                  <motion.div
+                    layoutId="spaceCategoryChip"
+                    className="absolute inset-0 bg-primary rounded-full shadow-sm -z-10"
+                    transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                  />
+                )}
+                <span>{cat.label}</span>
+                {typeof cat.count === "number" && cat.count > 0 && (
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                    isSelected ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
+                  }`}>
+                    {cat.count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {saveSuccess && (
