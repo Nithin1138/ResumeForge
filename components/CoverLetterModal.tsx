@@ -291,6 +291,11 @@ export default function CoverLetterModal({
               <CoverLetterPreview
                 data={coverLetter}
                 isLoading={isGenerating}
+                candidateName={candidateName}
+                candidateEmail={candidateEmail}
+                candidatePhone={candidatePhone}
+                candidateLocation={candidateLocation}
+                templateId={templateId}
               />
             </div>
           </div>
@@ -604,6 +609,11 @@ export default function CoverLetterModal({
               <CoverLetterPreview
                 data={coverLetter}
                 isLoading={isGenerating}
+                candidateName={candidateName}
+                candidateEmail={candidateEmail}
+                candidatePhone={candidatePhone}
+                candidateLocation={candidateLocation}
+                templateId={templateId}
               />
             </div>
 
