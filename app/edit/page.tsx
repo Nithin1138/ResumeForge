@@ -16,6 +16,7 @@ export default async function EditPage() {
     where: { email: session.user.email },
     include: {
       resumes: {
+        where: { abandoned: false },
         orderBy: { updatedAt: "desc" },
       },
     },
@@ -29,6 +30,8 @@ export default async function EditPage() {
     id: r.id,
     resumeName: r.resumeName,
     targetRole: r.targetRole,
+    status: r.status,
+    paymentStatus: r.paymentStatus,
     createdAt: r.createdAt.toISOString(),
     updatedAt: (r.updatedAt || r.createdAt).toISOString(),
     inputData: r.inputData,

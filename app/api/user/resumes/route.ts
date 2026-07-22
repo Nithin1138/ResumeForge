@@ -10,23 +10,22 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized access: Please sign in." }, { status: 401 });
     }
     
-    // We get the user ID from the session or email
-    const userId = (session.user as any).id;
-
-    // Intelligent query: Fetch by active userId OR find guest resumes matched to candidate email
-    const resumes = await prisma.resume.findMany({
-      where: {
-        OR: [
-          userId ? { userId } : {},
-          {
-            inputData: {
-              contains: `"email":"${session.user.email}"`,
-            },
-          },
-        ].filter(Boolean) as any,
+    // Fetch resumes matching the logged in user email strictly
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: {
+        resumes: {
+          where: { abandoned: false },
+          orderBy: { updatedAt: "desc" },
+        },
       },
-      orderBy: { createdAt: "desc" },
     });
+
+    if (!user) {
+      return NextResponse.json({ resumes: [] });
+    }
+
+    const resumes = user.resumes;
 
     const parsedResumes = resumes.map((resume: any) => {
       let atsScore = 85;
