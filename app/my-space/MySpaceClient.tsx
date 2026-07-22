@@ -47,7 +47,8 @@ interface ProjectItem {
   title: string;
   description: string;
   techStack: string;
-  link?: string;
+  githubLink?: string;
+  hostLink?: string;
 }
 
 interface ExperienceItem {
@@ -62,6 +63,26 @@ interface CustomFieldItem {
   id: string;
   key: string;
   value: string;
+}
+
+interface EducationItem {
+  id: string;
+  type: string; // "10th", "12th", "UG", "PG"
+  institution: string;
+  degree?: string;
+  branch?: string;
+  cgpaOrPercentage: string;
+  graduationYear: string;
+  location?: string;
+}
+
+interface CodingProfileItem {
+  id: string;
+  platform: string; // LeetCode, Codeforces, etc.
+  username: string;
+  url: string;
+  rating?: string;
+  solvedCount?: string;
 }
 
 export default function MySpaceClient({ userEmail }: { userEmail: string }) {
@@ -79,6 +100,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [collegeEmail, setCollegeEmail] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
   const [github, setGithub] = useState("");
@@ -91,11 +115,13 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const [codechef, setCodechef] = useState("");
   const [hackerrank, setHackerrank] = useState("");
   const [gfg, setGfg] = useState("");
+  const [codingProfiles, setCodingProfiles] = useState<CodingProfileItem[]>([]);
 
   const [college, setCollege] = useState("");
   const [branch, setBranch] = useState("");
   const [cgpa, setCgpa] = useState("");
   const [graduationYear, setGraduationYear] = useState("");
+  const [educationList, setEducationList] = useState<EducationItem[]>([]);
   const [summary, setSummary] = useState("");
   
   const [skills, setSkills] = useState<string[]>([]);
@@ -154,6 +180,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
       if (data && data.profile) {
         const p = data.profile;
         setFullName(p.fullName || data.userName || "");
+        setEmail(p.email || data.userEmail || "");
+        setCollegeEmail(p.collegeEmail || "");
+        setDateOfBirth(p.dateOfBirth || "");
         setPhone(p.phone || "");
         setLocation(p.location || "");
         setGithub(p.github || "");
@@ -167,12 +196,83 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         setHackerrank(p.hackerrank || "");
         setGfg(p.gfg || "");
 
+        // Load Coding Profiles
+        let parsedCoding: CodingProfileItem[] = [];
+        try {
+          parsedCoding = JSON.parse(p.codingProfilesJson || "[]");
+        } catch {}
+
+        const standardPlatforms = ["LeetCode", "Codeforces", "CodeChef", "HackerRank", "GeeksforGeeks"];
+        const loadedCoding: CodingProfileItem[] = [];
+        
+        standardPlatforms.forEach(plat => {
+          const existing = parsedCoding.find(item => item.platform === plat);
+          if (existing) {
+            loadedCoding.push(existing);
+          } else {
+            // Check legacy field fallback
+            let legacyUser = "";
+            let legacyUrl = "";
+            if (plat === "LeetCode" && p.leetcode) { legacyUser = p.leetcode; legacyUrl = p.leetcode.includes("leetcode.com") ? p.leetcode : `https://leetcode.com/u/${p.leetcode}`; }
+            else if (plat === "Codeforces" && p.codeforces) { legacyUser = p.codeforces; legacyUrl = p.codeforces.includes("codeforces.com") ? p.codeforces : `https://codeforces.com/profile/${p.codeforces}`; }
+            else if (plat === "CodeChef" && p.codechef) { legacyUser = p.codechef; legacyUrl = p.codechef.includes("codechef.com") ? p.codechef : `https://codechef.com/users/${p.codechef}`; }
+            else if (plat === "HackerRank" && p.hackerrank) { legacyUser = p.hackerrank; legacyUrl = p.hackerrank.includes("hackerrank.com") ? p.hackerrank : `https://hackerrank.com/${p.hackerrank}`; }
+            else if (plat === "GeeksforGeeks" && p.gfg) { legacyUser = p.gfg; legacyUrl = p.gfg.includes("geeksforgeeks.org") ? p.gfg : `https://www.geeksforgeeks.org/user/${p.gfg}`; }
+            
+            loadedCoding.push({
+              id: plat.toLowerCase(),
+              platform: plat,
+              username: legacyUser,
+              url: legacyUrl,
+              rating: "",
+              solvedCount: ""
+            });
+          }
+        });
+        setCodingProfiles(loadedCoding);
+
         setCollege(p.college || "");
         setBranch(p.branch || "");
         setCgpa(p.cgpa || "");
         setGraduationYear(p.graduationYear || "");
         setSummary(p.summary || "");
         setCustomNotes(p.customNotes || "");
+
+        // Load Education List
+        let parsedEdu: EducationItem[] = [];
+        try {
+          parsedEdu = JSON.parse(p.educationJson || "[]");
+        } catch {}
+
+        if (parsedEdu.length === 0 && (p.college || p.branch || p.cgpa || p.graduationYear)) {
+          parsedEdu.push({
+            id: "ug",
+            type: "UG",
+            institution: p.college || "",
+            degree: "Undergraduate Degree",
+            branch: p.branch || "",
+            cgpaOrPercentage: p.cgpa || "",
+            graduationYear: p.graduationYear || "",
+            location: ""
+          });
+        }
+        
+        const standardEduTypes = ["10th", "12th", "UG", "PG"];
+        standardEduTypes.forEach(t => {
+          if (!parsedEdu.some(e => e.type === t)) {
+            parsedEdu.push({
+              id: t.toLowerCase(),
+              type: t,
+              institution: "",
+              degree: t === "10th" ? "Secondary School" : t === "12th" ? "Higher Secondary" : t === "UG" ? "Bachelor's" : "Master's",
+              branch: "",
+              cgpaOrPercentage: "",
+              graduationYear: "",
+              location: ""
+            });
+          }
+        });
+        setEducationList(parsedEdu);
 
         try {
           const s = JSON.parse(p.skillsJson || "[]");
@@ -272,6 +372,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fullName,
+          email,
+          collegeEmail,
+          dateOfBirth,
           phone,
           location,
           github,
@@ -283,10 +386,12 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           codechef,
           hackerrank,
           gfg,
+          codingProfilesJson: JSON.stringify(codingProfiles),
           college,
           branch,
           cgpa,
           graduationYear,
+          educationJson: JSON.stringify(educationList),
           summary,
           skillsJson: JSON.stringify(skills),
           projectsJson: JSON.stringify(projects),
@@ -331,25 +436,26 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
       `CANDIDATE MASTER PROFILE VAULT`,
       `=========================================`,
       fullName ? `Name: ${fullName}` : null,
-      userEmail ? `Email: ${userEmail}` : null,
+      email ? `Email: ${email}` : null,
+      collegeEmail ? `College Email: ${collegeEmail}` : null,
+      dateOfBirth ? `Date of Birth: ${dateOfBirth}` : null,
       phone ? `Phone: ${phone}` : null,
       location ? `Location: ${location}` : null,
       github ? `GitHub: ${github}` : null,
       linkedin ? `LinkedIn: ${linkedin}` : null,
       noticePeriod ? `Notice Period: ${noticePeriod}` : null,
       ``,
-      (leetcode || codeforces || codechef || hackerrank || gfg) ? `--- CODING & PROBLEM-SOLVING PROFILES ---` : null,
-      leetcode ? `LeetCode: ${leetcode}` : null,
-      codeforces ? `Codeforces: ${codeforces}` : null,
-      codechef ? `CodeChef: ${codechef}` : null,
-      hackerrank ? `HackerRank: ${hackerrank}` : null,
-      gfg ? `GeeksforGeeks: ${gfg}` : null,
+      codingProfiles.length > 0 ? `--- CODING & PROBLEM-SOLVING PROFILES ---` : null,
+      ...codingProfiles.map(p => {
+        if (!p.username) return null;
+        return `${p.platform}: ${p.username} | Link: ${p.url || "N/A"} | Rating/Rank: ${p.rating || "N/A"} | Solved: ${p.solvedCount || "N/A"}`;
+      }),
       ``,
-      college || branch || cgpa ? `--- ACADEMIC & BIO ---` : null,
-      college ? `College: ${college}` : null,
-      branch ? `Branch/Degree: ${branch}` : null,
-      cgpa ? `CGPA: ${cgpa}` : null,
-      graduationYear ? `Graduation Year: ${graduationYear}` : null,
+      educationList.length > 0 ? `--- ACADEMICS & EDUCATION ---` : null,
+      ...educationList.map(e => {
+        if (!e.institution) return null;
+        return `[${e.type}] ${e.institution} - ${e.degree || "N/A"} (${e.branch || "N/A"}) | Grade: ${e.cgpaOrPercentage} | Year: ${e.graduationYear} | Location: ${e.location || "N/A"}`;
+      }),
       summary ? `Bio Summary: ${summary}` : null,
       ``,
       skills.length ? `--- SKILLS ---` : null,
@@ -362,7 +468,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
       achievements.length ? achievements.map(a => `- ${a}`).join("\n") : null,
       ``,
       projects.length ? `--- PROJECTS ---` : null,
-      projects.length ? projects.map(p => `- ${p.title} (${p.techStack}): ${p.description}`).join("\n") : null,
+      projects.length ? projects.map(p => `- ${p.title} (${p.techStack}) | GitHub: ${p.githubLink || "N/A"} | Live: ${p.hostLink || "N/A"}\n  Description: ${p.description}`).join("\n") : null,
       ``,
       experiences.length ? `--- EXPERIENCE ---` : null,
       experiences.length ? experiences.map(e => `- ${e.company} | ${e.role} (${e.duration}): ${e.description}`).join("\n") : null,
@@ -371,6 +477,14 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
     navigator.clipboard.writeText(lines);
     setCopiedKey("FULL_VAULT");
     setTimeout(() => setCopiedKey(null), 2500);
+  };
+
+  const handleUpdateCodingProfile = (platform: string, field: keyof CodingProfileItem, val: string) => {
+    setCodingProfiles(prev => prev.map(p => p.platform === platform ? { ...p, [field]: val } : p));
+  };
+
+  const handleUpdateEducation = (type: string, field: keyof EducationItem, val: string) => {
+    setEducationList(prev => prev.map(e => e.type === type ? { ...e, [field]: val } : e));
   };
 
   // Skill Handlers
@@ -724,12 +838,45 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     </div>
 
                     <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">Personal Email</label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="personal@email.com"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">College Email</label>
+                      <input
+                        type="email"
+                        value={collegeEmail}
+                        onChange={(e) => setCollegeEmail(e.target.value)}
+                        placeholder="student@college.edu"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
                       <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">Phone</label>
                       <input
                         type="text"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="+91 98765 43210"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">Date of Birth</label>
+                      <input
+                        type="text"
+                        value={dateOfBirth}
+                        onChange={(e) => setDateOfBirth(e.target.value)}
+                        placeholder="DD/MM/YYYY"
                         className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
                       />
                     </div>
@@ -792,8 +939,10 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
                     {[
                       { key: "Full Name", val: fullName, icon: User },
-                      { key: "Email", val: userEmail, icon: Mail },
+                      { key: "Personal Email", val: email, icon: Mail },
+                      { key: "College Email", val: collegeEmail, icon: Mail },
                       { key: "Phone", val: phone, icon: Phone },
+                      { key: "Date of Birth", val: dateOfBirth, icon: Clock },
                       { key: "Location", val: location, icon: MapPin },
                       { key: "GitHub", val: github, icon: Globe },
                       { key: "LinkedIn", val: linkedin, icon: ExternalLink },
@@ -853,141 +1002,153 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                       <Code className="w-5 h-5" />
                     </div>
                     <div>
-                      <h2 className="font-serif font-bold text-lg text-text">Coding Profiles & Competitive Programming</h2>
-                      <p className="text-xs text-text-muted font-medium">Platform handles, competitive programming ratings, and coding profiles</p>
+                      <h2 className="font-semibold text-[15px] text-text">Coding Profiles & Competitive Programming</h2>
                     </div>
                   </div>
                   <span className="text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
-                    {[leetcode, codeforces, codechef, hackerrank, gfg].filter(Boolean).length} Active Profiles
+                    {codingProfiles.filter(p => p.username).length} Active Profiles
                   </span>
                 </div>
 
                 {viewMode === "edit" ? (
                   /* EDIT MODE */
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center space-x-1">
-                        <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                        <span>LeetCode Profile / Username</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={leetcode}
-                        onChange={(e) => setLeetcode(e.target.value)}
-                        placeholder="leetcode.com/u/username"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center space-x-1">
-                        <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                        <span>Codeforces Profile / Username</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={codeforces}
-                        onChange={(e) => setCodeforces(e.target.value)}
-                        placeholder="codeforces.com/profile/username"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center space-x-1">
-                        <span className="w-2 h-2 rounded-full bg-amber-700"></span>
-                        <span>CodeChef Profile / Username</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={codechef}
-                        onChange={(e) => setCodechef(e.target.value)}
-                        placeholder="codechef.com/users/username"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center space-x-1">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span>HackerRank Profile / Username</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={hackerrank}
-                        onChange={(e) => setHackerrank(e.target.value)}
-                        placeholder="hackerrank.com/username"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
-                      />
-                    </div>
-
-                    <div className="space-y-1 sm:col-span-2 md:col-span-1">
-                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center space-x-1">
-                        <span className="w-2 h-2 rounded-full bg-green-600"></span>
-                        <span>GeeksforGeeks Profile / Username</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={gfg}
-                        onChange={(e) => setGfg(e.target.value)}
-                        placeholder="geeksforgeeks.org/user/username"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
-                      />
-                    </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {codingProfiles.map((p) => {
+                      let colorClass = "bg-amber-500/5 border-amber-500/20";
+                      let indicator = "bg-amber-500";
+                      if (p.platform === "Codeforces") { colorClass = "bg-blue-500/5 border-blue-500/20"; indicator = "bg-blue-500"; }
+                      else if (p.platform === "CodeChef") { colorClass = "bg-orange-500/5 border-orange-500/20"; indicator = "bg-orange-500"; }
+                      else if (p.platform === "HackerRank") { colorClass = "bg-emerald-500/5 border-emerald-500/20"; indicator = "bg-emerald-500"; }
+                      else if (p.platform === "GeeksforGeeks") { colorClass = "bg-green-500/5 border-green-500/20"; indicator = "bg-green-500"; }
+                      
+                      return (
+                        <div key={p.platform} className={`p-4 border rounded-2xl ${colorClass} space-y-3`}>
+                          <div className="flex items-center space-x-2 border-b border-border/30 pb-2">
+                            <span className={`w-2.5 h-2.5 rounded-full ${indicator}`}></span>
+                            <span className="text-xs font-bold text-text uppercase tracking-wider">{p.platform}</span>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Username</label>
+                              <input
+                                type="text"
+                                value={p.username}
+                                onChange={(e) => handleUpdateCodingProfile(p.platform, "username", e.target.value)}
+                                placeholder="Username / Handle"
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Profile Link / URL</label>
+                              <input
+                                type="text"
+                                value={p.url}
+                                onChange={(e) => handleUpdateCodingProfile(p.platform, "url", e.target.value)}
+                                placeholder="https://..."
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Rating / Rank / Stars</label>
+                              <input
+                                type="text"
+                                value={p.rating || ""}
+                                onChange={(e) => handleUpdateCodingProfile(p.platform, "rating", e.target.value)}
+                                placeholder="e.g. Knight / 1900 / 3★"
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Problems Solved</label>
+                              <input
+                                type="text"
+                                value={p.solvedCount || ""}
+                                onChange={(e) => handleUpdateCodingProfile(p.platform, "solvedCount", e.target.value)}
+                                placeholder="e.g. 500+ / 1200"
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   /* READ / COPY MODE */
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
-                    {[
-                      { key: "LeetCode", val: leetcode, platform: "LeetCode", color: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" },
-                      { key: "Codeforces", val: codeforces, platform: "Codeforces", color: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" },
-                      { key: "CodeChef", val: codechef, platform: "CodeChef", color: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20" },
-                      { key: "HackerRank", val: hackerrank, platform: "HackerRank", color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" },
-                      { key: "GeeksforGeeks", val: gfg, platform: "GeeksforGeeks", color: "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20" },
-                    ].filter(item => matchesSearch(item.key) || matchesSearch(item.val) || matchesSearch(item.platform)).map((item, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => item.val && copyToClipboard(item.val, item.key)}
-                        className={`p-3.5 md:p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between group relative ${
-                          item.val
-                            ? "bg-bg-base border-border/80 hover:border-primary/50 hover:shadow-sm"
-                            : "bg-bg-base/40 border-border/30 opacity-60 hover:opacity-100"
-                        }`}
-                      >
-                        <div className="flex items-center space-x-3 min-w-0 pr-2 flex-1">
-                          <div className={`p-2.5 rounded-xl border shrink-0 font-extrabold text-xs ${item.color}`}>
-                            <Code className="w-4 h-4" />
-                          </div>
-                          <div className="space-y-0.5 min-w-0 flex-1">
-                            <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{item.platform}</span>
-                            <span className={`text-xs font-bold block truncate ${item.val ? "text-text" : "text-text-muted italic"}`}>
-                              {item.val || "Not provided"}
-                            </span>
-                          </div>
-                        </div>
+                    {codingProfiles.filter(p => matchesSearch(p.platform) || matchesSearch(p.username) || matchesSearch(p.rating || "")).map((p) => {
+                      let colorClass = "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20";
+                      if (p.platform === "Codeforces") { colorClass = "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"; }
+                      else if (p.platform === "CodeChef") { colorClass = "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20"; }
+                      else if (p.platform === "HackerRank") { colorClass = "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"; }
+                      else if (p.platform === "GeeksforGeeks") { colorClass = "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20"; }
+                      
+                      return (
+                        <div
+                          key={p.platform}
+                          onClick={() => p.url && window.open(p.url, "_blank")}
+                          className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between group relative ${
+                            p.username
+                              ? "bg-bg-base border-border/80 hover:border-primary/50 hover:shadow-sm"
+                              : "bg-bg-base/40 border-border/30 opacity-60 hover:opacity-100"
+                          }`}
+                        >
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between min-w-0 pr-2">
+                              <div className="flex items-center space-x-2.5 min-w-0">
+                                <div className={`p-2 rounded-lg border shrink-0 font-extrabold text-xs ${colorClass}`}>
+                                  <Code className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="min-w-0">
+                                  <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{p.platform}</span>
+                                  <span className={`text-xs font-bold block truncate ${p.username ? "text-text" : "text-text-muted italic"}`}>
+                                    {p.username || "Not provided"}
+                                  </span>
+                                </div>
+                              </div>
+                              
+                              {p.url && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    copyToClipboard(p.url, p.platform);
+                                  }}
+                                  className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary/10 transition-all cursor-pointer shrink-0"
+                                  title="Copy profile link"
+                                >
+                                  {copiedKey === p.platform ? (
+                                    <Check className="w-3.5 h-3.5 text-emerald-500" />
+                                  ) : (
+                                    <Copy className="w-3.5 h-3.5" />
+                                  )}
+                                </button>
+                              )}
+                            </div>
 
-                        {item.val && (
-                          <div className="shrink-0 pl-1 flex items-center space-x-1">
-                            {copiedKey === item.key ? (
-                              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-md flex items-center space-x-1">
-                                <Check className="w-3 h-3" />
-                                <span>Copied</span>
-                              </span>
-                            ) : (
-                              <span className="p-1.5 rounded-lg text-text-muted group-hover:text-primary group-hover:bg-primary/10 transition-all flex items-center gap-1 text-[11px] font-semibold">
-                                <Copy className="w-3.5 h-3.5" />
-                              </span>
+                            {p.username && (p.rating || p.solvedCount) && (
+                              <div className="flex items-center gap-2 pt-1 border-t border-border/20">
+                                {p.rating && (
+                                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase">
+                                    {p.rating}
+                                  </span>
+                                )}
+                                {p.solvedCount && (
+                                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-bg-base border border-border/60 text-text-muted">
+                                    {p.solvedCount} solved
+                                  </span>
+                                )}
+                              </div>
                             )}
                           </div>
-                        )}
-                      </div>
-                    ))}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
             )}
 
-            {/* SECTION 2: ACADEMICS & CAREER BIO */}
             {(categoryFilter === "all" || categoryFilter === "academic") && (
               <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
                 <div className="border-b border-border/40 pb-3 flex items-center justify-between">
@@ -996,51 +1157,96 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                       <GraduationCap className="w-5 h-5" />
                     </div>
                     <div>
-                      <h2 className="font-serif font-bold text-lg text-text">Academics & Career Bio</h2>
-                      <p className="text-xs text-text-muted font-medium">Educational background, graduation metrics, and elevator pitch</p>
+                      <h2 className="font-semibold text-[15px] text-text">Academics & Education History</h2>
                     </div>
                   </div>
-                  <span className="text-xs text-text-muted font-bold bg-bg-base border border-border px-3 py-1 rounded-full">College & Background</span>
+                  <span className="text-xs text-text-muted font-bold bg-bg-base border border-border px-3 py-1 rounded-full">
+                    {educationList.filter(e => e.institution).length} Levels Completed
+                  </span>
                 </div>
 
                 {viewMode === "edit" ? (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="space-y-1 sm:col-span-2">
-                        <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">College Name</label>
-                        <input
-                          type="text"
-                          value={college}
-                          onChange={(e) => setCollege(e.target.value)}
-                          placeholder="Engineering Institute"
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
-                        />
-                      </div>
+                  /* EDIT MODE */
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      {educationList.map((e) => (
+                        <div key={e.type} className="p-4 border border-border/60 rounded-2xl bg-bg-base space-y-3">
+                          <div className="flex items-center justify-between border-b border-border/30 pb-2">
+                            <span className="text-xs font-bold text-primary uppercase tracking-wider">{e.type} Education</span>
+                          </div>
 
-                      <div className="space-y-1">
-                        <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">Branch / Degree</label>
-                        <input
-                          type="text"
-                          value={branch}
-                          onChange={(e) => setBranch(e.target.value)}
-                          placeholder="Computer Science & Engg"
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
-                        />
-                      </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="sm:col-span-2 space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Institution / School / College</label>
+                              <input
+                                type="text"
+                                value={e.institution}
+                                onChange={(eInput) => handleUpdateEducation(e.type, "institution", eInput.target.value)}
+                                placeholder="School/College Name"
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                              />
+                            </div>
 
-                      <div className="space-y-1">
-                        <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">CGPA / Percentage</label>
-                        <input
-                          type="text"
-                          value={cgpa}
-                          onChange={(e) => setCgpa(e.target.value)}
-                          placeholder="8.8 / 10"
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
-                        />
-                      </div>
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Degree</label>
+                              <input
+                                type="text"
+                                value={e.degree || ""}
+                                onChange={(eInput) => handleUpdateEducation(e.type, "degree", eInput.target.value)}
+                                placeholder="e.g. B.Tech / SSC / CBSE"
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                              />
+                            </div>
+
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Branch / Stream</label>
+                              <input
+                                type="text"
+                                value={e.branch || ""}
+                                onChange={(eInput) => handleUpdateEducation(e.type, "branch", eInput.target.value)}
+                                placeholder="e.g. Computer Science / PCM"
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                              />
+                            </div>
+
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">CGPA / Percentage</label>
+                              <input
+                                type="text"
+                                value={e.cgpaOrPercentage}
+                                onChange={(eInput) => handleUpdateEducation(e.type, "cgpaOrPercentage", eInput.target.value)}
+                                placeholder="e.g. 9.2 CGPA or 92%"
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                              />
+                            </div>
+
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Graduation Year</label>
+                              <input
+                                type="text"
+                                value={e.graduationYear}
+                                onChange={(eInput) => handleUpdateEducation(e.type, "graduationYear", eInput.target.value)}
+                                placeholder="e.g. 2026"
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                              />
+                            </div>
+
+                            <div className="sm:col-span-2 space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Location / City</label>
+                              <input
+                                type="text"
+                                value={e.location || ""}
+                                onChange={(eInput) => handleUpdateEducation(e.type, "location", eInput.target.value)}
+                                placeholder="e.g. Bengaluru, Karnataka"
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
 
-                    <div className="space-y-1.5">
+                    <div className="space-y-1.5 pt-2">
                       <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">Career Bio / Elevator Summary</label>
                       <textarea
                         rows={3}
@@ -1052,54 +1258,46 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     </div>
                   </div>
                 ) : (
+                  /* READ / COPY MODE */
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
-                      {[
-                        { key: "College", val: college, icon: Building2 },
-                        { key: "Branch / Degree", val: branch, icon: GraduationCap },
-                        { key: "CGPA", val: cgpa, icon: Award },
-                        { key: "Graduation Year", val: graduationYear, icon: Clock },
-                      ].filter(item => matchesSearch(item.key) || matchesSearch(item.val)).map((item, idx) => {
-                        const IconComp = item.icon;
-                        return (
-                          <div
-                            key={idx}
-                            onClick={() => item.val && copyToClipboard(item.val, item.key)}
-                            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between group relative ${
-                              item.val
-                                ? "bg-bg-base border-border/80 hover:border-primary/50 hover:shadow-sm"
-                                : "bg-bg-base/40 border-border/30 opacity-60 hover:opacity-100"
-                            }`}
-                          >
-                            <div className="flex items-center space-x-3 min-w-0 pr-2 flex-1">
-                              <div className={`p-2.5 rounded-xl shrink-0 ${item.val ? "bg-primary/10 text-primary" : "bg-bg-base text-text-muted"}`}>
-                                <IconComp className="w-4 h-4" />
-                              </div>
-                              <div className="space-y-0.5 min-w-0 flex-1">
-                                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{item.key}</span>
-                                <span className={`text-xs font-bold block truncate ${item.val ? "text-text" : "text-text-muted italic"}`}>
-                                  {item.val || "Not provided"}
-                                </span>
-                              </div>
+                      {educationList.filter(e => e.institution && (matchesSearch(e.institution) || matchesSearch(e.type) || matchesSearch(e.degree || "") || matchesSearch(e.branch || ""))).map((e) => (
+                        <div
+                          key={e.type}
+                          onClick={() => copyToClipboard(`${e.type}: ${e.institution} | Degree: ${e.degree || "N/A"} | Branch: ${e.branch || "N/A"} | Grade: ${e.cgpaOrPercentage} | Year: ${e.graduationYear} | Location: ${e.location || "N/A"}`, e.type)}
+                          className="p-3.5 rounded-2xl border border-border/80 bg-bg-base hover:border-primary/50 hover:shadow-sm transition-all cursor-pointer flex flex-col justify-between group relative"
+                        >
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-bold text-primary uppercase tracking-wider block">{e.type} Education</span>
+                              {copiedKey === e.type ? (
+                                <span className="text-[9px] font-bold text-emerald-600 bg-emerald-500/10 px-1.5 py-0.5 rounded-md">Copied</span>
+                              ) : (
+                                <Copy className="w-3.5 h-3.5 text-text-muted group-hover:text-primary shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              )}
                             </div>
 
-                            {item.val && (
-                              <div className="shrink-0 pl-1">
-                                {copiedKey === item.key ? (
-                                  <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-md flex items-center space-x-1">
-                                    <Check className="w-3 h-3" />
-                                    <span>Copied</span>
-                                  </span>
-                                ) : (
-                                  <span className="p-1.5 rounded-lg text-text-muted group-hover:text-primary group-hover:bg-primary/10 transition-all flex items-center gap-1 text-[11px] font-semibold">
-                                    <Copy className="w-3.5 h-3.5" />
-                                  </span>
-                                )}
-                              </div>
-                            )}
+                            <div className="space-y-1">
+                              <h4 className="text-xs font-bold text-text leading-tight">{e.institution}</h4>
+                              <p className="text-[11px] text-text-muted font-semibold">
+                                {e.degree || "No Degree"} {e.branch ? `· ${e.branch}` : ""}
+                              </p>
+                              {e.location && (
+                                <p className="text-[10px] text-text-muted/80 font-medium">📍 {e.location}</p>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-2 pt-1.5 border-t border-border/20">
+                              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                                {e.cgpaOrPercentage}
+                              </span>
+                              <span className="text-[10px] font-bold text-text-muted">
+                                Class of {e.graduationYear}
+                              </span>
+                            </div>
                           </div>
-                        );
-                      })}
+                        </div>
+                      ))}
                     </div>
 
                     {summary && (
@@ -1430,44 +1628,114 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                       {viewMode === "edit" ? (
                         <div className="space-y-3 pr-8">
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <input
-                              type="text"
-                              value={proj.title}
-                              onChange={(e) => handleUpdateProject(proj.id, "title", e.target.value)}
-                              placeholder="Project Title"
-                              className="px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-bold"
-                            />
-                            <input
-                              type="text"
-                              value={proj.techStack}
-                              onChange={(e) => handleUpdateProject(proj.id, "techStack", e.target.value)}
-                              placeholder="Tech Stack (e.g. Next.js, Docker, Redis)"
-                              className="px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold"
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Project Title</label>
+                              <input
+                                type="text"
+                                value={proj.title}
+                                onChange={(e) => handleUpdateProject(proj.id, "title", e.target.value)}
+                                placeholder="Project Title"
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-bold"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Tech Stack</label>
+                              <input
+                                type="text"
+                                value={proj.techStack}
+                                onChange={(e) => handleUpdateProject(proj.id, "techStack", e.target.value)}
+                                placeholder="Tech Stack (e.g. Next.js, Docker, Redis)"
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">GitHub Link</label>
+                              <input
+                                type="text"
+                                value={proj.githubLink || ""}
+                                onChange={(e) => handleUpdateProject(proj.id, "githubLink", e.target.value)}
+                                placeholder="https://github.com/..."
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Live Host Link</label>
+                              <input
+                                type="text"
+                                value={proj.hostLink || ""}
+                                onChange={(e) => handleUpdateProject(proj.id, "hostLink", e.target.value)}
+                                placeholder="https://..."
+                                className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold"
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Project Description</label>
+                            <textarea
+                              rows={2.5}
+                              value={proj.description}
+                              onChange={(e) => handleUpdateProject(proj.id, "description", e.target.value)}
+                              placeholder="Key achievements, metrics, architectural details..."
+                              className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-medium"
                             />
                           </div>
-                          <textarea
-                            rows={2}
-                            value={proj.description}
-                            onChange={(e) => handleUpdateProject(proj.id, "description", e.target.value)}
-                            placeholder="Key achievements, metrics, architectural details..."
-                            className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-medium"
-                          />
                         </div>
                       ) : (
                         <div
-                          onClick={() => copyToClipboard(`${proj.title} (${proj.techStack}): ${proj.description}`, proj.title)}
-                          className="space-y-1 cursor-pointer pr-8"
+                          className="space-y-2 pr-8"
                         >
-                          <div className="flex items-center justify-between">
-                            <h3 className="font-bold text-sm text-text flex items-center space-x-2">
-                              <span>{proj.title}</span>
-                              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                                {proj.techStack}
-                              </span>
-                            </h3>
-                            <Copy className="w-3.5 h-3.5 text-text-muted group-hover:text-primary" />
+                          <div className="flex items-start justify-between">
+                            <div className="space-y-1">
+                              <h3 className="font-bold text-sm text-text flex items-center gap-2">
+                                <span>{proj.title}</span>
+                                {proj.techStack && (
+                                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                                    {proj.techStack}
+                                  </span>
+                                )}
+                              </h3>
+                              
+                              <div className="flex items-center gap-3 pt-0.5">
+                                {proj.githubLink && (
+                                  <a
+                                    href={proj.githubLink}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-[10px] font-bold text-primary hover:underline inline-flex items-center gap-1"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <Globe className="w-3 h-3" />
+                                    <span>GitHub</span>
+                                  </a>
+                                )}
+                                {proj.hostLink && (
+                                  <a
+                                    href={proj.hostLink}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-[10px] font-bold text-emerald-600 hover:underline inline-flex items-center gap-1"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <ExternalLink className="w-3 h-3" />
+                                    <span>Live Link</span>
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                            
+                            <button
+                              onClick={() => copyToClipboard(`${proj.title} (${proj.techStack}): ${proj.description} | GitHub: ${proj.githubLink || "N/A"} | Live: ${proj.hostLink || "N/A"}`, proj.title)}
+                              className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary/10 transition-all cursor-pointer"
+                              title="Copy project description"
+                            >
+                              {copiedKey === proj.title ? (
+                                <Check className="w-3.5 h-3.5 text-emerald-500" />
+                              ) : (
+                                <Copy className="w-3.5 h-3.5" />
+                              )}
+                            </button>
                           </div>
-                          <p className="text-xs text-text-muted font-medium">{proj.description}</p>
+                          <p className="text-xs text-text-muted font-medium leading-relaxed">{proj.description}</p>
                         </div>
                       )}
                     </div>

@@ -125,6 +125,9 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const {
       fullName,
+      email,
+      collegeEmail,
+      dateOfBirth,
       phone,
       location,
       github,
@@ -141,6 +144,7 @@ export async function PUT(req: NextRequest) {
       branch,
       cgpa,
       graduationYear,
+      educationJson,
       summary,
       skillsJson,
       projectsJson,
@@ -153,6 +157,9 @@ export async function PUT(req: NextRequest) {
 
     const dataPayload: any = {
       fullName,
+      email,
+      collegeEmail,
+      dateOfBirth,
       phone,
       location,
       github,
@@ -169,6 +176,7 @@ export async function PUT(req: NextRequest) {
       branch,
       cgpa,
       graduationYear,
+      educationJson: typeof educationJson === "string" ? educationJson : JSON.stringify(educationJson || []),
       summary,
       skillsJson: typeof skillsJson === "string" ? skillsJson : JSON.stringify(skillsJson || []),
       projectsJson: typeof projectsJson === "string" ? projectsJson : JSON.stringify(projectsJson || []),

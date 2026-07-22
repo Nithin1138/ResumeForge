@@ -309,6 +309,9 @@ model MasterProfile {
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   fullName           String?
+  email              String?
+  collegeEmail       String?
+  dateOfBirth        String?
   phone              String?
   location           String?
   github             String?
@@ -327,6 +330,7 @@ model MasterProfile {
   branch             String?
   cgpa               String?
   graduationYear     String?
+  educationJson      String   @default("[]")
   summary            String?  @db.Text
 
   skillsJson         String   @default("[]")
