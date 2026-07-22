@@ -68,61 +68,20 @@ export interface ResumeData {
   canvasBoxes: CanvasBox[];
 }
 
-const DEFAULT_RESUME: ResumeData = {
-  fullName: "Alex Morgan",
-  email: "alex.morgan@example.com",
-  phone: "+1 (555) 019-2834",
-  location: "San Francisco, CA",
-  linkedin: "linkedin.com/in/alexmorgan",
-  github: "github.com/alexmorgan",
-  summary: "Results-driven Software Engineer with 3+ years of experience building scalable web applications and distributed cloud services.",
-  education: [
-    {
-      id: "edu_1",
-      school: "University of California, Berkeley",
-      degree: "B.S. in Computer Science",
-      year: "2020 – 2024",
-      location: "Berkeley, CA",
-      gpa: "3.8 / 4.0",
-    },
-  ],
-  experience: [
-    {
-      id: "exp_1",
-      company: "TechCorp Labs",
-      role: "Software Engineer",
-      duration: "Jun 2024 – Present",
-      location: "San Francisco, CA",
-      points: [
-        "Architected microservices handling over 2M daily requests with 99.99% uptime.",
-        "Optimized database queries resulting in a 40% reduction in API response times.",
-      ],
-    },
-  ],
-  projects: [
-    {
-      id: "proj_1",
-      title: "ATS Resume Optimizer",
-      tech: "Next.js, TypeScript, OpenAI API, Tailwind CSS",
-      link: "github.com/alex/ats-resume",
-      description: "Built an AI-powered ATS resume parsing engine analyzing job description keywords in real time.",
-    },
-  ],
-  skills: ["React", "Next.js", "TypeScript", "Node.js", "PostgreSQL", "Docker", "AWS", "Python"],
-  certifications: ["AWS Certified Solutions Architect", "Google Cloud Associate Engineer"],
-  canvasBoxes: [
-    {
-      id: "box_1",
-      text: "⚡ Top 5% ATS Match Score Guaranteed",
-      x: 350,
-      y: 20,
-      width: 240,
-      height: 40,
-      fontSize: 11,
-      isBold: true,
-      color: "#01696f",
-    },
-  ],
+export const EMPTY_RESUME: ResumeData = {
+  fullName: "",
+  email: "",
+  phone: "",
+  location: "",
+  linkedin: "",
+  github: "",
+  summary: "",
+  education: [],
+  experience: [],
+  projects: [],
+  skills: [],
+  certifications: [],
+  canvasBoxes: [],
 };
 
 type SectionTab = "personal" | "education" | "experience" | "projects" | "skills" | "canvas";
@@ -236,7 +195,7 @@ function convertParsedResponseToResume(data: any, defaultName?: string): ResumeD
   experienceList = rawExp.map((exp: any, i: number) => ({
     id: "exp_" + i,
     company: exp.company || exp.organization || "",
-    role: exp.role || exp.title || "Software Engineer",
+    role: exp.role || exp.title || "",
     duration: exp.duration || "",
     location: exp.location || "",
     points: Array.isArray(exp.points) 
@@ -249,7 +208,7 @@ function convertParsedResponseToResume(data: any, defaultName?: string): ResumeD
   if (Array.isArray(data.projects)) {
     projectsList = data.projects.map((proj: any, i: number) => ({
       id: "proj_" + i,
-      title: proj.title || "Project",
+      title: proj.title || "",
       tech: proj.techStack || proj.tech || "",
       link: proj.link || proj.githubLink || proj.liveLink || "",
       description: proj.description || proj.keyResult || "",
@@ -284,8 +243,12 @@ function convertParsedResponseToResume(data: any, defaultName?: string): ResumeD
 export default function EditClient({ savedResumes }: { savedResumes: SavedResumeItem[] }) {
   const [startMode, setStartMode] = useState<"CHOOSE" | "EDITOR">("CHOOSE");
   const [activeTab, setActiveTab] = useState<SectionTab>("personal");
-  const [resumeData, setResumeData] = useState<ResumeData>(DEFAULT_RESUME);
+  const [resumeData, setResumeData] = useState<ResumeData>(EMPTY_RESUME);
   const [selectedResumeId, setSelectedResumeId] = useState<string | null>(null);
+
+  // Realtime Save State
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   // Saved Resumes list & modal state
   const [resumesList, setResumesList] = useState<SavedResumeItem[]>(savedResumes);
@@ -382,21 +345,7 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
 
   // Start Options Handlers
   const handleStartBlank = () => {
-    setResumeData({
-      fullName: "",
-      email: "",
-      phone: "",
-      location: "",
-      linkedin: "",
-      github: "",
-      summary: "",
-      education: [],
-      experience: [],
-      projects: [],
-      skills: [],
-      certifications: [],
-      canvasBoxes: [],
-    });
+    setResumeData(EMPTY_RESUME);
     setSelectedResumeId(null);
     setStartMode("EDITOR");
   };
@@ -404,14 +353,14 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
   const handleSelectSavedResume = (item: SavedResumeItem) => {
     try {
       const parsed = typeof item.inputData === "string" ? JSON.parse(item.inputData) : item.inputData;
-      const converted = convertParsedResponseToResume(parsed, item.resumeName || "Candidate Resume");
+      const converted = convertParsedResponseToResume(parsed, item.resumeName || "");
 
       setResumeData(converted);
       setSelectedResumeId(item.id);
       setIsSavedModalOpen(false);
       setStartMode("EDITOR");
     } catch {
-      setResumeData(DEFAULT_RESUME);
+      setResumeData(EMPTY_RESUME);
       setIsSavedModalOpen(false);
       setStartMode("EDITOR");
     }
@@ -449,6 +398,83 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
       setParseError(err.message || "Could not parse file. You can start blank or edit manually.");
     } finally {
       setIsParsing(false);
+    }
+  };
+
+  const handleSaveCurrentResume = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      const inputPayload = JSON.stringify({
+        personal: {
+          fullName: resumeData.fullName,
+          email: resumeData.email,
+          phone: resumeData.phone,
+          location: resumeData.location,
+          linkedin: resumeData.linkedin,
+          github: resumeData.github,
+          summary: resumeData.summary,
+        },
+        education: resumeData.education,
+        experience: resumeData.experience,
+        projects: resumeData.projects,
+        skills: resumeData.skills,
+        certifications: resumeData.certifications,
+        canvasBoxes: resumeData.canvasBoxes,
+      });
+
+      if (selectedResumeId) {
+        const res = await fetch(`/api/resume/${selectedResumeId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            resumeName: resumeData.fullName || "Interactive Resume Draft",
+            inputData: inputPayload,
+          }),
+        });
+
+        if (res.ok) {
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 2000);
+          fetchUserResumes();
+        }
+      } else {
+        const res = await fetch("/api/draft", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            formData: {
+              personal: {
+                fullName: resumeData.fullName,
+                email: resumeData.email,
+                phone: resumeData.phone,
+                location: resumeData.location,
+                linkedin: resumeData.linkedin,
+                github: resumeData.github,
+                summary: resumeData.summary,
+              },
+              education: resumeData.education,
+              experience: resumeData.experience,
+              projects: resumeData.projects,
+              skills: resumeData.skills,
+              certifications: resumeData.certifications,
+              canvasBoxes: resumeData.canvasBoxes,
+            },
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.id) setSelectedResumeId(data.id);
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 2000);
+          fetchUserResumes();
+        }
+      }
+    } catch (err) {
+      console.error("Failed to save resume in realtime:", err);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -955,6 +981,22 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
               </div>
 
               <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={handleSaveCurrentResume}
+                  disabled={isSaving}
+                  className="px-3.5 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer disabled:opacity-50"
+                >
+                  {isSaving ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : saveSuccess ? (
+                    <Check className="w-3.5 h-3.5" />
+                  ) : (
+                    <FileText className="w-3.5 h-3.5" />
+                  )}
+                  <span>{isSaving ? "Saving..." : saveSuccess ? "Saved!" : "Save Changes"}</span>
+                </button>
+
                 <button
                   type="button"
                   onClick={addCanvasBox}
