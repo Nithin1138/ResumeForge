@@ -479,8 +479,26 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
     setTimeout(() => setCopiedKey(null), 2500);
   };
 
-  const handleUpdateCodingProfile = (platform: string, field: keyof CodingProfileItem, val: string) => {
-    setCodingProfiles(prev => prev.map(p => p.platform === platform ? { ...p, [field]: val } : p));
+  const handleUpdateCodingProfile = (id: string, field: keyof CodingProfileItem, val: string) => {
+    setCodingProfiles(prev => prev.map(p => p.id === id ? { ...p, [field]: val } : p));
+  };
+
+  const handleAddCodingProfile = () => {
+    setCodingProfiles(prev => [
+      ...prev,
+      {
+        id: `custom-${Date.now()}`,
+        platform: "Other",
+        username: "",
+        url: "",
+        rating: "",
+        solvedCount: ""
+      }
+    ]);
+  };
+
+  const handleRemoveCodingProfile = (id: string) => {
+    setCodingProfiles(prev => prev.filter(p => p.id !== id));
   };
 
   const handleUpdateEducation = (type: string, field: keyof EducationItem, val: string) => {
@@ -1005,27 +1023,60 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                       <h2 className="font-semibold text-[15px] text-text">Coding Profiles & Competitive Programming</h2>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
-                    {codingProfiles.filter(p => p.username).length} Active Profiles
-                  </span>
+                  <div className="flex items-center space-x-2">
+                    {viewMode === "edit" && (
+                      <button
+                        onClick={handleAddCodingProfile}
+                        className="px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-bold rounded-full hover:bg-amber-500/20 transition-all flex items-center space-x-1 cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add Custom Card</span>
+                      </button>
+                    )}
+                    <span className="text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+                      {codingProfiles.filter(p => p.username).length} Active Profiles
+                    </span>
+                  </div>
                 </div>
 
                 {viewMode === "edit" ? (
                   /* EDIT MODE */
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {codingProfiles.map((p) => {
+                      const isStandard = ["LeetCode", "Codeforces", "CodeChef", "HackerRank", "GeeksforGeeks"].includes(p.platform);
                       let colorClass = "bg-amber-500/5 border-amber-500/20";
                       let indicator = "bg-amber-500";
                       if (p.platform === "Codeforces") { colorClass = "bg-blue-500/5 border-blue-500/20"; indicator = "bg-blue-500"; }
                       else if (p.platform === "CodeChef") { colorClass = "bg-orange-500/5 border-orange-500/20"; indicator = "bg-orange-500"; }
                       else if (p.platform === "HackerRank") { colorClass = "bg-emerald-500/5 border-emerald-500/20"; indicator = "bg-emerald-500"; }
                       else if (p.platform === "GeeksforGeeks") { colorClass = "bg-green-500/5 border-green-500/20"; indicator = "bg-green-500"; }
+                      else if (!isStandard) { colorClass = "bg-primary/5 border-primary/20"; indicator = "bg-primary"; }
                       
                       return (
-                        <div key={p.platform} className={`p-4 border rounded-2xl ${colorClass} space-y-3`}>
+                        <div key={p.id} className={`p-4 border rounded-2xl ${colorClass} space-y-3 relative group`}>
+                          {!isStandard && (
+                            <button
+                              onClick={() => handleRemoveCodingProfile(p.id)}
+                              className="absolute top-4 right-4 text-text-muted hover:text-red-500 transition-colors cursor-pointer"
+                              title="Delete platform"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+
                           <div className="flex items-center space-x-2 border-b border-border/30 pb-2">
                             <span className={`w-2.5 h-2.5 rounded-full ${indicator}`}></span>
-                            <span className="text-xs font-bold text-text uppercase tracking-wider">{p.platform}</span>
+                            {isStandard ? (
+                              <span className="text-xs font-bold text-text uppercase tracking-wider">{p.platform}</span>
+                            ) : (
+                              <input
+                                type="text"
+                                value={p.platform}
+                                onChange={(e) => handleUpdateCodingProfile(p.id, "platform", e.target.value)}
+                                placeholder="Platform Name (e.g. GitHub)"
+                                className="px-2 py-0.5 rounded border border-border/80 bg-surface text-text text-xs font-bold w-48 focus:outline-none focus:border-primary"
+                              />
+                            )}
                           </div>
                           
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1034,7 +1085,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                               <input
                                 type="text"
                                 value={p.username}
-                                onChange={(e) => handleUpdateCodingProfile(p.platform, "username", e.target.value)}
+                                onChange={(e) => handleUpdateCodingProfile(p.id, "username", e.target.value)}
                                 placeholder="Username / Handle"
                                 className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
                               />
@@ -1044,7 +1095,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                               <input
                                 type="text"
                                 value={p.url}
-                                onChange={(e) => handleUpdateCodingProfile(p.platform, "url", e.target.value)}
+                                onChange={(e) => handleUpdateCodingProfile(p.id, "url", e.target.value)}
                                 placeholder="https://..."
                                 className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
                               />
@@ -1054,7 +1105,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                               <input
                                 type="text"
                                 value={p.rating || ""}
-                                onChange={(e) => handleUpdateCodingProfile(p.platform, "rating", e.target.value)}
+                                onChange={(e) => handleUpdateCodingProfile(p.id, "rating", e.target.value)}
                                 placeholder="e.g. Knight / 1900 / 3★"
                                 className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
                               />
@@ -1064,7 +1115,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                               <input
                                 type="text"
                                 value={p.solvedCount || ""}
-                                onChange={(e) => handleUpdateCodingProfile(p.platform, "solvedCount", e.target.value)}
+                                onChange={(e) => handleUpdateCodingProfile(p.id, "solvedCount", e.target.value)}
                                 placeholder="e.g. 500+ / 1200"
                                 className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
                               />
@@ -1077,22 +1128,20 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                 ) : (
                   /* READ / COPY MODE */
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
-                    {codingProfiles.filter(p => matchesSearch(p.platform) || matchesSearch(p.username) || matchesSearch(p.rating || "")).map((p) => {
+                    {codingProfiles.filter(p => p.username && (matchesSearch(p.platform) || matchesSearch(p.username) || matchesSearch(p.rating || ""))).map((p) => {
+                      const isStandard = ["LeetCode", "Codeforces", "CodeChef", "HackerRank", "GeeksforGeeks"].includes(p.platform);
                       let colorClass = "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20";
                       if (p.platform === "Codeforces") { colorClass = "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"; }
                       else if (p.platform === "CodeChef") { colorClass = "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20"; }
                       else if (p.platform === "HackerRank") { colorClass = "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"; }
                       else if (p.platform === "GeeksforGeeks") { colorClass = "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20"; }
+                      else if (!isStandard) { colorClass = "bg-primary/10 text-primary border-primary/20"; }
                       
                       return (
                         <div
-                          key={p.platform}
+                          key={p.id}
                           onClick={() => p.url && window.open(p.url, "_blank")}
-                          className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between group relative ${
-                            p.username
-                              ? "bg-bg-base border-border/80 hover:border-primary/50 hover:shadow-sm"
-                              : "bg-bg-base/40 border-border/30 opacity-60 hover:opacity-100"
-                          }`}
+                          className="p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between group relative bg-bg-base border-border/80 hover:border-primary/50 hover:shadow-sm"
                         >
                           <div className="space-y-3">
                             <div className="flex items-center justify-between min-w-0 pr-2">
@@ -1102,8 +1151,8 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                                 </div>
                                 <div className="min-w-0">
                                   <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{p.platform}</span>
-                                  <span className={`text-xs font-bold block truncate ${p.username ? "text-text" : "text-text-muted italic"}`}>
-                                    {p.username || "Not provided"}
+                                  <span className="text-xs font-bold block truncate text-text">
+                                    {p.username}
                                   </span>
                                 </div>
                               </div>
@@ -1126,7 +1175,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                               )}
                             </div>
 
-                            {p.username && (p.rating || p.solvedCount) && (
+                            {(p.rating || p.solvedCount) && (
                               <div className="flex items-center gap-2 pt-1 border-t border-border/20">
                                 {p.rating && (
                                   <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase">
@@ -1134,7 +1183,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                                   </span>
                                 )}
                                 {p.solvedCount && (
-                                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-bg-base border border-border/60 text-text-muted">
+                                  <span className="text-[10px] font-bold text-text-muted">
                                     {p.solvedCount} solved
                                   </span>
                                 )}
