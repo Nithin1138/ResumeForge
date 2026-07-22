@@ -116,8 +116,8 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* 2. MY SPACE & AI COPILOT HERO BANNER CARD */}
-        <div className="bg-gradient-to-r from-primary/10 via-surface to-surface border border-primary/20 rounded-3xl p-6 md:p-8 space-y-4 shadow-xs relative overflow-hidden">
+        {/* 2. MY SPACE & AI COPILOT HERO BANNER CARD WITH EXTENDED PINNED VAULT */}
+        <div className="bg-gradient-to-r from-primary/10 via-surface to-surface border border-primary/20 rounded-3xl p-6 md:p-8 space-y-6 shadow-xs relative overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2 max-w-xl">
               <div className="flex items-center space-x-2">
@@ -154,13 +154,10 @@ export default async function DashboardPage() {
               </Link>
             </div>
           </div>
+
+          {/* EXTENDED DRAGGABLE PINNED VAULT CARDS */}
+          <PinnedSections profile={user.masterProfile} />
         </div>
-
-        {/* 2.5 PINNED SECTIONS BLOCK */}
-        <PinnedSections profile={user.masterProfile} />
-
-        {/* 3. CANDIDATE WALLET COMPONENT */}
-        <WalletCard />
 
         {/* 4. RECENT RESUMES (Limit 2 with View All link) */}
         <div className="space-y-4">

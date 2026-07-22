@@ -646,7 +646,10 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
     const isPinned = pinnedSections.includes(sectionId);
     return (
       <button
-        onClick={() => togglePinSection(sectionId)}
+        onClick={(e) => {
+          e.stopPropagation();
+          togglePinSection(sectionId);
+        }}
         className={`p-1.5 rounded-lg border transition-all cursor-pointer flex items-center justify-center shrink-0 ${
           isPinned 
             ? "bg-amber-500/10 border-amber-500/30 text-amber-500 hover:bg-amber-500/20" 
@@ -1922,7 +1925,6 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-xs text-text-muted font-bold">{customFields.length} Custom Fields</span>
-                    {renderPinButton("custom")}
                   </div>
                 </div>
 
@@ -2068,6 +2070,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                       </div>
 
                       <div className="flex items-center space-x-1.5 shrink-0 relative z-20">
+                        {renderPinButton(`custom-field-${cf.id}`)}
                         {(cf.value.startsWith("http://") || cf.value.startsWith("https://") || cf.value.includes("github.com") || cf.value.includes("linkedin.com")) && (
                           <button
                             onClick={(e) => {
