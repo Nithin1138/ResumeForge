@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, Copy, Check, Printer, ArrowLeft } from "lucide-react";
+import { X, Copy, Check, Printer, ArrowLeft, Loader2 } from "lucide-react";
 import ResumePreviewPanel from "./ResumePreviewPanel";
 
 interface ResumeModalProps {
   isOpen: boolean;
   onClose: () => void;
   resume: any;
-  output: any;
+  output?: any;
 }
 
 export default function ResumeModal({
@@ -21,34 +21,48 @@ export default function ResumeModal({
   const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [zoomScale, setZoomScale] = useState<number>(0.65);
+  const [fullResume, setFullResume] = useState<any>(resume);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (resume?.id) {
+      setLoading(true);
+      fetch(`/api/resume/${resume.id}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setFullResume(data);
+        })
+        .catch((err) => console.error("Error loading resume details:", err))
+        .finally(() => setLoading(false));
+    }
+  }, [resume?.id]);
 
   if (!isOpen || !mounted || !resume) return null;
 
-  // Safely parse inputData and output if they are JSON strings
-  const rawInputData = typeof resume.inputData === "string"
-    ? JSON.parse(resume.inputData)
-    : (resume.inputData || {});
+  const activeResume = fullResume || resume;
 
-  const parsedOutput = typeof output === "string"
-    ? JSON.parse(output)
-    : (output || (resume.outputFull ? (typeof resume.outputFull === "string" ? JSON.parse(resume.outputFull) : resume.outputFull) : {}));
+  // Safely parse inputData and output if they are JSON strings
+  const rawInputData = typeof activeResume.inputData === "string"
+    ? JSON.parse(activeResume.inputData)
+    : (activeResume.inputData || {});
+
+  const parsedOutput = activeResume.outputFull
+    ? (typeof activeResume.outputFull === "string" ? JSON.parse(activeResume.outputFull) : activeResume.outputFull)
+    : (output ? (typeof output === "string" ? JSON.parse(output) : output) : {});
 
   const normalizedResume = {
-    ...resume,
+    ...activeResume,
     inputData: {
       ...rawInputData,
       personal: {
-        fullName: rawInputData?.personal?.fullName || resume?.title || "Candidate Name",
+        fullName: rawInputData?.personal?.fullName || activeResume?.title || "Candidate Name",
         email: rawInputData?.personal?.email || "",
         phone: rawInputData?.personal?.phone || "",
         city: rawInputData?.personal?.city || rawInputData?.personal?.location || "",
         linkedin: rawInputData?.personal?.linkedin || "",
         github: rawInputData?.personal?.github || "",
-        targetRole: rawInputData?.personal?.targetRole || resume?.targetRole || "",
+        targetRole: rawInputData?.personal?.targetRole || activeResume?.targetRole || "",
         branch: rawInputData?.personal?.branch || "",
         collegeName: rawInputData?.personal?.collegeName || "",
       }
@@ -62,10 +76,7 @@ Email: ${normalizedResume.inputData.personal.email}${normalizedResume.inputData.
 Target: ${normalizedResume.inputData.personal.targetRole} ${normalizedResume.inputData.personal.branch ? `(${normalizedResume.inputData.personal.branch})` : ""}
 Education: ${parsedOutput.pgEducation ? `[PG] ${parsedOutput.pgEducation.degree} - ${parsedOutput.pgEducation.institution} (${parsedOutput.pgEducation.year}) | CGPA: ${parsedOutput.pgEducation.cgpa} ; ` : ""}[UG] ${parsedOutput.education?.degree || ""} - ${parsedOutput.education?.institution || ""} (${parsedOutput.education?.year || ""}) | CGPA: ${parsedOutput.education?.cgpa || ""}
 
-PROFESSIONAL SUMMARY
-${parsedOutput.summary || ""}
-
-TECHNICAL SKILLS
+${parsedOutput.summary ? `PROFESSIONAL SUMMARY\n${parsedOutput.summary}\n\n` : ""}TECHNICAL SKILLS
 ${(parsedOutput.skills || []).map((s: any) => `- ${s.category}: ${(s.skills || []).join(", ")}`).join("\n")}
 
 PROJECTS
@@ -164,19 +175,28 @@ ${(exp.bullets || []).map((b: string) => `- ${b}`).join("\n")}
 
       {/* Centered Document Preview Canvas */}
       <div className="w-full flex-1 flex flex-col items-center justify-start overflow-y-auto py-4 px-2 my-auto">
-        <div 
-          className="relative shadow-2xl rounded-xs bg-white text-black border border-border/40 my-auto transition-all duration-200"
-          style={{ 
-            width: `${Math.round(794 * zoomScale)}px`,
-            height: `${Math.round(1122 * zoomScale)}px`,
-          }}
-        >
-          <ResumePreviewPanel 
-            resume={normalizedResume} 
-            output={parsedOutput} 
-            locked={false} 
-          />
-        </div>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center p-12 bg-surface border border-border rounded-2xl shadow-xl my-auto space-y-3">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            <span className="text-xs font-bold text-text-muted">Loading complete resume document...</span>
+          </div>
+        ) : (
+          <div 
+            className="relative shadow-2xl rounded-xs bg-white text-black border border-border/40 my-auto transition-all duration-200"
+            style={{ 
+              width: `${Math.round(794 * zoomScale)}px`,
+              minHeight: `${Math.round(1122 * zoomScale)}px`,
+            }}
+          >
+            <ResumePreviewPanel 
+              resume={normalizedResume} 
+              output={parsedOutput} 
+              locked={false}
+              includeSummary={true}
+              includeCertifications={true}
+            />
+          </div>
+        )}
       </div>
     </div>,
     document.body
