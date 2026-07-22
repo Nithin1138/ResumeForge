@@ -496,230 +496,248 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
     "How do your academic projects prepare you for this full-time role?",
   ];
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-base text-text flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-3">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
-          <p className="text-xs font-bold text-text-muted">Loading My Space Vault...</p>
-        </div>
-      </div>
-    );
-  }
+  const calculateVaultCompletion = () => {
+    let completed = 0;
+    const total = 8;
+    if (fullName && (userEmail || phone)) completed++;
+    if (leetcode || codeforces || codechef || hackerrank || gfg) completed++;
+    if (college || branch) completed++;
+    if (skills.length > 0) completed++;
+    if (certifications.length > 0) completed++;
+    if (achievements.length > 0) completed++;
+    if (projects.length > 0) completed++;
+    if (experiences.length > 0) completed++;
+    return Math.round((completed / total) * 100);
+  };
+  const completionPercentage = calculateVaultCompletion();
+
+  const navCategories = [
+    { id: "all", label: "Overview & All Vault", icon: Layers, count: null, isTab: "profile" },
+    { id: "personal", label: "Personal & Contact", icon: User, count: null, isTab: "profile" },
+    { id: "coding", label: "Coding Profiles", icon: Code, count: [leetcode, codeforces, codechef, hackerrank, gfg].filter(Boolean).length, isTab: "profile" },
+    { id: "academic", label: "Academics & Bio", icon: GraduationCap, count: null, isTab: "profile" },
+    { id: "skills", label: "Skills Vault", icon: Sparkles, count: skills.length, isTab: "profile" },
+    { id: "certifications", label: "Certifications", icon: FileText, count: certifications.length, isTab: "profile" },
+    { id: "achievements", label: "Achievements & Awards", icon: Award, count: achievements.length, isTab: "profile" },
+    { id: "projects", label: "Projects Vault", icon: Briefcase, count: projects.length, isTab: "profile" },
+    { id: "experience", label: "Experience Vault", icon: Building2, count: experiences.length, isTab: "profile" },
+    { id: "custom", label: "Custom Fields Vault", icon: Tag, count: customFields.length, isTab: "profile" },
+    { id: "copilot", label: "AI Application Copilot", icon: Bot, count: null, isTab: "copilot" },
+  ];
 
   return (
     <AppLayout>
-      <div className="space-y-8">
+      <div className="space-y-6">
         
-        {/* Title Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/40 pb-6">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-serif font-bold text-text flex items-center gap-2">
-              <Database className="w-8 h-8 text-primary" />
-              <span>My Space Data Vault</span>
+        {/* HERO / VAULT COMPLETION BANNER */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-surface border border-border/80 rounded-3xl p-6 md:p-8 shadow-xs">
+          <div className="space-y-2 max-w-xl">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-extrabold tracking-wide uppercase">
+              <Database className="w-3.5 h-3.5" />
+              <span>Candidate Space Vault</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-serif font-bold text-text">
+              My Candidate Space
             </h1>
-            <p className="text-xs text-text-muted font-medium">
-              Maintain, view, and add custom details to your private candidate vault. Auto-synced with resume & cover letter tools.
+            <p className="text-xs text-text-muted font-medium leading-relaxed">
+              Maintain, view, and organize your master profile. Auto-synced in real-time across your resume editor, cover letters, and AI application tools.
             </p>
           </div>
 
-          <div className="flex items-center space-x-2 bg-bg-base/80 border border-border/80 p-1.5 rounded-2xl w-fit relative shadow-inner">
+          {/* Completion Progress Bar */}
+          <div className="bg-bg-base/80 border border-border/80 rounded-2xl p-4 md:p-5 flex flex-col justify-between min-w-[280px] space-y-3 shadow-inner">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-text-muted">Vault Readiness</span>
+              <span className="text-xs font-extrabold text-primary bg-primary/10 px-2.5 py-0.5 rounded-full">
+                {completionPercentage}% Complete
+              </span>
+            </div>
+            <div className="w-full h-2.5 bg-border/40 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-primary to-emerald-400 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${completionPercentage}%` }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              />
+            </div>
+            <div className="flex items-center justify-between text-[11px] text-text-muted font-semibold pt-1">
+              <span>{skills.length} Skills</span>
+              <span>{[leetcode, codeforces, codechef, hackerrank, gfg].filter(Boolean).length} Handles</span>
+              <span>{projects.length} Projects</span>
+            </div>
+          </div>
+        </div>
+
+        {/* WORKSPACE CONTROL BAR */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface border border-border/80 rounded-3xl p-4 md:p-5 shadow-xs">
+          
+          {/* Mode Switcher */}
+          <div className="flex items-center bg-bg-base/80 border border-border/80 p-1.5 rounded-2xl relative shadow-inner shrink-0">
             <button
-              onClick={() => setActiveTab("profile")}
-              className={`px-5 py-2.5 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer ${
-                activeTab === "profile" 
-                  ? "text-white" 
-                  : "text-text-muted hover:text-text"
+              onClick={() => setViewMode("view")}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer ${
+                viewMode === "view" ? "text-white" : "text-text-muted hover:text-text"
               }`}
             >
-              {activeTab === "profile" && (
+              {viewMode === "view" && (
                 <motion.div
-                  layoutId="spaceMainTab"
-                  className="absolute inset-0 bg-primary rounded-xl shadow-md -z-10"
+                  layoutId="spaceViewToggle"
+                  className="absolute inset-0 bg-primary rounded-xl shadow-sm -z-10"
                   transition={{ type: "spring", stiffness: 450, damping: 30 }}
                 />
               )}
-              <User className="w-4 h-4" />
-              <span>Master Profile Vault</span>
+              <Eye className="w-4 h-4" />
+              <span>View & Copy Mode</span>
             </button>
 
             <button
-              onClick={() => setActiveTab("copilot")}
-              className={`px-5 py-2.5 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer ${
-                activeTab === "copilot" 
-                  ? "text-white" 
-                  : "text-text-muted hover:text-text"
+              onClick={() => setViewMode("edit")}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer ${
+                viewMode === "edit" ? "text-white" : "text-text-muted hover:text-text"
               }`}
             >
-              {activeTab === "copilot" && (
+              {viewMode === "edit" && (
                 <motion.div
-                  layoutId="spaceMainTab"
-                  className="absolute inset-0 bg-primary rounded-xl shadow-md -z-10"
+                  layoutId="spaceViewToggle"
+                  className="absolute inset-0 bg-primary rounded-xl shadow-sm -z-10"
                   transition={{ type: "spring", stiffness: 450, damping: 30 }}
                 />
               )}
-              <Bot className="w-4 h-4" />
-              <span>AI Application Copilot</span>
+              <Edit3 className="w-4 h-4" />
+              <span>Edit & Add Mode</span>
+            </button>
+          </div>
+
+          {/* Live Search Bar */}
+          <div className="relative flex-1 min-w-[220px]">
+            <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search skills, handles, projects, degree..."
+              className="w-full pl-10 pr-8 py-2.5 rounded-2xl border border-border/80 bg-bg-base/80 text-text text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text text-xs font-bold"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Right Action Buttons */}
+          <div className="flex items-center space-x-2.5 shrink-0">
+            <button
+              onClick={handleCopyFullVault}
+              className="px-4 py-2.5 bg-bg-base hover:bg-border/40 border border-border text-text text-xs font-extrabold rounded-2xl inline-flex items-center space-x-2 transition-all cursor-pointer shadow-2xs"
+            >
+              {copiedKey === "FULL_VAULT" ? (
+                <>
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span className="text-emerald-600 font-bold">Full Profile Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 text-primary" />
+                  <span>Copy Full Vault</span>
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={handleSaveProfile}
+              disabled={saving}
+              className="px-6 py-2.5 bg-primary hover:bg-primary/95 text-white text-xs font-extrabold rounded-2xl inline-flex items-center space-x-2 transition-all shadow-sm cursor-pointer disabled:opacity-50"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>Save Master Profile</span>
+                </>
+              )}
             </button>
           </div>
         </div>
 
-        {/* TAB 1: MASTER PROFILE VAULT */}
-        {activeTab === "profile" && (
-          <div className="space-y-8">
-            
-            {/* Control Bar: View/Edit Toggle, Search Bar, Save Button, Copy All */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface border border-border/80 rounded-3xl p-4 md:p-5 shadow-xs">
-              
-              {/* Left: View / Edit Toggle & Search */}
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center bg-bg-base/80 border border-border/80 p-1.5 rounded-2xl relative shadow-inner">
+        {saveSuccess && (
+          <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-600 text-xs font-bold flex items-center space-x-2 animate-in fade-in">
+            <CheckCircle2 className="w-5 h-5 shrink-0" />
+            <span>Master Candidate Vault saved successfully to PostgreSQL database & auto-synced across pages!</span>
+          </div>
+        )}
+
+        {saveError && (
+          <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-xs font-bold animate-in fade-in">
+            {saveError}
+          </div>
+        )}
+
+        {/* MAIN WORKSPACE SPLIT: LEFT SIDEBAR RAIL + RIGHT CONTENT AREA */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* LEFT SIDEBAR NAVIGATION RAIL */}
+          <div className="lg:col-span-4 xl:col-span-3 space-y-3 sticky top-6">
+            <div className="bg-surface border border-border/80 rounded-3xl p-3 shadow-xs space-y-1">
+              <p className="text-[10px] font-black uppercase text-text-muted tracking-wider px-3 py-2">
+                Candidate Vault Menu
+              </p>
+
+              {navCategories.map((nav) => {
+                const IconComp = nav.icon;
+                const isSelected = nav.isTab === "copilot" ? activeTab === "copilot" : (activeTab === "profile" && categoryFilter === nav.id);
+                return (
                   <button
-                    onClick={() => setViewMode("view")}
-                    className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer ${
-                      viewMode === "view"
-                        ? "text-white"
-                        : "text-text-muted hover:text-text"
+                    key={nav.id}
+                    onClick={() => {
+                      if (nav.isTab === "copilot") {
+                        setActiveTab("copilot");
+                      } else {
+                        setActiveTab("profile");
+                        setCategoryFilter(nav.id);
+                      }
+                    }}
+                    className={`w-full text-left px-3.5 py-3 rounded-2xl text-xs font-extrabold flex items-center justify-between transition-all relative z-10 cursor-pointer ${
+                      isSelected ? "text-white shadow-sm" : "text-text-muted hover:text-text hover:bg-bg-base/60"
                     }`}
                   >
-                    {viewMode === "view" && (
+                    {isSelected && (
                       <motion.div
-                        layoutId="spaceViewToggle"
-                        className="absolute inset-0 bg-primary rounded-xl shadow-sm -z-10"
+                        layoutId="spaceNavPill"
+                        className="absolute inset-0 bg-primary rounded-2xl -z-10 shadow-xs"
                         transition={{ type: "spring", stiffness: 450, damping: 30 }}
                       />
                     )}
-                    <Eye className="w-4 h-4" />
-                    <span>View & Copy Mode</span>
-                  </button>
-
-                  <button
-                    onClick={() => setViewMode("edit")}
-                    className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer ${
-                      viewMode === "edit"
-                        ? "text-white"
-                        : "text-text-muted hover:text-text"
-                    }`}
-                  >
-                    {viewMode === "edit" && (
-                      <motion.div
-                        layoutId="spaceViewToggle"
-                        className="absolute inset-0 bg-primary rounded-xl shadow-sm -z-10"
-                        transition={{ type: "spring", stiffness: 450, damping: 30 }}
-                      />
+                    <div className="flex items-center space-x-3 min-w-0">
+                      <IconComp className={`w-4 h-4 shrink-0 ${isSelected ? "text-white" : "text-primary"}`} />
+                      <span className="truncate">{nav.label}</span>
+                    </div>
+                    {typeof nav.count === "number" && nav.count > 0 && (
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ml-1 ${
+                        isSelected ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
+                      }`}>
+                        {nav.count}
+                      </span>
                     )}
-                    <Edit3 className="w-4 h-4" />
-                    <span>Edit & Add Mode</span>
                   </button>
-                </div>
-
-                {/* Live Vault Search */}
-                <div className="relative flex-1 min-w-[200px]">
-                  <Search className="w-3.5 h-3.5 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search vault details..."
-                    className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-border bg-bg-base text-text text-xs font-medium focus:outline-none focus:border-primary"
-                  />
-                </div>
-              </div>
-
-              {/* Right: Copy Full Vault & Save Button */}
-              <div className="flex items-center space-x-2.5 shrink-0">
-                <button
-                  onClick={handleCopyFullVault}
-                  className="px-4 py-2.5 bg-bg-base hover:bg-border/40 border border-border text-text text-xs font-bold rounded-full inline-flex items-center space-x-1.5 transition-all cursor-pointer shadow-2xs"
-                  title="Copy formatted summary of full profile vault"
-                >
-                  {copiedKey === "FULL_VAULT" ? (
-                    <>
-                      <Check className="w-4 h-4 text-emerald-500" />
-                      <span className="text-emerald-600 font-bold">Full Profile Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4 text-primary" />
-                      <span>Copy Full Vault</span>
-                    </>
-                  )}
-                </button>
-
-                <button
-                  onClick={handleSaveProfile}
-                  disabled={saving}
-                  className="px-6 py-2.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center space-x-2 transition-all shadow-xs cursor-pointer disabled:opacity-50 shrink-0"
-                >
-                  {saving ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Saving...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4" />
-                      <span>Save Master Profile</span>
-                    </>
-                  )}
-                </button>
-              </div>
+                );
+              })}
             </div>
+          </div>
 
-            {saveSuccess && (
-              <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-600 text-xs font-bold flex items-center space-x-2 animate-in fade-in">
-                <CheckCircle2 className="w-4.5 h-4.5 shrink-0" />
-                <span>Master Profile Vault saved successfully to PostgreSQL database!</span>
-              </div>
-            )}
+          {/* RIGHT MAIN WORKSPACE CONTENT AREA */}
+          <div className="lg:col-span-8 xl:col-span-9 space-y-8">
 
-            {saveError && (
-              <div className="p-3.5 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-xs font-bold animate-in fade-in">
-                {saveError}
-              </div>
-            )}
-
-            {/* Category Filter Chips */}
-            <div className="flex items-center space-x-2 overflow-x-auto pb-1 no-scrollbar relative">
-              {[
-                { id: "all", label: "All Sections", count: null },
-                { id: "personal", label: "Personal & Social", count: null },
-                { id: "coding", label: "Coding Profiles", count: [leetcode, codeforces, codechef, hackerrank, gfg].filter(Boolean).length },
-                { id: "academic", label: "Academics & Bio", count: null },
-                { id: "skills", label: "Skills Vault", count: skills.length },
-                { id: "certifications", label: "Certifications", count: certifications.length },
-                { id: "achievements", label: "Achievements & Awards", count: achievements.length },
-                { id: "projects", label: "Projects", count: projects.length },
-                { id: "experience", label: "Experience", count: experiences.length },
-                { id: "custom", label: "Custom Fields Vault", count: customFields.length },
-              ].map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setCategoryFilter(cat.id)}
-                  className={`px-4.5 py-2 rounded-full text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer flex items-center space-x-2 relative z-10 ${
-                    categoryFilter === cat.id
-                      ? "text-white"
-                      : "bg-surface border border-border/80 text-text-muted hover:text-text hover:border-primary/50 shadow-2xs"
-                  }`}
-                >
-                  {categoryFilter === cat.id && (
-                    <motion.div
-                      layoutId="spaceCategoryChip"
-                      className="absolute inset-0 bg-primary rounded-full shadow-sm -z-10"
-                      transition={{ type: "spring", stiffness: 450, damping: 30 }}
-                    />
-                  )}
-                  <span>{cat.label}</span>
-                  {typeof cat.count === "number" && cat.count > 0 && (
-                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                      categoryFilter === cat.id ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
-                    }`}>
-                      {cat.count}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
+            {/* TAB 1: MASTER PROFILE VAULT */}
+            {activeTab === "profile" && (
+              <div className="space-y-8">
 
             {/* SECTION 1: PERSONAL & SOCIAL PROFILES */}
             {(categoryFilter === "all" || categoryFilter === "personal") && (
@@ -1718,6 +1736,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
             </div>
           </div>
         )}
+
+          </div>
+        </div>
 
       </div>
     </AppLayout>
