@@ -1674,11 +1674,18 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     <span
                       key={idx}
                       onClick={() => copyToClipboard(cert.year ? `${cert.name} (${cert.year})` : cert.name, `Cert-${cert.name}`)}
-                      className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold cursor-pointer hover:bg-emerald-500/20 transition-all"
+                      className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold cursor-pointer hover:bg-emerald-500/20 transition-all group"
                       title="Click to copy certification"
                     >
                       <Award className="w-3.5 h-3.5 shrink-0" />
                       <span>{cert.name}{cert.year ? ` (${cert.year})` : ""}</span>
+                      {viewMode === "view" && (
+                        copiedKey === `Cert-${cert.name}` ? (
+                          <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400 ml-1 shrink-0" />
+                        ) : (
+                          <Copy className="w-3 h-3 text-emerald-500/50 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity ml-1 shrink-0" />
+                        )
+                      )}
                       {viewMode === "edit" && (
                         <button onClick={(e) => { e.stopPropagation(); handleRemoveCert(idx); }} className="hover:text-red-500 cursor-pointer ml-1">
                           <Trash2 className="w-3.5 h-3.5 text-red-400" />
