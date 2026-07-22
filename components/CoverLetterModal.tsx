@@ -189,13 +189,11 @@ export default function CoverLetterModal({
     printTarget.id = "cover-letter-print-target";
     printTarget.innerHTML = docNode.outerHTML;
     document.body.appendChild(printTarget);
-    document.body.classList.add("printing-cover-letter");
 
     const originalTitle = document.title;
     document.title = `Cover_Letter_${(companyName || "Application").replace(/[^a-zA-Z0-9]/g, "_")}`;
 
     const cleanup = () => {
-      document.body.classList.remove("printing-cover-letter");
       const target = document.getElementById("cover-letter-print-target");
       if (target) target.remove();
       document.title = originalTitle;
@@ -205,8 +203,8 @@ export default function CoverLetterModal({
     window.addEventListener("afterprint", cleanup);
     setTimeout(() => {
       window.print();
-      setTimeout(cleanup, 2000);
-    }, 150);
+      setTimeout(cleanup, 1000);
+    }, 100);
   };
 
   if (!isOpen || !mounted) return null;
