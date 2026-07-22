@@ -557,24 +557,27 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
 
 
 
-      {/* STICKY BOTTOM FLOATING FOOTER */}
+      {/* STICKY BOTTOM LIQUID GLASS FLOATING FOOTER */}
       <div className="fixed bottom-0 left-0 right-0 z-40 p-3 md:p-4 pointer-events-none">
-        <div className="max-w-6xl mx-auto bg-surface/95 backdrop-blur-xl border border-border/80 shadow-2xl rounded-3xl p-3.5 md:p-4 pointer-events-auto transition-all">
+        <div className="max-w-6xl mx-auto bg-surface/65 dark:bg-surface/50 backdrop-blur-2xl border border-white/40 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.18)] rounded-3xl p-3.5 md:p-4 pointer-events-auto transition-all ring-1 ring-black/5">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-3 md:gap-4">
             
-            {/* 1. Left Pricing Badge */}
-            <div className="flex items-center space-x-3 w-full lg:w-auto justify-between lg:justify-start border-b lg:border-b-0 border-border/40 pb-2.5 lg:pb-0">
-              <div className="flex items-baseline space-x-2">
-                <span className="text-2xl md:text-3xl font-black text-text tracking-tight">₹{price}</span>
-                <span className="text-xs text-text-muted line-through font-bold">₹199</span>
-                <span className="text-[10px] font-black bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                  {Math.round(((199 - price) / 199) * 100)}% OFF
-                </span>
+            {/* 1. Left Pricing Badge & One-Time Line Under Amount */}
+            <div className="flex items-center space-x-4 w-full lg:w-auto justify-between lg:justify-start border-b lg:border-b-0 border-border/40 pb-2.5 lg:pb-0">
+              <div className="flex flex-col space-y-1">
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl md:text-3xl font-black text-text tracking-tight">₹{price}</span>
+                  <span className="text-xs md:text-sm text-text-muted line-through font-bold">₹199</span>
+                  <span className="text-xs font-extrabold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-full uppercase whitespace-nowrap">
+                    {Math.round(((199 - price) / 199) * 100)}% OFF
+                  </span>
+                </div>
+                {/* One-time structured line under amount */}
+                <div className="text-[11px] font-bold text-text-muted border-t border-border/60 pt-1 flex items-center space-x-1.5 whitespace-nowrap">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <span>One-Time Fee • Instant Unlimited Access</span>
+                </div>
               </div>
-              <p className="text-[10px] text-text-muted font-bold flex items-center space-x-1 hidden sm:flex">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <span>One-Time Instant Unlock</span>
-              </p>
             </div>
 
             {/* 2. Middle Payment Action Buttons */}
@@ -604,7 +607,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
               <button
                 onClick={handlePayment}
                 disabled={isProcessingPayment || isProcessingWallet}
-                className="w-full sm:w-auto px-6 py-3 bg-primary hover:bg-primary/90 text-white text-xs md:text-sm font-extrabold rounded-2xl flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer shrink-0"
+                className="w-full sm:w-auto px-6 py-3 bg-primary hover:bg-primary/90 text-white text-xs md:text-sm font-extrabold rounded-2xl flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer shrink-0 border border-white/20"
               >
                 {isProcessingPayment ? (
                   <>
@@ -628,7 +631,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                     setVerificationModalOpen(false);
                     router.replace(`/result/${resumeId}`, { scroll: false });
                   }}
-                  className="w-full lg:w-auto px-4 py-2.5 bg-bg-base border border-border hover:border-primary/50 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer"
+                  className="w-full lg:w-auto px-4 py-2.5 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer"
                 >
                   <ArrowLeft className="w-4 h-4 text-text-muted group-hover:-translate-x-1 transition-transform shrink-0" />
                   <span>Back to ATS Score</span>
@@ -639,7 +642,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                     setVerificationModalOpen(true);
                     router.replace(`/result/${resumeId}?verify=true`, { scroll: false });
                   }}
-                  className="w-full lg:w-auto px-4 py-2.5 bg-bg-base border border-border hover:border-primary/50 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer"
+                  className="w-full lg:w-auto px-4 py-2.5 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer"
                 >
                   <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
                   <span className="text-text-muted font-medium">Don't trust score?</span>
