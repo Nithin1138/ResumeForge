@@ -66,6 +66,12 @@ export default function WalletClient({
 
   const handleTopUpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const amt = parseInt(topUpAmount, 10);
+    if (isNaN(amt) || amt <= 0) {
+      setMessage("Please enter a valid positive amount.");
+      return;
+    }
+
     setIsProcessing(true);
     setMessage(null);
 
@@ -78,13 +84,17 @@ export default function WalletClient({
 
       const data = await res.json();
       if (res.ok) {
-        setMessage(`Success! Credited ₹${data.credited} to your wallet.`);
-        setBalance(data.newBalance);
-        await fetchWallet();
-        setTimeout(() => {
-          setIsTopUpOpen(false);
-          setMessage(null);
-        }, 1500);
+        if (data.paymentUrl) {
+          window.location.href = data.paymentUrl;
+        } else {
+          setMessage(`Success! Credited ₹${data.credited} to your candidate wallet.`);
+          setBalance(data.newBalance);
+          await fetchWallet();
+          setTimeout(() => {
+            setIsTopUpOpen(false);
+            setMessage(null);
+          }, 1500);
+        }
       } else {
         setMessage(data.error || "Top-up failed.");
       }
@@ -382,16 +392,16 @@ export default function WalletClient({
                     ))}
                   </div>
 
-                  <div className="relative pt-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-text-muted">₹</span>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-extrabold text-text-muted select-none">₹</span>
                     <input
                       type="number"
                       min="10"
                       max="10000"
                       value={topUpAmount}
                       onChange={(e) => setTopUpAmount(e.target.value)}
-                      className="w-full pl-7 pr-4 py-2.5 rounded-xl bg-bg-base border border-border text-xs text-text font-bold focus:outline-none focus:border-emerald-500"
-                      placeholder="Custom Amount"
+                      className="w-full pl-8 pr-4 py-2.5 rounded-xl bg-bg-base border border-border text-xs text-text font-bold focus:outline-none focus:border-emerald-500 transition-colors"
+                      placeholder="Enter amount (e.g. 500)"
                     />
                   </div>
                 </div>
