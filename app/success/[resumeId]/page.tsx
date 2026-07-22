@@ -3,7 +3,7 @@
 import { use, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap, Sparkles, RotateCcw, ShieldCheck } from "lucide-react";
+import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap, Sparkles, RotateCcw, ShieldCheck, Edit3 } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { FullResumeOutput } from "@/types/resume";
@@ -104,6 +104,45 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [isVerificationModalOpen, setVerificationModalOpen] = useState(false);
   const [activeProjectVariants, setActiveProjectVariants] = useState<Record<number, number>>({});
   const [scoreMode, setScoreMode] = useState<"resume" | "role">("resume");
+  
+  // Bulk Project Edit States
+  const [editingProjectIdx, setEditingProjectIdx] = useState<number | null>(null);
+  const [projectEditTexts, setProjectEditTexts] = useState<Record<number, { title: string; techStack: string; bulletsText: string }>>({});
+
+  const startEditingProject = (idx: number, proj: any) => {
+    setEditingProjectIdx(idx);
+    setProjectEditTexts((prev) => ({
+      ...prev,
+      [idx]: {
+        title: proj.title || "",
+        techStack: proj.techStack || "",
+        bulletsText: (proj.bullets || []).join("\n"),
+      },
+    }));
+  };
+
+  const saveProjectEdit = (idx: number) => {
+    const currentEdit = projectEditTexts[idx];
+    if (!currentEdit) return;
+
+    const newBullets = currentEdit.bulletsText
+      .split("\n")
+      .map((line) => line.replace(/^[\s•\-\*]+/, "").trim())
+      .filter(Boolean);
+
+    setLiveResume((prev: any) => {
+      const currentOutput = prev || output;
+      const next = JSON.parse(JSON.stringify(currentOutput));
+      if (next.projects && next.projects[idx]) {
+        next.projects[idx].title = currentEdit.title.trim() || next.projects[idx].title;
+        next.projects[idx].techStack = currentEdit.techStack.trim() || next.projects[idx].techStack;
+        next.projects[idx].bullets = newBullets;
+      }
+      return next;
+    });
+
+    setEditingProjectIdx(null);
+  };
   
   const [density, setDensity] = useState<"concise" | "normal" | "expand">("normal");
   const [isAdjustingDensity, setIsAdjustingDensity] = useState(false);
@@ -1001,28 +1040,36 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
           {(output.projects || []).map((proj, idx) => {
             const blockId = `proj_${idx}`;
             const projText = `${proj.title} (${proj.techStack})\n${(proj.bullets || []).map(b => `- ${b}`).join("\n")}`;
+            const isEditingThisProj = editingProjectIdx === idx;
 
             return (
-              <div key={idx} className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs">
+              <div key={idx} className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs transition-all">
                 <div className="flex justify-between items-center mb-4 border-b border-border/30 pb-2">
                   <div className="text-left">
                     <span className="text-[9px] font-bold text-primary tracking-wider uppercase block">Project #{idx + 1}</span>
-                    <h4 
-                      className="font-bold text-base text-text outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded px-1 -mx-1"
-                      contentEditable 
-                      suppressContentEditableWarning
-                      onBlur={(e) => {
-                        setLiveResume((prev: any) => {
-                          const next = JSON.parse(JSON.stringify(prev));
-                          next.projects[idx].title = e.target.textContent || "";
-                          return next;
-                        });
-                      }}
-                    >
+                    <h4 className="font-bold text-base text-text">
                       {proj.title}
                     </h4>
                   </div>
-                  <div className="flex space-x-2">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => {
+                        if (isEditingThisProj) {
+                          setEditingProjectIdx(null);
+                        } else {
+                          startEditingProject(idx, proj);
+                        }
+                      }}
+                      className={`text-xs font-semibold transition-all flex items-center space-x-1.5 border px-3 py-1.5 rounded-full cursor-pointer ${
+                        isEditingThisProj
+                          ? "bg-primary text-white border-primary shadow-xs"
+                          : "border-border bg-bg-base/40 text-text-muted hover:text-primary hover:border-primary/40"
+                      }`}
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>{isEditingThisProj ? "Editing" : "Edit Points"}</span>
+                    </button>
+
                     <button
                       onClick={() => {
                         const inputProj = resume?.inputData?.projects?.[idx];
@@ -1052,6 +1099,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                       {regeneratingStates[blockId] ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
                       <span className="hidden sm:inline">Regenerate</span>
                     </button>
+
                     <button
                       onClick={() => copyToClipboard(projText, blockId)}
                       className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
@@ -1062,39 +1110,100 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2 text-[10px] font-bold text-text-muted">
-                    <span className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md uppercase">Tech Stack</span>
-                    <span>{proj.techStack}</span>
-                    {proj.duration && (
-                      <>
-                        <span>•</span>
-                        <span>{proj.duration}</span>
-                      </>
-                    )}
-                  </div>
+                {isEditingThisProj ? (
+                  /* Bulk Edit Mode for All Bullet Points & Details */
+                  <div className="space-y-4 pt-1 animate-fade-in">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Project Title</label>
+                        <input
+                          type="text"
+                          value={projectEditTexts[idx]?.title || ""}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setProjectEditTexts(prev => ({
+                              ...prev,
+                              [idx]: { ...(prev[idx] || { title: "", techStack: "", bulletsText: "" }), title: val }
+                            }));
+                          }}
+                          className="w-full px-3 py-2 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Tech Stack</label>
+                        <input
+                          type="text"
+                          value={projectEditTexts[idx]?.techStack || ""}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setProjectEditTexts(prev => ({
+                              ...prev,
+                              [idx]: { ...(prev[idx] || { title: "", techStack: "", bulletsText: "" }), techStack: val }
+                            }));
+                          }}
+                          className="w-full px-3 py-2 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                        />
+                      </div>
+                    </div>
 
-
-                  <ul className="list-disc pl-5 space-y-2 text-sm font-medium leading-relaxed">
-                    {(proj.bullets || []).map((bulletText: string, bIdx: number) => (
-                      <li 
-                        key={bIdx}
-                        className="outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1 -m-1 transition-all"
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(e) => {
-                          setLiveResume((prev: any) => {
-                            const next = JSON.parse(JSON.stringify(prev));
-                            next.projects[idx].bullets[bIdx] = e.target.textContent || "";
-                            return next;
-                          });
+                    <div>
+                      <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">
+                        Edit All Bullet Points (One point per line):
+                      </label>
+                      <textarea
+                        rows={5}
+                        value={projectEditTexts[idx]?.bulletsText || ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setProjectEditTexts(prev => ({
+                            ...prev,
+                            [idx]: { ...(prev[idx] || { title: "", techStack: "", bulletsText: "" }), bulletsText: val }
+                          }));
                         }}
+                        placeholder="Bullet point 1...\nBullet point 2...\nBullet point 3..."
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-medium focus:outline-none focus:border-primary leading-relaxed"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-end space-x-2 pt-1">
+                      <button
+                        onClick={() => setEditingProjectIdx(null)}
+                        className="px-4 py-2 rounded-xl border border-border bg-bg-base text-text-muted text-xs font-bold hover:text-text transition-colors cursor-pointer"
                       >
-                        {bulletText}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => saveProjectEdit(idx)}
+                        className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-xs flex items-center space-x-1.5 cursor-pointer"
+                      >
+                        <Check className="w-4 h-4" />
+                        <span>Save All Points</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* Standard Normal Display Mode */
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2 text-[10px] font-bold text-text-muted">
+                      <span className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md uppercase">Tech Stack</span>
+                      <span>{proj.techStack}</span>
+                      {proj.duration && (
+                        <>
+                          <span>•</span>
+                          <span>{proj.duration}</span>
+                        </>
+                      )}
+                    </div>
+
+                    <ul className="list-disc pl-5 space-y-2 text-sm font-medium leading-relaxed">
+                      {(proj.bullets || []).map((bulletText: string, bIdx: number) => (
+                        <li key={bIdx}>
+                          {bulletText}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             );
           })}
