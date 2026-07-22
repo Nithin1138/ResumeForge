@@ -1935,72 +1935,121 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     </span>
 
                     <div className="space-y-3">
-                      {/* Row 1: Key Selector and Value Input */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="flex gap-2">
-                          <select
-                            value={customKeySelection}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              setCustomKeySelection(val);
-                              if (val !== "Other") {
-                                setNewCustomKey(val);
-                              } else {
-                                setNewCustomKey("");
-                              }
-                            }}
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary shrink-0"
-                          >
-                            <option value="Target Role 1">Target Role 1</option>
-                            <option value="Target Role 2">Target Role 2</option>
-                            <option value="Target Role 3">Target Role 3</option>
-                            <option value="Preferred Location">Preferred Location</option>
-                            <option value="Expected CTC">Expected CTC</option>
-                            <option value="Other">Other (Custom Key)</option>
-                          </select>
+                      {customKeySelection === "Other" ? (
+                        <>
+                          {/* Row 1: Dropdown and Key Name Input (50/50 split) */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <select
+                                value={customKeySelection}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setCustomKeySelection(val);
+                                  if (val !== "Other") {
+                                    setNewCustomKey(val);
+                                  } else {
+                                    setNewCustomKey("");
+                                  }
+                                }}
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary"
+                              >
+                                <option value="Target Role 1">Target Role 1</option>
+                                <option value="Target Role 2">Target Role 2</option>
+                                <option value="Target Role 3">Target Role 3</option>
+                                <option value="Preferred Location">Preferred Location</option>
+                                <option value="Expected CTC">Expected CTC</option>
+                                <option value="Other">Other (Custom Key)</option>
+                              </select>
+                            </div>
+                            <div>
+                              <input
+                                type="text"
+                                value={newCustomKey}
+                                onChange={(e) => setNewCustomKey(e.target.value)}
+                                placeholder="Key Name (e.g. Portfolio)"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary"
+                              />
+                            </div>
+                          </div>
 
-                          {customKeySelection === "Other" && (
+                          {/* Row 2: Value Input, Link Input, and Add Button */}
+                          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                            <div className="sm:col-span-5">
+                              <input
+                                type="text"
+                                value={newCustomVal}
+                                onChange={(e) => setNewCustomVal(e.target.value)}
+                                placeholder="Field Value (e.g. Software Engineer, Bengaluru, 15 LPA)"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                              />
+                            </div>
+                            <div className="sm:col-span-5">
+                              <input
+                                type="text"
+                                value={newCustomLink}
+                                onChange={(e) => setNewCustomLink(e.target.value)}
+                                placeholder="Optional Link / URL for easy open (e.g. https://my-portfolio.com)"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                              />
+                            </div>
+                            <div className="sm:col-span-2">
+                              <button
+                                type="button"
+                                onClick={handleAddCustomField}
+                                className="w-full px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all cursor-pointer"
+                              >
+                                + Add Field
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        /* Single Row Layout when using a Preset Key */
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                          <div className="sm:col-span-4">
+                            <select
+                              value={customKeySelection}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setCustomKeySelection(val);
+                                if (val !== "Other") {
+                                  setNewCustomKey(val);
+                                } else {
+                                  setNewCustomKey("");
+                                }
+                              }}
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary"
+                            >
+                              <option value="Target Role 1">Target Role 1</option>
+                              <option value="Target Role 2">Target Role 2</option>
+                              <option value="Target Role 3">Target Role 3</option>
+                              <option value="Preferred Location">Preferred Location</option>
+                              <option value="Expected CTC">Expected CTC</option>
+                              <option value="Other">Other (Custom Key)</option>
+                            </select>
+                          </div>
+
+                          <div className="sm:col-span-6">
                             <input
                               type="text"
-                              value={newCustomKey}
-                              onChange={(e) => setNewCustomKey(e.target.value)}
-                              placeholder="Key Name (e.g. Portfolio)"
-                              className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary"
+                              value={newCustomVal}
+                              onChange={(e) => setNewCustomVal(e.target.value)}
+                              placeholder="Field Value (e.g. Software Engineer, Bengaluru, 15 LPA)"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
                             />
-                          )}
-                        </div>
+                          </div>
 
-                        <input
-                          type="text"
-                          value={newCustomVal}
-                          onChange={(e) => setNewCustomVal(e.target.value)}
-                          placeholder="Field Value (e.g. Software Engineer, Bengaluru, 15 LPA)"
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
-                        />
-                      </div>
-
-                      {/* Row 2: Optional Link Input and Add Button */}
-                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
-                        <div className="sm:col-span-3">
-                          <input
-                            type="text"
-                            value={newCustomLink}
-                            onChange={(e) => setNewCustomLink(e.target.value)}
-                            placeholder="Optional Link / URL for easy open (e.g. https://my-portfolio.com)"
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
-                          />
+                          <div className="sm:col-span-2">
+                            <button
+                              type="button"
+                              onClick={handleAddCustomField}
+                              className="w-full px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all cursor-pointer"
+                            >
+                              + Add Field
+                            </button>
+                          </div>
                         </div>
-
-                        <div className="sm:col-span-1">
-                          <button
-                            type="button"
-                            onClick={handleAddCustomField}
-                            className="w-full px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all cursor-pointer"
-                          >
-                            + Add Field
-                          </button>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 )}
