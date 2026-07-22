@@ -36,6 +36,8 @@ export interface SavedResumeItem {
   createdAt: string;
   updatedAt?: string;
   inputData: string;
+  status?: string;
+  paymentStatus?: string;
   branch?: string | null;
   college?: string | null;
 }
@@ -576,11 +578,22 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
     }));
   };
 
-  const filteredSavedResumes = resumesList.filter((item) => {
+  // Filter 1: Saved Built Resumes for Card 2 & Modal
+  const savedVaultResumes = resumesList.filter(
+    (item) => item.status !== "DRAFT" || item.paymentStatus === "PAID"
+  );
+  const displaySavedResumes = savedVaultResumes.length > 0 ? savedVaultResumes : resumesList;
+
+  const filteredSavedResumes = displaySavedResumes.filter((item) => {
     const nameMatch = (item.resumeName || "").toLowerCase().includes(savedSearchQuery.toLowerCase());
     const roleMatch = (item.targetRole || "").toLowerCase().includes(savedSearchQuery.toLowerCase());
     return nameMatch || roleMatch;
   });
+
+  // Filter 2: Drafted & Uploaded Editor Files for Bottom Grid
+  const draftedEditingFiles = resumesList.filter(
+    (item) => item.status === "DRAFT" && item.paymentStatus !== "PAID"
+  );
 
   // Modal for Saved Resumes Selection
   const savedResumesModal = isSavedModalOpen ? (
@@ -589,7 +602,7 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
         <div className="flex items-center justify-between border-b border-border/40 pb-3 shrink-0">
           <div className="flex items-center space-x-2">
             <FileText className="w-5 h-5 text-emerald-500" />
-            <h3 className="font-bold text-lg text-text">Select Saved Resume to Edit</h3>
+            <h3 className="font-bold text-lg text-text">Select Saved Built Resume to Edit</h3>
           </div>
           <button
             type="button"
@@ -622,7 +635,7 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
           ) : filteredSavedResumes.length === 0 ? (
             <div className="py-12 text-center text-xs text-text-muted space-y-2">
               <FileText className="w-8 h-8 text-text-muted/40 mx-auto" />
-              <p>No saved resumes match your search.</p>
+              <p>No saved built resumes match your search.</p>
               <Link href="/myresumes" className="text-primary font-bold hover:underline inline-block">
                 View My Resumes Collection
               </Link>
@@ -657,7 +670,7 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                   ) : (
                     <div className="flex items-center space-x-2 truncate">
                       <h4 className="font-bold text-xs text-text truncate">
-                        {item.resumeName || item.targetRole || "Engineering Resume"}
+                        {item.resumeName || item.targetRole || "Saved Resume"}
                       </h4>
                       <button
                         type="button"
@@ -762,7 +775,7 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                       <FileText className="w-6 h-6" />
                     </div>
                     <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                      {resumesList.length} Available
+                      {displaySavedResumes.length} Saved
                     </span>
                   </div>
                   <h3 className="text-lg font-bold text-text">Edit Saved Resume</h3>
@@ -777,7 +790,7 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                   className="w-full py-2.5 bg-emerald-500/10 hover:bg-emerald-600 text-emerald-600 hover:text-white rounded-xl text-xs font-bold transition-all text-center cursor-pointer flex items-center justify-center space-x-2 shadow-2xs group-hover:shadow-md"
                 >
                   <FileText className="w-4 h-4" />
-                  <span>Select Saved Resume ({resumesList.length})</span>
+                  <span>Select Saved Resume ({displaySavedResumes.length})</span>
                 </button>
               </div>
 
@@ -811,39 +824,37 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
             </div>
 
             {/* =========================================================================
-                SECTION BELOW 3 GRIDS: DRAFTED & SAVED EDITING FILES COLLECTION
+                SECTION BELOW 3 GRIDS: DRAFTED & UPLOADED EDITING FILES COLLECTION
                 ========================================================================= */}
             <div className="pt-6 border-t border-border/40 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-xl font-serif font-bold text-text flex items-center space-x-2">
                     <FileText className="w-5 h-5 text-emerald-500" />
-                    <span>Drafted & Saved Resume Files</span>
+                    <span>Drafted & Uploaded Editing Files</span>
                   </h2>
                   <p className="text-xs text-text-muted">
-                    Manage, rename, delete, or load any of your saved resume drafts directly into the interactive editor workspace.
+                    Manage, rename, delete, or continue editing your active draft files and uploaded resumes.
                   </p>
                 </div>
 
-                {resumesList.length > 0 && (
-                  <span className="text-xs font-bold text-text-muted bg-surface border border-border px-3 py-1 rounded-full self-start sm:self-auto">
-                    Total: {resumesList.length} files
-                  </span>
-                )}
+                <span className="text-xs font-bold text-text-muted bg-surface border border-border px-3 py-1 rounded-full self-start sm:self-auto">
+                  Total: {draftedEditingFiles.length} drafts
+                </span>
               </div>
 
               {loadingResumes ? (
                 <div className="py-12 bg-surface/50 border border-border rounded-3xl text-center space-y-2">
                   <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto" />
-                  <p className="text-xs text-text-muted font-medium">Loading saved resume files...</p>
+                  <p className="text-xs text-text-muted font-medium">Loading active draft files...</p>
                 </div>
-              ) : resumesList.length === 0 ? (
+              ) : draftedEditingFiles.length === 0 ? (
                 <div className="py-12 bg-surface/50 border border-dashed border-border/80 rounded-3xl text-center space-y-3 p-6">
                   <FileText className="w-10 h-10 text-text-muted/40 mx-auto" />
                   <div className="space-y-1">
-                    <h3 className="text-sm font-bold text-text">No saved resumes found</h3>
+                    <h3 className="text-sm font-bold text-text">No active drafts found</h3>
                     <p className="text-xs text-text-muted max-w-sm mx-auto">
-                      Create a blank resume, upload a PDF/Word file, or save a resume from the Builder to see it listed here.
+                      Start a blank canvas or upload a PDF/Word file above to create your first active draft file.
                     </p>
                   </div>
                   <button
@@ -852,12 +863,12 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                     className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-bold inline-flex items-center space-x-1.5 shadow-2xs hover:bg-primary/90 transition-all cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>Start New Blank Draft</span>
+                    <span>Start Blank Draft</span>
                   </button>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {resumesList.map((item) => (
+                  {draftedEditingFiles.map((item) => (
                     <div
                       key={item.id}
                       className="bg-surface border border-border hover:border-emerald-500/50 rounded-2xl p-4 space-y-3 transition-all hover:shadow-md flex flex-col justify-between group"
@@ -892,7 +903,7 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                               </div>
                               <div className="truncate">
                                 <h3 className="text-sm font-bold text-text truncate group-hover:text-emerald-600 transition-colors">
-                                  {item.resumeName || item.targetRole || "Saved Resume"}
+                                  {item.resumeName || item.targetRole || "Draft Resume"}
                                 </h3>
                                 <p className="text-[10px] text-text-muted truncate">
                                   {item.targetRole || "Interactive Canvas Draft"}
@@ -903,10 +914,10 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setEditingResumeId(item.id);
-                                  setEditingNameValue(item.resumeName || item.targetRole || "Resume");
+                                  setEditingNameValue(item.resumeName || item.targetRole || "Draft Resume");
                                 }}
                                 className="text-text-muted hover:text-emerald-600 p-1 cursor-pointer opacity-60 hover:opacity-100 transition-opacity"
-                                title="Rename file"
+                                title="Rename draft"
                               >
                                 <Edit3 className="w-3.5 h-3.5" />
                               </button>
@@ -918,7 +929,7 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                               type="button"
                               onClick={(e) => handleDeleteResume(e, item.id)}
                               className="p-1.5 text-text-muted hover:text-rose-600 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer shrink-0"
-                              title="Delete file"
+                              title="Delete draft"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -947,7 +958,7 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                         className="w-full py-2 px-3 rounded-xl bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs font-bold transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
-                        <span>Edit Resume Canvas</span>
+                        <span>Continue Editing Draft</span>
                       </button>
                     </div>
                   ))}
