@@ -1320,37 +1320,39 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                   <span className="text-xs text-text-muted font-bold">{customFields.length} Custom Fields</span>
                 </div>
 
-                {/* Add Custom Detail Form */}
-                <div className="p-4 border border-primary/30 rounded-2xl bg-primary/5 space-y-3">
-                  <span className="text-xs font-bold text-primary uppercase tracking-wider flex items-center space-x-1">
-                    <PlusCircle className="w-4 h-4" />
-                    <span>Add Custom Detail Field (e.g., Preferred CTC, Portfolio, Achievements)</span>
-                  </span>
+                {/* Add Custom Detail Form - Edit mode only */}
+                {viewMode === "edit" && (
+                  <div className="p-4 border border-primary/30 rounded-2xl bg-primary/5 space-y-3">
+                    <span className="text-xs font-bold text-primary uppercase tracking-wider flex items-center space-x-1">
+                      <PlusCircle className="w-4 h-4" />
+                      <span>Add Custom Detail Field (e.g., Preferred CTC, Portfolio, Achievements)</span>
+                    </span>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                    <input
-                      type="text"
-                      value={newCustomKey}
-                      onChange={(e) => setNewCustomKey(e.target.value)}
-                      placeholder="Field Name (e.g., Target CTC)"
-                      className="sm:col-span-2 px-3.5 py-2 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none"
-                    />
-                    <input
-                      type="text"
-                      value={newCustomVal}
-                      onChange={(e) => setNewCustomVal(e.target.value)}
-                      placeholder="Field Value (e.g., 12-15 LPA)"
-                      className="sm:col-span-2 px-3.5 py-2 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleAddCustomField}
-                      className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all cursor-pointer"
-                    >
-                      + Add Field
-                    </button>
+                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                      <input
+                        type="text"
+                        value={newCustomKey}
+                        onChange={(e) => setNewCustomKey(e.target.value)}
+                        placeholder="Field Name (e.g., Target CTC)"
+                        className="sm:col-span-2 px-3.5 py-2 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={newCustomVal}
+                        onChange={(e) => setNewCustomVal(e.target.value)}
+                        placeholder="Field Value (e.g., 12-15 LPA)"
+                        className="sm:col-span-2 px-3.5 py-2 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddCustomField}
+                        className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all cursor-pointer"
+                      >
+                        + Add Field
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Custom Fields List */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -1374,16 +1376,18 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                           <Copy className="w-3.5 h-3.5 text-text-muted group-hover:text-primary" />
                         )}
 
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveCustomField(cf.id);
-                          }}
-                          className="p-1 text-text-muted hover:text-red-500 transition-colors"
-                          title="Delete Custom Field"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        {viewMode === "edit" && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveCustomField(cf.id);
+                            }}
+                            className="p-1 text-text-muted hover:text-red-500 transition-colors"
+                            title="Delete Custom Field"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -1399,25 +1403,29 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     <FileText className="w-5 h-5 text-primary" />
                     <h2 className="font-serif font-bold text-lg text-text">Key Engineering Projects</h2>
                   </div>
-                  <button
-                    onClick={handleAddProject}
-                    className="px-3.5 py-1.5 bg-primary/10 border border-primary/30 text-primary text-xs font-bold rounded-full hover:bg-primary/20 transition-all flex items-center space-x-1 cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Project</span>
-                  </button>
+                  {viewMode === "edit" && (
+                    <button
+                      onClick={handleAddProject}
+                      className="px-3.5 py-1.5 bg-primary/10 border border-primary/30 text-primary text-xs font-bold rounded-full hover:bg-primary/20 transition-all flex items-center space-x-1 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Project</span>
+                    </button>
+                  )}
                 </div>
 
                 <div className="space-y-4">
                   {(Array.isArray(projects) ? projects : []).filter(p => matchesSearch(p.title) || matchesSearch(p.techStack) || matchesSearch(p.description)).map((proj) => (
                     <div key={proj.id} className="p-4 border border-border rounded-2xl bg-bg-base space-y-3 relative group">
-                      <button
-                        onClick={() => handleRemoveProject(proj.id)}
-                        className="absolute top-4 right-4 text-text-muted hover:text-red-500 transition-colors"
-                        title="Delete Project"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      {viewMode === "edit" && (
+                        <button
+                          onClick={() => handleRemoveProject(proj.id)}
+                          className="absolute top-4 right-4 text-text-muted hover:text-red-500 transition-colors"
+                          title="Delete Project"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
 
                       {viewMode === "edit" ? (
                         <div className="space-y-3 pr-8">
@@ -1476,24 +1484,28 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     <Briefcase className="w-5 h-5 text-primary" />
                     <h2 className="font-serif font-bold text-lg text-text">Experience & Internships</h2>
                   </div>
-                  <button
-                    onClick={handleAddExperience}
-                    className="px-3.5 py-1.5 bg-primary/10 border border-primary/30 text-primary text-xs font-bold rounded-full hover:bg-primary/20 transition-all flex items-center space-x-1 cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Experience</span>
-                  </button>
+                  {viewMode === "edit" && (
+                    <button
+                      onClick={handleAddExperience}
+                      className="px-3.5 py-1.5 bg-primary/10 border border-primary/30 text-primary text-xs font-bold rounded-full hover:bg-primary/20 transition-all flex items-center space-x-1 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Experience</span>
+                    </button>
+                  )}
                 </div>
 
                 <div className="space-y-4">
                   {(Array.isArray(experiences) ? experiences : []).filter(e => matchesSearch(e.role) || matchesSearch(e.company) || matchesSearch(e.description)).map((exp) => (
                     <div key={exp.id} className="p-4 border border-border rounded-2xl bg-bg-base space-y-3 relative group">
-                      <button
-                        onClick={() => handleRemoveExperience(exp.id)}
-                        className="absolute top-4 right-4 text-text-muted hover:text-red-500 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      {viewMode === "edit" && (
+                        <button
+                          onClick={() => handleRemoveExperience(exp.id)}
+                          className="absolute top-4 right-4 text-text-muted hover:text-red-500 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
 
                       {viewMode === "edit" ? (
                         <div className="space-y-3 pr-8">
