@@ -253,16 +253,16 @@ export default function MyResumesClient({ initialResumes }: { initialResumes: Re
                     <div className="flex items-center space-x-2">
                       <DeleteButton id={resume.id} />
                       <Link
-                        href={`/build?resumeId=${resume.id}`}
+                        href={`/success/${resume.id}?sandbox=true`}
                         className="p-2.5 text-text-muted hover:text-primary border border-border bg-bg-base/30 rounded-full transition-colors cursor-pointer shrink-0"
-                        title="Edit Resume Content"
+                        title="View Resume Success Page"
                       >
                         <Edit2 className="w-4 h-4" />
                       </Link>
                     </div>
 
                     <Link
-                      href={`/success/${resume.id}?sandbox=true`}
+                      href={`/success/${resume.id}?sandbox=true&view=output`}
                       className="flex-1 min-h-[42px] px-4 py-2 rounded-full text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-xs bg-success text-white hover:bg-success/90 cursor-pointer"
                     >
                       <span>View Output</span>

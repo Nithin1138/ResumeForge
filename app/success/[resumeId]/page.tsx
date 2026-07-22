@@ -105,6 +105,11 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [activeProjectVariants, setActiveProjectVariants] = useState<Record<number, number>>({});
   const [scoreMode, setScoreMode] = useState<"resume" | "role">("resume");
   
+  // Document View vs ATS Engine Page View Mode
+  const initialViewMode = searchParams.get("view") === "output" ? "document" : (searchParams.get("sandbox") === "true" ? "document" : "ats");
+  const [pageViewMode, setPageViewMode] = useState<"document" | "ats">(initialViewMode);
+  const [zoomScale, setZoomScale] = useState<number>(0.65);
+  
   // Bulk Project Edit States
   const [editingProjectIdx, setEditingProjectIdx] = useState<number | null>(null);
   const [projectEditTexts, setProjectEditTexts] = useState<Record<number, { title: string; techStack: string; bulletsText: string }>>({});
@@ -595,14 +600,38 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
   return (
     <div className="h-auto lg:h-screen lg:overflow-hidden bg-bg-base text-text flex flex-col font-sans print:block print:h-auto print:overflow-visible print:bg-white print:text-black">
       {/* Navbar (hidden during print) */}
-      <header className="glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between print:hidden">
-        <div className="flex items-center space-x-2">
+      <header className="glass-panel border-b border-border/40 px-6 py-3.5 flex items-center justify-between print:hidden">
+        <div className="flex items-center space-x-3">
           <Link href="/" className="flex items-center justify-center">
             <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
           </Link>
           <span className="font-bold text-lg tracking-tight text-text">
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
+
+          {/* View Mode Switcher Pill */}
+          <div className="flex bg-primary/10 border border-primary/20 rounded-full p-1 shrink-0 select-none ml-2">
+            <button
+              onClick={() => setPageViewMode("document")}
+              className={`px-3 py-1 rounded-full text-xs font-extrabold transition-all cursor-pointer ${
+                pageViewMode === "document"
+                  ? "bg-primary text-white shadow-xs"
+                  : "text-text-muted hover:text-primary"
+              }`}
+            >
+              📄 Document View
+            </button>
+            <button
+              onClick={() => setPageViewMode("ats")}
+              className={`px-3 py-1 rounded-full text-xs font-extrabold transition-all cursor-pointer ${
+                pageViewMode === "ats"
+                  ? "bg-primary text-white shadow-xs"
+                  : "text-text-muted hover:text-primary"
+              }`}
+            >
+              📊 ATS & Edits
+            </button>
+          </div>
         </div>
         
         <div className="flex items-center space-x-3 sm:space-x-4">
@@ -628,293 +657,176 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
               FREE
             </span>
           </button>
-          {session && (
-            <Link href="/dashboard" className="text-xs font-bold text-primary hover:underline">
-              Dashboard
-            </Link>
-          )}
-          <div className="flex items-center space-x-2 bg-success/15 border border-success/30 px-3 py-1.5 rounded-full text-xs font-bold text-success">
+          <Link href="/myresumes" className="text-xs font-bold text-primary hover:underline hidden sm:inline">
+            My Resumes
+          </Link>
+          <div className="hidden sm:flex items-center space-x-2 bg-success/15 border border-success/30 px-3 py-1.5 rounded-full text-xs font-bold text-success">
             <CheckCircle2 className="w-4 h-4" />
-            <span>Payment Confirmed ✓</span>
+            <span>Unlocked ✓</span>
           </div>
           <ThemeToggle />
         </div>
       </header>
+         {/* Main Content Area */}
+      <main className="flex-1 overflow-y-auto print:block print:overflow-visible print:h-auto">
+        {pageViewMode === "document" ? (
+          <div className="w-full min-h-[calc(100vh-80px)] bg-bg-base/80 dark:bg-black/75 backdrop-blur-md flex flex-col items-center justify-start p-3 sm:p-6 font-sans overflow-y-auto">
+            {/* Top Control Bar inside Document View */}
+            <div className="w-full max-w-4xl bg-surface/95 border border-border/80 text-text px-4 py-3 rounded-2xl flex items-center justify-between shrink-0 shadow-xl mb-6 backdrop-blur-md gap-2">
+              <div className="flex items-center space-x-3">
+                <Link
+                  href="/myresumes"
+                  className="px-3.5 py-1.5 rounded-full bg-bg-base hover:bg-border/40 text-xs font-bold text-text transition-all flex items-center space-x-1.5 border border-border/60 cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Back to My Resumes</span>
+                </Link>
+              </div>
 
-      {/* 2-column layout — fills remaining viewport height */}
-      <main className="flex-1 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row print:block print:overflow-visible print:h-auto">
-
-        {/* ── LEFT: Fixed-height Resume Preview (never scrolls) ── */}
-        <div className={`w-full ${showMobilePreview ? "h-[50vh]" : "h-[56px]"} lg:h-full lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 print:w-full print:h-auto print:border-none print:p-0 print:overflow-visible overflow-hidden transition-all duration-300`}>
-          {/* Panel header */}
-          <div className="flex items-center justify-between mb-3 flex-shrink-0 print:hidden">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>
-              <button
-                type="button"
-                onClick={() => setShowMobilePreview(!showMobilePreview)}
-                className="lg:hidden text-[10px] font-bold text-primary bg-primary/10 border border-primary/25 px-2 py-0.5 rounded-md hover:bg-primary/15 transition-colors cursor-pointer"
-              >
-                {showMobilePreview ? "Hide Preview 👁️" : "Show Preview 👁️"}
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-success bg-success/10 border border-success/25 px-2.5 py-1 rounded-full">
-                <CheckCircle2 className="w-3 h-3" /> Unlocked
-              </span>
-
-              {/* Density Control Segmented Pill */}
-              <div className="flex bg-primary/5 border border-primary/20 rounded-full p-0.5 shrink-0 select-none">
-                {(["concise", "normal", "expand"] as const).map((dOpt) => {
-                  const isActive = density === dOpt;
-                  return (
+              <div className="flex items-center space-x-2">
+                {/* Zoom Level Selector */}
+                <div className="flex items-center space-x-1 bg-bg-base/80 p-1 rounded-full border border-border/60 text-[11px] font-bold mr-1">
+                  {[
+                    { label: "Fit Page", val: 0.65 },
+                    { label: "75%", val: 0.75 },
+                    { label: "90%", val: 0.9 },
+                    { label: "100%", val: 1.0 },
+                  ].map((z) => (
                     <button
-                      key={dOpt}
-                      onClick={() => handleDensityChange(dOpt)}
-                      disabled={isAdjustingDensity}
-                      className={`text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-full transition-all cursor-pointer disabled:opacity-50 ${
-                        isActive 
-                          ? "bg-primary text-white shadow-sm" 
-                          : "text-text-muted hover:text-primary"
+                      key={z.val}
+                      onClick={() => setZoomScale(z.val)}
+                      className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                        zoomScale === z.val
+                          ? "bg-primary text-white shadow-xs"
+                          : "text-text-muted hover:text-text"
                       }`}
                     >
-                      {dOpt}
+                      {z.label}
                     </button>
-                  );
-                })}
-              </div>
+                  ))}
+                </div>
 
-              <button
-                onClick={triggerBrowserPrint}
-                className="inline-flex items-center gap-1.5 text-[10px] font-bold text-primary bg-primary/10 border border-primary/25 px-2.5 py-1 rounded-full hover:bg-primary/15 transition-colors cursor-pointer"
+                <button
+                  onClick={() => copyToClipboard(fullPlainTextContent, "full_resume")}
+                  className="px-3.5 py-1.5 rounded-full bg-bg-base hover:bg-border/40 text-xs font-bold text-text transition-all flex items-center space-x-1.5 border border-border/60 cursor-pointer"
+                >
+                  {copiedStates["full_resume"] ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span className="hidden sm:inline">{copiedStates["full_resume"] ? "Copied" : "Copy Text"}</span>
+                </button>
+
+                <button
+                  onClick={triggerBrowserPrint}
+                  className="px-4 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-md"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Save PDF</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Scaled Preview Canvas (Matching Cover Letter View Output!) */}
+            <div className="w-full max-w-4xl flex-1 flex flex-col items-center justify-center my-auto py-2 pb-8 overflow-visible">
+              <div 
+                className="flex items-center justify-center transition-all duration-200"
+                style={{ 
+                  height: `${Math.round(297 * zoomScale * 3.78)}px`,
+                  width: `${Math.round(210 * zoomScale * 3.78)}px`
+                }}
               >
-                <Printer className="w-3 h-3" /> Save PDF
-              </button>
-            </div>
-          </div>
-          {/* Preview fills all remaining height */}
-          <div className="flex-1 overflow-hidden min-h-0 print:overflow-visible relative">
-            <ResumePreviewPanel 
-              resume={resume} 
-              output={output} 
-              locked={false} 
-              liveData={liveResume} 
-              includeSummary={includeSummary} 
-              includeCertifications={includeCertifications}
-            />
-            {isAdjustingDensity && (
-              <div className="absolute inset-0 bg-white/70 dark:bg-black/50 backdrop-blur-[2px] flex flex-col items-center justify-center z-50">
-                <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
-                <p className="text-xs font-bold text-text-muted">Adjusting resume density...</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* ── RIGHT: Only this column scrolls ── */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col gap-8 print:hidden">
-
-          {/* Page title */}
-          <div className="text-center print:hidden space-y-2 pt-1">
-            <h1 className="text-2xl md:text-3xl font-serif tracking-tight">🎉 Your Resume Content is Ready!</h1>
-            <p className="text-xs text-text-muted max-w-lg mx-auto leading-relaxed font-medium">
-              Copy-paste bullet points directly into your resume template.
-            </p>
-          </div>
-
-
-
-          {/* ATS Score Header Card */}
-          <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:justify-between gap-6 shadow-xs print:hidden">
-            <div className="text-center md:text-left space-y-2 max-w-md">
-            <div className="flex flex-col sm:flex-row items-center md:items-start sm:items-center gap-3">
-              <h1 className="text-2xl md:text-3xl font-bold font-sans">ATSLift Score Engine</h1>
-              <div className="relative flex bg-primary/10 rounded-full p-1 border border-primary/20 mt-1 sm:mt-0 w-max shrink-0">
-                <button 
-                  onClick={() => setScoreMode("resume")} 
-                  className={`relative text-[10px] font-bold uppercase px-4 py-1.5 rounded-full transition-colors duration-300 whitespace-nowrap cursor-pointer z-10 ${scoreMode === "resume" ? "text-white" : "text-primary hover:text-primary/80"}`}
+                <div 
+                  className="origin-center transition-transform duration-200 shadow-2xl rounded-xs bg-white text-black overflow-hidden"
+                  style={{ transform: `scale(${zoomScale})` }}
                 >
-                  {scoreMode === "resume" && (
-                    <motion.div
-                      layoutId="scoreModeActivePill"
-                      className="absolute inset-0 bg-primary rounded-full shadow-sm -z-10"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  Resume
-                </button>
-                <button 
-                  onClick={() => setScoreMode("role")} 
-                  className={`relative text-[10px] font-bold uppercase px-4 py-1.5 rounded-full transition-colors duration-300 whitespace-nowrap cursor-pointer z-10 ${scoreMode === "role" ? "text-white" : "text-primary hover:text-primary/80"}`}
-                >
-                  {scoreMode === "role" && (
-                    <motion.div
-                      layoutId="scoreModeActivePill"
-                      className="absolute inset-0 bg-primary rounded-full shadow-sm -z-10"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  Job Role
-                </button>
-              </div>
-            </div>
-              <p className="text-sm text-text-muted leading-relaxed font-medium">
-                We have completed a deterministic, category-based evaluation of your resume's technical strength, keyword alignment, and recruiter readability.
-              </p>
-            </div>
-
-            {/* Circular Score Circle */}
-            <div className="flex flex-col items-center">
-              <div className="relative w-28 h-28 flex items-center justify-center">
-                {/* Ring background */}
-                <svg className="w-full h-full transform -rotate-90">
-                  <circle cx="56" cy="56" r="48" strokeWidth="6" stroke="#d4d1ca" fill="transparent" className="opacity-30" />
-                  <circle
-                    cx="56"
-                    cy="56"
-                    r="48"
-                    strokeWidth="8"
-                    stroke="#437a22"
-                    fill="transparent"
-                    strokeDasharray="301.6"
-                    strokeDashoffset={301.6 - (301.6 * displayAtsScore) / 100}
-                    className="transition-all duration-1000 ease-out"
+                  <ResumePreviewPanel 
+                    resume={resume} 
+                    output={output} 
+                    locked={false} 
+                    liveData={liveResume} 
+                    includeSummary={includeSummary} 
+                    includeCertifications={includeCertifications}
                   />
-                </svg>
-                <div className="absolute flex flex-col items-center">
-                  <span className="text-2xl font-black font-mono leading-none">{displayAtsScore}</span>
-                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider mt-0.5">ATS Score</span>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Detailed Score Breakdown */}
-          {displayBreakdown && (
-            <div className="bg-surface border border-border rounded-2xl p-6 space-y-4 print:hidden">
-              <h2 className="font-bold text-base text-text">Category Breakdown</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="p-3 bg-bg-base rounded-xl border border-border/50">
-                  <div className="text-xs text-text-muted font-semibold mb-1">Keyword Match</div>
-                  <div className="text-lg font-bold text-primary">{displayBreakdown.keywordMatch}/30</div>
+        ) : (
+          <div className="h-auto lg:h-full flex flex-col lg:flex-row w-full overflow-y-auto lg:overflow-hidden">
+            {/* ── LEFT: Fixed-height Resume Preview (never scrolls) ── */}
+            <div className={`w-full ${showMobilePreview ? "h-[50vh]" : "h-[56px]"} lg:h-full lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 print:w-full print:h-auto print:border-none print:p-0 print:overflow-visible overflow-hidden transition-all duration-300`}>
+              {/* Panel header */}
+              <div className="flex items-center justify-between mb-3 flex-shrink-0 print:hidden">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Resume Preview</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowMobilePreview(!showMobilePreview)}
+                    className="lg:hidden text-[10px] font-bold text-primary bg-primary/10 border border-primary/25 px-2 py-0.5 rounded-md hover:bg-primary/15 transition-colors cursor-pointer"
+                  >
+                    {showMobilePreview ? "Hide Preview 👁️" : "Show Preview 👁️"}
+                  </button>
                 </div>
-                <div className="p-3 bg-bg-base rounded-xl border border-border/50">
-                  <div className="text-xs text-text-muted font-semibold mb-1">ATS Compatibility</div>
-                  <div className="text-lg font-bold text-primary">{displayBreakdown.atsCompatibility}/25</div>
-                </div>
-                <div className="p-3 bg-bg-base rounded-xl border border-border/50">
-                  <div className="text-xs text-text-muted font-semibold mb-1">Technical Strength</div>
-                  <div className="text-lg font-bold text-primary">{displayBreakdown.technicalStrength}/15</div>
-                </div>
-                <div className="p-3 bg-bg-base rounded-xl border border-border/50">
-                  <div className="text-xs text-text-muted font-semibold mb-1">Project Quality</div>
-                  <div className="text-lg font-bold text-primary">{displayBreakdown.projectQuality}/15</div>
-                </div>
-                <div className="p-3 bg-bg-base rounded-xl border border-border/50">
-                  <div className="text-xs text-text-muted font-semibold mb-1">Readability</div>
-                  <div className="text-lg font-bold text-primary">{displayBreakdown.recruiterReadability}/10</div>
-                </div>
-                <div className="p-3 bg-bg-base rounded-xl border border-border/50">
-                  <div className="text-xs text-text-muted font-semibold mb-1">Credibility</div>
-                  <div className="text-lg font-bold text-primary">{displayBreakdown.experienceCredibility}/5</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Strengths, Weaknesses, Improvements */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:hidden">
-            <div className="bg-success/5 border border-success/20 rounded-2xl p-6 space-y-3">
-              <div className="flex items-center space-x-2 text-success">
-                <CheckCircle2 className="w-5 h-5" />
-                <h2 className="font-bold text-base">Key Strengths</h2>
-              </div>
-              <ul className="space-y-2 list-disc pl-5 text-sm text-text font-medium">
-                {displayStrengths.map((item: string, idx: number) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
-            </div>
-            
-            <div className="bg-warning/5 border border-warning/20 rounded-2xl p-6 space-y-3">
-              <div className="flex items-center space-x-2 text-warning">
-                <AlertTriangle className="w-5 h-5" />
-                <h2 className="font-bold text-base">Weaknesses</h2>
-              </div>
-              <ul className="space-y-2 list-disc pl-5 text-sm text-text font-medium">
-                {displayWeaknesses.map((item: string, idx: number) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 space-y-4 print:hidden">
-            <div className="flex items-center space-x-2 text-primary">
-              <Zap className="w-5 h-5" />
-              <h2 className="font-bold text-base">ATS Improvement Tips (Included Free)</h2>
-            </div>
-            <ul className="space-y-3">
-              {displayImprovements.map((tip: string, idx: number) => (
-                <li key={idx} className="flex items-start space-x-2.5 text-xs text-text font-medium leading-relaxed">
-                  <span className="w-5 h-5 rounded-full bg-primary/10 border border-primary/25 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
-                    {idx + 1}
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-success bg-success/10 border border-success/25 px-2.5 py-1 rounded-full">
+                    <CheckCircle2 className="w-3 h-3" /> Unlocked
                   </span>
-                  <span>{tip}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
 
-        {/* Section: Summary Card */}
-        <div className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs print:hidden">
-          <div className="flex justify-between items-center mb-4 border-b border-border/40 pb-3">
-            <h3 className="text-xs font-bold text-primary tracking-wider uppercase">Professional Summary</h3>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => handleRegenerateSection(
-                  "summary", 
-                  "Professional Summary", 
-                  output.summary, 
-                  (newText) => setLiveResume((prev: any) => ({ ...prev, summary: newText }))
+                  {/* Density Control Segmented Pill */}
+                  <div className="flex bg-primary/5 border border-primary/20 rounded-full p-0.5 shrink-0 select-none">
+                    {(["concise", "normal", "expand"] as const).map((dOpt) => {
+                      const isActive = density === dOpt;
+                      return (
+                        <button
+                          key={dOpt}
+                          onClick={() => handleDensityChange(dOpt)}
+                          disabled={isAdjustingDensity}
+                          className={`text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-full transition-all cursor-pointer disabled:opacity-50 ${
+                            isActive 
+                              ? "bg-primary text-white shadow-sm" 
+                              : "text-text-muted hover:text-primary"
+                          }`}
+                        >
+                          {dOpt}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={triggerBrowserPrint}
+                    className="inline-flex items-center gap-1.5 text-[10px] font-bold text-primary bg-primary/10 border border-primary/25 px-2.5 py-1 rounded-full hover:bg-primary/15 transition-colors cursor-pointer"
+                  >
+                    <Printer className="w-3 h-3" /> Save PDF
+                  </button>
+                </div>
+              </div>
+              {/* Preview fills all remaining height */}
+              <div className="flex-1 overflow-hidden min-h-0 print:overflow-visible relative">
+                <ResumePreviewPanel 
+                  resume={resume} 
+                  output={output} 
+                  locked={false} 
+                  liveData={liveResume} 
+                  includeSummary={includeSummary} 
+                  includeCertifications={includeCertifications}
+                />
+                {isAdjustingDensity && (
+                  <div className="absolute inset-0 bg-white/70 dark:bg-black/50 backdrop-blur-[2px] flex flex-col items-center justify-center z-50">
+                    <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
+                    <p className="text-xs font-bold text-text-muted">Adjusting resume density...</p>
+                  </div>
                 )}
-                disabled={regeneratingStates["summary"]}
-                className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"
-              >
-                {regeneratingStates["summary"] ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-                <span className="hidden sm:inline">Regenerate</span>
-              </button>
-              <button
-                onClick={() => copyToClipboard(output.summary, "summary")}
-                className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
-              >
-                {copiedStates["summary"] ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
-                <span className="hidden sm:inline">{copiedStates["summary"] ? "Copied!" : "Copy"}</span>
-              </button>
+              </div>
             </div>
-          </div>
-          <p 
-            className="text-sm font-medium leading-relaxed outline-none focus:bg-surface focus:ring-2 focus:ring-primary/40 rounded p-1.5 -m-1.5 transition-all"
-            contentEditable 
-            suppressContentEditableWarning 
-            onBlur={(e) => setLiveResume((prev: any) => ({ ...prev, summary: e.target.textContent || "" }))}
-          >
-            {output.summary}
-          </p>
-          <div className="mt-5 flex items-center space-x-3 bg-bg-base p-3 rounded-lg border border-border/50">
-            <input 
-              type="checkbox" 
-              id="includeSummary" 
-              checked={includeSummary} 
-              onChange={(e) => setIncludeSummary(e.target.checked)} 
-              className="w-4 h-4 text-primary accent-primary rounded cursor-pointer"
-            />
-            <label htmlFor="includeSummary" className="text-xs font-semibold text-text cursor-pointer select-none">
-              Include Professional Summary in PDF
-              <span className="block text-[10px] text-text-muted font-medium mt-0.5">(Recommended for professionals with {">"}3 years experience)</span>
-            </label>
-          </div>
-        </div>
+
+            {/* ── RIGHT: Only this column scrolls ── */}
+            <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col gap-8 print:hidden">
+              {/* Page title */}
+              <div className="text-center print:hidden space-y-2 pt-1">
+                <h1 className="text-2xl md:text-3xl font-serif tracking-tight">🎉 Your Resume Content is Ready!</h1>
+                <p className="text-xs text-text-muted max-w-lg mx-auto leading-relaxed font-medium">
+                  Copy-paste bullet points directly into your resume template.
+                </p>
+              </div>
 
         {/* Section: Skills Badges Card */}
         <div className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs print:hidden">
@@ -1546,9 +1458,10 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
             </button>
           </div>
         </div>
-
-        </div>
-        {/* end right scrollable column */}
+      </div>
+    </div>
+  )}
+</main>
 
       <CoverLetterModal isOpen={isCoverLetterModalOpen} onClose={() => setCoverLetterModalOpen(false)} resumeId={resumeId} inputData={resume?.inputData} templateId={resume?.inputData?.options?.templateId || "modern"} />
 
@@ -1569,7 +1482,6 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
           </div>
         </div>
       )}
-      </main>
     </div>
   );
 }
