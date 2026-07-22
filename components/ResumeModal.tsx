@@ -111,9 +111,9 @@ ${(exp.bullets || []).map((b: string) => `- ${b}`).join("\n")}
   };
 
   return createPortal(
-    <div className="fixed inset-0 bg-bg-base/80 dark:bg-black/75 backdrop-blur-md flex flex-col items-center justify-between p-3 sm:p-6 z-[9999] animate-fade-in overflow-y-auto font-sans">
+    <div className="fixed inset-0 bg-bg-base/80 dark:bg-black/75 backdrop-blur-md flex flex-col items-center justify-between p-3 sm:p-6 z-[9999] animate-fade-in overflow-y-auto font-sans print:p-0 print:bg-transparent print:static print:overflow-visible">
       {/* Floating Top Control Bar (Matching Image 2 pixel-for-pixel) */}
-      <div className="w-full max-w-4xl bg-surface/95 border border-border/80 text-text px-4 py-3 rounded-2xl flex items-center justify-between shrink-0 shadow-xl mb-4 backdrop-blur-md gap-2 z-50">
+      <div className="w-full max-w-4xl bg-surface/95 border border-border/80 text-text px-4 py-3 rounded-2xl flex items-center justify-between shrink-0 shadow-xl mb-4 backdrop-blur-md gap-2 z-50 print:hidden">
         <div className="flex items-center space-x-3">
           <button
             onClick={onClose}

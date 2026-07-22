@@ -354,12 +354,35 @@ export default function ResumePreviewPanel({
     <div ref={wrapperRef} className="w-full h-full flex items-start justify-center overflow-y-auto overflow-x-hidden custom-scrollbar print:block print:h-auto print:w-auto print:overflow-visible">
       <style>{`
         @media print {
+          @page {
+            size: A4 portrait;
+            margin: 0;
+          }
+          html, body {
+            background: white !important;
+            color: black !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: auto !important;
+            overflow: visible !important;
+          }
+          body * {
+            visibility: hidden !important;
+          }
+          .print-exact, .print-exact * {
+            visibility: visible !important;
+          }
           .print-exact {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
             transform: none !important;
             box-shadow: none !important;
             margin: 0 !important;
+            padding: 0 !important;
             border-radius: 0 !important;
-            width: 794px !important;
             overflow: visible !important;
             background-image: none !important;
           }
