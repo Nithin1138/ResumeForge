@@ -559,7 +559,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
 
       {/* STICKY BOTTOM LIQUID GLASS FLOATING FOOTER */}
       <div className="fixed bottom-0 left-0 right-0 z-40 p-3 md:p-4 pointer-events-none flex justify-center">
-        <div className="w-fit max-w-[95vw] bg-surface/80 dark:bg-surface/70 backdrop-blur-2xl border border-white/40 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.18)] rounded-3xl p-3 md:p-3.5 px-4 md:px-6 pointer-events-auto transition-all ring-1 ring-black/5">
+        <div className="w-fit max-w-[95vw] bg-white/45 dark:bg-slate-900/45 backdrop-blur-2xl backdrop-saturate-180 border border-white/70 dark:border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.12),inset_0_1px_1px_rgba(255,255,255,0.8)] rounded-3xl p-3 md:p-3.5 px-4 md:px-6 pointer-events-auto transition-all ring-1 ring-black/5">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4">
             
             {/* Left Group: Pricing Badge & AI Verification Pill (Tightly Grouped) */}
@@ -591,7 +591,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                       setVerificationModalOpen(false);
                       router.replace(`/result/${resumeId}`, { scroll: false });
                     }}
-                    className="w-full sm:w-auto px-4 py-2.5 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer"
+                    className="w-full sm:w-auto px-4 py-2.5 bg-white/40 dark:bg-white/10 hover:bg-white/60 dark:hover:bg-white/15 border border-white/60 dark:border-white/20 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer backdrop-blur-md"
                   >
                     <ArrowLeft className="w-4 h-4 text-text-muted group-hover:-translate-x-1 transition-transform shrink-0" />
                     <span>Back to ATS Score</span>
@@ -602,7 +602,7 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                       setVerificationModalOpen(true);
                       router.replace(`/result/${resumeId}?verify=true`, { scroll: false });
                     }}
-                    className="w-full sm:w-auto px-4 py-2 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs rounded-2xl transition-all flex items-center justify-center sm:justify-start space-x-2.5 shadow-2xs group cursor-pointer shrink-0"
+                    className="w-full sm:w-auto px-4 py-2 bg-white/40 dark:bg-white/10 hover:bg-white/60 dark:hover:bg-white/15 border border-white/60 dark:border-white/20 text-text text-xs rounded-2xl transition-all flex items-center justify-center sm:justify-start space-x-2.5 shadow-2xs group cursor-pointer shrink-0 backdrop-blur-md"
                   >
                     <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
                     <div className="flex flex-col text-left leading-tight">
