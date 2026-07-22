@@ -21,7 +21,7 @@ import AppLayout from "@/components/AppLayout";
 import TagSelector from "@/components/TagSelector";
 import CreateTagButton from "@/components/CreateTagButton";
 import { CustomTag, getCustomTags } from "@/lib/userTags";
-import { EditTitle, DeleteButton } from "@/components/DashboardActions";
+import { EditTitle, DeleteButton, ViewResumeOutputButton } from "@/components/DashboardActions";
 
 export interface ResumeItem {
   id: string;
@@ -261,13 +261,7 @@ export default function MyResumesClient({ initialResumes }: { initialResumes: Re
                       </Link>
                     </div>
 
-                    <Link
-                      href={`/success/${resume.id}?sandbox=true&view=output`}
-                      className="flex-1 min-h-[42px] px-4 py-2 rounded-full text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-xs bg-success text-white hover:bg-success/90 cursor-pointer"
-                    >
-                      <span>View Output</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </Link>
+                    <ViewResumeOutputButton resume={resume} />
                   </div>
                 </div>
               );

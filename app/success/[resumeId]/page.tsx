@@ -105,12 +105,6 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [activeProjectVariants, setActiveProjectVariants] = useState<Record<number, number>>({});
   const [scoreMode, setScoreMode] = useState<"resume" | "role">("resume");
   
-  // Document View vs ATS Engine Page View Mode
-  const initialViewMode = searchParams.get("view") === "output" ? "document" : (searchParams.get("sandbox") === "true" ? "document" : "ats");
-  const [pageViewMode, setPageViewMode] = useState<"document" | "ats">(initialViewMode);
-  const [zoomScale, setZoomScale] = useState<number>(0.65);
-  
-  // Bulk Project Edit States
   const [editingProjectIdx, setEditingProjectIdx] = useState<number | null>(null);
   const [projectEditTexts, setProjectEditTexts] = useState<Record<number, { title: string; techStack: string; bulletsText: string }>>({});
 
@@ -608,30 +602,6 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
           <span className="font-bold text-lg tracking-tight text-text">
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
-
-          {/* View Mode Switcher Pill */}
-          <div className="flex bg-primary/10 border border-primary/20 rounded-full p-1 shrink-0 select-none ml-2">
-            <button
-              onClick={() => setPageViewMode("document")}
-              className={`px-3 py-1 rounded-full text-xs font-extrabold transition-all cursor-pointer ${
-                pageViewMode === "document"
-                  ? "bg-primary text-white shadow-xs"
-                  : "text-text-muted hover:text-primary"
-              }`}
-            >
-              📄 Document View
-            </button>
-            <button
-              onClick={() => setPageViewMode("ats")}
-              className={`px-3 py-1 rounded-full text-xs font-extrabold transition-all cursor-pointer ${
-                pageViewMode === "ats"
-                  ? "bg-primary text-white shadow-xs"
-                  : "text-text-muted hover:text-primary"
-              }`}
-            >
-              📊 ATS & Edits
-            </button>
-          </div>
         </div>
         
         <div className="flex items-center space-x-3 sm:space-x-4">
@@ -669,88 +639,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
       </header>
          {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto print:block print:overflow-visible print:h-auto">
-        {pageViewMode === "document" ? (
-          <div className="w-full min-h-[calc(100vh-80px)] bg-bg-base/80 dark:bg-black/75 backdrop-blur-md flex flex-col items-center justify-start p-3 sm:p-6 font-sans overflow-y-auto">
-            {/* Top Control Bar inside Document View */}
-            <div className="w-full max-w-4xl bg-surface/95 border border-border/80 text-text px-4 py-3 rounded-2xl flex items-center justify-between shrink-0 shadow-xl mb-6 backdrop-blur-md gap-2">
-              <div className="flex items-center space-x-3">
-                <Link
-                  href="/myresumes"
-                  className="px-3.5 py-1.5 rounded-full bg-bg-base hover:bg-border/40 text-xs font-bold text-text transition-all flex items-center space-x-1.5 border border-border/60 cursor-pointer"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Back to My Resumes</span>
-                </Link>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                {/* Zoom Level Selector */}
-                <div className="flex items-center space-x-1 bg-bg-base/80 p-1 rounded-full border border-border/60 text-[11px] font-bold mr-1">
-                  {[
-                    { label: "Fit Page", val: 0.65 },
-                    { label: "75%", val: 0.75 },
-                    { label: "90%", val: 0.9 },
-                    { label: "100%", val: 1.0 },
-                  ].map((z) => (
-                    <button
-                      key={z.val}
-                      onClick={() => setZoomScale(z.val)}
-                      className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
-                        zoomScale === z.val
-                          ? "bg-primary text-white shadow-xs"
-                          : "text-text-muted hover:text-text"
-                      }`}
-                    >
-                      {z.label}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => copyToClipboard(fullPlainTextContent, "full_resume")}
-                  className="px-3.5 py-1.5 rounded-full bg-bg-base hover:bg-border/40 text-xs font-bold text-text transition-all flex items-center space-x-1.5 border border-border/60 cursor-pointer"
-                >
-                  {copiedStates["full_resume"] ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span className="hidden sm:inline">{copiedStates["full_resume"] ? "Copied" : "Copy Text"}</span>
-                </button>
-
-                <button
-                  onClick={triggerBrowserPrint}
-                  className="px-4 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-md"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span>Save PDF</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Scaled Preview Canvas (Matching Cover Letter View Output!) */}
-            <div className="w-full max-w-4xl flex-1 flex flex-col items-center justify-center my-auto py-2 pb-8 overflow-visible">
-              <div 
-                className="flex items-center justify-center transition-all duration-200"
-                style={{ 
-                  height: `${Math.round(297 * zoomScale * 3.78)}px`,
-                  width: `${Math.round(210 * zoomScale * 3.78)}px`
-                }}
-              >
-                <div 
-                  className="origin-center transition-transform duration-200 shadow-2xl rounded-xs bg-white text-black overflow-hidden"
-                  style={{ transform: `scale(${zoomScale})` }}
-                >
-                  <ResumePreviewPanel 
-                    resume={resume} 
-                    output={output} 
-                    locked={false} 
-                    liveData={liveResume} 
-                    includeSummary={includeSummary} 
-                    includeCertifications={includeCertifications}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="h-auto lg:h-full flex flex-col lg:flex-row w-full overflow-y-auto lg:overflow-hidden">
+        <div className="h-auto lg:h-full flex flex-col lg:flex-row w-full overflow-y-auto lg:overflow-hidden">
             {/* ── LEFT: Fixed-height Resume Preview (never scrolls) ── */}
             <div className={`w-full ${showMobilePreview ? "h-[50vh]" : "h-[56px]"} lg:h-full lg:w-[42%] flex-shrink-0 flex flex-col p-3 md:p-5 pb-2 md:pb-4 border-b lg:border-b-0 lg:border-r border-border/40 print:w-full print:h-auto print:border-none print:p-0 print:overflow-visible overflow-hidden transition-all duration-300`}>
               {/* Panel header */}
@@ -1460,8 +1349,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
         </div>
       </div>
     </div>
-  )}
-</main>
+  </main>
 
       <CoverLetterModal isOpen={isCoverLetterModalOpen} onClose={() => setCoverLetterModalOpen(false)} resumeId={resumeId} inputData={resume?.inputData} templateId={resume?.inputData?.options?.templateId || "modern"} />
 

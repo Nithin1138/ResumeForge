@@ -5,6 +5,7 @@ import { Loader2, Trash2, LogOut, Edit2, Check, X, Sparkles, FileText, ChevronRi
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import CoverLetterModal from "./CoverLetterModal";
+import ResumeModal from "./ResumeModal";
 
 export function LogoutButton() {
   return (
@@ -122,6 +123,39 @@ export function ViewCoverLetterOutputButton({ letter }: { letter: any }) {
         initialCompany={letter.companyName}
         initialRole={letter.targetRole}
         readOnly={true}
+      />
+    </>
+  );
+}
+
+export function ViewResumeOutputButton({ resume }: { resume: any }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const outputData = resume.outputFull 
+    ? (typeof resume.outputFull === "string" ? JSON.parse(resume.outputFull) : resume.outputFull)
+    : {
+        summary: resume.summary || "",
+        skills: resume.skills || [],
+        projects: resume.projects || [],
+        experience: resume.experience || [],
+        education: resume.education || { institution: resume.college || "", degree: resume.branch || "", year: "", cgpa: resume.cgpa || "" },
+      };
+
+  return (
+    <>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="flex-1 min-h-[42px] px-4 py-2 rounded-full text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-xs bg-success text-white hover:bg-success/90 cursor-pointer"
+      >
+        <span>View Output</span>
+        <ChevronRight className="w-4 h-4" />
+      </button>
+
+      <ResumeModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        resume={resume}
+        output={outputData}
       />
     </>
   );
