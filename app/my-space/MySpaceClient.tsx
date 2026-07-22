@@ -63,6 +63,7 @@ interface CustomFieldItem {
   id: string;
   key: string;
   value: string;
+  link?: string;
 }
 
 interface EducationItem {
@@ -139,6 +140,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const [newCustomKey, setNewCustomKey] = useState("Target Role 1");
   const [newCustomVal, setNewCustomVal] = useState("");
   const [customKeySelection, setCustomKeySelection] = useState("Target Role 1");
+  const [newCustomLink, setNewCustomLink] = useState("");
   const [customNotes, setCustomNotes] = useState("");
 
   // AI Copilot State
@@ -552,6 +554,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const handleAddCustomField = () => {
     const key = newCustomKey.trim();
     const value = newCustomVal.trim();
+    const link = newCustomLink.trim();
     if (key && value) {
       const exists = customFields.some(cf => cf.key.toLowerCase() === key.toLowerCase());
       if (exists) {
@@ -560,9 +563,15 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
       }
       setCustomFields([
         ...customFields,
-        { id: Date.now().toString(), key, value },
+        { 
+          id: Date.now().toString(), 
+          key, 
+          value,
+          ...(link ? { link } : {})
+        },
       ]);
       setNewCustomVal("");
+      setNewCustomLink("");
       setCustomKeySelection("Target Role 1");
       setNewCustomKey("Target Role 1");
     }
@@ -1830,46 +1839,42 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                       <span>Add Custom Detail Field (e.g., Preferred CTC, Portfolio, Achievements)</span>
                     </span>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-                      {/* Select Dropdown */}
-                      <div className={customKeySelection === "Other" ? "sm:col-span-3" : "sm:col-span-4"}>
-                        <select
-                          value={customKeySelection}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setCustomKeySelection(val);
-                            if (val !== "Other") {
-                              setNewCustomKey(val);
-                            } else {
-                              setNewCustomKey("");
-                            }
-                          }}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary"
-                        >
-                          <option value="Target Role 1">Target Role 1</option>
-                          <option value="Target Role 2">Target Role 2</option>
-                          <option value="Target Role 3">Target Role 3</option>
-                          <option value="Preferred Location">Preferred Location</option>
-                          <option value="Expected CTC">Expected CTC</option>
-                          <option value="Other">Other (Custom Key)</option>
-                        </select>
-                      </div>
+                    <div className="space-y-3">
+                      {/* Row 1: Key Selector and Value Input */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="flex gap-2">
+                          <select
+                            value={customKeySelection}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setCustomKeySelection(val);
+                              if (val !== "Other") {
+                                setNewCustomKey(val);
+                              } else {
+                                setNewCustomKey("");
+                              }
+                            }}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary shrink-0"
+                          >
+                            <option value="Target Role 1">Target Role 1</option>
+                            <option value="Target Role 2">Target Role 2</option>
+                            <option value="Target Role 3">Target Role 3</option>
+                            <option value="Preferred Location">Preferred Location</option>
+                            <option value="Expected CTC">Expected CTC</option>
+                            <option value="Other">Other (Custom Key)</option>
+                          </select>
 
-                      {/* Custom Key Input (Only visible if 'Other' is selected) */}
-                      {customKeySelection === "Other" && (
-                        <div className="sm:col-span-3">
-                          <input
-                            type="text"
-                            value={newCustomKey}
-                            onChange={(e) => setNewCustomKey(e.target.value)}
-                            placeholder="Key Name (e.g. Portfolio)"
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary"
-                          />
+                          {customKeySelection === "Other" && (
+                            <input
+                              type="text"
+                              value={newCustomKey}
+                              onChange={(e) => setNewCustomKey(e.target.value)}
+                              placeholder="Key Name (e.g. Portfolio)"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary"
+                            />
+                          )}
                         </div>
-                      )}
 
-                      {/* Value Input */}
-                      <div className={customKeySelection === "Other" ? "sm:col-span-4" : "sm:col-span-6"}>
                         <input
                           type="text"
                           value={newCustomVal}
@@ -1879,15 +1884,27 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                         />
                       </div>
 
-                      {/* Add Button */}
-                      <div className="sm:col-span-2">
-                        <button
-                          type="button"
-                          onClick={handleAddCustomField}
-                          className="w-full px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all cursor-pointer"
-                        >
-                          + Add Field
-                        </button>
+                      {/* Row 2: Optional Link Input and Add Button */}
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+                        <div className="sm:col-span-3">
+                          <input
+                            type="text"
+                            value={newCustomLink}
+                            onChange={(e) => setNewCustomLink(e.target.value)}
+                            placeholder="Optional Link / URL for easy open (e.g. https://my-portfolio.com)"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+
+                        <div className="sm:col-span-1">
+                          <button
+                            type="button"
+                            onClick={handleAddCustomField}
+                            className="w-full px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all cursor-pointer"
+                          >
+                            + Add Field
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
