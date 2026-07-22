@@ -1919,6 +1919,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                               <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">GitHub Link</label>
                               <input
                                 type="text"
+                                autoComplete="off"
                                 value={proj.githubLink || ""}
                                 onChange={(e) => handleUpdateProject(proj.id, "githubLink", e.target.value)}
                                 placeholder="https://github.com/..."
@@ -1929,6 +1930,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                               <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Live Host Link</label>
                               <input
                                 type="text"
+                                autoComplete="off"
                                 value={proj.hostLink || ""}
                                 onChange={(e) => handleUpdateProject(proj.id, "hostLink", e.target.value)}
                                 placeholder="https://..."
@@ -1966,18 +1968,19 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                                   ))}
                                 </div>
                               )}
-                              
-                              <div className="flex items-center gap-3 pt-0.5">
+                            </div>
+                            
+                            <div className="flex items-center space-x-2 shrink-0">
                                 {proj.githubLink && (
                                   <a
                                     href={proj.githubLink}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="text-[10px] font-bold text-primary hover:underline inline-flex items-center gap-1"
+                                    className="text-[10px] font-bold text-primary hover:bg-primary/10 border border-primary/20 px-2.5 py-1.5 rounded-xl inline-flex items-center gap-1.5 transition-all cursor-pointer"
                                     onClick={(e) => e.stopPropagation()}
                                   >
-                                    <Globe className="w-3 h-3" />
-                                    <span>GitHub</span>
+                                    <Globe className="w-3.5 h-3.5" />
+                                    <span className="hidden sm:inline">GitHub</span>
                                   </a>
                                 )}
                                 {proj.hostLink && (
@@ -1985,27 +1988,25 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                                     href={proj.hostLink}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="text-[10px] font-bold text-emerald-600 hover:underline inline-flex items-center gap-1"
+                                    className="text-[10px] font-bold text-emerald-600 hover:bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1.5 rounded-xl inline-flex items-center gap-1.5 transition-all cursor-pointer"
                                     onClick={(e) => e.stopPropagation()}
                                   >
-                                    <ExternalLink className="w-3 h-3" />
-                                    <span>Live Link</span>
+                                    <ExternalLink className="w-3.5 h-3.5" />
+                                    <span className="hidden sm:inline">Live Link</span>
                                   </a>
                                 )}
+                                <button
+                                  onClick={() => copyToClipboard(`${proj.title} (${proj.techStack}): ${proj.description} | GitHub: ${proj.githubLink || "N/A"} | Live: ${proj.hostLink || "N/A"}`, proj.title)}
+                                  className="p-2 rounded-xl text-text-muted hover:text-primary hover:bg-primary/10 transition-all border border-border/60 cursor-pointer flex items-center justify-center"
+                                  title="Copy project description"
+                                >
+                                  {copiedKey === proj.title ? (
+                                    <Check className="w-4 h-4 text-emerald-500" />
+                                  ) : (
+                                    <Copy className="w-4 h-4" />
+                                  )}
+                                </button>
                               </div>
-                            </div>
-                            
-                            <button
-                              onClick={() => copyToClipboard(`${proj.title} (${proj.techStack}): ${proj.description} | GitHub: ${proj.githubLink || "N/A"} | Live: ${proj.hostLink || "N/A"}`, proj.title)}
-                              className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary/10 transition-all cursor-pointer"
-                              title="Copy project description"
-                            >
-                              {copiedKey === proj.title ? (
-                                <Check className="w-3.5 h-3.5 text-emerald-500" />
-                              ) : (
-                                <Copy className="w-3.5 h-3.5" />
-                              )}
-                            </button>
                           </div>
                           <p className="text-xs text-text-muted font-medium leading-relaxed">{proj.description}</p>
                         </div>
