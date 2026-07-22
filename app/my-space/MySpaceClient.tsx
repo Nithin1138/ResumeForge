@@ -28,7 +28,12 @@ import {
   Globe,
   ExternalLink,
   Clock,
-  Tag
+  Tag,
+  Mail,
+  Phone,
+  MapPin,
+  CheckCircle2,
+  Layers
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoutButton } from "@/components/DashboardActions";
@@ -277,6 +282,48 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
+  const handleCopyFullVault = () => {
+    if (typeof window === "undefined" || !navigator?.clipboard?.writeText) return;
+    const lines = [
+      `=========================================`,
+      `CANDIDATE MASTER PROFILE VAULT`,
+      `=========================================`,
+      fullName ? `Name: ${fullName}` : null,
+      userEmail ? `Email: ${userEmail}` : null,
+      phone ? `Phone: ${phone}` : null,
+      location ? `Location: ${location}` : null,
+      github ? `GitHub: ${github}` : null,
+      linkedin ? `LinkedIn: ${linkedin}` : null,
+      noticePeriod ? `Notice Period: ${noticePeriod}` : null,
+      ``,
+      college || branch || cgpa ? `--- ACADEMIC & BIO ---` : null,
+      college ? `College: ${college}` : null,
+      branch ? `Branch/Degree: ${branch}` : null,
+      cgpa ? `CGPA: ${cgpa}` : null,
+      graduationYear ? `Graduation Year: ${graduationYear}` : null,
+      summary ? `Bio Summary: ${summary}` : null,
+      ``,
+      skills.length ? `--- SKILLS ---` : null,
+      skills.length ? skills.join(", ") : null,
+      ``,
+      certifications.length ? `--- CERTIFICATIONS ---` : null,
+      certifications.length ? certifications.map(c => `- ${c}`).join("\n") : null,
+      ``,
+      achievements.length ? `--- ACHIEVEMENTS & AWARDS ---` : null,
+      achievements.length ? achievements.map(a => `- ${a}`).join("\n") : null,
+      ``,
+      projects.length ? `--- PROJECTS ---` : null,
+      projects.length ? projects.map(p => `- ${p.title} (${p.techStack}): ${p.description}`).join("\n") : null,
+      ``,
+      experiences.length ? `--- EXPERIENCE ---` : null,
+      experiences.length ? experiences.map(e => `- ${e.company} | ${e.role} (${e.duration}): ${e.description}`).join("\n") : null,
+    ].filter(line => line !== null).join("\n");
+
+    navigator.clipboard.writeText(lines);
+    setCopiedKey("FULL_VAULT");
+    setTimeout(() => setCopiedKey(null), 2500);
+  };
+
   // Skill Handlers
   const handleAddSkill = () => {
     if (newSkillInput.trim() && !skills.includes(newSkillInput.trim())) {
@@ -458,7 +505,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         {activeTab === "profile" && (
           <div className="space-y-8">
             
-            {/* Control Bar: View/Edit Toggle, Search Bar, Save Button */}
+            {/* Control Bar: View/Edit Toggle, Search Bar, Save Button, Copy All */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface border border-border/60 rounded-3xl p-4 md:p-5 shadow-xs">
               
               {/* Left: View / Edit Toggle & Search */}
@@ -502,11 +549,25 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                 </div>
               </div>
 
-              {/* Right: Save Button */}
-              <div className="flex items-center space-x-3">
-                <span className="text-xs text-text-muted font-semibold hidden md:inline">
-                  {viewMode === "view" ? "Click any field to copy to clipboard" : "Edit details & save to vault"}
-                </span>
+              {/* Right: Copy Full Vault & Save Button */}
+              <div className="flex items-center space-x-2.5 shrink-0">
+                <button
+                  onClick={handleCopyFullVault}
+                  className="px-4 py-2.5 bg-bg-base hover:bg-border/40 border border-border text-text text-xs font-bold rounded-full inline-flex items-center space-x-1.5 transition-all cursor-pointer shadow-2xs"
+                  title="Copy formatted summary of full profile vault"
+                >
+                  {copiedKey === "FULL_VAULT" ? (
+                    <>
+                      <Check className="w-4 h-4 text-emerald-500" />
+                      <span className="text-emerald-600 font-bold">Full Profile Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4 text-primary" />
+                      <span>Copy Full Vault</span>
+                    </>
+                  )}
+                </button>
 
                 <button
                   onClick={handleSaveProfile}
@@ -529,41 +590,48 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
             </div>
 
             {saveSuccess && (
-              <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-600 text-xs font-bold flex items-center space-x-2">
-                <Check className="w-4 h-4" />
-                <span>Master Profile Vault saved successfully to PostgreSQL DB!</span>
+              <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-600 text-xs font-bold flex items-center space-x-2 animate-in fade-in">
+                <CheckCircle2 className="w-4.5 h-4.5 shrink-0" />
+                <span>Master Profile Vault saved successfully to PostgreSQL database!</span>
               </div>
             )}
 
             {saveError && (
-              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-xs font-bold">
+              <div className="p-3.5 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-xs font-bold animate-in fade-in">
                 {saveError}
               </div>
             )}
 
             {/* Category Filter Chips */}
-            <div className="flex items-center space-x-2 overflow-x-auto pb-1">
+            <div className="flex items-center space-x-2 overflow-x-auto pb-1 custom-scrollbar">
               {[
-                { id: "all", label: "All Sections" },
-                { id: "personal", label: "Personal & Social" },
-                { id: "academic", label: "Academics & Bio" },
-                { id: "skills", label: "Skills Vault" },
-                { id: "certifications", label: "Certifications" },
-                { id: "achievements", label: "Achievements & Awards" },
-                { id: "projects", label: "Projects" },
-                { id: "experience", label: "Experience" },
-                { id: "custom", label: "Custom Fields Vault" },
+                { id: "all", label: "All Sections", count: null },
+                { id: "personal", label: "Personal & Social", count: null },
+                { id: "academic", label: "Academics & Bio", count: null },
+                { id: "skills", label: "Skills Vault", count: skills.length },
+                { id: "certifications", label: "Certifications", count: certifications.length },
+                { id: "achievements", label: "Achievements & Awards", count: achievements.length },
+                { id: "projects", label: "Projects", count: projects.length },
+                { id: "experience", label: "Experience", count: experiences.length },
+                { id: "custom", label: "Custom Fields Vault", count: customFields.length },
               ].map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setCategoryFilter(cat.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer flex items-center space-x-1.5 ${
                     categoryFilter === cat.id
-                      ? "bg-primary/15 border border-primary/40 text-primary"
-                      : "bg-surface border border-border text-text-muted hover:text-text"
+                      ? "bg-primary text-white shadow-xs"
+                      : "bg-surface border border-border/80 text-text-muted hover:text-text hover:border-primary/40"
                   }`}
                 >
-                  {cat.label}
+                  <span>{cat.label}</span>
+                  {typeof cat.count === "number" && cat.count > 0 && (
+                    <span className={`text-[10px] font-extrabold px-1.5 py-0.2 rounded-full ${
+                      categoryFilter === cat.id ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
+                    }`}>
+                      {cat.count}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
@@ -572,11 +640,16 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
             {(categoryFilter === "all" || categoryFilter === "personal") && (
               <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-6 shadow-xs">
                 <div className="border-b border-border/40 pb-3 flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <User className="w-5 h-5 text-primary" />
-                    <h2 className="font-serif font-bold text-lg text-text">Personal & Social Links</h2>
+                  <div className="flex items-center space-x-2.5">
+                    <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                      <User className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="font-serif font-bold text-lg text-text">Personal & Social Links</h2>
+                      <p className="text-xs text-text-muted font-medium">Core contact information and public developer profiles</p>
+                    </div>
                   </div>
-                  <span className="text-xs text-text-muted font-bold">Contact & Profiles</span>
+                  <span className="text-xs text-text-muted font-bold bg-bg-base border border-border px-3 py-1 rounded-full">Contact & Profiles</span>
                 </div>
 
                 {viewMode === "edit" ? (
@@ -617,7 +690,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
                     <div className="space-y-1">
                       <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center space-x-1">
-                        <Globe className="w-3.5 h-3.5" />
+                        <Globe className="w-3.5 h-3.5 text-primary" />
                         <span>GitHub Profile</span>
                       </label>
                       <input
@@ -659,36 +732,56 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                   </div>
                 ) : (
                   /* READ / COPY MODE */
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
                     {[
-                      { key: "Full Name", val: fullName },
-                      { key: "Email", val: userEmail },
-                      { key: "Phone", val: phone },
-                      { key: "Location", val: location },
-                      { key: "GitHub", val: github },
-                      { key: "LinkedIn", val: linkedin },
-                      { key: "Notice Period", val: noticePeriod },
-                    ].filter(item => matchesSearch(item.key) || matchesSearch(item.val)).map((item, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => copyToClipboard(item.val, item.key)}
-                        className="p-3.5 border border-border/80 rounded-2xl bg-bg-base hover:border-primary/50 transition-all cursor-pointer flex items-center justify-between group"
-                      >
-                        <div className="space-y-0.5 min-w-0 pr-2">
-                          <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{item.key}</span>
-                          <span className="text-xs font-bold text-text truncate block">{item.val || "Not provided"}</span>
-                        </div>
+                      { key: "Full Name", val: fullName, icon: User },
+                      { key: "Email", val: userEmail, icon: Mail },
+                      { key: "Phone", val: phone, icon: Phone },
+                      { key: "Location", val: location, icon: MapPin },
+                      { key: "GitHub", val: github, icon: Globe },
+                      { key: "LinkedIn", val: linkedin, icon: ExternalLink },
+                      { key: "Notice Period", val: noticePeriod, icon: Clock },
+                    ].filter(item => matchesSearch(item.key) || matchesSearch(item.val)).map((item, idx) => {
+                      const IconComp = item.icon;
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => item.val && copyToClipboard(item.val, item.key)}
+                          className={`p-3.5 md:p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between group relative ${
+                            item.val
+                              ? "bg-bg-base border-border/80 hover:border-primary/50 hover:shadow-sm"
+                              : "bg-bg-base/40 border-border/30 opacity-60 hover:opacity-100"
+                          }`}
+                        >
+                          <div className="flex items-center space-x-3 min-w-0 pr-2 flex-1">
+                            <div className={`p-2.5 rounded-xl shrink-0 ${item.val ? "bg-primary/10 text-primary" : "bg-bg-base text-text-muted"}`}>
+                              <IconComp className="w-4 h-4" />
+                            </div>
+                            <div className="space-y-0.5 min-w-0 flex-1">
+                              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{item.key}</span>
+                              <span className={`text-xs font-bold block truncate ${item.val ? "text-text" : "text-text-muted italic"}`}>
+                                {item.val || "Not provided"}
+                              </span>
+                            </div>
+                          </div>
 
-                        {copiedKey === item.key ? (
-                          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-1 rounded-md shrink-0 flex items-center space-x-1">
-                            <Check className="w-3 h-3" />
-                            <span>Copied</span>
-                          </span>
-                        ) : (
-                          <Copy className="w-3.5 h-3.5 text-text-muted group-hover:text-primary shrink-0" />
-                        )}
-                      </div>
-                    ))}
+                          {item.val && (
+                            <div className="shrink-0 pl-1">
+                              {copiedKey === item.key ? (
+                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-md flex items-center space-x-1">
+                                  <Check className="w-3 h-3" />
+                                  <span>Copied</span>
+                                </span>
+                              ) : (
+                                <span className="p-1.5 rounded-lg text-text-muted group-hover:text-primary group-hover:bg-primary/10 transition-all flex items-center gap-1 text-[11px] font-semibold">
+                                  <Copy className="w-3.5 h-3.5" />
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -698,11 +791,16 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
             {(categoryFilter === "all" || categoryFilter === "academic") && (
               <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-6 shadow-xs">
                 <div className="border-b border-border/40 pb-3 flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <GraduationCap className="w-5 h-5 text-primary" />
-                    <h2 className="font-serif font-bold text-lg text-text">Academics & Career Bio</h2>
+                  <div className="flex items-center space-x-2.5">
+                    <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                      <GraduationCap className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="font-serif font-bold text-lg text-text">Academics & Career Bio</h2>
+                      <p className="text-xs text-text-muted font-medium">Educational background, graduation metrics, and elevator pitch</p>
+                    </div>
                   </div>
-                  <span className="text-xs text-text-muted font-bold">College & Background</span>
+                  <span className="text-xs text-text-muted font-bold bg-bg-base border border-border px-3 py-1 rounded-full">College & Background</span>
                 </div>
 
                 {viewMode === "edit" ? (
@@ -754,37 +852,76 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
                       {[
-                        { key: "College", val: college },
-                        { key: "Branch", val: branch },
-                        { key: "CGPA", val: cgpa },
-                      ].map((item, idx) => (
-                        <div
-                          key={idx}
-                          onClick={() => copyToClipboard(item.val, item.key)}
-                          className="p-3.5 border border-border/80 rounded-2xl bg-bg-base hover:border-primary/50 transition-all cursor-pointer flex items-center justify-between group"
-                        >
-                          <div className="space-y-0.5 min-w-0 pr-2">
-                            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{item.key}</span>
-                            <span className="text-xs font-bold text-text truncate block">{item.val || "Not provided"}</span>
+                        { key: "College", val: college, icon: Building2 },
+                        { key: "Branch / Degree", val: branch, icon: GraduationCap },
+                        { key: "CGPA", val: cgpa, icon: Award },
+                        { key: "Graduation Year", val: graduationYear, icon: Clock },
+                      ].filter(item => matchesSearch(item.key) || matchesSearch(item.val)).map((item, idx) => {
+                        const IconComp = item.icon;
+                        return (
+                          <div
+                            key={idx}
+                            onClick={() => item.val && copyToClipboard(item.val, item.key)}
+                            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between group relative ${
+                              item.val
+                                ? "bg-bg-base border-border/80 hover:border-primary/50 hover:shadow-sm"
+                                : "bg-bg-base/40 border-border/30 opacity-60 hover:opacity-100"
+                            }`}
+                          >
+                            <div className="flex items-center space-x-3 min-w-0 pr-2 flex-1">
+                              <div className={`p-2.5 rounded-xl shrink-0 ${item.val ? "bg-primary/10 text-primary" : "bg-bg-base text-text-muted"}`}>
+                                <IconComp className="w-4 h-4" />
+                              </div>
+                              <div className="space-y-0.5 min-w-0 flex-1">
+                                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{item.key}</span>
+                                <span className={`text-xs font-bold block truncate ${item.val ? "text-text" : "text-text-muted italic"}`}>
+                                  {item.val || "Not provided"}
+                                </span>
+                              </div>
+                            </div>
+
+                            {item.val && (
+                              <div className="shrink-0 pl-1">
+                                {copiedKey === item.key ? (
+                                  <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-md flex items-center space-x-1">
+                                    <Check className="w-3 h-3" />
+                                    <span>Copied</span>
+                                  </span>
+                                ) : (
+                                  <span className="p-1.5 rounded-lg text-text-muted group-hover:text-primary group-hover:bg-primary/10 transition-all flex items-center gap-1 text-[11px] font-semibold">
+                                    <Copy className="w-3.5 h-3.5" />
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </div>
-                          <Copy className="w-3.5 h-3.5 text-text-muted group-hover:text-primary shrink-0" />
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     {summary && (
                       <div
                         onClick={() => copyToClipboard(summary, "Career Bio")}
-                        className="p-4 border border-border/80 rounded-2xl bg-bg-base hover:border-primary/50 transition-all cursor-pointer space-y-1 group"
+                        className="p-4 border border-border/80 rounded-2xl bg-bg-base hover:border-primary/50 transition-all cursor-pointer space-y-1.5 group relative"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Career Bio / Summary</span>
-                          <Copy className="w-3.5 h-3.5 text-text-muted group-hover:text-primary" />
+                          <span className="text-[10px] font-bold text-primary uppercase tracking-wider block">Career Bio / Summary</span>
+                          {copiedKey === "Career Bio" ? (
+                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-md flex items-center space-x-1">
+                              <Check className="w-3 h-3" />
+                              <span>Copied</span>
+                            </span>
+                          ) : (
+                            <span className="text-xs font-semibold text-text-muted group-hover:text-primary flex items-center gap-1">
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>Click to copy bio</span>
+                            </span>
+                          )}
                         </div>
-                        <p className="text-xs text-text font-medium leading-relaxed">{summary}</p>
+                        <p className="text-xs font-medium text-text leading-relaxed whitespace-pre-wrap">{summary}</p>
                       </div>
                     )}
                   </div>
