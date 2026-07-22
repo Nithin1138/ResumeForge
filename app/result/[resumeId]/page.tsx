@@ -560,10 +560,11 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
       {/* STICKY BOTTOM LIQUID GLASS FLOATING FOOTER */}
       <div className="fixed bottom-0 left-0 right-0 z-40 p-3 md:p-4 pointer-events-none">
         <div className="max-w-6xl mx-auto bg-surface/65 dark:bg-surface/50 backdrop-blur-2xl border border-white/40 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.18)] rounded-3xl p-3.5 md:p-4 pointer-events-auto transition-all ring-1 ring-black/5">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-3 md:gap-4">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-3.5 md:gap-4">
             
-            {/* 1. Left Pricing Badge & One-Time Line Under Amount */}
-            <div className="flex items-center space-x-4 w-full lg:w-auto justify-between lg:justify-start border-b lg:border-b-0 border-border/40 pb-2.5 lg:pb-0">
+            {/* Left Group: Pricing Badge & AI Verification Pill (Tightly Grouped) */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-4 w-full lg:w-auto justify-between sm:justify-start">
+              {/* 1. Left Pricing Badge & One-Time Line */}
               <div className="flex flex-col space-y-1">
                 <div className="flex items-center space-x-2">
                   <span className="text-2xl md:text-3xl font-black text-text tracking-tight">₹{price}</span>
@@ -578,40 +579,43 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                   <span>One-Time Fee • Instant Unlimited Access</span>
                 </div>
               </div>
+
+              {/* Vertical Divider for desktop */}
+              <div className="hidden sm:block h-8 w-px bg-border/60 mx-1" />
+
+              {/* 2. AI Verification Toggle Pill (Adjacent to Amount with tight gap) */}
+              <div className="w-full sm:w-auto flex justify-center sm:justify-start shrink-0">
+                {isVerificationModalOpen ? (
+                  <button
+                    onClick={() => {
+                      setVerificationModalOpen(false);
+                      router.replace(`/result/${resumeId}`, { scroll: false });
+                    }}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer"
+                  >
+                    <ArrowLeft className="w-4 h-4 text-text-muted group-hover:-translate-x-1 transition-transform shrink-0" />
+                    <span>Back to ATS Score</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setVerificationModalOpen(true);
+                      router.replace(`/result/${resumeId}?verify=true`, { scroll: false });
+                    }}
+                    className="w-full sm:w-auto px-4 py-2 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs rounded-2xl transition-all flex items-center justify-center sm:justify-start space-x-2.5 shadow-2xs group cursor-pointer shrink-0"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
+                    <div className="flex flex-col text-left leading-tight">
+                      <span className="text-[10px] text-text-muted font-bold tracking-tight">Don't trust ATSlift?</span>
+                      <span className="text-xs font-extrabold text-primary underline underline-offset-2 decoration-primary/40 group-hover:decoration-primary">Verify with any AI</span>
+                    </div>
+                  </button>
+                )}
+              </div>
             </div>
 
-            {/* 2. AI Verification Toggle Pill (Adjacent to Amount) */}
-            <div className="w-full lg:w-auto flex justify-center lg:justify-start">
-              {isVerificationModalOpen ? (
-                <button
-                  onClick={() => {
-                    setVerificationModalOpen(false);
-                    router.replace(`/result/${resumeId}`, { scroll: false });
-                  }}
-                  className="w-full lg:w-auto px-4 py-2.5 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer"
-                >
-                  <ArrowLeft className="w-4 h-4 text-text-muted group-hover:-translate-x-1 transition-transform shrink-0" />
-                  <span>Back to ATS Score</span>
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    setVerificationModalOpen(true);
-                    router.replace(`/result/${resumeId}?verify=true`, { scroll: false });
-                  }}
-                  className="w-full lg:w-auto px-4 py-2 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs rounded-2xl transition-all flex items-center justify-center lg:justify-start space-x-2.5 shadow-2xs group cursor-pointer"
-                >
-                  <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
-                  <div className="flex flex-col text-left leading-tight">
-                    <span className="text-[10px] text-text-muted font-bold tracking-tight">Don't trust ATSlift?</span>
-                    <span className="text-xs font-extrabold text-primary underline underline-offset-2 decoration-primary/40 group-hover:decoration-primary">Verify with any AI</span>
-                  </div>
-                </button>
-              )}
-            </div>
-
-            {/* 3. Payment Action Buttons (Right Side) */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-2.5 w-full lg:w-auto">
+            {/* Right Group: Payment Action Buttons (Right Side) */}
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-2.5 w-full lg:w-auto shrink-0">
               {/* Candidate Wallet Payment Option (If balance is sufficient) */}
               {walletBalance !== null && walletBalance >= price && (
                 <button
