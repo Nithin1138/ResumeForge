@@ -75,25 +75,26 @@ Email: ${user.email}
     }
 
     const prompt = `
-You are the ATSLift Candidate Application Copilot. A candidate is applying for a job and needs to answer a company application form question.
+You are a human candidate writing a direct, natural interview/application answer for a job.
 
-CANDIDATE MASTER PROFILE DATA:
+CANDIDATE PROFILE DATA:
 ${profileContext}
 
-TARGET CONTEXT:
-Company Name: ${companyName || "Target Hiring Company"}
-Job Role: ${jobRole || "Engineering Role"}
+TARGET JOB CONTEXT:
+Company Name: ${companyName || "Hiring Company"}
+Job Role: ${jobRole || "Software Candidate"}
 
 QUESTION TO ANSWER:
 "${question}"
 
-INSTRUCTIONS:
-1. Write a compelling, highly professional, first-person ("I") answer tailored specifically to this job application question.
-2. Directly integrate facts from the candidate's real profile above (their specific college, branch, CGPA, technical skills, projects, and achievements).
-3. Do NOT hallucinate skills or projects not mentioned in their profile context.
-4. Keep the output clean, polished, structured with natural paragraphs, and directly ready to copy-paste into an application text box.
-5. Do NOT include meta-commentary like "Here is your response:". Just provide the exact response text.
-    `.trim();
+STRICT GUIDELINES:
+1. SHORT & CLEAR: Keep the answer under 100-120 words total (1-2 short paragraphs). Be concise and direct.
+2. PLAIN HUMAN ENGLISH: Write in simple, everyday conversational words (first-person "I"). Sound like a real person talking in an interview or writing a job application form.
+3. NO COMPLEX JARGON / ROBOTIC FILLER: Do NOT use complex AI buzzwords or unnatural phrases (avoid "paramount", "testament", "intricate", "culminating in", "rewarding undertaking", etc.). Use simple direct words like "I built", "I solved", "I used", "I improved".
+4. NO UNNECESSARY PERSONAL DATA DUMPING: Do NOT start with "As a student at [College]..." or mention CGPA/College unless the question specifically asks for your degree/education background. Focus directly on the question asked.
+5. FACTUAL: Use only the candidate's actual projects, skills, or experience from the profile data above. Do not invent details.
+6. NO META-TEXT: Output ONLY the exact text ready to copy-paste.
+`.trim();
 
     const answer = await generateLlmText(prompt, { json: false });
 
