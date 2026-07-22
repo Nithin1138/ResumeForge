@@ -482,6 +482,13 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
     }
   };
 
+  const deferredSearchQuery = useDeferredValue(searchQuery);
+
+  const matchesSearch = useCallback((text: string) => {
+    if (!deferredSearchQuery.trim()) return true;
+    return text.toLowerCase().includes(deferredSearchQuery.toLowerCase());
+  }, [deferredSearchQuery]);
+
   const presetQuestions = [
     "Why do you want to join our engineering team?",
     "Describe a challenging technical project you built and how you solved it.",
@@ -499,13 +506,6 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
       </div>
     );
   }
-
-  const deferredSearchQuery = useDeferredValue(searchQuery);
-
-  const matchesSearch = useCallback((text: string) => {
-    if (!deferredSearchQuery.trim()) return true;
-    return text.toLowerCase().includes(deferredSearchQuery.toLowerCase());
-  }, [deferredSearchQuery]);
 
   return (
     <AppLayout>
