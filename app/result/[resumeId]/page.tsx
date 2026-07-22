@@ -642,11 +642,13 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
                     setVerificationModalOpen(true);
                     router.replace(`/result/${resumeId}?verify=true`, { scroll: false });
                   }}
-                  className="w-full lg:w-auto px-4 py-2.5 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer"
+                  className="w-full lg:w-auto px-4 py-2 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs rounded-2xl transition-all flex items-center justify-center lg:justify-start space-x-2.5 shadow-2xs group cursor-pointer"
                 >
                   <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
-                  <span className="text-text-muted font-medium">Don't trust score?</span>
-                  <span className="font-extrabold text-primary underline underline-offset-2">Verify with AI</span>
+                  <div className="flex flex-col text-left leading-tight">
+                    <span className="text-[10px] text-text-muted font-bold tracking-tight">Don't trust ATSlift?</span>
+                    <span className="text-xs font-extrabold text-primary underline underline-offset-2 decoration-primary/40 group-hover:decoration-primary">Verify with any AI</span>
+                  </div>
                 </button>
               )}
             </div>
