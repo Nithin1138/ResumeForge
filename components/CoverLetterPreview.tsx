@@ -87,7 +87,7 @@ export default function CoverLetterPreview({
   return (
     <div
       id="cover-letter-document"
-      className="w-full h-full max-w-[620px] aspect-[210/297] bg-white text-zinc-900 shadow-2xl border border-zinc-200/90 rounded-sm p-6 sm:p-9 md:p-10 flex flex-col justify-between font-sans text-xs leading-relaxed relative select-text mx-auto my-0 box-border overflow-hidden"
+      className="w-full max-w-[210mm] aspect-[210/297] min-h-[297mm] bg-white text-zinc-900 shadow-2xl border border-zinc-200/90 rounded-sm p-8 sm:p-12 md:p-14 flex flex-col justify-between font-sans text-xs leading-relaxed relative select-text mx-auto my-0 box-border"
     >
       {/* ── TOP HEADER (Matching Resume Template Accent & Header Style) ── */}
       <div>
