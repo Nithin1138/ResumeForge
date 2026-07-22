@@ -724,15 +724,16 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
             {/* Segmented Control */}
             <div className="flex items-center bg-bg-base border border-border/80 p-1 rounded-xl relative shrink-0">
               {[
-                { id: "view" as const, label: "View", icon: Eye },
-                { id: "edit" as const, label: "Edit", icon: Edit3 },
+                { id: "view" as const, label: "View", icon: Eye, onClick: () => { setActiveTab("profile"); setViewMode("view"); } },
+                { id: "edit" as const, label: "Edit", icon: Edit3, onClick: () => { setActiveTab("profile"); setViewMode("edit"); } },
+                { id: "copilot" as const, label: "AI Assist", icon: Bot, onClick: () => { setActiveTab("copilot"); } },
               ].map((mode) => {
-                const isActive = activeTab === "profile" && viewMode === mode.id;
+                const isActive = mode.id === "copilot" ? activeTab === "copilot" : (activeTab === "profile" && viewMode === mode.id);
                 const ModeIcon = mode.icon;
                 return (
                   <button
                     key={mode.id}
-                    onClick={() => { setActiveTab("profile"); setViewMode(mode.id); }}
+                    onClick={mode.onClick}
                     className={`px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all relative z-10 cursor-pointer ${
                       isActive ? "text-white" : "text-text-muted hover:text-text"
                     }`}
@@ -782,15 +783,14 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
               { id: "projects", label: `Projects${projects.length ? ` · ${projects.length}` : ""}`, isTab: "profile" as const },
               { id: "experience", label: `Experience${experiences.length ? ` · ${experiences.length}` : ""}`, isTab: "profile" as const },
               { id: "custom", label: "Custom", isTab: "profile" as const },
-              { id: "copilot", label: "AI Copilot", isTab: "copilot" as const },
             ].map((cat) => {
-              const isActive = cat.isTab === "copilot" ? activeTab === "copilot" : (activeTab === "profile" && categoryFilter === cat.id);
+              const isActive = activeTab === "profile" && categoryFilter === cat.id;
               return (
                 <button
                   key={cat.id}
                   onClick={() => {
-                    if (cat.isTab === "copilot") { setActiveTab("copilot"); }
-                    else { setActiveTab("profile"); setCategoryFilter(cat.id); }
+                    setActiveTab("profile");
+                    setCategoryFilter(cat.id);
                   }}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer relative z-10 ${
                     isActive
