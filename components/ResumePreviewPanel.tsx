@@ -363,28 +363,40 @@ export default function ResumePreviewPanel({
             color: black !important;
             margin: 0 !important;
             padding: 0 !important;
+            width: 100% !important;
             height: auto !important;
             overflow: visible !important;
           }
-          body * {
-            visibility: hidden !important;
+          body > *:not(#resume-modal-portal) {
+            display: none !important;
           }
-          .print-exact, .print-exact * {
-            visibility: visible !important;
-          }
-          .print-exact {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            transform: none !important;
-            box-shadow: none !important;
+          #resume-modal-portal {
+            display: block !important;
+            position: static !important;
             margin: 0 !important;
             padding: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            background: white !important;
+          }
+          .print-exact {
+            position: relative !important;
+            left: 0 !important;
+            top: 0 !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            width: 210mm !important;
+            max-width: 210mm !important;
+            transform: none !important;
+            box-shadow: none !important;
             border-radius: 0 !important;
+            border: none !important;
             overflow: visible !important;
             background-image: none !important;
+            page-break-before: avoid !important;
+            page-break-after: avoid !important;
+            break-before: avoid !important;
+            break-after: avoid !important;
           }
         }
       `}</style>

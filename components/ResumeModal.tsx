@@ -111,7 +111,7 @@ ${(exp.bullets || []).map((b: string) => `- ${b}`).join("\n")}
   };
 
   return createPortal(
-    <div className="fixed inset-0 bg-bg-base/80 dark:bg-black/75 backdrop-blur-md flex flex-col items-center justify-between p-3 sm:p-6 z-[9999] animate-fade-in overflow-y-auto font-sans print:p-0 print:bg-transparent print:static print:overflow-visible">
+    <div id="resume-modal-portal" className="fixed inset-0 bg-bg-base/80 dark:bg-black/75 backdrop-blur-md flex flex-col items-center justify-between p-3 sm:p-6 z-[9999] animate-fade-in overflow-y-auto font-sans print:p-0 print:m-0 print:bg-white print:static print:overflow-visible print:block print:w-full print:h-auto">
       {/* Floating Top Control Bar (Matching Image 2 pixel-for-pixel) */}
       <div className="w-full max-w-4xl bg-surface/95 border border-border/80 text-text px-4 py-3 rounded-2xl flex items-center justify-between shrink-0 shadow-xl mb-4 backdrop-blur-md gap-2 z-50 print:hidden">
         <div className="flex items-center space-x-3">
@@ -174,15 +174,15 @@ ${(exp.bullets || []).map((b: string) => `- ${b}`).join("\n")}
       </div>
 
       {/* Centered Document Preview Canvas */}
-      <div className="w-full flex-1 flex flex-col items-center justify-start overflow-y-auto py-4 px-2 my-auto">
+      <div className="w-full flex-1 flex flex-col items-center justify-start overflow-y-auto py-4 px-2 my-auto print:p-0 print:m-0 print:block print:w-full print:h-auto">
         {loading ? (
-          <div className="flex flex-col items-center justify-center p-12 bg-surface border border-border rounded-2xl shadow-xl my-auto space-y-3">
+          <div className="flex flex-col items-center justify-center p-12 bg-surface border border-border rounded-2xl shadow-xl my-auto space-y-3 print:hidden">
             <Loader2 className="w-8 h-8 text-primary animate-spin" />
             <span className="text-xs font-bold text-text-muted">Loading complete resume document...</span>
           </div>
         ) : (
           <div 
-            className="flex flex-col items-center justify-start my-auto transition-all duration-200"
+            className="flex flex-col items-center justify-start my-auto transition-all duration-200 print:p-0 print:m-0 print:block print:w-full print:h-auto"
           >
             <ResumePreviewPanel 
               resume={normalizedResume} 
