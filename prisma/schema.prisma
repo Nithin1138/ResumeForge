@@ -326,6 +326,7 @@ model MasterProfile {
   projectsJson       String   @default("[]")
   experiencesJson    String   @default("[]")
   certificationsJson String   @default("[]")
+  achievementsJson   String   @default("[]")
   customFieldsJson   String   @default("[]")
   customNotes        String?  @db.Text
 

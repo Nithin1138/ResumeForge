@@ -38,6 +38,7 @@ export async function GET(req: NextRequest) {
 
         let extractedSkills: string[] = [];
         let extractedCertifications: string[] = [];
+        let extractedAchievements: string[] = [];
 
         if (Array.isArray(inputData.skills)) {
           extractedSkills = inputData.skills;
@@ -53,6 +54,16 @@ export async function GET(req: NextRequest) {
           if (inputData.skills.certifications && typeof inputData.skills.certifications === "string") {
             extractedCertifications.push(...inputData.skills.certifications.split(",").map((v: string) => v.trim()));
           }
+        }
+
+        if (Array.isArray(inputData.certifications)) {
+          extractedCertifications.push(...inputData.certifications);
+        }
+
+        if (Array.isArray(inputData.achievements)) {
+          extractedAchievements.push(...inputData.achievements);
+        } else if (typeof inputData.achievements === "string") {
+          extractedAchievements.push(...inputData.achievements.split("\n").map((a: string) => a.trim()).filter(Boolean));
         }
 
         masterProfile = await prisma.masterProfile.create({
@@ -73,6 +84,7 @@ export async function GET(req: NextRequest) {
             projectsJson: JSON.stringify(Array.isArray(inputData.projects) ? inputData.projects : []),
             experiencesJson: JSON.stringify(Array.isArray(inputData.internships) ? inputData.internships : (Array.isArray(inputData.experience) ? inputData.experience : [])),
             certificationsJson: JSON.stringify(extractedCertifications.filter(Boolean)),
+            achievementsJson: JSON.stringify(extractedAchievements.filter(Boolean)),
             customFieldsJson: JSON.stringify([
               { key: "Target Role", value: latestResume.targetRole || "Software Engineer" },
               { key: "Preferred Location", value: "Bengaluru / Remote" },
@@ -128,6 +140,7 @@ export async function PUT(req: NextRequest) {
       projectsJson,
       experiencesJson,
       certificationsJson,
+      achievementsJson,
       customFieldsJson,
       customNotes,
     } = body;
@@ -149,6 +162,7 @@ export async function PUT(req: NextRequest) {
       projectsJson: typeof projectsJson === "string" ? projectsJson : JSON.stringify(projectsJson || []),
       experiencesJson: typeof experiencesJson === "string" ? experiencesJson : JSON.stringify(experiencesJson || []),
       certificationsJson: typeof certificationsJson === "string" ? certificationsJson : JSON.stringify(certificationsJson || []),
+      achievementsJson: typeof achievementsJson === "string" ? achievementsJson : JSON.stringify(achievementsJson || []),
       customFieldsJson: typeof customFieldsJson === "string" ? customFieldsJson : JSON.stringify(customFieldsJson || []),
       customNotes,
     };

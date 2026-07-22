@@ -90,6 +90,8 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const [experiences, setExperiences] = useState<ExperienceItem[]>([]);
   const [certifications, setCertifications] = useState<string[]>([]);
   const [newCertInput, setNewCertInput] = useState("");
+  const [achievements, setAchievements] = useState<string[]>([]);
+  const [newAchievementInput, setNewAchievementInput] = useState("");
   
   const [customFields, setCustomFields] = useState<CustomFieldItem[]>([]);
   const [newCustomKey, setNewCustomKey] = useState("");
@@ -184,6 +186,19 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         } catch {
           setCertifications([]);
         }
+
+        try {
+          const ac = JSON.parse(p.achievementsJson || "[]");
+          if (Array.isArray(ac)) {
+            setAchievements(ac);
+          } else if (typeof ac === "string") {
+            setAchievements(ac.split("\n").map((a: string) => a.trim()).filter(Boolean));
+          } else {
+            setAchievements([]);
+          }
+        } catch {
+          setAchievements([]);
+        }
         
         try {
           const parsedCF = JSON.parse(p.customFieldsJson || "[]");
@@ -235,6 +250,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           projectsJson: JSON.stringify(projects),
           experiencesJson: JSON.stringify(experiences),
           certificationsJson: JSON.stringify(certifications),
+          achievementsJson: JSON.stringify(achievements),
           customFieldsJson: JSON.stringify(customFields),
           customNotes,
         }),
@@ -281,6 +297,20 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   };
   const handleRemoveCert = (index: number) => {
     setCertifications(certifications.filter((_, i) => i !== index));
+  };
+
+  // Achievement Handlers
+  const handleAddAchievement = () => {
+    const trimmed = newAchievementInput.trim();
+    if (!trimmed) return;
+    if (!achievements.includes(trimmed)) {
+      setAchievements(prev => [...prev, trimmed]);
+    }
+    setNewAchievementInput("");
+  };
+
+  const handleRemoveAchievement = (idx: number) => {
+    setAchievements(prev => prev.filter((_, i) => i !== idx));
   };
 
   // Custom Field Handlers
@@ -518,6 +548,8 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                 { id: "personal", label: "Personal & Social" },
                 { id: "academic", label: "Academics & Bio" },
                 { id: "skills", label: "Skills Vault" },
+                { id: "certifications", label: "Certifications" },
+                { id: "achievements", label: "Achievements & Awards" },
                 { id: "projects", label: "Projects" },
                 { id: "experience", label: "Experience" },
                 { id: "custom", label: "Custom Fields Vault" },
@@ -807,6 +839,135 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                       )}
                     </span>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* CERTIFICATIONS & LICENSES VAULT */}
+            {(categoryFilter === "all" || categoryFilter === "certifications") && (
+              <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-4 shadow-xs">
+                <div className="border-b border-border/40 pb-3 flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Award className="w-5 h-5 text-emerald-500" />
+                    <h2 className="font-serif font-bold text-lg text-text">Certifications & Licenses Vault</h2>
+                  </div>
+                  <span className="text-xs text-text-muted font-bold">{certifications.length} Certifications Stored</span>
+                </div>
+
+                {viewMode === "edit" && (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={newCertInput}
+                      onChange={(e) => setNewCertInput(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddCert())}
+                      placeholder="Add certification (e.g. AWS Certified Solutions Architect, Google Cloud Professional)"
+                      className="flex-1 px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCert}
+                      className="px-4 py-2.5 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-500 transition-all cursor-pointer"
+                    >
+                      Add Certification
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {(Array.isArray(certifications) ? certifications : []).filter(c => matchesSearch(c)).map((cert, idx) => (
+                    <span
+                      key={idx}
+                      onClick={() => copyToClipboard(cert, `Cert-${cert}`)}
+                      className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold cursor-pointer hover:bg-emerald-500/20 transition-all"
+                      title="Click to copy certification"
+                    >
+                      <Award className="w-3.5 h-3.5 shrink-0" />
+                      <span>{cert}</span>
+                      {viewMode === "edit" && (
+                        <button onClick={(e) => { e.stopPropagation(); handleRemoveCert(idx); }} className="hover:text-red-500 cursor-pointer ml-1">
+                          <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                        </button>
+                      )}
+                    </span>
+                  ))}
+                  {certifications.length === 0 && (
+                    <p className="text-xs text-text-muted italic">No certifications stored yet. Click "Edit Profile Vault" to add your professional certificates.</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ACHIEVEMENTS & AWARDS VAULT */}
+            {(categoryFilter === "all" || categoryFilter === "achievements") && (
+              <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-4 shadow-xs">
+                <div className="border-b border-border/40 pb-3 flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="w-5 h-5 text-amber-500" />
+                    <h2 className="font-serif font-bold text-lg text-text">Achievements & Awards Vault</h2>
+                  </div>
+                  <span className="text-xs text-text-muted font-bold">{achievements.length} Achievements Stored</span>
+                </div>
+
+                {viewMode === "edit" && (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={newAchievementInput}
+                      onChange={(e) => setNewAchievementInput(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddAchievement())}
+                      placeholder="Add achievement (e.g. 1st Rank in Smart India Hackathon 2025, Published IEEE paper)"
+                      className="flex-1 px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddAchievement}
+                      className="px-4 py-2.5 bg-amber-500 text-white text-xs font-bold rounded-xl hover:bg-amber-400 transition-all cursor-pointer"
+                    >
+                      Add Achievement
+                    </button>
+                  </div>
+                )}
+
+                <div className="space-y-2 pt-1">
+                  {(Array.isArray(achievements) ? achievements : []).filter(a => matchesSearch(a)).map((ach, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => copyToClipboard(ach, `Ach-${idx}`)}
+                      className="p-3 border border-border/80 rounded-2xl bg-bg-base hover:border-amber-500/50 transition-all cursor-pointer flex items-center justify-between group"
+                    >
+                      <div className="flex items-center space-x-2.5 min-w-0 pr-2">
+                        <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+                        <span className="text-xs font-bold text-text truncate">{ach}</span>
+                      </div>
+
+                      <div className="flex items-center space-x-1.5 shrink-0">
+                        {copiedKey === `Ach-${idx}` ? (
+                          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-1 rounded-md">
+                            Copied
+                          </span>
+                        ) : (
+                          <Copy className="w-3.5 h-3.5 text-text-muted group-hover:text-amber-500" />
+                        )}
+
+                        {viewMode === "edit" && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveAchievement(idx);
+                            }}
+                            className="p-1 text-text-muted hover:text-red-500 transition-colors cursor-pointer"
+                            title="Delete Achievement"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  {achievements.length === 0 && (
+                    <p className="text-xs text-text-muted italic">No achievements stored yet. Click "Edit Profile Vault" to add your hackathons, ranks, awards, and publications.</p>
+                  )}
                 </div>
               </div>
             )}
