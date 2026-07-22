@@ -891,10 +891,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     <div className="space-y-1">
                       <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">Date of Birth</label>
                       <input
-                        type="text"
-                        value={dateOfBirth}
+                        type="date"
+                        value={dateOfBirth || ""}
                         onChange={(e) => setDateOfBirth(e.target.value)}
-                        placeholder="DD/MM/YYYY"
                         className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
                       />
                     </div>
@@ -970,7 +969,17 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                       return (
                         <div
                           key={idx}
-                          onClick={() => item.val && copyToClipboard(item.val, item.key)}
+                          onClick={() => {
+                            if (!item.val) return;
+                            const copyVal = item.key === "Date of Birth" ? (
+                              (() => {
+                                const parts = item.val.split("-");
+                                if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                                return item.val;
+                              })()
+                            ) : item.val;
+                            copyToClipboard(copyVal, item.key);
+                          }}
                           className={`p-3.5 md:p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between group relative ${
                             item.val
                               ? "bg-bg-base border-border/80 hover:border-primary/50 hover:shadow-sm"
@@ -984,7 +993,13 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                             <div className="space-y-0.5 min-w-0 flex-1">
                               <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{item.key}</span>
                               <span className={`text-xs font-bold block truncate ${item.val ? "text-text" : "text-text-muted italic"}`}>
-                                {item.val || "Not provided"}
+                                {item.key === "Date of Birth" && item.val ? (
+                                  (() => {
+                                    const parts = item.val.split("-");
+                                    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                                    return item.val;
+                                  })()
+                                ) : (item.val || "Not provided")}
                               </span>
                             </div>
                           </div>
@@ -997,7 +1012,20 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                                   <span>Copied</span>
                                 </span>
                               ) : (
-                                <span className="p-1.5 rounded-lg text-text-muted group-hover:text-primary group-hover:bg-primary/10 transition-all flex items-center gap-1 text-[11px] font-semibold">
+                                <span 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const copyVal = item.key === "Date of Birth" ? (
+                                      (() => {
+                                        const parts = item.val.split("-");
+                                        if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                                        return item.val;
+                                      })()
+                                    ) : item.val;
+                                    copyToClipboard(copyVal, item.key);
+                                  }}
+                                  className="p-1.5 rounded-lg text-text-muted group-hover:text-primary group-hover:bg-primary/10 transition-all flex items-center gap-1 text-[11px] font-semibold"
+                                >
                                   <Copy className="w-3.5 h-3.5" />
                                 </span>
                               )}
