@@ -557,95 +557,97 @@ export default function ResultPage({ params }: { params: Promise<{ resumeId: str
 
 
 
-      {/* STICKY BOTTOM CHECKOUT / PAYMENT CARD */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-surface/85 backdrop-blur-md border-t border-border p-4 shadow-xl">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-3.5">
-            <div className="text-left">
-              <div className="flex items-baseline space-x-1.5">
-                <span className="text-xl md:text-2xl font-black text-text">₹{price}</span>
-                <span className="text-xs text-text-muted line-through font-semibold">₹199</span>
-                <span className="text-[10px] bg-success/15 border border-success/30 px-1.5 py-0.5 rounded-md font-extrabold text-success uppercase">
+      {/* STICKY BOTTOM FLOATING FOOTER */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 p-3 md:p-4 pointer-events-none">
+        <div className="max-w-6xl mx-auto bg-surface/95 backdrop-blur-xl border border-border/80 shadow-2xl rounded-3xl p-3.5 md:p-4 pointer-events-auto transition-all">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-3 md:gap-4">
+            
+            {/* 1. Left Pricing Badge */}
+            <div className="flex items-center space-x-3 w-full lg:w-auto justify-between lg:justify-start border-b lg:border-b-0 border-border/40 pb-2.5 lg:pb-0">
+              <div className="flex items-baseline space-x-2">
+                <span className="text-2xl md:text-3xl font-black text-text tracking-tight">₹{price}</span>
+                <span className="text-xs text-text-muted line-through font-bold">₹199</span>
+                <span className="text-[10px] font-black bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider">
                   {Math.round(((199 - price) / 199) * 100)}% OFF
                 </span>
               </div>
-              <p className="text-[10px] text-text-muted font-bold mt-0.5 flex items-center space-x-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
-                <span>Instant payment via Razorpay. One-time fee.</span>
+              <p className="text-[10px] text-text-muted font-bold flex items-center space-x-1 hidden sm:flex">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>One-Time Instant Unlock</span>
               </p>
-             <div className="flex flex-col sm:flex-row-reverse items-center gap-3 w-full md:w-auto">
-            {/* Direct Razorpay Checkout Button */}
-            <button
-              onClick={handlePayment}
-              disabled={isProcessingPayment || isProcessingWallet}
-              className="px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-sm font-semibold rounded-full flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg disabled:opacity-50 w-full sm:w-auto cursor-pointer"
-            >
-              {isProcessingPayment ? (
-                <>
-                  <Loader2 className="w-4.5 h-4.5 animate-spin" />
-                  <span>Preparing Checkout...</span>
-                </>
-              ) : (
-                <>
-                  <span>Unlock via Razorpay (₹{price})</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
+            </div>
 
-            {/* Candidate Wallet Payment Option (If logged-in and balance is available) */}
-            {walletBalance !== null && walletBalance >= price && (
+            {/* 2. Middle Payment Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 w-full lg:w-auto">
+              {/* Candidate Wallet Payment Option (If balance is sufficient) */}
+              {walletBalance !== null && walletBalance >= price && (
+                <button
+                  onClick={handleWalletPayment}
+                  disabled={isProcessingPayment || isProcessingWallet}
+                  className="w-full sm:w-auto px-5 py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs md:text-sm font-extrabold rounded-2xl flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer border border-emerald-400/30 shrink-0"
+                >
+                  {isProcessingWallet ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Deducting Wallet...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Wallet className="w-4 h-4" />
+                      <span>Pay ₹{price} with Wallet (Bal: ₹{walletBalance})</span>
+                    </>
+                  )}
+                </button>
+              )}
+
+              {/* Direct Razorpay / Payment Link Unlock Button */}
               <button
-                onClick={handleWalletPayment}
+                onClick={handlePayment}
                 disabled={isProcessingPayment || isProcessingWallet}
-                className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-full flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg disabled:opacity-50 w-full sm:w-auto cursor-pointer border border-emerald-400/30"
+                className="w-full sm:w-auto px-6 py-3 bg-primary hover:bg-primary/90 text-white text-xs md:text-sm font-extrabold rounded-2xl flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer shrink-0"
               >
-                {isProcessingWallet ? (
+                {isProcessingPayment ? (
                   <>
-                    <Loader2 className="w-4.5 h-4.5 animate-spin" />
-                    <span>Deducting Wallet...</span>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Preparing Checkout...</span>
                   </>
                 ) : (
                   <>
-                    <Wallet className="w-4 h-4" />
-                    <span>Pay ₹{price} with Wallet (Bal: ₹{walletBalance})</span>
+                    <span>Unlock via Razorpay (₹{price})</span>
+                    <ArrowRight className="w-4 h-4" />
                   </>
                 )}
               </button>
-            )}
-          </div>
             </div>
-          </div>
 
-          <div className="flex flex-col sm:flex-row-reverse items-center gap-3 w-full md:w-auto">
-            {/* AI Verification Button (Renders on the left on desktop, bottom on mobile) */}
-            {isVerificationModalOpen ? (
-              <button 
-                onClick={() => {
-                  setVerificationModalOpen(false);
-                  router.replace(`/result/${resumeId}`, { scroll: false });
-                }}
-                className="px-5 py-3 sm:py-3.5 bg-surface border border-border hover:bg-border/60 text-text text-[11px] sm:text-xs font-bold rounded-full transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-xs group cursor-pointer"
-              >
-                <ArrowLeft className="w-4 h-4 text-text-muted group-hover:-translate-x-1 transition-transform shrink-0" />
-                <span>Back to ATS Score</span>
-              </button>
-            ) : (
-              <button 
-                onClick={() => {
-                  setVerificationModalOpen(true);
-                  router.replace(`/result/${resumeId}?verify=true`, { scroll: false });
-                }}
-                className="px-5 py-3 sm:py-3.5 bg-surface border border-border hover:bg-border/60 text-text text-[11px] sm:text-xs font-bold rounded-full transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-xs group cursor-pointer"
-              >
-                <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
-                <span>
-                  <span className="text-text-muted font-medium mr-1.5 hidden sm:inline">Don't trust the score?</span>
-                  <span className="text-text-muted font-medium mr-1.5 sm:hidden">Not sure?</span>
-                  <span className="underline underline-offset-2 decoration-border group-hover:decoration-text-muted">Verify with AI</span>
-                </span>
-              </button>
-            )}
+            {/* 3. Right AI Verification Toggle Pill */}
+            <div className="w-full lg:w-auto flex justify-end">
+              {isVerificationModalOpen ? (
+                <button
+                  onClick={() => {
+                    setVerificationModalOpen(false);
+                    router.replace(`/result/${resumeId}`, { scroll: false });
+                  }}
+                  className="w-full lg:w-auto px-4 py-2.5 bg-bg-base border border-border hover:border-primary/50 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4 text-text-muted group-hover:-translate-x-1 transition-transform shrink-0" />
+                  <span>Back to ATS Score</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setVerificationModalOpen(true);
+                    router.replace(`/result/${resumeId}?verify=true`, { scroll: false });
+                  }}
+                  className="w-full lg:w-auto px-4 py-2.5 bg-bg-base border border-border hover:border-primary/50 text-text text-xs font-bold rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-2xs group cursor-pointer"
+                >
+                  <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
+                  <span className="text-text-muted font-medium">Don't trust score?</span>
+                  <span className="font-extrabold text-primary underline underline-offset-2">Verify with AI</span>
+                </button>
+              )}
+            </div>
+
           </div>
         </div>
       </div>
