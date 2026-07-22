@@ -316,6 +316,13 @@ model MasterProfile {
   portfolio          String?
   noticePeriod       String?
 
+  leetcode           String?
+  codeforces         String?
+  codechef           String?
+  hackerrank         String?
+  gfg                String?
+  codingProfilesJson String   @default("[]")
+
   college            String?
   branch             String?
   cgpa               String?

@@ -82,6 +82,12 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const [portfolio, setPortfolio] = useState("");
   const [noticePeriod, setNoticePeriod] = useState("");
 
+  const [leetcode, setLeetcode] = useState("");
+  const [codeforces, setCodeforces] = useState("");
+  const [codechef, setCodechef] = useState("");
+  const [hackerrank, setHackerrank] = useState("");
+  const [gfg, setGfg] = useState("");
+
   const [college, setCollege] = useState("");
   const [branch, setBranch] = useState("");
   const [cgpa, setCgpa] = useState("");
@@ -134,6 +140,12 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         setLinkedin(p.linkedin || "");
         setPortfolio(p.portfolio || "");
         setNoticePeriod(p.noticePeriod || "Immediate / 15 Days");
+
+        setLeetcode(p.leetcode || "");
+        setCodeforces(p.codeforces || "");
+        setCodechef(p.codechef || "");
+        setHackerrank(p.hackerrank || "");
+        setGfg(p.gfg || "");
 
         setCollege(p.college || "");
         setBranch(p.branch || "");
@@ -246,6 +258,11 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           linkedin,
           portfolio,
           noticePeriod,
+          leetcode,
+          codeforces,
+          codechef,
+          hackerrank,
+          gfg,
           college,
           branch,
           cgpa,
@@ -295,6 +312,13 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
       github ? `GitHub: ${github}` : null,
       linkedin ? `LinkedIn: ${linkedin}` : null,
       noticePeriod ? `Notice Period: ${noticePeriod}` : null,
+      ``,
+      (leetcode || codeforces || codechef || hackerrank || gfg) ? `--- CODING & PROBLEM-SOLVING PROFILES ---` : null,
+      leetcode ? `LeetCode: ${leetcode}` : null,
+      codeforces ? `Codeforces: ${codeforces}` : null,
+      codechef ? `CodeChef: ${codechef}` : null,
+      hackerrank ? `HackerRank: ${hackerrank}` : null,
+      gfg ? `GeeksforGeeks: ${gfg}` : null,
       ``,
       college || branch || cgpa ? `--- ACADEMIC & BIO ---` : null,
       college ? `College: ${college}` : null,
@@ -607,6 +631,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
               {[
                 { id: "all", label: "All Sections", count: null },
                 { id: "personal", label: "Personal & Social", count: null },
+                { id: "coding", label: "Coding Profiles", count: [leetcode, codeforces, codechef, hackerrank, gfg].filter(Boolean).length },
                 { id: "academic", label: "Academics & Bio", count: null },
                 { id: "skills", label: "Skills Vault", count: skills.length },
                 { id: "certifications", label: "Certifications", count: certifications.length },
@@ -782,6 +807,149 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                         </div>
                       );
                     })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* SECTION: CODING & PROBLEM SOLVING PROFILES */}
+            {(categoryFilter === "all" || categoryFilter === "coding") && (
+              <div className="bg-surface border border-border/60 rounded-3xl p-6 space-y-6 shadow-xs">
+                <div className="border-b border-border/40 pb-3 flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500">
+                      <Code className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="font-serif font-bold text-lg text-text">Coding Profiles & Competitive Programming</h2>
+                      <p className="text-xs text-text-muted font-medium">Platform handles, competitive programming ratings, and coding profiles</p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+                    {[leetcode, codeforces, codechef, hackerrank, gfg].filter(Boolean).length} Active Profiles
+                  </span>
+                </div>
+
+                {viewMode === "edit" ? (
+                  /* EDIT MODE */
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center space-x-1">
+                        <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                        <span>LeetCode Profile / Username</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={leetcode}
+                        onChange={(e) => setLeetcode(e.target.value)}
+                        placeholder="leetcode.com/u/username"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center space-x-1">
+                        <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                        <span>Codeforces Profile / Username</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={codeforces}
+                        onChange={(e) => setCodeforces(e.target.value)}
+                        placeholder="codeforces.com/profile/username"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center space-x-1">
+                        <span className="w-2 h-2 rounded-full bg-amber-700"></span>
+                        <span>CodeChef Profile / Username</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={codechef}
+                        onChange={(e) => setCodechef(e.target.value)}
+                        placeholder="codechef.com/users/username"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center space-x-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span>HackerRank Profile / Username</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={hackerrank}
+                        onChange={(e) => setHackerrank(e.target.value)}
+                        placeholder="hackerrank.com/username"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div className="space-y-1 sm:col-span-2 md:col-span-1">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center space-x-1">
+                        <span className="w-2 h-2 rounded-full bg-green-600"></span>
+                        <span>GeeksforGeeks Profile / Username</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={gfg}
+                        onChange={(e) => setGfg(e.target.value)}
+                        placeholder="geeksforgeeks.org/user/username"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  /* READ / COPY MODE */
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+                    {[
+                      { key: "LeetCode", val: leetcode, platform: "LeetCode", color: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" },
+                      { key: "Codeforces", val: codeforces, platform: "Codeforces", color: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" },
+                      { key: "CodeChef", val: codechef, platform: "CodeChef", color: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20" },
+                      { key: "HackerRank", val: hackerrank, platform: "HackerRank", color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" },
+                      { key: "GeeksforGeeks", val: gfg, platform: "GeeksforGeeks", color: "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20" },
+                    ].filter(item => matchesSearch(item.key) || matchesSearch(item.val) || matchesSearch(item.platform)).map((item, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => item.val && copyToClipboard(item.val, item.key)}
+                        className={`p-3.5 md:p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between group relative ${
+                          item.val
+                            ? "bg-bg-base border-border/80 hover:border-primary/50 hover:shadow-sm"
+                            : "bg-bg-base/40 border-border/30 opacity-60 hover:opacity-100"
+                        }`}
+                      >
+                        <div className="flex items-center space-x-3 min-w-0 pr-2 flex-1">
+                          <div className={`p-2.5 rounded-xl border shrink-0 font-extrabold text-xs ${item.color}`}>
+                            <Code className="w-4 h-4" />
+                          </div>
+                          <div className="space-y-0.5 min-w-0 flex-1">
+                            <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{item.platform}</span>
+                            <span className={`text-xs font-bold block truncate ${item.val ? "text-text" : "text-text-muted italic"}`}>
+                              {item.val || "Not provided"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {item.val && (
+                          <div className="shrink-0 pl-1 flex items-center space-x-1">
+                            {copiedKey === item.key ? (
+                              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-md flex items-center space-x-1">
+                                <Check className="w-3 h-3" />
+                                <span>Copied</span>
+                              </span>
+                            ) : (
+                              <span className="p-1.5 rounded-lg text-text-muted group-hover:text-primary group-hover:bg-primary/10 transition-all flex items-center gap-1 text-[11px] font-semibold">
+                                <Copy className="w-3.5 h-3.5" />
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
