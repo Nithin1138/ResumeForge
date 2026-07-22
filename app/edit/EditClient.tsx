@@ -723,120 +723,40 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                     Begin with an empty template canvas and fill in your details section by section.
                   </p>
                 </div>
-                <button type="button" className="w-full py-2.5 bg-primary/10 group-hover:bg-primary text-primary group-hover:text-white rounded-xl text-xs font-bold transition-all">
+                <button type="button" className="w-full py-2.5 bg-primary/10 group-hover:bg-primary text-primary group-hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer">
                   Create Blank Resume
                 </button>
               </div>
 
-              {/* Option B: Edit Saved Resume (with direct list & actions inside card) */}
-              <div className="bg-surface border-2 border-border/80 rounded-3xl p-6 space-y-4 flex flex-col justify-between">
+              {/* Option B: Edit Saved Resume */}
+              <div className="group bg-surface border-2 border-border/80 hover:border-emerald-500/80 rounded-3xl p-6 space-y-4 flex flex-col justify-between transition-all hover:shadow-md">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                       <FileText className="w-6 h-6" />
                     </div>
-                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                      {resumesList.length} Saved
+                    <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                      {resumesList.length} Available
                     </span>
                   </div>
                   <h3 className="text-lg font-bold text-text">Edit Saved Resume</h3>
                   <p className="text-xs text-text-muted">
-                    Select one of your previously saved ATS resumes to edit.
+                    Select one of your previously saved ATS resumes to edit section by section.
                   </p>
-
-                  {/* List of saved files directly inside Card 2 */}
-                  {resumesList.length === 0 ? (
-                    <p className="text-[11px] text-text-muted italic pt-2">No saved resumes found yet.</p>
-                  ) : (
-                    <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1 pt-1">
-                      {resumesList.map((item) => (
-                        <div
-                          key={item.id}
-                          className="p-2.5 rounded-2xl bg-bg-base border border-border hover:border-emerald-500/50 space-y-1.5 transition-all"
-                        >
-                          <div className="flex items-center justify-between">
-                            {editingResumeId === item.id ? (
-                              <form onSubmit={(e) => handleRenameSubmit(e, item)} className="flex items-center space-x-1.5 w-full pr-1">
-                                <input
-                                  type="text"
-                                  autoFocus
-                                  value={editingNameValue}
-                                  onChange={(e) => setEditingNameValue(e.target.value)}
-                                  className="px-2 py-0.5 rounded-lg bg-surface border border-emerald-500 text-[11px] font-bold text-text w-full focus:outline-none"
-                                />
-                                <button type="submit" className="px-2 py-0.5 rounded-md bg-emerald-600 text-white text-[10px] font-bold">
-                                  Save
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setEditingResumeId(null)}
-                                  className="text-text-muted text-[10px] p-0.5"
-                                >
-                                  X
-                                </button>
-                              </form>
-                            ) : (
-                              <div className="flex items-center space-x-1.5 truncate">
-                                <span className="font-bold text-xs text-text truncate">
-                                  {item.resumeName || item.targetRole || "Saved Resume"}
-                                </span>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setEditingResumeId(item.id);
-                                    setEditingNameValue(item.resumeName || item.targetRole || "Resume");
-                                  }}
-                                  className="text-text-muted hover:text-emerald-600 p-0.5 cursor-pointer"
-                                  title="Rename resume"
-                                >
-                                  <Edit3 className="w-3 h-3" />
-                                </button>
-                              </div>
-                            )}
-
-                            <div className="flex items-center space-x-1 shrink-0">
-                              <button
-                                type="button"
-                                onClick={() => handleSelectSavedResume(item)}
-                                className="px-2.5 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-2xs transition-all cursor-pointer"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                type="button"
-                                onClick={(e) => handleDeleteResume(e, item.id)}
-                                className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer"
-                                title="Delete resume"
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Created & Updated Timestamps */}
-                          <div className="flex items-center space-x-2 text-[9px] text-text-muted font-medium pt-0.5">
-                            <span className="truncate">Created: {formatDateTime(item.createdAt)}</span>
-                            {item.updatedAt && <span className="truncate">• Updated: {formatDateTime(item.updatedAt)}</span>}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
 
-                {resumesList.length > 3 && (
-                  <button
-                    type="button"
-                    onClick={() => setIsSavedModalOpen(true)}
-                    className="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-600 hover:text-white rounded-xl text-xs font-bold transition-all text-center cursor-pointer"
-                  >
-                    View All {resumesList.length} Saved Resumes
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => setIsSavedModalOpen(true)}
+                  className="w-full py-2.5 bg-emerald-500/10 hover:bg-emerald-600 text-emerald-600 hover:text-white rounded-xl text-xs font-bold transition-all text-center cursor-pointer flex items-center justify-center space-x-2 shadow-2xs group-hover:shadow-md"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>Select Saved Resume ({resumesList.length})</span>
+                </button>
               </div>
 
               {/* Option C: Upload & Parse */}
-              <label className="group bg-surface border-2 border-dashed border-border/80 hover:border-sky-500/60 rounded-3xl p-6 space-y-4 cursor-pointer transition-all hover:shadow-md flex flex-col justify-between relative">
+              <label className="group bg-surface border-2 border-dashed border-border/80 hover:border-sky-500/80 rounded-3xl p-6 space-y-4 cursor-pointer transition-all hover:shadow-md flex flex-col justify-between relative">
                 <input
                   type="file"
                   accept=".pdf,.docx,.doc"
@@ -862,6 +782,151 @@ export default function EditClient({ savedResumes }: { savedResumes: SavedResume
                   {isParsing ? "Parsing Resume..." : "Choose File to Upload"}
                 </div>
               </label>
+            </div>
+
+            {/* =========================================================================
+                SECTION BELOW 3 GRIDS: DRAFTED & SAVED EDITING FILES COLLECTION
+                ========================================================================= */}
+            <div className="pt-6 border-t border-border/40 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-xl font-serif font-bold text-text flex items-center space-x-2">
+                    <FileText className="w-5 h-5 text-emerald-500" />
+                    <span>Drafted & Saved Resume Files</span>
+                  </h2>
+                  <p className="text-xs text-text-muted">
+                    Manage, rename, delete, or load any of your saved resume drafts directly into the interactive editor workspace.
+                  </p>
+                </div>
+
+                {resumesList.length > 0 && (
+                  <span className="text-xs font-bold text-text-muted bg-surface border border-border px-3 py-1 rounded-full self-start sm:self-auto">
+                    Total: {resumesList.length} files
+                  </span>
+                )}
+              </div>
+
+              {loadingResumes ? (
+                <div className="py-12 bg-surface/50 border border-border rounded-3xl text-center space-y-2">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto" />
+                  <p className="text-xs text-text-muted font-medium">Loading saved resume files...</p>
+                </div>
+              ) : resumesList.length === 0 ? (
+                <div className="py-12 bg-surface/50 border border-dashed border-border/80 rounded-3xl text-center space-y-3 p-6">
+                  <FileText className="w-10 h-10 text-text-muted/40 mx-auto" />
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-bold text-text">No saved resumes found</h3>
+                    <p className="text-xs text-text-muted max-w-sm mx-auto">
+                      Create a blank resume, upload a PDF/Word file, or save a resume from the Builder to see it listed here.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleStartBlank}
+                    className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-bold inline-flex items-center space-x-1.5 shadow-2xs hover:bg-primary/90 transition-all cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Start New Blank Draft</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {resumesList.map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-surface border border-border hover:border-emerald-500/50 rounded-2xl p-4 space-y-3 transition-all hover:shadow-md flex flex-col justify-between group"
+                    >
+                      <div className="space-y-2">
+                        {/* Title & Rename Header */}
+                        <div className="flex items-start justify-between gap-2">
+                          {editingResumeId === item.id ? (
+                            <form onSubmit={(e) => handleRenameSubmit(e, item)} className="flex items-center space-x-1.5 w-full">
+                              <input
+                                type="text"
+                                autoFocus
+                                value={editingNameValue}
+                                onChange={(e) => setEditingNameValue(e.target.value)}
+                                className="px-2.5 py-1 rounded-lg bg-bg-base border border-emerald-500 text-xs font-bold text-text w-full focus:outline-none"
+                              />
+                              <button type="submit" className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold shrink-0 cursor-pointer">
+                                Save
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingResumeId(null)}
+                                className="text-text-muted hover:text-text text-xs p-1 cursor-pointer"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </form>
+                          ) : (
+                            <div className="flex items-center space-x-2 truncate">
+                              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+                                <FileText className="w-4 h-4" />
+                              </div>
+                              <div className="truncate">
+                                <h3 className="text-sm font-bold text-text truncate group-hover:text-emerald-600 transition-colors">
+                                  {item.resumeName || item.targetRole || "Saved Resume"}
+                                </h3>
+                                <p className="text-[10px] text-text-muted truncate">
+                                  {item.targetRole || "Interactive Canvas Draft"}
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingResumeId(item.id);
+                                  setEditingNameValue(item.resumeName || item.targetRole || "Resume");
+                                }}
+                                className="text-text-muted hover:text-emerald-600 p-1 cursor-pointer opacity-60 hover:opacity-100 transition-opacity"
+                                title="Rename file"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          )}
+
+                          {editingResumeId !== item.id && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleDeleteResume(e, item.id)}
+                              className="p-1.5 text-text-muted hover:text-rose-600 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer shrink-0"
+                              title="Delete file"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Created & Updated Timestamps */}
+                        <div className="bg-bg-base/60 rounded-xl p-2.5 space-y-1 border border-border/40 text-[11px] text-text-muted font-medium">
+                          <div className="flex items-center space-x-1.5 text-emerald-600 dark:text-emerald-400">
+                            <Calendar className="w-3.5 h-3.5 shrink-0" />
+                            <span>Created: {formatDateTime(item.createdAt)}</span>
+                          </div>
+                          {item.updatedAt && (
+                            <div className="flex items-center space-x-1.5 text-sky-600 dark:text-sky-400">
+                              <Clock className="w-3.5 h-3.5 shrink-0" />
+                              <span>Updated: {formatDateTime(item.updatedAt)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Select / Edit Action Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleSelectSavedResume(item)}
+                        className="w-full py-2 px-3 rounded-xl bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs font-bold transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span>Edit Resume Canvas</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ) : (

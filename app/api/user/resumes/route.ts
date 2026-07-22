@@ -41,12 +41,16 @@ export async function GET(req: NextRequest) {
 
       return {
         id: resume.id,
+        resumeName: resume.resumeName || null,
         targetRole: resume.targetRole || "Software Developer",
+        branch: resume.branch || null,
         cgpa: resume.cgpa || "N/A",
         college: resume.college || "N/A",
         createdAt: resume.createdAt,
+        updatedAt: resume.updatedAt,
         paymentStatus: resume.paymentStatus,
         status: resume.status,
+        inputData: resume.inputData,
         atsScore,
       };
     });
