@@ -656,54 +656,33 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
   }
 
   return (
-    <div className="border-t border-border/30 pt-5 mt-4 space-y-4">
-      <div className="flex items-center justify-between pb-1">
+    <div className="border-t border-border/30 pt-4 mt-4 space-y-3">
+      <div className="flex items-center justify-between pb-0.5">
         <div className="flex items-center space-x-2">
           <Pin className="w-4 h-4 text-amber-500 fill-amber-500" />
           <h3 className="text-xs font-bold text-text-muted tracking-wider uppercase">
             Pinned Vault Cards ({totalCardsCount})
           </h3>
         </div>
-        <span className="text-[10px] text-text-muted font-semibold flex items-center gap-1 bg-bg-base/60 border border-border/60 px-2.5 py-1 rounded-full">
-          <GripVertical className="w-3 h-3 text-amber-500" />
-          <span>Drag custom cards to reorder</span>
-        </span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
-        {/* LEFT COLUMN: Up to 2 Custom Detail Cards (Stacked, Total Height = Right Card) */}
-        <div className="flex flex-col gap-4 justify-between">
-          {customItems.map(({ id, index, item }) => {
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+        {/* LEFT COLUMN: Up to 2 Compact Custom Detail Cards */}
+        <div className="space-y-3">
+          {customItems.map(({ id, item }) => {
             const SecIcon = item.icon;
-            const isDragging = draggedIndex === index;
-            const isOver = dragOverIndex === index;
 
             return (
               <div 
                 key={id} 
-                draggable
-                onDragStart={(e) => handleDragStart(e, index)}
-                onDragOver={(e) => handleDragOver(e, index)}
-                onDrop={(e) => handleDrop(e, index)}
-                onDragEnd={handleDragEnd}
-                className={`bg-surface border rounded-2xl p-4 md:p-5 space-y-3 relative group/card cursor-grab active:cursor-grabbing transition-all duration-200 flex-1 flex flex-col justify-between ${
-                  isDragging ? "opacity-30 scale-95 border-amber-500/50" : ""
-                } ${
-                  isOver && !isDragging ? "border-amber-500 border-2 scale-[1.01] shadow-md bg-amber-500/5" : "border-border/80 hover:shadow-md hover:border-border"
-                }`}
+                className="bg-surface border border-border/80 rounded-2xl p-3.5 space-y-2.5 shadow-xs relative hover:shadow-md hover:border-border transition-all"
               >
-                <div className="flex items-center justify-between border-b border-border/30 pb-2.5">
-                  <div className="flex items-center space-x-2.5">
-                    <div 
-                      className="p-1 rounded text-text-muted group-hover/card:text-amber-500 cursor-grab active:cursor-grabbing hover:bg-amber-500/10 transition-colors"
-                      title="Drag card"
-                    >
-                      <GripVertical className="w-4 h-4" />
+                <div className="flex items-center justify-between border-b border-border/30 pb-2">
+                  <div className="flex items-center space-x-2">
+                    <div className={`p-1.5 rounded-lg border ${item.color}`}>
+                      <SecIcon className="w-3.5 h-3.5" />
                     </div>
-                    <div className={`p-2 rounded-xl border ${item.color}`}>
-                      <SecIcon className="w-4 h-4" />
-                    </div>
-                    <h4 className="font-serif font-bold text-[15px] text-text">{item.title}</h4>
+                    <h4 className="font-serif font-bold text-sm text-text">{item.title}</h4>
                   </div>
 
                   <button
@@ -715,7 +694,7 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
                   </button>
                 </div>
 
-                <div className="mt-1 flex-1 flex flex-col justify-center">
+                <div>
                   {item.content}
                 </div>
               </div>
@@ -723,8 +702,8 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
           })}
 
           {customItems.length === 0 && (
-            <div className="border border-dashed border-border/60 rounded-2xl p-6 text-center text-text-muted text-xs flex flex-col items-center justify-center space-y-1 h-full min-h-[160px]">
-              <Tag className="w-5 h-5 text-text-muted/60 mb-1" />
+            <div className="border border-dashed border-border/60 rounded-2xl p-4 text-center text-text-muted text-xs flex flex-col items-center justify-center space-y-1">
+              <Tag className="w-4 h-4 text-text-muted/60 mb-0.5" />
               <p className="font-bold text-text-muted">No Custom Card Pinned</p>
               <p className="text-[11px]">Pin up to 2 custom detail cards in My Space</p>
             </div>
@@ -732,29 +711,14 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
         </div>
 
         {/* RIGHT COLUMN: 1 Big Profile Section Card */}
-        <div className="flex flex-col h-full">
+        <div>
           {sectionCardItem ? (
             <div 
               key={sectionCardItem.id} 
-              draggable
-              onDragStart={(e) => handleDragStart(e, sectionCardItem.index)}
-              onDragOver={(e) => handleDragOver(e, sectionCardItem.index)}
-              onDrop={(e) => handleDrop(e, sectionCardItem.index)}
-              onDragEnd={handleDragEnd}
-              className={`bg-surface border rounded-2xl p-4 md:p-5 space-y-4 relative group/card cursor-grab active:cursor-grabbing transition-all duration-200 h-full flex flex-col justify-between ${
-                draggedIndex === sectionCardItem.index ? "opacity-30 scale-95 border-amber-500/50" : ""
-              } ${
-                dragOverIndex === sectionCardItem.index && draggedIndex !== sectionCardItem.index ? "border-amber-500 border-2 scale-[1.01] shadow-md bg-amber-500/5" : "border-border/80 hover:shadow-md hover:border-border"
-              }`}
+              className="bg-surface border border-border/80 rounded-2xl p-4 md:p-5 space-y-4 relative shadow-xs hover:shadow-md hover:border-border transition-all"
             >
               <div className="flex items-center justify-between border-b border-border/30 pb-3">
                 <div className="flex items-center space-x-2.5">
-                  <div 
-                    className="p-1 rounded text-text-muted group-hover/card:text-amber-500 cursor-grab active:cursor-grabbing hover:bg-amber-500/10 transition-colors"
-                    title="Drag card"
-                  >
-                    <GripVertical className="w-4 h-4" />
-                  </div>
                   <div className={`p-2 rounded-xl border ${sectionCardItem.item.color}`}>
                     {React.createElement(sectionCardItem.item.icon as React.ElementType, { className: "w-4 h-4" })}
                   </div>
@@ -770,12 +734,12 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
                 </button>
               </div>
 
-              <div className="mt-2 flex-1">
+              <div>
                 {sectionCardItem.item.content}
               </div>
             </div>
           ) : (
-            <div className="border border-dashed border-border/60 rounded-2xl p-6 text-center text-text-muted text-xs flex flex-col items-center justify-center space-y-1 h-full min-h-[220px]">
+            <div className="border border-dashed border-border/60 rounded-2xl p-6 text-center text-text-muted text-xs flex flex-col items-center justify-center space-y-1">
               <User className="w-5 h-5 text-text-muted/60 mb-1" />
               <p className="font-bold text-text-muted">No Section Card Pinned</p>
               <p className="text-[11px]">Pin a profile section (e.g. Personal Details) in My Space</p>
