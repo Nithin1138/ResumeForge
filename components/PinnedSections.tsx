@@ -29,6 +29,8 @@ interface PinnedSectionsProps {
 
 export default function PinnedSections({ profile }: PinnedSectionsProps) {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   let initialPinned: string[] = [];
   try {
@@ -43,6 +45,38 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
       setPinnedIds(Array.isArray(updated) ? updated : []);
     } catch {}
   }, [profile?.pinnedSectionsJson]);
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", index.toString());
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (dragOverIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) return;
+
+    const newOrder = [...expandedPinnedIds];
+    const [movedItem] = newOrder.splice(draggedIndex, 1);
+    newOrder.splice(dropIndex, 0, movedItem);
+
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    savePinnedOrder(newOrder);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
 
   if (!profile) return null;
 
@@ -610,26 +644,34 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
         </span>
       </div>
 
-      <Reorder.Group 
-        axis="y" 
-        values={expandedPinnedIds} 
-        onReorder={savePinnedOrder} 
-        className="grid grid-cols-1 lg:grid-cols-2 gap-4"
-      >
-        {expandedPinnedIds.map((id) => {
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {expandedPinnedIds.map((id, index) => {
           const item = getSectionContent(id);
           if (!item) return null;
           const SecIcon = item.icon;
+          const isDragging = draggedIndex === index;
+          const isOver = dragOverIndex === index;
 
           return (
-            <Reorder.Item 
+            <div 
               key={id} 
-              value={id} 
-              className="bg-surface border border-border/80 rounded-2xl p-5 space-y-4 shadow-xs relative group/card cursor-grab active:cursor-grabbing transition-shadow hover:shadow-md"
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={(e) => handleDrop(e, index)}
+              onDragEnd={handleDragEnd}
+              className={`bg-surface border rounded-2xl p-5 space-y-4 relative group/card cursor-grab active:cursor-grabbing transition-all duration-200 ${
+                isDragging ? "opacity-30 scale-95 border-amber-500/50" : ""
+              } ${
+                isOver && !isDragging ? "border-amber-500 border-2 scale-[1.01] shadow-md bg-amber-500/5" : "border-border/80 hover:shadow-md hover:border-border"
+              }`}
             >
               <div className="flex items-center justify-between border-b border-border/30 pb-3">
                 <div className="flex items-center space-x-2.5">
-                  <div className="p-1 rounded text-text-muted group-hover/card:text-text cursor-grab active:cursor-grabbing">
+                  <div 
+                    className="p-1 rounded text-text-muted group-hover/card:text-amber-500 cursor-grab active:cursor-grabbing hover:bg-amber-500/10 transition-colors"
+                    title="Drag card anywhere"
+                  >
                     <GripVertical className="w-4 h-4" />
                   </div>
                   <div className={`p-2 rounded-xl border ${item.color}`}>
@@ -650,10 +692,10 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
               <div className="mt-2">
                 {item.content}
               </div>
-            </Reorder.Item>
+            </div>
           );
         })}
-      </Reorder.Group>
+      </div>
     </div>
   );
 }

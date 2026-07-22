@@ -597,11 +597,28 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const togglePinSection = async (sectionId: string, altSectionId?: string) => {
     const isPinned = pinnedSections.includes(sectionId) || (altSectionId && pinnedSections.includes(altSectionId));
     let updated: string[];
+
     if (isPinned) {
+      // Unpinning
       updated = pinnedSections.filter(id => id !== sectionId && id !== altSectionId && id !== "custom-field-undefined");
     } else {
-      updated = [...pinnedSections.filter(id => id !== "custom-field-undefined"), sectionId];
+      // Pinning new card
+      const isCustom = sectionId.startsWith("custom-field-") || sectionId === "custom";
+      const currentNormal = pinnedSections.filter(id => !id.startsWith("custom-field-") && id !== "custom" && id !== "custom-field-undefined");
+      const currentCustom = pinnedSections.filter(id => (id.startsWith("custom-field-") || id === "custom") && id !== "custom-field-undefined");
+
+      if (isCustom) {
+        if (currentCustom.length >= 2) {
+          alert("You can pin a maximum of 2 custom cards to your dashboard. Please unpin an existing custom card first.");
+          return;
+        }
+        updated = [...pinnedSections.filter(id => id !== "custom-field-undefined"), sectionId];
+      } else {
+        // Normal section pin: limit to 1 (replace any existing normal section pin)
+        updated = [sectionId, ...currentCustom];
+      }
     }
+
     setPinnedSections(updated);
 
     try {
