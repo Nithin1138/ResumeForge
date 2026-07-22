@@ -128,7 +128,17 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
   try { achievements = JSON.parse(profile.achievementsJson || "[]"); } catch {}
   try { projects = JSON.parse(profile.projectsJson || "[]"); } catch {}
   try { experiences = JSON.parse(profile.experiencesJson || "[]"); } catch {}
-  try { customFields = JSON.parse(profile.customFieldsJson || "[]"); } catch {}
+  try { 
+    const rawCF = JSON.parse(profile.customFieldsJson || "[]");
+    if (Array.isArray(rawCF)) {
+      customFields = rawCF.map((item: any, idx: number) => ({
+        id: item.id ? item.id.toString() : idx.toString(),
+        key: item.key || item.name || "Custom Detail",
+        value: item.value || item.val || "",
+        ...(item.link ? { link: item.link } : {})
+      }));
+    }
+  } catch {}
 
   const getSectionContent = (id: string) => {
     if (id === "personal") {
@@ -441,7 +451,12 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
     // Individual Custom Field Card: custom-field-${id}
     if (id.startsWith("custom-field-")) {
       const fieldId = id.replace("custom-field-", "");
-      const cf = customFields.find(f => f.id === fieldId || f.id?.toString() === fieldId);
+      const cf = customFields.find((f, idx) => 
+        f.id === fieldId || 
+        f.id?.toString() === fieldId || 
+        idx.toString() === fieldId ||
+        f.key?.toLowerCase() === fieldId.toLowerCase()
+      );
       if (!cf) return null;
 
       const hasLink = cf.link || cf.value?.startsWith("http://") || cf.value?.startsWith("https://") || cf.value?.includes("github.com") || cf.value?.includes("linkedin.com");
@@ -531,7 +546,24 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
     return null;
   };
 
-  const validPinned = pinnedIds.map(id => ({ id, data: getSectionContent(id) })).filter(item => item.data !== null);
+  // Expand "custom" to individual custom field IDs if stored as generic "custom"
+  let expandedPinnedIds: string[] = [];
+  pinnedIds.forEach(id => {
+    if (id === "custom") {
+      customFields.forEach(cf => {
+        const itemKey = `custom-field-${cf.id}`;
+        if (!expandedPinnedIds.includes(itemKey)) {
+          expandedPinnedIds.push(itemKey);
+        }
+      });
+    } else {
+      if (!expandedPinnedIds.includes(id)) {
+        expandedPinnedIds.push(id);
+      }
+    }
+  });
+
+  const validPinned = expandedPinnedIds.map(id => ({ id, data: getSectionContent(id) })).filter(item => item.data !== null);
 
   if (validPinned.length === 0) {
     return (
@@ -574,11 +606,11 @@ export default function PinnedSections({ profile }: PinnedSectionsProps) {
 
       <Reorder.Group 
         axis="y" 
-        values={pinnedIds} 
+        values={expandedPinnedIds} 
         onReorder={savePinnedOrder} 
         className="grid grid-cols-1 lg:grid-cols-2 gap-4"
       >
-        {pinnedIds.map((id) => {
+        {expandedPinnedIds.map((id) => {
           const item = getSectionContent(id);
           if (!item) return null;
           const SecIcon = item.icon;

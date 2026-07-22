@@ -353,6 +353,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
               id: item.id || idx.toString(),
               key: item.key || item.name || "Custom Detail",
               value: item.value || item.val || "",
+              ...(item.link ? { link: item.link } : {})
             })));
           } else {
             setCustomFields([]);
