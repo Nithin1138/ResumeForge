@@ -33,7 +33,8 @@ import {
   Phone,
   MapPin,
   CheckCircle2,
-  Layers
+  Layers,
+  Menu
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -68,6 +69,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const [viewMode, setViewMode] = useState<"view" | "edit">("view");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [isNavCollapsed, setIsNavCollapsed] = useState<boolean>(false);
 
   // Profile Form States
   const [loading, setLoading] = useState(true);
@@ -684,11 +686,24 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* LEFT SIDEBAR NAVIGATION RAIL */}
-          <div className="lg:col-span-4 xl:col-span-3 space-y-3 sticky top-6">
+          <div className={`${isNavCollapsed ? "lg:col-span-2 xl:col-span-1" : "lg:col-span-4 xl:col-span-3"} space-y-3 sticky top-6 transition-all duration-300`}>
             <div className="bg-surface border border-border/80 rounded-3xl p-3 shadow-xs space-y-1">
-              <p className="text-[10px] font-black uppercase text-text-muted tracking-wider px-3 py-2">
-                Candidate Vault Menu
-              </p>
+              
+              {/* Menu Header with 3-Lines Toggle Button */}
+              <div className={`px-2 py-2 flex items-center justify-between border-b border-border/40 mb-1 ${isNavCollapsed ? "flex-col gap-2 justify-center" : ""}`}>
+                {!isNavCollapsed && (
+                  <p className="text-[10px] font-black uppercase text-text-muted tracking-wider truncate">
+                    Vault Menu
+                  </p>
+                )}
+                <button
+                  onClick={() => setIsNavCollapsed(!isNavCollapsed)}
+                  className="p-1.5 rounded-xl border border-border/70 bg-bg-base/80 text-text-muted hover:text-primary hover:border-primary/40 transition-all cursor-pointer shadow-2xs"
+                  title={isNavCollapsed ? "Expand Vault Menu (Open)" : "Collapse Vault Menu (Show Icons Only)"}
+                >
+                  <Menu className="w-3.5 h-3.5" />
+                </button>
+              </div>
 
               {navCategories.map((nav) => {
                 const IconComp = nav.icon;
@@ -704,7 +719,10 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                         setCategoryFilter(nav.id);
                       }
                     }}
-                    className={`w-full text-left px-3.5 py-3 rounded-2xl text-xs font-extrabold flex items-center justify-between transition-all relative z-10 cursor-pointer ${
+                    title={isNavCollapsed ? nav.label : undefined}
+                    className={`w-full rounded-2xl text-xs font-extrabold flex items-center transition-all relative z-10 cursor-pointer ${
+                      isNavCollapsed ? "justify-center p-3" : "justify-between px-3.5 py-3 text-left"
+                    } ${
                       isSelected ? "text-white shadow-sm" : "text-text-muted hover:text-text hover:bg-bg-base/60"
                     }`}
                   >
@@ -715,11 +733,11 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                         transition={{ type: "spring", stiffness: 450, damping: 30 }}
                       />
                     )}
-                    <div className="flex items-center space-x-3 min-w-0">
+                    <div className={`flex items-center ${isNavCollapsed ? "justify-center" : "space-x-3 min-w-0"}`}>
                       <IconComp className={`w-4 h-4 shrink-0 ${isSelected ? "text-white" : "text-primary"}`} />
-                      <span className="truncate">{nav.label}</span>
+                      {!isNavCollapsed && <span className="truncate">{nav.label}</span>}
                     </div>
-                    {typeof nav.count === "number" && nav.count > 0 && (
+                    {!isNavCollapsed && typeof nav.count === "number" && nav.count > 0 && (
                       <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ml-1 ${
                         isSelected ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
                       }`}>
@@ -733,7 +751,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           </div>
 
           {/* RIGHT MAIN WORKSPACE CONTENT AREA */}
-          <div className="lg:col-span-8 xl:col-span-9 space-y-8">
+          <div className={`${isNavCollapsed ? "lg:col-span-10 xl:col-span-11" : "lg:col-span-8 xl:col-span-9"} space-y-8 transition-all duration-300`}>
 
             {/* TAB 1: MASTER PROFILE VAULT */}
             {activeTab === "profile" && (
