@@ -127,7 +127,7 @@ export function ViewCoverLetterOutputButton({ letter }: { letter: any }) {
   );
 }
 
-export function EditCoverLetterButton({ letter }: { letter: any }) {
+export function EditCoverLetterButton({ letter, variant = "icon" }: { letter: any, variant?: "icon" | "pill" }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const initialData = {
@@ -143,13 +143,23 @@ export function EditCoverLetterButton({ letter }: { letter: any }) {
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="p-2.5 text-text-muted hover:text-primary border border-border bg-bg-base/30 rounded-full transition-colors cursor-pointer shrink-0"
-        title="Edit Cover Letter"
-      >
-        <Edit2 className="w-4 h-4" />
-      </button>
+      {variant === "pill" ? (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="px-3 py-1 rounded-full text-xs font-semibold border border-border bg-bg-base/40 text-text-muted hover:text-primary hover:border-primary/40 transition-all flex items-center space-x-1.5 cursor-pointer"
+        >
+          <Edit2 className="w-3 h-3" />
+          <span>Update</span>
+        </button>
+      ) : (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="p-2.5 text-text-muted hover:text-primary border border-border bg-bg-base/30 rounded-full transition-colors cursor-pointer shrink-0"
+          title="Edit Cover Letter"
+        >
+          <Edit2 className="w-4 h-4" />
+        </button>
+      )}
 
       <CoverLetterModal
         isOpen={isOpen}

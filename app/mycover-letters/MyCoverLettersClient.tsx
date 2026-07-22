@@ -17,7 +17,7 @@ import AppLayout from "@/components/AppLayout";
 import TagSelector from "@/components/TagSelector";
 import CreateTagButton from "@/components/CreateTagButton";
 import { CustomTag, getCustomTags } from "@/lib/userTags";
-import { DeleteCoverLetterButton, ViewCoverLetterOutputButton, CoverLetterButton } from "@/components/DashboardActions";
+import { DeleteCoverLetterButton, ViewCoverLetterOutputButton, EditCoverLetterButton, CoverLetterButton } from "@/components/DashboardActions";
 
 export interface CoverLetterItem {
   id: string;
@@ -192,7 +192,7 @@ export default function MyCoverLettersClient({ initialLetters }: { initialLetter
                       : "border-border"
                   }`}
                 >
-                  {/* Top Bar: Date & + Tag Selector Button */}
+                  {/* Top Bar: Date & Update + Tag Selector Button */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2 text-xs font-semibold text-text-muted">
                       <Calendar className="w-3.5 h-3.5" />
@@ -205,11 +205,14 @@ export default function MyCoverLettersClient({ initialLetters }: { initialLetter
                       </span>
                     </div>
 
-                    <TagSelector
-                      currentTag={letter.categoryTag}
-                      onSelectTag={async (newTag) => handleUpdateCategory(letter.id, newTag || "")}
-                      onTagsChanged={handleTagsChanged}
-                    />
+                    <div className="flex items-center space-x-2">
+                      <EditCoverLetterButton letter={letter} variant="pill" />
+                      <TagSelector
+                        currentTag={letter.categoryTag}
+                        onSelectTag={async (newTag) => handleUpdateCategory(letter.id, newTag || "")}
+                        onTagsChanged={handleTagsChanged}
+                      />
+                    </div>
                   </div>
 
                   {/* Company & Role */}
@@ -225,7 +228,10 @@ export default function MyCoverLettersClient({ initialLetters }: { initialLetter
 
                   {/* Actions Row */}
                   <div className="pt-2 border-t border-border/40 flex items-center justify-between gap-3">
-                    <DeleteCoverLetterButton id={letter.id} />
+                    <div className="flex items-center space-x-2">
+                      <DeleteCoverLetterButton id={letter.id} />
+                      <EditCoverLetterButton letter={letter} variant="icon" />
+                    </div>
                     <ViewCoverLetterOutputButton letter={letter} />
                   </div>
                 </div>

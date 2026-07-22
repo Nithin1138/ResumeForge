@@ -219,11 +219,20 @@ export default function MyResumesClient({ initialResumes }: { initialResumes: Re
                     </div>
 
                     {/* Dotted + Tag Selector Button / Popover */}
-                    <TagSelector
-                      currentTag={resume.categoryTag}
-                      onSelectTag={async (newTag) => handleUpdateCategory(resume.id, newTag || "")}
-                      onTagsChanged={handleTagsChanged}
-                    />
+                    <div className="flex items-center space-x-2">
+                      <Link
+                        href={`/build?resumeId=${resume.id}`}
+                        className="px-3 py-1 rounded-full text-xs font-semibold border border-border bg-bg-base/40 text-text-muted hover:text-primary hover:border-primary/40 transition-all flex items-center space-x-1.5 cursor-pointer"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                        <span>Update</span>
+                      </Link>
+                      <TagSelector
+                        currentTag={resume.categoryTag}
+                        onSelectTag={async (newTag) => handleUpdateCategory(resume.id, newTag || "")}
+                        onTagsChanged={handleTagsChanged}
+                      />
+                    </div>
                   </div>
 
                   {/* Resume Title & Metadata */}
