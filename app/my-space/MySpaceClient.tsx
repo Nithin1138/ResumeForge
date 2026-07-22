@@ -1877,7 +1877,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Project Description</label>
                             <textarea
-                              rows={2.5}
+                              rows={5}
                               value={proj.description}
                               onChange={(e) => handleUpdateProject(proj.id, "description", e.target.value)}
                               placeholder="Key achievements, metrics, architectural details..."
@@ -2006,7 +2006,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                             />
                           </div>
                           <textarea
-                            rows={2}
+                            rows={5}
                             value={exp.description}
                             onChange={(e) => handleUpdateExperience(exp.id, "description", e.target.value)}
                             placeholder="Responsibilities, achievements, impact..."
