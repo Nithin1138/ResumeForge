@@ -3,7 +3,7 @@
 import { use, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap, Sparkles, RotateCcw } from "lucide-react";
+import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap, Sparkles, RotateCcw, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { FullResumeOutput } from "@/types/resume";
@@ -11,6 +11,7 @@ import { calculateDynamicMetrics } from "@/lib/atsScoring";
 import { getLocalSession } from "@/lib/authClient";
 import ResumePreviewPanel from "@/components/ResumePreviewPanel";
 import CoverLetterModal from "@/components/CoverLetterModal";
+import AIVerificationSection from "@/components/AIVerificationSection";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export const dynamic = 'force-dynamic';
@@ -100,6 +101,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [includeCertifications, setIncludeCertifications] = useState(true);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [isCoverLetterModalOpen, setCoverLetterModalOpen] = useState(false);
+  const [isVerificationModalOpen, setVerificationModalOpen] = useState(false);
   const [activeProjectVariants, setActiveProjectVariants] = useState<Record<number, number>>({});
   const [scoreMode, setScoreMode] = useState<"resume" | "role">("resume");
   
@@ -565,6 +567,18 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
         </div>
         
         <div className="flex items-center space-x-3 sm:space-x-4">
+          {/* Don't trust ATSlift? Verify with any AI button */}
+          <button
+            onClick={() => setVerificationModalOpen(true)}
+            className="hidden md:flex px-3.5 py-1.5 bg-surface/80 hover:bg-surface border border-border/80 text-text text-xs rounded-xl md:rounded-full transition-all items-center space-x-2 shadow-2xs group cursor-pointer"
+          >
+            <ShieldCheck className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
+            <div className="flex flex-col text-left leading-tight">
+              <span className="text-[10px] text-text-muted font-bold tracking-tight">Don't trust ATSlift?</span>
+              <span className="text-xs font-extrabold text-primary underline underline-offset-2 decoration-primary/40 group-hover:decoration-primary">Verify with any AI</span>
+            </div>
+          </button>
+
           <button
             onClick={() => setCoverLetterModalOpen(true)}
             className="px-4 py-2 bg-gradient-to-r from-primary via-emerald-600 to-primary hover:opacity-95 text-white font-extrabold text-xs rounded-full flex items-center space-x-1.5 shadow-md hover:shadow-lg hover:scale-105 transition-all cursor-pointer ring-2 ring-primary/40"
@@ -1428,6 +1442,24 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
         {/* end right scrollable column */}
 
       <CoverLetterModal isOpen={isCoverLetterModalOpen} onClose={() => setCoverLetterModalOpen(false)} resumeId={resumeId} inputData={resume?.inputData} templateId={resume?.inputData?.options?.templateId || "modern"} />
+
+      {/* AI Verification Modal Popup */}
+      {isVerificationModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-surface border border-border rounded-3xl p-6 md:p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+            <button
+              onClick={() => setVerificationModalOpen(false)}
+              className="absolute top-4 right-4 p-2 px-3 text-text-muted hover:text-text bg-bg-base hover:bg-border/40 rounded-full transition-all cursor-pointer font-bold text-xs flex items-center gap-1 border border-border"
+            >
+              ✕ Close
+            </button>
+            <AIVerificationSection
+              handlePayment={() => setVerificationModalOpen(false)}
+              isProcessingPayment={false}
+            />
+          </div>
+        </div>
+      )}
       </main>
     </div>
   );
