@@ -1916,10 +1916,12 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                               />
                             </div>
                             <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">GitHub Link</label>
+                              <label htmlFor={`github-link-${proj.id}`} className="text-[10px] font-bold text-text-muted uppercase tracking-wider">GitHub Link</label>
                               <input
                                 type="text"
-                                autoComplete="off"
+                                id={`github-link-${proj.id}`}
+                                name={`github-link-${proj.id}`}
+                                autoComplete="new-password"
                                 value={proj.githubLink || ""}
                                 onChange={(e) => handleUpdateProject(proj.id, "githubLink", e.target.value)}
                                 placeholder="https://github.com/..."
@@ -1927,10 +1929,12 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                               />
                             </div>
                             <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Live Host Link</label>
+                              <label htmlFor={`host-link-${proj.id}`} className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Live Host Link</label>
                               <input
                                 type="text"
-                                autoComplete="off"
+                                id={`host-link-${proj.id}`}
+                                name={`host-link-${proj.id}`}
+                                autoComplete="new-password"
                                 value={proj.hostLink || ""}
                                 onChange={(e) => handleUpdateProject(proj.id, "hostLink", e.target.value)}
                                 placeholder="https://..."
