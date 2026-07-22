@@ -539,7 +539,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
               <span>Candidate Space Vault</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-serif font-bold text-text">
-              My Candidate Space
+              {fullName || "Candidate Master Space"}
             </h1>
             <p className="text-xs text-text-muted font-medium leading-relaxed">
               Maintain, view, and organize your master profile. Auto-synced in real-time across your resume editor, cover letters, and AI application tools.
@@ -570,43 +570,66 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           </div>
         </div>
 
-        {/* WORKSPACE CONTROL BAR */}
+        {/* TOP WORKSPACE NAVIGATION & TOOLBAR */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface border border-border/80 rounded-3xl p-4 md:p-5 shadow-xs">
           
-          {/* Mode Switcher */}
-          <div className="flex items-center bg-bg-base/80 border border-border/80 p-1.5 rounded-2xl relative shadow-inner shrink-0">
+          {/* Main Segmented Mode Switcher */}
+          <div className="flex items-center bg-bg-base/80 border border-border/80 p-1.5 rounded-2xl relative shadow-inner shrink-0 overflow-x-auto no-scrollbar">
             <button
-              onClick={() => setViewMode("view")}
-              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer ${
-                viewMode === "view" ? "text-white" : "text-text-muted hover:text-text"
+              onClick={() => {
+                setActiveTab("profile");
+                setViewMode("view");
+              }}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer whitespace-nowrap ${
+                activeTab === "profile" && viewMode === "view" ? "text-white" : "text-text-muted hover:text-text"
               }`}
             >
-              {viewMode === "view" && (
+              {activeTab === "profile" && viewMode === "view" && (
                 <motion.div
-                  layoutId="spaceViewToggle"
+                  layoutId="spaceMainModePill"
                   className="absolute inset-0 bg-primary rounded-xl shadow-sm -z-10"
                   transition={{ type: "spring", stiffness: 450, damping: 30 }}
                 />
               )}
               <Eye className="w-4 h-4" />
-              <span>View & Copy Mode</span>
+              <span>🗃️ Master Vault Deck</span>
             </button>
 
             <button
-              onClick={() => setViewMode("edit")}
-              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer ${
-                viewMode === "edit" ? "text-white" : "text-text-muted hover:text-text"
+              onClick={() => {
+                setActiveTab("profile");
+                setViewMode("edit");
+              }}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer whitespace-nowrap ${
+                activeTab === "profile" && viewMode === "edit" ? "text-white" : "text-text-muted hover:text-text"
               }`}
             >
-              {viewMode === "edit" && (
+              {activeTab === "profile" && viewMode === "edit" && (
                 <motion.div
-                  layoutId="spaceViewToggle"
+                  layoutId="spaceMainModePill"
                   className="absolute inset-0 bg-primary rounded-xl shadow-sm -z-10"
                   transition={{ type: "spring", stiffness: 450, damping: 30 }}
                 />
               )}
               <Edit3 className="w-4 h-4" />
-              <span>Edit & Add Mode</span>
+              <span>✍️ Fast Editor Studio</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("copilot")}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2 transition-all relative z-10 cursor-pointer whitespace-nowrap ${
+                activeTab === "copilot" ? "text-white" : "text-text-muted hover:text-text"
+              }`}
+            >
+              {activeTab === "copilot" && (
+                <motion.div
+                  layoutId="spaceMainModePill"
+                  className="absolute inset-0 bg-primary rounded-xl shadow-sm -z-10"
+                  transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                />
+              )}
+              <Bot className="w-4 h-4" />
+              <span>🤖 AI Copilot Studio</span>
             </button>
           </div>
 
@@ -682,80 +705,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           </div>
         )}
 
-        {/* MAIN WORKSPACE SPLIT: LEFT SIDEBAR RAIL + RIGHT CONTENT AREA */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* LEFT SIDEBAR NAVIGATION RAIL */}
-          <div className={`${isNavCollapsed ? "lg:col-span-2 xl:col-span-1" : "lg:col-span-4 xl:col-span-3"} space-y-3 sticky top-6 transition-all duration-300`}>
-            <div className="bg-surface border border-border/80 rounded-3xl p-3 shadow-xs space-y-1">
-              
-              {/* Menu Header with 3-Lines Toggle Button */}
-              <div className={`px-2 py-2 flex items-center justify-between border-b border-border/40 mb-1 ${isNavCollapsed ? "flex-col gap-2 justify-center" : ""}`}>
-                {!isNavCollapsed && (
-                  <p className="text-[10px] font-black uppercase text-text-muted tracking-wider truncate">
-                    Vault Menu
-                  </p>
-                )}
-                <button
-                  onClick={() => setIsNavCollapsed(!isNavCollapsed)}
-                  className="p-1.5 rounded-xl border border-border/70 bg-bg-base/80 text-text-muted hover:text-primary hover:border-primary/40 transition-all cursor-pointer shadow-2xs"
-                  title={isNavCollapsed ? "Expand Vault Menu (Open)" : "Collapse Vault Menu (Show Icons Only)"}
-                >
-                  <Menu className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {navCategories.map((nav) => {
-                const IconComp = nav.icon;
-                const isSelected = nav.isTab === "copilot" ? activeTab === "copilot" : (activeTab === "profile" && categoryFilter === nav.id);
-                return (
-                  <button
-                    key={nav.id}
-                    onClick={() => {
-                      if (nav.isTab === "copilot") {
-                        setActiveTab("copilot");
-                      } else {
-                        setActiveTab("profile");
-                        setCategoryFilter(nav.id);
-                      }
-                    }}
-                    title={isNavCollapsed ? nav.label : undefined}
-                    className={`w-full rounded-2xl text-xs font-extrabold flex items-center transition-all relative z-10 cursor-pointer ${
-                      isNavCollapsed ? "justify-center p-3" : "justify-between px-3.5 py-3 text-left"
-                    } ${
-                      isSelected ? "text-white shadow-sm" : "text-text-muted hover:text-text hover:bg-bg-base/60"
-                    }`}
-                  >
-                    {isSelected && (
-                      <motion.div
-                        layoutId="spaceNavPill"
-                        className="absolute inset-0 bg-primary rounded-2xl -z-10 shadow-xs"
-                        transition={{ type: "spring", stiffness: 450, damping: 30 }}
-                      />
-                    )}
-                    <div className={`flex items-center ${isNavCollapsed ? "justify-center" : "space-x-3 min-w-0"}`}>
-                      <IconComp className={`w-4 h-4 shrink-0 ${isSelected ? "text-white" : "text-primary"}`} />
-                      {!isNavCollapsed && <span className="truncate">{nav.label}</span>}
-                    </div>
-                    {!isNavCollapsed && typeof nav.count === "number" && nav.count > 0 && (
-                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ml-1 ${
-                        isSelected ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
-                      }`}>
-                        {nav.count}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* RIGHT MAIN WORKSPACE CONTENT AREA */}
-          <div className={`${isNavCollapsed ? "lg:col-span-10 xl:col-span-11" : "lg:col-span-8 xl:col-span-9"} space-y-8 transition-all duration-300`}>
-
-            {/* TAB 1: MASTER PROFILE VAULT */}
-            {activeTab === "profile" && (
-              <div className="space-y-8">
+        {/* MASTER PROFILE VAULT MODE */}
+        {activeTab === "profile" && (
+          <div className="space-y-8">
 
             {/* SECTION 1: PERSONAL & SOCIAL PROFILES */}
             {(categoryFilter === "all" || categoryFilter === "personal") && (
@@ -1754,9 +1706,6 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
             </div>
           </div>
         )}
-
-          </div>
-        </div>
 
       </div>
     </AppLayout>
