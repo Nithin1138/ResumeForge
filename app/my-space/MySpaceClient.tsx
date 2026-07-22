@@ -639,9 +639,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const calculateVaultCompletion = () => {
     let completed = 0;
     const total = 8;
-    if (fullName && (userEmail || phone)) completed++;
-    if (leetcode || codeforces || codechef || hackerrank || gfg) completed++;
-    if (college || branch) completed++;
+    if (fullName && (email || phone || collegeEmail)) completed++;
+    if (codingProfiles.some(p => p.username && p.platform)) completed++;
+    if (educationList.some(e => e.institution)) completed++;
     if (skills.length > 0) completed++;
     if (certifications.length > 0) completed++;
     if (achievements.length > 0) completed++;
