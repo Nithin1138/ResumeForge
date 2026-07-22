@@ -1803,8 +1803,8 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                     </span>
 
                     <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-                      {/* Key Selection */}
-                      <div className={`${customKeySelection === "Other" ? "sm:col-span-5" : "sm:col-span-3"} flex gap-2`}>
+                      {/* Select Dropdown */}
+                      <div className={customKeySelection === "Other" ? "sm:col-span-3" : "sm:col-span-4"}>
                         <select
                           value={customKeySelection}
                           onChange={(e) => {
@@ -1816,7 +1816,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                               setNewCustomKey("");
                             }
                           }}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary shrink-0"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary"
                         >
                           <option value="Target Role 1">Target Role 1</option>
                           <option value="Target Role 2">Target Role 2</option>
@@ -1825,8 +1825,11 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                           <option value="Expected CTC">Expected CTC</option>
                           <option value="Other">Other (Custom Key)</option>
                         </select>
+                      </div>
 
-                        {customKeySelection === "Other" && (
+                      {/* Custom Key Input (Only visible if 'Other' is selected) */}
+                      {customKeySelection === "Other" && (
+                        <div className="sm:col-span-3">
                           <input
                             type="text"
                             value={newCustomKey}
@@ -1834,11 +1837,11 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                             placeholder="Key Name (e.g. Portfolio)"
                             className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary"
                           />
-                        )}
-                      </div>
+                        </div>
+                      )}
 
                       {/* Value Input */}
-                      <div className={customKeySelection === "Other" ? "sm:col-span-5" : "sm:col-span-7"}>
+                      <div className={customKeySelection === "Other" ? "sm:col-span-4" : "sm:col-span-6"}>
                         <input
                           type="text"
                           value={newCustomVal}
