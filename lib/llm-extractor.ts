@@ -1,5 +1,5 @@
 // lib/llm-extractor.ts
-// Extract structured Placement Drive / JD information from forwarded email text
+// Extract structured Placement Drive / JD information from forwarded email text & HTML tables
 
 export interface ExtractedJdData {
   companyName: string;
@@ -15,11 +15,45 @@ export interface ExtractedJdData {
   otherImportantDates?: Array<{ event: string; date: string }>;
 }
 
-export function cleanEmailText(rawEmail: string): string {
-  if (!rawEmail) return "";
+export function htmlToPlainText(html: string): string {
+  if (!html) return "";
+
+  return html
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<\/tr>/gi, "\n")
+    .replace(/<\/td>/gi, " : ")
+    .replace(/<\/th>/gi, " : ")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n")
+    .replace(/<\/div>/gi, "\n")
+    .replace(/<\/h[1-6]>/gi, "\n\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/[\r\t]+/g, " ")
+    .replace(/\n\s*\n+/g, "\n")
+    .trim();
+}
+
+export function cleanEmailText(rawEmail: string, rawHtml?: string): string {
+  let combined = rawEmail || "";
+
+  if (rawHtml) {
+    const convertedHtml = htmlToPlainText(rawHtml);
+    if (convertedHtml.length > combined.length) {
+      combined = convertedHtml;
+    }
+  }
+
+  if (!combined) return "";
 
   // Remove common Gmail forwarding headers
-  let cleaned = rawEmail
+  let cleaned = combined
     .replace(/^---------- Forwarded message ---------[\s\S]*?To:.*?\n/g, "")
     .replace(/^From:.*?\nDate:.*?\nSubject:.*?\nTo:.*?\n/gm, "")
     .replace(/^>+/gm, "") // Strip quoted text angle brackets
@@ -35,37 +69,51 @@ export function cleanEmailText(rawEmail: string): string {
 
 export async function extractJdInfoWithLLM(
   rawEmailText: string,
+  rawHtmlText?: string,
   attempt: number = 1
 ): Promise<ExtractedJdData | null> {
-  const cleanedText = cleanEmailText(rawEmailText);
+  const cleanedText = cleanEmailText(rawEmailText, rawHtmlText);
+
+  if (!cleanedText || cleanedText.length < 10) {
+    console.warn("[LLM Extractor] Email text is too short or empty.");
+    return null;
+  }
 
   const prompt = `
 You are an expert Job Description & Placement Drive Parser for Engineering Students.
-Parse the following placement cell email text and extract structured information in strict JSON format ONLY.
+Parse the following placement cell email text (which may contain converted HTML tables) and extract structured information in strict JSON format ONLY.
 
 EMAIL TEXT:
 """
 ${cleanedText}
 """
 
+CRITICAL INSTRUCTIONS:
+1. "companyName": Extract the actual company name hiring in this drive. If the company name is in the subject or table header, extract it. If not explicitly specified, use the Organization name or "Campus Placement Drive". NEVER invent a fake company name like Amazon if it's not in the email!
+2. "roleTitle": Extract the exact role title (e.g. SDE, Software Engineer, Graduate Trainee, etc.). If unspecified, use "Placement Drive Candidate".
+3. "eligibilityCriteria":
+   - "branches": Array of eligible branch strings (e.g. ["CSE", "IT", "ECE"] or ["All Branches"]).
+   - "cgpaCutoff": Cutoff mentioned in email (e.g. "7.0 CGPA or 70% in X, XII & Degree") or "No Cutoff".
+   - "backlogPolicy": Backlog policy (e.g. "No Standing Arrears" or "Not Specified").
+4. "applicationDeadline": ISO 8601 Date string (e.g. "2026-08-15T23:59:00Z") or null if no deadline mentioned.
+5. "driveDate": ISO 8601 Date string or null if no drive date mentioned.
+6. Do NOT hallucinate dates or company names not present in the text!
+
 REQUIRED JSON STRUCTURE (Return ONLY raw JSON, no markdown wrappers, no explanations):
 {
-  "companyName": "Exact Company Name",
-  "roleTitle": "Job Title / Role (e.g. SDE Intern, Software Engineer)",
+  "companyName": "Company Name",
+  "roleTitle": "Role Title",
   "eligibilityCriteria": {
-    "branches": ["CS", "IT", "ECE"], // Allowed branches or "All Engineering Branches"
-    "cgpaCutoff": "7.5 CGPA or 75%", // Cutoff or "No Cutoff"
-    "backlogPolicy": "No active backlogs allowed" // Policy or "Not Specified"
+    "branches": ["CS", "IT"],
+    "cgpaCutoff": "7.0 CGPA",
+    "backlogPolicy": "No Standing Arrears"
   },
-  "applicationDeadline": "YYYY-MM-DDTHH:mm:ssZ", // ISO 8601 string or null if not found
-  "driveDate": "YYYY-MM-DDTHH:mm:ssZ", // ISO 8601 string or null if not found
-  "otherImportantDates": [
-    { "event": "PPT / Online Test", "date": "YYYY-MM-DDTHH:mm:ssZ" }
-  ]
+  "applicationDeadline": "YYYY-MM-DDTHH:mm:ssZ",
+  "driveDate": "YYYY-MM-DDTHH:mm:ssZ",
+  "otherImportantDates": []
 }
 
 Today's Date: ${new Date().toISOString()}
-If a year is omitted in the email, infer the current or upcoming placement year (2026).
 Return ONLY valid JSON.
 `;
 
@@ -137,7 +185,7 @@ Return ONLY valid JSON.
   // Retry once if attempt === 1
   if (attempt < 2) {
     console.log("[LLM Extraction]: Retrying extraction (attempt 2)...");
-    return extractJdInfoWithLLM(rawEmailText, attempt + 1);
+    return extractJdInfoWithLLM(rawEmailText, rawHtmlText, attempt + 1);
   }
 
   return null;

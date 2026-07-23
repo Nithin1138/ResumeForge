@@ -43,13 +43,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "No matching user alias" }, { status: 200 });
     }
 
-    // Fetch full email content using Resend Received Emails API
-    let rawEmailText = "";
+    // Fetch email content from Resend payload or API
+    let rawEmailText = payload.data.text || payload.data.body || "";
+    let rawHtmlText = payload.data.html || "";
     const resendApiKey = process.env.RESEND_API_KEY;
 
-    if (resendApiKey && email_id) {
+    if (!rawEmailText && !rawHtmlText && resendApiKey && email_id) {
       try {
-        const emailRes = await fetch(`https://api.resend.com/emails/${email_id}`, {
+        const emailRes = await fetch(`https://api.resend.com/emails/receiving/${email_id}`, {
           headers: {
             Authorization: `Bearer ${resendApiKey}`,
           },
@@ -57,20 +58,19 @@ export async function POST(req: Request) {
 
         if (emailRes.ok) {
           const emailData = await emailRes.json();
-          rawEmailText = emailData.text || emailData.html || "";
+          rawEmailText = emailData.text || "";
+          rawHtmlText = emailData.html || "";
         }
       } catch (err) {
         console.error("[Resend Inbound API Error]:", err);
       }
     }
 
-    // Fallback if API fetch didn't return text (e.g. simulation payload)
-    if (!rawEmailText) {
-      rawEmailText = payload.data.text || payload.data.body || `Subject: ${subject}\nFrom: ${from}`;
-    }
+    // Prepend Email Subject and Sender to raw text context
+    const fullTextContext = `Subject: ${subject || ""}\nFrom: ${from || ""}\n\n${rawEmailText}`;
 
-    // Call LLM Extractor
-    const extracted = await extractJdInfoWithLLM(rawEmailText);
+    // Call LLM Extractor with both text & HTML
+    const extracted = await extractJdInfoWithLLM(fullTextContext, rawHtmlText);
 
     if (!extracted || !extracted.companyName) {
       // Failed extraction / Malformed -> Flag for Manual Review
