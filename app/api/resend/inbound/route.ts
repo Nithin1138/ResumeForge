@@ -103,6 +103,37 @@ export async function POST(req: Request) {
     // Prepend Email Subject and Sender to raw text context
     const fullTextContext = `Subject: ${subject || ""}\nFrom: ${from || ""}\n\n${rawEmailText}`;
 
+    // Check if this is a Gmail Auto-Forwarding Confirmation Email from Google
+    const fromLower = (from || "").toLowerCase();
+    const subjectLower = (subject || "").toLowerCase();
+    const isGmailConfirmation =
+      fromLower.includes("forwarding-noreply@google.com") ||
+      fromLower.includes("google.com") ||
+      subjectLower.includes("forwarding confirmation") ||
+      subjectLower.includes("gmail forwarding");
+
+    if (isGmailConfirmation) {
+      const codeMatch = fullTextContext.match(/Confirmation code:\s*(\d+)/i) || fullTextContext.match(/\b(\d{7,10})\b/);
+      const linkMatch = fullTextContext.match(/(https:\/\/mail\.google\.com\/mail\/vf-[^\s<">]+)/i);
+
+      const confirmCode = codeMatch ? codeMatch[1] : null;
+      const confirmLink = linkMatch ? linkMatch[1] : null;
+
+      let confirmMsg = `🔑 <b>Gmail Auto-Forwarding Confirmation Request Received!</b>\n\nGoogle sent a verification email to complete your Gmail filter setup:\n\n`;
+
+      if (confirmCode) {
+        confirmMsg += `<b>Confirmation Code:</b> <code>${confirmCode}</code>\n\n`;
+      }
+      if (confirmLink) {
+        confirmMsg += `🔗 <b>Verification Link:</b>\n<a href="${confirmLink}">Click Here to Approve Gmail Forwarding</a>\n\n`;
+      }
+
+      confirmMsg += `Copy this confirmation code into your Gmail Settings or click the link above to verify and activate auto-forwarding!`;
+
+      await sendTelegramMessage(matchedTgUser.telegramChatId, confirmMsg);
+      return NextResponse.json({ ok: true, type: "GMAIL_CONFIRMATION" });
+    }
+
     // Call LLM Extractor with both text & HTML
     const extracted = await extractJdInfoWithLLM(fullTextContext, rawHtmlText);
 
