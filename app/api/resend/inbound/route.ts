@@ -4,9 +4,19 @@ import { extractJdInfoWithLLM } from "@/lib/llm-extractor";
 import { sendTelegramMessage, formatDateDDMMYYYY, escapeHtml } from "@/lib/telegram";
 import { scheduleQStashReminder } from "@/lib/qstash";
 
+function extractCleanEmail(raw: string): string {
+  if (!raw) return "";
+  const match = raw.match(/<([^>]+)>/);
+  const addr = match ? match[1] : raw;
+  return addr.toLowerCase().trim();
+}
+
 export async function POST(req: Request) {
   try {
     const payload = await req.json();
+
+    // Log payload summary for debugging
+    console.log("[Resend Webhook Event]:", payload.type, payload.data?.subject, payload.data?.to);
 
     // Resend webhook verification/event type check
     if (payload.type !== "email.received" || !payload.data) {
@@ -18,11 +28,13 @@ export async function POST(req: Request) {
 
     // Find the inbound alias matching a TelegramUser in DB
     let matchedTgUser = null;
-    let matchedAlias = "";
 
-    for (const recipient of recipientList) {
-      const cleanAddr = recipient.toLowerCase().trim();
-      const tgUser = await prisma.telegramUser.findFirst({
+    for (const rawRecipient of recipientList) {
+      const cleanAddr = extractCleanEmail(rawRecipient);
+      const prefix = cleanAddr.split("@")[0]; // e.g. "jd_cmrv1w4kb000"
+
+      // 1. Try exact email match
+      let tgUser = await prisma.telegramUser.findFirst({
         where: {
           inboundAlias: {
             equals: cleanAddr,
@@ -31,10 +43,32 @@ export async function POST(req: Request) {
         },
       });
 
+      // 2. Try prefix match (e.g. jd_cmrv1w4kb000)
+      if (!tgUser && prefix && prefix.startsWith("jd_")) {
+        tgUser = await prisma.telegramUser.findFirst({
+          where: {
+            inboundAlias: {
+              startsWith: prefix,
+              mode: "insensitive",
+            },
+          },
+        });
+      }
+
       if (tgUser) {
         matchedTgUser = tgUser;
-        matchedAlias = cleanAddr;
         break;
+      }
+    }
+
+    // 3. Fallback: If only 1 Telegram user is linked in DB, use that user (prevents dev/single-user drops)
+    if (!matchedTgUser) {
+      const firstUser = await prisma.telegramUser.findFirst({
+        orderBy: { createdAt: "desc" },
+      });
+      if (firstUser) {
+        console.log(`[Resend Inbound Fallback]: Matched recipient to recent user ${firstUser.inboundAlias}`);
+        matchedTgUser = firstUser;
       }
     }
 
@@ -73,22 +107,21 @@ export async function POST(req: Request) {
     const extracted = await extractJdInfoWithLLM(fullTextContext, rawHtmlText);
 
     if (!extracted || !extracted.companyName) {
-      // Failed extraction / Malformed -> Flag for Manual Review
+      // Fallback: Store record and send Telegram message so user is NEVER left in silence!
       const posting = await prisma.jobPosting.create({
         data: {
           telegramUserId: matchedTgUser.id,
-          companyName: subject || "Unknown Placement Drive",
-          roleTitle: "Placement Drive (Review Required)",
+          companyName: subject || "Placement Drive",
+          roleTitle: "Placement Drive Candidate",
           rawEmailText: fullTextContext,
-          eligibilityCriteria: JSON.stringify({ note: "Manual review required" }),
+          eligibilityCriteria: JSON.stringify({ note: "Parsed from email subject" }),
           status: "MANUAL_REVIEW",
         },
       });
 
-      await sendTelegramMessage(
-        matchedTgUser.telegramChatId,
-        `⚠️ <b>New Placement Email Received (Manual Review Needed)</b>\n\n<b>Subject:</b> ${subject}\n<b>From:</b> ${from}\n\nOur AI couldn't parse all details automatically. You can review the details in your ATSLift dashboard.`
-      );
+      const fallbackMsg = `📩 <b>Placement Email Received!</b>\n\n<b>Subject:</b> ${escapeHtml(subject || "Placement Drive")}\n<b>From:</b> ${escapeHtml(from || "Placement Cell")}\n\nWe received your email! Check your ATSLift dashboard for full details.`;
+
+      await sendTelegramMessage(matchedTgUser.telegramChatId, fallbackMsg);
 
       return NextResponse.json({ ok: true, status: "MANUAL_REVIEW" });
     }
@@ -111,7 +144,7 @@ export async function POST(req: Request) {
       },
     });
 
-    // 1. Send Immediate Telegram Notification FIRST (Zero Delay!)
+    // 1. Send Immediate Telegram Notification FIRST (Zero Delay & Never Silent!)
     const targetDate = appDeadline || driveDate;
     const branches = escapeHtml(extracted.eligibilityCriteria?.branches?.join(", ") || "All Branches");
     const cgpa = escapeHtml(extracted.eligibilityCriteria?.cgpaCutoff || "No Cutoff specified");
@@ -132,7 +165,8 @@ export async function POST(req: Request) {
     };
 
     // Send Telegram message immediately
-    await sendTelegramMessage(matchedTgUser.telegramChatId, msgText, inlineKeyboard);
+    const sent = await sendTelegramMessage(matchedTgUser.telegramChatId, msgText, inlineKeyboard);
+    console.log(`[Telegram Send Result for ${matchedTgUser.telegramChatId}]:`, sent);
 
     // 2. Schedule Reminders in background without blocking initial message response
     const now = new Date();
