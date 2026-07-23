@@ -11,9 +11,9 @@ import {
   Sparkles, 
   RefreshCw, 
   Loader2,
-  BellRing,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Link as LinkIcon
 } from "lucide-react";
 
 export function TelegramLinkCard() {
@@ -21,6 +21,9 @@ export function TelegramLinkCard() {
   const [data, setData] = useState<any>(null);
   const [copiedAlias, setCopiedAlias] = useState(false);
   const [copiedToken, setCopiedToken] = useState(false);
+
+  const [webhookMsg, setWebhookMsg] = useState<string | null>(null);
+  const [settingWebhook, setSettingWebhook] = useState(false);
 
   const fetchStatus = async () => {
     setLoading(true);
@@ -52,6 +55,24 @@ export function TelegramLinkCard() {
     }
   };
 
+  const handleRegisterWebhook = async () => {
+    setSettingWebhook(true);
+    setWebhookMsg(null);
+    try {
+      const res = await fetch("/api/telegram/setup-webhook");
+      const json = await res.json();
+      if (json.ok) {
+        setWebhookMsg(json.message);
+      } else {
+        setWebhookMsg(`Error: ${json.message}`);
+      }
+    } catch (err: any) {
+      setWebhookMsg("Failed to connect webhook.");
+    } finally {
+      setSettingWebhook(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-6 bg-surface border border-border/80 rounded-3xl flex items-center justify-center space-x-3 text-text-muted">
@@ -63,9 +84,11 @@ export function TelegramLinkCard() {
 
   if (!data) return null;
 
+  const nativeAppUrl = `tg://resolve?domain=${data.botUsername}&start=${data.linkToken}`;
+
   return (
     <div className="p-6 bg-surface/90 dark:bg-surface/90 border border-border/80 rounded-3xl shadow-xl space-y-5 relative overflow-hidden backdrop-blur-xl">
-      {/* Decorative Top Accent */}
+      {/* Top Header Accent */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2.5">
           <div className="w-9 h-9 rounded-2xl bg-sky-500/15 text-sky-500 flex items-center justify-center font-bold">
@@ -93,6 +116,12 @@ export function TelegramLinkCard() {
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
+
+      {webhookMsg && (
+        <div className="p-3 bg-primary/10 border border-primary/20 text-primary text-xs rounded-xl font-bold">
+          {webhookMsg}
+        </div>
+      )}
 
       {data.isLinked ? (
         /* Connected State */
@@ -143,31 +172,52 @@ export function TelegramLinkCard() {
       ) : (
         /* Not Connected State */
         <div className="space-y-4 pt-1 border-t border-border/50">
-          <div className="p-3.5 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs rounded-2xl font-semibold flex items-center space-x-2">
-            <AlertCircle className="w-4.5 h-4.5 shrink-0 text-amber-500" />
-            <span>Connect your Telegram account to activate automated placement reminders.</span>
+          <div className="p-3.5 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs rounded-2xl font-semibold flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <AlertCircle className="w-4.5 h-4.5 shrink-0 text-amber-500" />
+              <span>Connect your Telegram account to activate automated placement reminders.</span>
+            </div>
+            <button
+              onClick={handleRegisterWebhook}
+              disabled={settingWebhook}
+              className="text-[10px] font-bold underline text-primary cursor-pointer hover:opacity-80 shrink-0 ml-2"
+              title="Register Webhook URL with Telegram API"
+            >
+              {settingWebhook ? "Registering..." : "Sync Webhook"}
+            </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Option 1: Direct Buttons */}
             <div className="p-4 bg-bg-base border border-border rounded-2xl space-y-2">
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-text-muted block">
-                Option 1: One-Click Link
+                Option 1: Open in Telegram
               </span>
-              <a
-                href={data.deepLinkUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-2.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-extrabold rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-xs"
-              >
-                <Send className="w-4 h-4" />
-                <span>Open @{data.botUsername}</span>
-                <ExternalLink className="w-3.5 h-3.5 ml-1 opacity-70" />
-              </a>
+              <div className="grid grid-cols-2 gap-1.5">
+                <a
+                  href={data.deepLinkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-2.5 bg-sky-500 hover:bg-sky-600 text-white text-[11px] font-extrabold rounded-xl flex items-center justify-center space-x-1 transition-all cursor-pointer shadow-xs"
+                >
+                  <span>Web Link</span>
+                  <ExternalLink className="w-3 h-3 opacity-80" />
+                </a>
+
+                <a
+                  href={nativeAppUrl}
+                  className="py-2.5 bg-primary hover:opacity-90 text-white text-[11px] font-extrabold rounded-xl flex items-center justify-center space-x-1 transition-all cursor-pointer shadow-xs"
+                >
+                  <span>App Link</span>
+                  <Send className="w-3 h-3 opacity-80" />
+                </a>
+              </div>
             </div>
 
+            {/* Option 2: 6-Digit Link Code */}
             <div className="p-4 bg-bg-base border border-border rounded-2xl space-y-2">
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-text-muted block">
-                Option 2: 6-Digit Link Code
+                Option 2: Manual Code Method
               </span>
               <div className="flex items-center space-x-2">
                 <span className="flex-1 bg-surface border border-border py-1.5 text-center font-mono font-extrabold text-sm tracking-widest text-primary rounded-lg">
@@ -182,7 +232,7 @@ export function TelegramLinkCard() {
                 </button>
               </div>
               <p className="text-[10px] text-text-muted font-medium text-center">
-                Send <code>/start {data.linkToken}</code> to @{data.botUsername}
+                Search <b>@{data.botUsername}</b> on Telegram & send: <code>/start {data.linkToken}</code>
               </p>
             </div>
           </div>
