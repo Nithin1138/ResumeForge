@@ -10,6 +10,28 @@ export function getInboundAlias(userId: string): string {
   return `jd_${cleanId}@${INBOUND_DOMAIN}`;
 }
 
+export function formatDateDDMMYYYY(dateInput: Date | string | null | undefined): string {
+  if (!dateInput) return "Not Specified";
+  const d = new Date(dateInput);
+  if (isNaN(d.getTime())) return "Not Specified";
+
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+
+  const timeStr = d.toLocaleTimeString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  if (timeStr === "12:00 am" || timeStr === "00:00") {
+    return `${day}/${month}/${year}`;
+  }
+  return `${day}/${month}/${year}, ${timeStr}`;
+}
+
 export async function sendTelegramMessage(
   chatId: string | number,
   text: string,

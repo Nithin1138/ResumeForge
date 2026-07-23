@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { extractJdInfoWithLLM } from "@/lib/llm-extractor";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { sendTelegramMessage, formatDateDDMMYYYY } from "@/lib/telegram";
 import { scheduleQStashReminder } from "@/lib/qstash";
 
 export async function POST(req: Request) {
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
           telegramUserId: matchedTgUser.id,
           companyName: subject || "Unknown Placement Drive",
           roleTitle: "Placement Drive (Review Required)",
-          rawEmailText,
+          rawEmailText: fullTextContext,
           eligibilityCriteria: JSON.stringify({ note: "Manual review required" }),
           status: "MANUAL_REVIEW",
         },
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
         telegramUserId: matchedTgUser.id,
         companyName: extracted.companyName,
         roleTitle: extracted.roleTitle,
-        rawEmailText,
+        rawEmailText: fullTextContext,
         eligibilityCriteria: JSON.stringify(extracted.eligibilityCriteria || {}),
         applicationDeadline: appDeadline && !isNaN(appDeadline.getTime()) ? appDeadline : null,
         driveDate: driveDate && !isNaN(driveDate.getTime()) ? driveDate : null,
@@ -111,11 +111,30 @@ export async function POST(req: Request) {
       },
     });
 
-    // Schedule Reminders (3 days before, 1 day before, day of)
+    // 1. Send Immediate Telegram Notification FIRST (Zero Delay!)
+    const targetDate = appDeadline || driveDate;
+    const branches = extracted.eligibilityCriteria?.branches?.join(", ") || "All Branches";
+    const cgpa = extracted.eligibilityCriteria?.cgpaCutoff || "No Cutoff specified";
+    const deadlineStr = formatDateDDMMYYYY(targetDate);
+
+    const msgText = `🎯 <b>New Drive Detected: ${extracted.companyName}</b>\n\n<b>Role:</b> ${extracted.roleTitle}\n<b>Eligible Branches:</b> ${branches}\n<b>CGPA Cutoff:</b> ${cgpa}\n<b>Deadline/Date:</b> 🗓️ ${deadlineStr}\n\n<i>Reminders have been scheduled for 3 days before, 1 day before, and day of drive.</i>`;
+
+    const inlineKeyboard = {
+      inline_keyboard: [
+        [
+          { text: "✅ Applied", callback_data: `applied:${posting.id}` },
+          { text: "❌ Not Eligible", callback_data: `not_eligible:${posting.id}` },
+          { text: "⏭️ Skip", callback_data: `skip:${posting.id}` },
+        ],
+      ],
+    };
+
+    // Send Telegram message immediately
+    await sendTelegramMessage(matchedTgUser.telegramChatId, msgText, inlineKeyboard);
+
+    // 2. Schedule Reminders in background without blocking initial message response
     const now = new Date();
     const remindersToCreate: Array<{ scheduledFor: Date; reminderType: "THREE_DAYS_BEFORE" | "ONE_DAY_BEFORE" | "DAY_OF" }> = [];
-
-    const targetDate = appDeadline || driveDate;
 
     if (targetDate && !isNaN(targetDate.getTime())) {
       // 3 Days Before
@@ -138,38 +157,20 @@ export async function POST(req: Request) {
       }
     }
 
-    for (const rem of remindersToCreate) {
-      const createdRem = await prisma.reminder.create({
-        data: {
-          jobPostingId: posting.id,
-          scheduledFor: rem.scheduledFor,
-          reminderType: rem.reminderType,
-          sent: false,
-        },
-      });
-
-      // Schedule individual reminder delivery with Upstash QStash at creation time (no polling)
-      await scheduleQStashReminder(createdRem.id, createdRem.scheduledFor);
-    }
-
-    // Send Immediate Telegram Notification with Inline Buttons
-    const branches = extracted.eligibilityCriteria?.branches?.join(", ") || "All Branches";
-    const cgpa = extracted.eligibilityCriteria?.cgpaCutoff || "No Cutoff specified";
-    const deadlineStr = targetDate ? targetDate.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }) : "Not Specified";
-
-    const msgText = `🎯 <b>New Drive Detected: ${extracted.companyName}</b>\n\n<b>Role:</b> ${extracted.roleTitle}\n<b>Eligible Branches:</b> ${branches}\n<b>CGPA Cutoff:</b> ${cgpa}\n<b>Deadline/Date:</b> 🗓️ ${deadlineStr}\n\n<i>Reminders have been scheduled for 3 days before, 1 day before, and day of drive.</i>`;
-
-    const inlineKeyboard = {
-      inline_keyboard: [
-        [
-          { text: "✅ Applied", callback_data: `applied:${posting.id}` },
-          { text: "❌ Not Eligible", callback_data: `not_eligible:${posting.id}` },
-          { text: "⏭️ Skip", callback_data: `skip:${posting.id}` },
-        ],
-      ],
-    };
-
-    await sendTelegramMessage(matchedTgUser.telegramChatId, msgText, inlineKeyboard);
+    // Schedule reminders in parallel
+    Promise.allSettled(
+      remindersToCreate.map(async (rem) => {
+        const createdRem = await prisma.reminder.create({
+          data: {
+            jobPostingId: posting.id,
+            scheduledFor: rem.scheduledFor,
+            reminderType: rem.reminderType,
+            sent: false,
+          },
+        });
+        return scheduleQStashReminder(createdRem.id, createdRem.scheduledFor);
+      })
+    ).catch((err) => console.error("Error scheduling background reminders:", err));
 
     return NextResponse.json({ ok: true, postingId: posting.id });
   } catch (error) {

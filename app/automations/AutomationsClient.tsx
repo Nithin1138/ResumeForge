@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import AppLayout from "@/components/AppLayout";
 import { TelegramLinkCard } from "@/components/TelegramLinkCard";
 import { 
@@ -19,7 +19,7 @@ import {
   FileText,
   Filter
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { formatDateDDMMYYYY } from "@/lib/telegram";
 
 export default function AutomationsClient() {
   const [postings, setPostings] = useState<any[]>([]);
@@ -27,8 +27,8 @@ export default function AutomationsClient() {
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  const fetchPostings = async () => {
-    setLoading(true);
+  const fetchPostings = useCallback(async (isSilent = false) => {
+    if (!isSilent) setLoading(true);
     try {
       const res = await fetch("/api/user/job-postings");
       if (res.ok) {
@@ -38,13 +38,29 @@ export default function AutomationsClient() {
     } catch (err) {
       console.error("Failed to fetch job postings:", err);
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchPostings();
-  }, []);
+    fetchPostings(false);
+
+    // Auto-poll every 4 seconds so Telegram inline button clicks reflect dynamically on site!
+    const interval = setInterval(() => {
+      fetchPostings(true);
+    }, 4000);
+
+    const onFocus = () => {
+      fetchPostings(true);
+    };
+
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [fetchPostings]);
 
   const handleUpdateStatus = async (postingId: string, newStatus: string) => {
     setUpdatingId(postingId);
@@ -107,7 +123,7 @@ export default function AutomationsClient() {
           </div>
 
           <button
-            onClick={fetchPostings}
+            onClick={() => fetchPostings(false)}
             className="px-4 py-2 bg-surface hover:bg-bg-base border border-border/80 text-text text-xs font-bold rounded-xl flex items-center space-x-2 transition-all shrink-0 cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
@@ -175,9 +191,7 @@ export default function AutomationsClient() {
 
                 const branches = criteria.branches?.join(", ") || "All Engineering Branches";
                 const cgpa = criteria.cgpaCutoff || "No Cutoff Specified";
-                const deadline = posting.applicationDeadline
-                  ? new Date(posting.applicationDeadline).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" })
-                  : "Not Specified";
+                const deadline = formatDateDDMMYYYY(posting.applicationDeadline || posting.driveDate);
 
                 return (
                   <div
