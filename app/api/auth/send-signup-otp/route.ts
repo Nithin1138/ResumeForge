@@ -14,9 +14,14 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!password || password.trim().length < 6) {
+    const hasMinLen = password.length >= 8;
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasNumOrSpecial = /[\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+    if (!hasMinLen || !hasUpper || !hasLower || !hasNumOrSpecial) {
       return NextResponse.json(
-        { message: "Password must be at least 6 characters long." },
+        { message: "Please enter a strong password (at least 8 characters with uppercase, lowercase, and numbers or symbols)." },
         { status: 400 }
       );
     }

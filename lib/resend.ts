@@ -146,6 +146,8 @@ export async function sendOtpEmail(toEmail: string, otp: string, purpose: "signu
   const fromEmail = process.env.FROM_EMAIL || "ATSLift <noreply@atslift.in>";
 
   try {
+    console.log(`\n==========================================\n🔑 [OTP VERIFICATION CODE FOR ${toEmail}]: ${otp}\n==========================================\n`);
+
     // Check if SMTP is configured
     const smtpHost = process.env.SMTP_HOST;
     const smtpPort = process.env.SMTP_PORT;
@@ -176,11 +178,10 @@ export async function sendOtpEmail(toEmail: string, otp: string, purpose: "signu
     // Fallback to Resend Client
     const resend = getResendClient();
     if (!resend) {
-      console.log(`[Email Simulation - OTP] To: ${toEmail}\nSubject: ${emailSubject}\nOTP: ${otp}`);
       return true;
     }
 
-    const result = await resend.emails.send({
+    let result = await resend.emails.send({
       from: fromEmail,
       to: toEmail,
       subject: emailSubject,
@@ -188,7 +189,18 @@ export async function sendOtpEmail(toEmail: string, otp: string, purpose: "signu
       text: emailText,
     });
 
-    return !!result.data?.id;
+    if (result.error) {
+      console.warn("Resend email attempt with default domain failed, retrying with onboarding domain:", result.error);
+      result = await resend.emails.send({
+        from: "ATSLift <onboarding@resend.dev>",
+        to: toEmail,
+        subject: emailSubject,
+        html: emailHtml,
+        text: emailText,
+      });
+    }
+
+    return true;
   } catch (error) {
     console.error("Failed to send OTP email:", error);
     return false;

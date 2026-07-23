@@ -47,21 +47,21 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Mail or password is wrong");
         }
-        
+
         const user = await prisma.user.findUnique({
           where: { email: credentials.email.trim().toLowerCase() }
         });
-        
+
         if (!user || !user.password) {
-          throw new Error("Mail or password is wrong");
+          throw new Error("Invalid email or password");
         }
 
         const isValid = await bcrypt.compare(credentials.password, user.password);
-        
+
         if (!isValid) {
-          throw new Error("Mail or password is wrong");
+          throw new Error("Invalid email or password");
         }
-        
+
         return user;
       }
     }),
@@ -155,7 +155,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
       if (user?.email) {
-        const dbUser = await prisma.user.findUnique({ where: { email: user.email }});
+        const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
         if (dbUser?.isBlocked) {
           throw new Error("Your account has been suspended by the administrator.");
         }

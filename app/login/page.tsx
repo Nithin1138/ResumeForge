@@ -8,6 +8,42 @@ import { signIn, getSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+function getPasswordStrength(pass: string) {
+  const hasMinLen = pass.length >= 8;
+  const hasUpper = /[A-Z]/.test(pass);
+  const hasLower = /[a-z]/.test(pass);
+  const hasNumOrSpecial = /[\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pass);
+
+  const checks = [
+    { label: "8+ characters", met: hasMinLen },
+    { label: "Uppercase (A-Z)", met: hasUpper },
+    { label: "Lowercase (a-z)", met: hasLower },
+    { label: "Number / Symbol", met: hasNumOrSpecial },
+  ];
+
+  const score = checks.filter((c) => c.met).length;
+
+  let label = "Weak";
+  let color = "bg-red-500";
+  let textColor = "text-red-500";
+
+  if (score === 2) {
+    label = "Fair";
+    color = "bg-amber-500";
+    textColor = "text-amber-500";
+  } else if (score === 3) {
+    label = "Good";
+    color = "bg-yellow-500";
+    textColor = "text-yellow-500";
+  } else if (score === 4) {
+    label = "Strong";
+    color = "bg-emerald-500";
+    textColor = "text-emerald-500";
+  }
+
+  return { score, label, color, textColor, checks };
+}
+
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -27,6 +63,7 @@ function LoginContent() {
   // Standard Auth States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [signUpStep, setSignUpStep] = useState<"form" | "otp">("form");
   const [signUpOtp, setSignUpOtp] = useState("");
@@ -35,6 +72,7 @@ function LoginContent() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Forgot Password / OTP States
   const [isForgotPass, setIsForgotPass] = useState(false);
@@ -51,6 +89,8 @@ function LoginContent() {
     }
   }, [searchParams]);
 
+  const strength = getPasswordStrength(password);
+
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setResetSuccess(null);
@@ -60,9 +100,15 @@ function LoginContent() {
       return;
     }
 
-    if (signUpStep === "form" && (!password.trim() || password.length < 6)) {
-      setError("Password must be at least 6 characters long.");
-      return;
+    if (isSignUp && signUpStep === "form") {
+      if (strength.score < 4) {
+        setError("Please create a stronger password meeting all strength requirements.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError("Passwords do not match. Please re-enter your password.");
+        return;
+      }
     }
 
     setError(null);
@@ -213,6 +259,7 @@ function LoginContent() {
       setForgotPassStep("email");
       setEmail(forgotEmail);
       setPassword("");
+      setConfirmPassword("");
       setOtp("");
       setNewPassword("");
     } catch (err: any) {
@@ -591,48 +638,120 @@ function LoginContent() {
                       </div>
                     </div>
                   ) : (
-                    <div>
-                      <div className="flex justify-between items-center mb-1.5">
-                        <label className="block text-[11px] font-bold uppercase tracking-wider text-text-muted">
-                          Password
-                        </label>
-                        {!isSignUp && (
+                    <>
+                      <div>
+                        <div className="flex justify-between items-center mb-1.5">
+                          <label className="block text-[11px] font-bold uppercase tracking-wider text-text-muted">
+                            Password
+                          </label>
+                          {!isSignUp && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setIsForgotPass(true);
+                                setForgotPassStep("email");
+                                setForgotEmail(email);
+                                setError(null);
+                                setResetSuccess(null);
+                              }}
+                              className="text-xs font-bold text-primary hover:underline cursor-pointer"
+                            >
+                              Forgot password?
+                            </button>
+                          )}
+                        </div>
+                        <div className="relative">
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            required
+                            autoComplete={isSignUp ? "new-password" : "current-password"}
+                            className="w-full pl-11 pr-12 py-3 rounded-xl border border-border/80 bg-bg-base text-text focus:ring-2 focus:ring-primary/40 focus:border-transparent outline-none text-xs font-semibold transition-all"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                          />
                           <button
                             type="button"
-                            onClick={() => {
-                              setIsForgotPass(true);
-                              setForgotPassStep("email");
-                              setForgotEmail(email);
-                              setError(null);
-                              setResetSuccess(null);
-                            }}
-                            className="text-xs font-bold text-primary hover:underline cursor-pointer"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text cursor-pointer"
+                            tabIndex={-1}
                           >
-                            Forgot password?
+                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                           </button>
+                        </div>
+
+                        {/* Interactive Password Strength Indicator for Account Creation */}
+                        {isSignUp && password.length > 0 && (
+                          <div className="mt-2.5 p-3 bg-bg-base/70 border border-border/60 rounded-2xl space-y-2">
+                            <div className="flex items-center justify-between text-[11px] font-bold">
+                              <span className="text-text-muted uppercase tracking-wider">Password Strength</span>
+                              <span className={strength.textColor}>{strength.label}</span>
+                            </div>
+                            
+                            <div className="grid grid-cols-4 gap-1.5 h-1.5 w-full">
+                              {[1, 2, 3, 4].map((step) => (
+                                <div
+                                  key={step}
+                                  className={`h-full rounded-full transition-all duration-300 ${
+                                    strength.score >= step ? strength.color : "bg-border/50"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-1 pt-1 text-[10px] font-semibold text-text-muted">
+                              {strength.checks.map((c, idx) => (
+                                <div key={idx} className="flex items-center space-x-1.5">
+                                  <span className={c.met ? "text-emerald-500 font-extrabold" : "text-border"}>
+                                    {c.met ? "✓" : "•"}
+                                  </span>
+                                  <span className={c.met ? "text-text" : "text-text-muted/60"}>
+                                    {c.label}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         )}
                       </div>
-                      <div className="relative">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                        <input
-                          type={showPassword ? "text" : "password"}
-                          required
-                          autoComplete={isSignUp ? "new-password" : "current-password"}
-                          className="w-full pl-11 pr-12 py-3 rounded-xl border border-border/80 bg-bg-base text-text focus:ring-2 focus:ring-primary/40 focus:border-transparent outline-none text-xs font-semibold transition-all"
-                          placeholder="••••••••"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text cursor-pointer"
-                          tabIndex={-1}
-                        >
-                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </div>
+
+                      {/* Confirm Password Input (Only for Account Creation) */}
+                      {isSignUp && (
+                        <div>
+                          <label className="block text-[11px] font-bold mb-1.5 uppercase tracking-wider text-text-muted">
+                            Confirm Password
+                          </label>
+                          <div className="relative">
+                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                            <input
+                              type={showConfirmPassword ? "text" : "password"}
+                              required
+                              autoComplete="new-password"
+                              className={`w-full pl-11 pr-12 py-3 rounded-xl border ${
+                                confirmPassword && confirmPassword !== password
+                                  ? "border-red-500/80 focus:ring-red-500/30"
+                                  : "border-border/80 focus:ring-primary/40"
+                              } bg-bg-base text-text focus:ring-2 focus:border-transparent outline-none text-xs font-semibold transition-all`}
+                              placeholder="Re-enter your password"
+                              value={confirmPassword}
+                              onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text cursor-pointer"
+                              tabIndex={-1}
+                            >
+                              {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                          </div>
+                          {confirmPassword && confirmPassword !== password && (
+                            <p className="text-[10px] text-red-500 font-bold mt-1">Passwords do not match</p>
+                          )}
+                        </div>
+                      )}
+                    </>
                   )}
 
                   <button
