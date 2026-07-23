@@ -17,11 +17,10 @@ import {
   Check, 
   FileText, 
   Zap, 
-  Award,
-  ChevronRight,
   Star,
-  Building2,
-  GraduationCap
+  GraduationCap,
+  Key,
+  FolderKanban
 } from "lucide-react";
 import { signIn, getSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -289,6 +288,9 @@ function LoginContent() {
     }
   };
 
+  // Determine active view key for dynamic left side content
+  const activeMode = isForgotPass ? "forgot" : isSignUp ? "signup" : "signin";
+
   return (
     <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans relative overflow-hidden">
       {/* Dynamic Animated Ambient Orbs */}
@@ -332,53 +334,127 @@ function LoginContent() {
       {/* Main Split Grid Section */}
       <main className="flex-1 grid grid-cols-1 lg:grid-cols-12 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-10 gap-8 items-center relative z-20">
         
-        {/* Left Side: Brand Showcase & Social Proof (Visible on lg screens) */}
-        <motion.div 
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="hidden lg:flex lg:col-span-6 flex-col justify-between space-y-8 pr-6"
-        >
-          <div className="space-y-6">
-            {/* Top Pill Badge */}
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-extrabold text-primary uppercase tracking-wider shadow-2xs backdrop-blur-md">
-              <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
-              <span>Campus Placement Season 2026 Active</span>
-            </div>
+        {/* Left Side: Dynamic Brand Showcase & Social Proof (Adapts based on activeMode) */}
+        <div className="hidden lg:flex lg:col-span-6 flex-col justify-between space-y-8 pr-6 min-h-[540px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeMode}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="space-y-6"
+            >
+              {/* Dynamic Top Pill Badge */}
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-extrabold text-primary uppercase tracking-wider shadow-2xs backdrop-blur-md">
+                <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+                <span>
+                  {activeMode === "forgot"
+                    ? "🔐 ACCOUNT RECOVERY MODE"
+                    : activeMode === "signin"
+                    ? "⚡ WELCOME BACK CANDIDATE"
+                    : "✨ CAMPUS PLACEMENT SEASON 2026 ACTIVE"}
+                </span>
+              </div>
 
-            {/* Main Headline */}
-            <div className="space-y-3">
-              <h1 className="text-4xl xl:text-5xl font-serif font-bold tracking-tight text-text leading-[1.15]">
-                Turn Raw Projects Into <span className="text-primary italic font-serif">100% ATS-Passed</span> Resumes.
-              </h1>
-              <p className="text-sm text-text-muted font-medium leading-relaxed max-w-lg">
-                Built specifically for engineering students across CS, IT, ECE, AI/ML, and Data Science to land interviews at top tech companies.
-              </p>
-            </div>
-
-            {/* Feature Highlight Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
-              <div className="p-4 bg-surface/70 border border-border/70 rounded-2xl space-y-1.5 shadow-2xs hover:border-primary/40 transition-colors">
-                <div className="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
-                  <Zap className="w-4 h-4" />
-                </div>
-                <h4 className="font-bold text-xs text-text">Instant ATS Optimization</h4>
-                <p className="text-[11px] text-text-muted font-medium leading-normal">
-                  Auto-formats metrics, tech stacks, and bullet points to bypass recruiter ATS filters.
+              {/* Dynamic Main Headline */}
+              <div className="space-y-3">
+                <h1 className="text-4xl xl:text-5xl font-serif font-bold tracking-tight text-text leading-[1.15]">
+                  {activeMode === "forgot" ? (
+                    <>
+                      Reset Your Password <span className="text-primary italic font-serif">Securely</span>.
+                    </>
+                  ) : activeMode === "signin" ? (
+                    <>
+                      Access Your Saved <span className="text-primary italic font-serif">ATS Resumes</span> & Vault.
+                    </>
+                  ) : (
+                    <>
+                      Turn Raw Projects Into <span className="text-primary italic font-serif">100% ATS-Passed</span> Resumes.
+                    </>
+                  )}
+                </h1>
+                <p className="text-sm text-text-muted font-medium leading-relaxed max-w-lg">
+                  {activeMode === "forgot"
+                    ? "Verify your registered email with a 6-digit OTP code to safely update your account credentials."
+                    : activeMode === "signin"
+                    ? "Sign in to manage your unlocked resumes, edit candidate profile details, and generate tailored cover letters."
+                    : "Built specifically for engineering students across CS, IT, ECE, AI/ML, and Data Science to land interviews at top tech companies."}
                 </p>
               </div>
 
-              <div className="p-4 bg-surface/70 border border-border/70 rounded-2xl space-y-1.5 shadow-2xs hover:border-primary/40 transition-colors">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center font-bold">
-                  <FileText className="w-4 h-4" />
-                </div>
-                <h4 className="font-bold text-xs text-text">PDF & Copyable Formats</h4>
-                <p className="text-[11px] text-text-muted font-medium leading-normal">
-                  Download recruiter-ready A4 PDFs or copy raw text directly into online job portals.
-                </p>
+              {/* Dynamic Feature Highlight Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
+                {activeMode === "forgot" ? (
+                  <>
+                    <div className="p-4 bg-surface/70 border border-border/70 rounded-2xl space-y-1.5 shadow-2xs hover:border-primary/40 transition-colors">
+                      <div className="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
+                        <Key className="w-4 h-4" />
+                      </div>
+                      <h4 className="font-bold text-xs text-text">Instant 6-Digit OTP</h4>
+                      <p className="text-[11px] text-text-muted font-medium leading-normal">
+                        One-time password code sent directly to your email inbox for instant authentication.
+                      </p>
+                    </div>
+
+                    <div className="p-4 bg-surface/70 border border-border/70 rounded-2xl space-y-1.5 shadow-2xs hover:border-primary/40 transition-colors">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center font-bold">
+                        <ShieldCheck className="w-4 h-4" />
+                      </div>
+                      <h4 className="font-bold text-xs text-text">256-Bit Protection</h4>
+                      <p className="text-[11px] text-text-muted font-medium leading-normal">
+                        All passwords are encrypted with industry-standard salted bcrypt hashing algorithms.
+                      </p>
+                    </div>
+                  </>
+                ) : activeMode === "signin" ? (
+                  <>
+                    <div className="p-4 bg-surface/70 border border-border/70 rounded-2xl space-y-1.5 shadow-2xs hover:border-primary/40 transition-colors">
+                      <div className="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
+                        <FolderKanban className="w-4 h-4" />
+                      </div>
+                      <h4 className="font-bold text-xs text-text">Unlocked Resumes Space</h4>
+                      <p className="text-[11px] text-text-muted font-medium leading-normal">
+                        Access all your unlocked resume versions, edit candidate metrics, and export PDFs anytime.
+                      </p>
+                    </div>
+
+                    <div className="p-4 bg-surface/70 border border-border/70 rounded-2xl space-y-1.5 shadow-2xs hover:border-primary/40 transition-colors">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center font-bold">
+                        <Zap className="w-4 h-4" />
+                      </div>
+                      <h4 className="font-bold text-xs text-text">1-Click Cover Letters</h4>
+                      <p className="text-[11px] text-text-muted font-medium leading-normal">
+                        Generate recruiter-matched cover letters based on your saved candidate profile.
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="p-4 bg-surface/70 border border-border/70 rounded-2xl space-y-1.5 shadow-2xs hover:border-primary/40 transition-colors">
+                      <div className="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
+                        <Zap className="w-4 h-4" />
+                      </div>
+                      <h4 className="font-bold text-xs text-text">Instant ATS Optimization</h4>
+                      <p className="text-[11px] text-text-muted font-medium leading-normal">
+                        Auto-formats metrics, tech stacks, and bullet points to bypass recruiter ATS filters.
+                      </p>
+                    </div>
+
+                    <div className="p-4 bg-surface/70 border border-border/70 rounded-2xl space-y-1.5 shadow-2xs hover:border-primary/40 transition-colors">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center font-bold">
+                        <FileText className="w-4 h-4" />
+                      </div>
+                      <h4 className="font-bold text-xs text-text">PDF & Copyable Formats</h4>
+                      <p className="text-[11px] text-text-muted font-medium leading-normal">
+                        Download recruiter-ready A4 PDFs or copy raw text directly into online job portals.
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </AnimatePresence>
 
           {/* Social Proof Card */}
           <div className="p-5 bg-surface/80 border border-border/80 rounded-2xl shadow-sm space-y-3">
@@ -389,7 +465,11 @@ function LoginContent() {
               <span className="text-xs font-bold text-text ml-2">4.9 / 5.0 Rating</span>
             </div>
             <p className="text-xs text-text font-medium italic leading-relaxed">
-              "ATSLift converted my messy project descriptions into bullet points with metrics. Landed 3 SDE interviews within two weeks!"
+              {activeMode === "forgot"
+                ? '"Password reset via 6-digit OTP took less than 30 seconds right before my campus interview."'
+                : activeMode === "signin"
+                ? '"Having all my resume versions stored in ATSLift saved me so much time during off-campus drives!"'
+                : '"ATSLift converted my messy project descriptions into bullet points with metrics. Landed 3 SDE interviews!"'}
             </p>
             <div className="flex items-center justify-between text-[11px] text-text-muted pt-1 border-t border-border/50">
               <span className="font-bold text-text">Verified Student Candidate</span>
@@ -399,82 +479,84 @@ function LoginContent() {
               </span>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Right Side: The Ultra-Sleek Glassmorphism Auth Card */}
+        {/* Right Side: Ultra-Sleek Fixed Height Auth Card */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.96, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="lg:col-span-6 max-w-[440px] w-full mx-auto"
+          className="lg:col-span-6 max-w-[450px] w-full mx-auto"
         >
           <div className="p-[1px] bg-gradient-to-b from-primary/30 via-border/50 to-emerald-500/30 rounded-3xl shadow-2xl">
-            <div className="bg-surface/95 dark:bg-surface/95 backdrop-blur-2xl rounded-[23px] p-6 sm:p-8 max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col justify-between">
+            {/* Rigid Fixed Dimensions Card: h-[560px] max-h-[560px] */}
+            <div className="bg-surface/95 dark:bg-surface/95 backdrop-blur-2xl rounded-[23px] p-6 sm:p-7 h-[560px] max-h-[560px] flex flex-col justify-between overflow-hidden">
               
-              <div>
-                {/* Header Title inside Card */}
-                <div className="text-center space-y-1.5 mb-6">
-                  <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">
-                    {isForgotPass ? "Account Recovery" : isSignUp ? "Create ATSLift Account" : "Welcome Back"}
-                  </h2>
-                  <p className="text-xs text-text-muted font-medium max-w-xs mx-auto leading-relaxed">
-                    {isForgotPass
-                      ? "Enter your email to receive a 6-digit password reset code."
-                      : isSignUp
-                      ? "Verify your email with a 6-digit code to activate your account."
-                      : "Access your unlocked resumes, candidate space, and AI copilot."}
-                  </p>
+              {/* Header Title inside Card (Fixed Top) */}
+              <div className="shrink-0 text-center space-y-1.5 mb-4">
+                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">
+                  {isForgotPass ? "Account Recovery" : isSignUp ? "Create ATSLift Account" : "Welcome Back"}
+                </h2>
+                <p className="text-xs text-text-muted font-medium max-w-xs mx-auto leading-relaxed">
+                  {isForgotPass
+                    ? "Enter your email to receive a 6-digit password reset code."
+                    : isSignUp
+                    ? "Verify your email with a 6-digit code to activate your account."
+                    : "Access your unlocked resumes, candidate space, and AI copilot."}
+                </p>
+              </div>
+
+              {/* Segmented Tab Switcher (Sign In vs Create Account) */}
+              {!isForgotPass && (
+                <div className="shrink-0 flex items-center bg-bg-base/90 border border-border/80 p-1 rounded-2xl mb-4 relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsSignUp(false);
+                      setSignUpStep("form");
+                      setError(null);
+                      setResetSuccess(null);
+                    }}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all relative z-10 cursor-pointer ${
+                      !isSignUp ? "text-primary dark:text-white" : "text-text-muted hover:text-text"
+                    }`}
+                  >
+                    {!isSignUp && (
+                      <motion.div
+                        layoutId="authTab"
+                        className="absolute inset-0 bg-surface dark:bg-surface-dark border border-border/70 rounded-xl shadow-xs -z-10"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                    Sign In
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsSignUp(true);
+                      setSignUpStep("form");
+                      setError(null);
+                      setResetSuccess(null);
+                    }}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all relative z-10 cursor-pointer ${
+                      isSignUp ? "text-primary dark:text-white" : "text-text-muted hover:text-text"
+                    }`}
+                  >
+                    {isSignUp && (
+                      <motion.div
+                        layoutId="authTab"
+                        className="absolute inset-0 bg-surface dark:bg-surface-dark border border-border/70 rounded-xl shadow-xs -z-10"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                    Create Account
+                  </button>
                 </div>
+              )}
 
-                {/* Segmented Tab Switcher (Sign In vs Create Account) */}
-                {!isForgotPass && (
-                  <div className="flex items-center bg-bg-base/90 border border-border/80 p-1 rounded-2xl mb-6 relative">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsSignUp(false);
-                        setSignUpStep("form");
-                        setError(null);
-                        setResetSuccess(null);
-                      }}
-                      className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all relative z-10 cursor-pointer ${
-                        !isSignUp ? "text-primary dark:text-white" : "text-text-muted hover:text-text"
-                      }`}
-                    >
-                      {!isSignUp && (
-                        <motion.div
-                          layoutId="authTab"
-                          className="absolute inset-0 bg-surface dark:bg-surface-dark border border-border/70 rounded-xl shadow-xs -z-10"
-                          transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                        />
-                      )}
-                      Sign In
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsSignUp(true);
-                        setSignUpStep("form");
-                        setError(null);
-                        setResetSuccess(null);
-                      }}
-                      className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all relative z-10 cursor-pointer ${
-                        isSignUp ? "text-primary dark:text-white" : "text-text-muted hover:text-text"
-                      }`}
-                    >
-                      {isSignUp && (
-                        <motion.div
-                          layoutId="authTab"
-                          className="absolute inset-0 bg-surface dark:bg-surface-dark border border-border/70 rounded-xl shadow-xs -z-10"
-                          transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                        />
-                      )}
-                      Create Account
-                    </button>
-                  </div>
-                )}
-
+              {/* Middle Dynamic Scroll Area (Takes remaining flex space cleanly) */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 py-1">
                 {/* Animated Alerts */}
                 <AnimatePresence mode="wait">
                   {error && (
@@ -482,7 +564,7 @@ function LoginContent() {
                       initial={{ opacity: 0, y: -6 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -6 }}
-                      className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs rounded-xl font-bold mb-4 flex items-center space-x-2"
+                      className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs rounded-xl font-bold mb-3 flex items-center space-x-2"
                     >
                       <div className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0 animate-pulse" />
                       <span>{error}</span>
@@ -494,7 +576,7 @@ function LoginContent() {
                       initial={{ opacity: 0, y: -6 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -6 }}
-                      className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs rounded-xl font-bold mb-4 flex items-center space-x-2"
+                      className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs rounded-xl font-bold mb-3 flex items-center space-x-2"
                     >
                       <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
                       <span>{resetSuccess}</span>
@@ -511,12 +593,12 @@ function LoginContent() {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -15 }}
                       transition={{ duration: 0.2 }}
-                      className="space-y-4"
+                      className="space-y-3.5"
                     >
                       {forgotPassStep === "email" ? (
-                        <form onSubmit={handleForgotPassSubmit} className="space-y-4">
+                        <form onSubmit={handleForgotPassSubmit} className="space-y-3.5">
                           <div>
-                            <label className="block text-[10px] font-extrabold mb-1.5 uppercase tracking-wider text-text-muted">
+                            <label className="block text-[10px] font-extrabold mb-1 uppercase tracking-wider text-text-muted">
                               University / Personal Email
                             </label>
                             <div className="relative">
@@ -563,9 +645,9 @@ function LoginContent() {
                           </div>
                         </form>
                       ) : (
-                        <form onSubmit={handleResetPassSubmit} className="space-y-4">
+                        <form onSubmit={handleResetPassSubmit} className="space-y-3.5">
                           <div>
-                            <label className="block text-[10px] font-extrabold mb-1.5 uppercase tracking-wider text-text-muted">
+                            <label className="block text-[10px] font-extrabold mb-1 uppercase tracking-wider text-text-muted">
                               6-Digit OTP Code
                             </label>
                             <div className="relative">
@@ -585,7 +667,7 @@ function LoginContent() {
                           </div>
 
                           <div>
-                            <label className="block text-[10px] font-extrabold mb-1.5 uppercase tracking-wider text-text-muted">
+                            <label className="block text-[10px] font-extrabold mb-1 uppercase tracking-wider text-text-muted">
                               New Password
                             </label>
                             <div className="relative">
@@ -647,7 +729,7 @@ function LoginContent() {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: isSignUp ? -12 : 12 }}
                       transition={{ duration: 0.2 }}
-                      className="space-y-4"
+                      className="space-y-3.5"
                     >
                       {/* Google Sign In Button */}
                       <button
@@ -679,7 +761,7 @@ function LoginContent() {
                       {/* Form inputs */}
                       <form onSubmit={handleAuthSubmit} className="space-y-3.5">
                         <div>
-                          <label className="block text-[10px] font-extrabold mb-1.5 uppercase tracking-wider text-text-muted">
+                          <label className="block text-[10px] font-extrabold mb-1 uppercase tracking-wider text-text-muted">
                             University / Personal Email
                           </label>
                           <div className="relative">
@@ -735,7 +817,7 @@ function LoginContent() {
                         ) : (
                           <>
                             <div>
-                              <div className="flex justify-between items-center mb-1.5">
+                              <div className="flex justify-between items-center mb-1">
                                 <label className="block text-[10px] font-extrabold uppercase tracking-wider text-text-muted">
                                   Password
                                 </label>
@@ -814,7 +896,7 @@ function LoginContent() {
                             {/* Confirm Password Input (Account Creation) */}
                             {isSignUp && (
                               <div>
-                                <label className="block text-[10px] font-extrabold mb-1.5 uppercase tracking-wider text-text-muted">
+                                <label className="block text-[10px] font-extrabold mb-1 uppercase tracking-wider text-text-muted">
                                   Confirm Password
                                 </label>
                                 <div className="relative">
@@ -882,8 +964,8 @@ function LoginContent() {
                 </AnimatePresence>
               </div>
 
-              {/* Card Footer Links */}
-              <div className="pt-4 border-t border-border/50 text-center text-[10px] text-text-muted space-x-2">
+              {/* Card Footer Links (Fixed Bottom) */}
+              <div className="shrink-0 pt-3 border-t border-border/50 text-center text-[10px] text-text-muted space-x-2">
                 <span>By continuing, you agree to ATSLift's</span>
                 <Link href="/terms" className="underline hover:text-text font-semibold">Terms</Link>
                 <span>&</span>
