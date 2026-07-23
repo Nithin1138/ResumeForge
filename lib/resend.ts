@@ -107,8 +107,17 @@ ${plainTextResume}
   }
 }
 
-export async function sendOtpEmail(toEmail: string, otp: string): Promise<boolean> {
-  const emailSubject = "Your Password Reset OTP — ATSLift";
+export async function sendOtpEmail(toEmail: string, otp: string, purpose: "signup" | "reset" = "reset"): Promise<boolean> {
+  const isSignup = purpose === "signup";
+  const emailSubject = isSignup
+    ? "Your 6-Digit Verification Code — ATSLift"
+    : "Your Password Reset OTP — ATSLift";
+
+  const headingText = isSignup ? "Verify Your Account" : "Reset Your Password";
+  const bodyText = isSignup
+    ? "Use the 6-digit OTP code below to verify your email and complete creating your ATSLift account. This code will expire in 10 minutes."
+    : "Use the OTP code below to verify your email and set a new password. This code will expire in 10 minutes.";
+
   const emailHtml = `
     <div style="font-family: 'Satoshi', sans-serif; background-color: #f7f6f2; color: #28251d; padding: 40px; border-radius: 12px; max-width: 500px; margin: 0 auto; border: 1px solid #d4d1ca;">
       <div style="text-align: center; margin-bottom: 30px;">
@@ -117,9 +126,9 @@ export async function sendOtpEmail(toEmail: string, otp: string): Promise<boolea
       </div>
       
       <div style="background-color: #f9f8f5; border: 1px solid #d4d1ca; padding: 25px; border-radius: 8px; margin-bottom: 25px; text-align: center;">
-        <h3 style="font-size: 18px; margin: 0 0 10px 0; color: #28251d;">Reset Your Password</h3>
+        <h3 style="font-size: 18px; margin: 0 0 10px 0; color: #28251d;">${headingText}</h3>
         <p style="font-size: 14px; line-height: 1.6; color: #7a7974; margin: 0 0 20px 0;">
-          Use the OTP code below to verify your email and set a new password. This code will expire in 10 minutes.
+          ${bodyText}
         </p>
         
         <div style="font-family: monospace; font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #01696f; background-color: #ffffff; padding: 15px; border-radius: 6px; border: 1px solid #d4d1ca; display: inline-block; margin-bottom: 10px;">
@@ -133,7 +142,7 @@ export async function sendOtpEmail(toEmail: string, otp: string): Promise<boolea
       </div>
     </div>
   `;
-  const emailText = `Reset Your Password\n\nUse the OTP code below to verify your email and set a new password. This code will expire in 10 minutes.\n\nOTP Code: ${otp}`;
+  const emailText = `${headingText}\n\n${bodyText}\n\nOTP Code: ${otp}`;
   const fromEmail = process.env.FROM_EMAIL || "ATSLift <noreply@atslift.in>";
 
   try {

@@ -45,29 +45,21 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Missing email or password");
+          throw new Error("Mail or password is wrong");
         }
         
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
+          where: { email: credentials.email.trim().toLowerCase() }
         });
         
-        if (!user) {
-          throw new Error("No account found, please sign up");
-        }
-        
-        if (!user.password) {
-          throw new Error("Please sign in with Google or Magic Link");
+        if (!user || !user.password) {
+          throw new Error("Mail or password is wrong");
         }
 
-        if (!user.emailVerified) {
-          throw new Error("Please verify your email first. Use the sign up flow or magic link to receive an activation email.");
-        }
-        
         const isValid = await bcrypt.compare(credentials.password, user.password);
         
         if (!isValid) {
-          throw new Error("Invalid email or password");
+          throw new Error("Mail or password is wrong");
         }
         
         return user;

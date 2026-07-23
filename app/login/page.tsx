@@ -3,7 +3,7 @@
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Loader2, ArrowRight, Mail, Sparkles, Lock, Eye, EyeOff, CheckCircle2, ShieldCheck, User, KeyRound } from "lucide-react";
+import { Loader2, ArrowRight, Mail, Sparkles, Lock, Eye, EyeOff, CheckCircle2, ShieldCheck, KeyRound } from "lucide-react";
 import { signIn, getSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -24,14 +24,16 @@ function LoginContent() {
     }
   }, [router, searchParams]);
 
-  // Standard Login States
+  // Standard Auth States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
+  const [signUpStep, setSignUpStep] = useState<"form" | "otp">("form");
+  const [signUpOtp, setSignUpOtp] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isVerifyRequest, setIsVerifyRequest] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   // Forgot Password / OTP States
@@ -44,59 +46,21 @@ function LoginContent() {
   const [resetSuccess, setResetSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    if (searchParams.get("verifyRequest") === "true") {
-      setIsVerifyRequest(true);
-    }
     if (searchParams.get("error") && searchParams.get("error") !== "SessionExpired") {
-      setError("Authentication failed. Please try again.");
+      setError("Mail or password is wrong");
     }
   }, [searchParams]);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isVerifyRequest && email && password) {
-      interval = setInterval(async () => {
-        try {
-          const session = await getSession();
-          if (session) {
-            router.push("/dashboard");
-            return;
-          }
-
-          const res = await fetch("/api/auth/check-status", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          });
-          const data = await res.json();
-
-          if (data.verified) {
-            clearInterval(interval);
-            const signInRes = await signIn("credentials", {
-              email,
-              password,
-              redirect: false,
-            });
-            if (signInRes && !signInRes.error) {
-              router.push("/dashboard");
-            }
-          }
-        } catch (error) {}
-      }, 3000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isVerifyRequest, router, email, password]);
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setResetSuccess(null);
+
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
       setError("Please enter a valid university or personal email address.");
       return;
     }
-    if (!password.trim() || password.length < 6) {
+
+    if (signUpStep === "form" && (!password.trim() || password.length < 6)) {
       setError("Password must be at least 6 characters long.");
       return;
     }
@@ -106,46 +70,69 @@ function LoginContent() {
 
     try {
       if (isSignUp) {
-        const registerRes = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
+        if (signUpStep === "form") {
+          // Step 1: Send 6-digit OTP code to candidate's email
+          const res = await fetch("/api/auth/send-signup-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
 
-        const registerData = await registerRes.json();
+          const data = await res.json();
+          if (!res.ok) {
+            throw new Error(data.message || "Failed to send verification code.");
+          }
 
-        if (!registerRes.ok) {
-          throw new Error(registerData.message || "Failed to register.");
+          setSignUpStep("otp");
+          setResetSuccess(`6-digit verification code sent to ${email}`);
+        } else {
+          // Step 2: Verify 6-digit OTP code and create account
+          if (!signUpOtp.trim() || signUpOtp.length !== 6 || !/^\d+$/.test(signUpOtp)) {
+            throw new Error("Verification code must be a 6-digit number.");
+          }
+
+          const registerRes = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password, otp: signUpOtp }),
+          });
+
+          const registerData = await registerRes.json();
+          if (!registerRes.ok) {
+            throw new Error(registerData.message || "Failed to create account.");
+          }
+
+          // Auto sign-in with credentials after successful verification
+          const signInRes = await signIn("credentials", {
+            email,
+            password,
+            redirect: false,
+          });
+
+          if (signInRes?.error) {
+            setResetSuccess("Account created successfully! Please sign in with your email and password.");
+            setIsSignUp(false);
+            setSignUpStep("form");
+          } else {
+            router.push("/dashboard");
+          }
         }
-
-        const emailSignInRes = await signIn("email", {
+      } else {
+        // Direct Sign In with Email & Password
+        const res = await signIn("credentials", {
           email,
-          callbackUrl: "/dashboard",
+          password,
           redirect: false,
         });
-        if (emailSignInRes?.error) {
-          throw new Error("Account created, but failed to send activation email.");
+
+        if (res?.error) {
+          throw new Error("Mail or password is wrong");
+        } else if (res?.ok) {
+          router.push("/dashboard");
         }
-
-        setIsVerifyRequest(true);
-        setIsLoading(false);
-        return;
-      }
-
-      const res = await signIn("credentials", {
-        email,
-        password,
-        callbackUrl: "/dashboard",
-        redirect: false,
-      });
-
-      if (res?.error) {
-        throw new Error(res.error);
-      } else if (res?.url) {
-        router.push("/dashboard");
       }
     } catch (err: any) {
-      setError(err.message || "An authentication error occurred.");
+      setError(err.message || "Mail or password is wrong");
     } finally {
       setIsLoading(false);
     }
@@ -187,6 +174,7 @@ function LoginContent() {
       }
 
       setForgotPassStep("otp");
+      setResetSuccess(`6-digit code sent to ${forgotEmail}`);
     } catch (err: any) {
       setError(err.message || "Failed to send verification code.");
     } finally {
@@ -236,7 +224,7 @@ function LoginContent() {
 
   return (
     <div className="min-h-screen bg-bg-base text-text flex flex-col font-sans relative overflow-hidden">
-      {/* Dynamic Animated Ambient Background Orbs */}
+      {/* Ambient Orbs */}
       <motion.div
         animate={{
           scale: [1, 1.2, 1],
@@ -292,18 +280,19 @@ function LoginContent() {
               {isForgotPass
                 ? "Reset your password via 6-digit email OTP verification."
                 : isSignUp
-                ? "Unlock copyable ATS resumes, cover letters, and master profile vault."
+                ? "Verify your email with a 6-digit code to create your account."
                 : "Manage unlocked resumes, candidate space vault, and AI copilot."}
             </p>
           </div>
 
           {/* Segmented Tab Switcher (Sign In vs Create Account) */}
-          {!isForgotPass && !isVerifyRequest && (
+          {!isForgotPass && (
             <div className="flex items-center bg-bg-base/80 border border-border p-1 rounded-2xl mb-6 relative">
               <button
                 type="button"
                 onClick={() => {
                   setIsSignUp(false);
+                  setSignUpStep("form");
                   setError(null);
                   setResetSuccess(null);
                 }}
@@ -325,6 +314,7 @@ function LoginContent() {
                 type="button"
                 onClick={() => {
                   setIsSignUp(true);
+                  setSignUpStep("form");
                   setError(null);
                   setResetSuccess(null);
                 }}
@@ -373,29 +363,7 @@ function LoginContent() {
 
           {/* Animated Content Views */}
           <AnimatePresence mode="wait">
-            {isVerifyRequest ? (
-              <motion.div
-                key="verifyView"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="text-center py-6 space-y-4"
-              >
-                <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-3xl flex items-center justify-center mx-auto shadow-md animate-bounce">
-                  <Mail className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-serif font-bold text-text">Check Your Email</h3>
-                <p className="text-xs text-text-muted font-medium leading-relaxed max-w-xs mx-auto">
-                  A magic activation link has been sent to <span className="font-bold text-text">{email}</span>. Click the link to instantly log in.
-                </p>
-                <button
-                  onClick={() => setIsVerifyRequest(false)}
-                  className="pt-2 text-xs text-primary font-bold hover:underline cursor-pointer inline-flex items-center space-x-1"
-                >
-                  <span>← Try a different email</span>
-                </button>
-              </motion.div>
-            ) : isForgotPass ? (
+            {isForgotPass ? (
               <motion.div
                 key="forgotView"
                 initial={{ opacity: 0, x: 20 }}
@@ -445,6 +413,7 @@ function LoginContent() {
                         onClick={() => {
                           setIsForgotPass(false);
                           setError(null);
+                          setResetSuccess(null);
                         }}
                         className="text-xs text-text-muted hover:text-primary transition-colors font-bold cursor-pointer"
                       >
@@ -532,7 +501,7 @@ function LoginContent() {
               </motion.div>
             ) : (
               <motion.div
-                key={isSignUp ? "signUpForm" : "signInForm"}
+                key={isSignUp ? `signUpForm_${signUpStep}` : "signInForm"}
                 initial={{ opacity: 0, x: isSignUp ? 15 : -15 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: isSignUp ? -15 : 15 }}
@@ -576,8 +545,9 @@ function LoginContent() {
                       <input
                         type="email"
                         required
+                        disabled={isSignUp && signUpStep === "otp"}
                         autoComplete="email"
-                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-border/80 bg-bg-base text-text focus:ring-2 focus:ring-primary/40 focus:border-transparent outline-none text-xs font-semibold transition-all"
+                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-border/80 bg-bg-base text-text focus:ring-2 focus:ring-primary/40 focus:border-transparent outline-none text-xs font-semibold transition-all disabled:opacity-60"
                         placeholder="e.g. nithin.kumar@vit.edu"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -585,48 +555,85 @@ function LoginContent() {
                     </div>
                   </div>
 
-                  <div>
-                    <div className="flex justify-between items-center mb-1.5">
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-text-muted">
-                        Password
+                  {isSignUp && signUpStep === "otp" ? (
+                    <div>
+                      <label className="block text-[11px] font-bold mb-1.5 uppercase tracking-wider text-text-muted">
+                        Enter 6-Digit Code Received via Email
                       </label>
-                      {!isSignUp && (
+                      <div className="relative">
+                        <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                        <input
+                          type="text"
+                          required
+                          maxLength={6}
+                          pattern="\d{6}"
+                          inputMode="numeric"
+                          autoFocus
+                          className="w-full pl-11 pr-4 py-3 rounded-xl border-2 border-primary/50 bg-bg-base text-text focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm tracking-widest font-extrabold transition-all"
+                          placeholder="123456"
+                          value={signUpOtp}
+                          onChange={(e) => setSignUpOtp(e.target.value.replace(/\D/g, ""))}
+                        />
+                      </div>
+                      <div className="flex justify-between items-center mt-2">
                         <button
                           type="button"
                           onClick={() => {
-                            setIsForgotPass(true);
-                            setForgotPassStep("email");
-                            setForgotEmail(email);
+                            setSignUpStep("form");
+                            setSignUpOtp("");
                             setError(null);
                             setResetSuccess(null);
                           }}
                           className="text-xs font-bold text-primary hover:underline cursor-pointer"
                         >
-                          Forgot password?
+                          ← Change Email or Password
                         </button>
-                      )}
+                      </div>
                     </div>
-                    <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        required
-                        autoComplete="current-password"
-                        className="w-full pl-11 pr-12 py-3 rounded-xl border border-border/80 bg-bg-base text-text focus:ring-2 focus:ring-primary/40 focus:border-transparent outline-none text-xs font-semibold transition-all"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text cursor-pointer"
-                        tabIndex={-1}
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
+                  ) : (
+                    <div>
+                      <div className="flex justify-between items-center mb-1.5">
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-text-muted">
+                          Password
+                        </label>
+                        {!isSignUp && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsForgotPass(true);
+                              setForgotPassStep("email");
+                              setForgotEmail(email);
+                              setError(null);
+                              setResetSuccess(null);
+                            }}
+                            className="text-xs font-bold text-primary hover:underline cursor-pointer"
+                          >
+                            Forgot password?
+                          </button>
+                        )}
+                      </div>
+                      <div className="relative">
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          required
+                          autoComplete={isSignUp ? "new-password" : "current-password"}
+                          className="w-full pl-11 pr-12 py-3 rounded-xl border border-border/80 bg-bg-base text-text focus:ring-2 focus:ring-primary/40 focus:border-transparent outline-none text-xs font-semibold transition-all"
+                          placeholder="••••••••"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text cursor-pointer"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <button
                     type="submit"
@@ -637,7 +644,13 @@ function LoginContent() {
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       <>
-                        <span>{isSignUp ? "Create ATSLift Account" : "Sign In to Dashboard"}</span>
+                        <span>
+                          {isSignUp
+                            ? signUpStep === "otp"
+                              ? "Verify Code & Create Account"
+                              : "Send 6-Digit Code"
+                            : "Sign In to Dashboard"}
+                        </span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
