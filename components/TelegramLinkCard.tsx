@@ -13,7 +13,9 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
-  Zap
+  Zap,
+  PlusCircle,
+  X
 } from "lucide-react";
 
 export function TelegramLinkCard() {
@@ -26,6 +28,13 @@ export function TelegramLinkCard() {
   const [settingWebhook, setSettingWebhook] = useState(false);
   const [simulating, setSimulating] = useState(false);
   const [simulatingEmail, setSimulatingEmail] = useState(false);
+
+  // Modal State for Manual Email Ingestion
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [manualSubject, setManualSubject] = useState("");
+  const [manualSender, setManualSender] = useState("placement@vitapstudent.ac.in");
+  const [manualBody, setManualBody] = useState("");
+  const [ingesting, setIngesting] = useState(false);
 
   const fetchStatus = async () => {
     setLoading(true);
@@ -118,6 +127,40 @@ export function TelegramLinkCard() {
     }
   };
 
+  const handleManualIngestSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualBody.trim()) return;
+
+    setIngesting(true);
+    setWebhookMsg(null);
+    try {
+      const res = await fetch("/api/resend/manual-ingest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          emailSubject: manualSubject,
+          sender: manualSender,
+          emailBody: manualBody,
+        }),
+      });
+
+      const json = await res.json();
+      if (json.ok) {
+        setWebhookMsg("🎯 Real Placement Email AI Parsed & Sent to Telegram!");
+        setIsModalOpen(false);
+        setManualBody("");
+        setManualSubject("");
+      } else {
+        setWebhookMsg(`Ingest Error: ${json.message}`);
+      }
+    } catch (err) {
+      console.error("Manual ingest error:", err);
+      setWebhookMsg("Failed to ingest placement email.");
+    } finally {
+      setIngesting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-6 bg-surface border border-border/80 rounded-3xl flex items-center justify-center space-x-3 text-text-muted">
@@ -185,20 +228,29 @@ export function TelegramLinkCard() {
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <label className="block text-[10px] font-extrabold uppercase tracking-wider text-text-muted">
                 Your Personal Placement Inbound Email Alias
               </label>
 
-              {/* Developer Test Email simulation button */}
-              <button
-                onClick={handleSimulateTestEmail}
-                disabled={simulatingEmail}
-                className="text-[10px] font-bold text-sky-500 hover:underline flex items-center space-x-1 cursor-pointer"
-              >
-                <Zap className="w-3 h-3" />
-                <span>{simulatingEmail ? "Processing AI..." : "Test Placement Email Ingestion"}</span>
-              </button>
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="text-[10px] font-extrabold text-emerald-500 hover:underline flex items-center space-x-1 cursor-pointer bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20"
+                >
+                  <PlusCircle className="w-3 h-3" />
+                  <span>Paste Real Email</span>
+                </button>
+
+                <button
+                  onClick={handleSimulateTestEmail}
+                  disabled={simulatingEmail}
+                  className="text-[10px] font-bold text-sky-500 hover:underline flex items-center space-x-1 cursor-pointer"
+                >
+                  <Zap className="w-3 h-3" />
+                  <span>{simulatingEmail ? "Processing AI..." : "Test Simulation"}</span>
+                </button>
+              </div>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -303,6 +355,96 @@ export function TelegramLinkCard() {
                 Search <b>@{data.botUsername}</b> on Telegram & send: <code>/start {data.linkToken}</code>
               </p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Manual Real Email Ingestion Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-surface border border-border rounded-3xl p-6 max-w-lg w-full space-y-4 shadow-2xl relative">
+            <div className="flex items-center justify-between border-b border-border/40 pb-3">
+              <h3 className="font-extrabold text-base text-text flex items-center space-x-2">
+                <PlusCircle className="w-5 h-5 text-emerald-500" />
+                <span>Parse Real Placement Email</span>
+              </h3>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="p-1 rounded-lg text-text-muted hover:text-text cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleManualIngestSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-extrabold text-text mb-1">
+                  Email Subject
+                </label>
+                <input
+                  type="text"
+                  value={manualSubject}
+                  onChange={(e) => setManualSubject(e.target.value)}
+                  placeholder="e.g. Tekion | Placement Drive / Internship - 2027 Batch"
+                  className="w-full px-3.5 py-2.5 bg-bg-base border border-border/80 rounded-xl text-xs text-text focus:outline-none focus:ring-2 focus:ring-primary/40 font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold text-text mb-1">
+                  Placement Cell Sender Email
+                </label>
+                <input
+                  type="text"
+                  value={manualSender}
+                  onChange={(e) => setManualSender(e.target.value)}
+                  placeholder="cdc@vitapstudent.ac.in"
+                  className="w-full px-3.5 py-2.5 bg-bg-base border border-border/80 rounded-xl text-xs text-text focus:outline-none focus:ring-2 focus:ring-primary/40 font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold text-text mb-1">
+                  Paste Placement Email Content / Table *
+                </label>
+                <textarea
+                  rows={6}
+                  value={manualBody}
+                  onChange={(e) => setManualBody(e.target.value)}
+                  placeholder="Paste the placement email text, criteria table, CTC, and deadline dates here..."
+                  required
+                  className="w-full p-3 bg-bg-base border border-border/80 rounded-xl text-xs text-text focus:outline-none focus:ring-2 focus:ring-primary/40 font-mono resize-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end space-x-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 bg-surface hover:bg-bg-base text-text-muted text-xs font-bold rounded-xl cursor-pointer"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={ingesting}
+                  className="px-5 py-2.5 bg-primary hover:opacity-90 text-white text-xs font-extrabold rounded-xl flex items-center space-x-2 transition-all cursor-pointer shadow-xs"
+                >
+                  {ingesting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Parsing AI...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-4 h-4" />
+                      <span>Parse & Notify Telegram</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

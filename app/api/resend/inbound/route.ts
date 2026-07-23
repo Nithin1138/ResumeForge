@@ -15,16 +15,22 @@ export async function POST(req: Request) {
   try {
     const payload = await req.json();
 
+    const data = payload.data || payload;
+
     // Log payload summary for debugging
-    console.log("[Resend Webhook Event]:", payload.type, payload.data?.subject, payload.data?.to);
+    console.log("[Resend Webhook Event]:", payload.type, data.subject, data.to);
 
     // Resend webhook verification/event type check
-    if (payload.type !== "email.received" || !payload.data) {
+    if (payload.type && payload.type !== "email.received") {
       return NextResponse.json({ message: "Ignored event type" }, { status: 200 });
     }
 
-    const { email_id, to, from, subject } = payload.data;
-    const recipientList: string[] = Array.isArray(to) ? to : [to];
+    const email_id = data.email_id || data.id || payload.email_id;
+    const to = data.to || payload.to;
+    const from = data.from || payload.from;
+    const subject = data.subject || payload.subject;
+
+    const recipientList: string[] = Array.isArray(to) ? to : (to ? [to] : []);
 
     // Find the inbound alias matching a TelegramUser in DB
     let matchedTgUser = null;
