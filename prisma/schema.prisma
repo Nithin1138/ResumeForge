@@ -47,6 +47,7 @@ model User {
   resumes            Resume[]
   coverLetters       CoverLetter[]
   masterProfile      MasterProfile?
+  telegramUser       TelegramUser?
   walletTransactions WalletTransaction[]
   createdAt          DateTime  @default(now())
 }
@@ -347,3 +348,68 @@ model MasterProfile {
 
   @@index([userId])
 }
+
+enum PostingStatus {
+  NEW
+  NOTIFIED
+  APPLIED
+  NOT_ELIGIBLE
+  SKIPPED
+  EXPIRED
+  MANUAL_REVIEW
+}
+
+enum ReminderType {
+  THREE_DAYS_BEFORE
+  ONE_DAY_BEFORE
+  DAY_OF
+}
+
+model TelegramUser {
+  id                 String       @id @default(cuid())
+  userId             String       @unique
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  telegramChatId     String       @unique
+  telegramUsername   String?
+  inboundAlias       String       @unique
+  createdAt          DateTime     @default(now())
+
+  jobPostings        JobPosting[]
+
+  @@index([telegramChatId])
+  @@index([inboundAlias])
+}
+
+model JobPosting {
+  id                   String         @id @default(cuid())
+  telegramUserId       String
+  telegramUser         TelegramUser   @relation(fields: [telegramUserId], references: [id], onDelete: Cascade)
+  companyName          String
+  roleTitle            String
+  rawEmailText         String         @db.Text
+  eligibilityCriteria  String         @db.Text
+  applicationDeadline  DateTime?
+  driveDate            DateTime?
+  otherImportantDates  String?        @db.Text
+  status               PostingStatus  @default(NEW)
+  createdAt            DateTime       @default(now())
+
+  reminders            Reminder[]
+
+  @@index([telegramUserId])
+  @@index([status])
+}
+
+model Reminder {
+  id           String       @id @default(cuid())
+  jobPostingId String
+  jobPosting   JobPosting   @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  scheduledFor DateTime
+  sent         Boolean      @default(false)
+  reminderType ReminderType
+  createdAt    DateTime     @default(now())
+
+  @@index([jobPostingId])
+  @@index([scheduledFor, sent])
+}
+

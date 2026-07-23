@@ -43,6 +43,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoutButton } from "@/components/DashboardActions";
 import HeaderWalletBadge from "@/components/HeaderWalletBadge";
 import AppLayout from "@/components/AppLayout";
+import { TelegramLinkCard } from "@/components/TelegramLinkCard";
 
 interface ProjectItem {
   id: string;
@@ -964,6 +965,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
             {saveError}
           </div>
         )}
+
+        {/* Telegram JD Reminders & Monitoring Card */}
+        <TelegramLinkCard />
 
         {/* ─── TAB CONTENT WITH SMOOTH ANIMATEPRESENCE ─── */}
         <AnimatePresence mode="wait">
