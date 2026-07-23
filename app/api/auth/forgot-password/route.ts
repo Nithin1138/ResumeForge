@@ -56,7 +56,10 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { message: "OTP sent successfully." },
+      { 
+        message: "OTP sent successfully.",
+        otp: process.env.NODE_ENV !== "production" ? otp : undefined
+      },
       { status: 200 }
     );
   } catch (error) {

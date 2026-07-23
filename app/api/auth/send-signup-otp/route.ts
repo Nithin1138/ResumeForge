@@ -74,7 +74,10 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { message: "Verification code sent to your email." },
+      { 
+        message: "Verification code sent to your email.",
+        otp: process.env.NODE_ENV !== "production" ? otp : undefined
+      },
       { status: 200 }
     );
   } catch (error) {

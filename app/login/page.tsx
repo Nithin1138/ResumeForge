@@ -149,7 +149,11 @@ function LoginContent() {
           }
 
           setSignUpStep("otp");
-          setResetSuccess(`6-digit verification code sent to ${email}`);
+          if (data.otp) {
+            setResetSuccess(`Code sent! For Sandbox Test, use: ${data.otp}`);
+          } else {
+            setResetSuccess(`6-digit verification code sent to ${email}`);
+          }
         } else {
           // Step 2: Verify 6-digit OTP code and create account
           if (!signUpOtp.trim() || signUpOtp.length !== 6 || !/^\d+$/.test(signUpOtp)) {
@@ -239,7 +243,11 @@ function LoginContent() {
       }
 
       setForgotPassStep("otp");
-      setResetSuccess(`6-digit code sent to ${forgotEmail}`);
+      if (data.otp) {
+        setResetSuccess(`Code sent! For Sandbox Test, use: ${data.otp}`);
+      } else {
+        setResetSuccess(`6-digit code sent to ${forgotEmail}`);
+      }
     } catch (err: any) {
       setError(err.message || "Failed to send verification code.");
     } finally {
