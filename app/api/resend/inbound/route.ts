@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { extractJdInfoWithLLM } from "@/lib/llm-extractor";
-import { sendTelegramMessage, formatDateDDMMYYYY } from "@/lib/telegram";
+import { sendTelegramMessage, formatDateDDMMYYYY, escapeHtml } from "@/lib/telegram";
 import { scheduleQStashReminder } from "@/lib/qstash";
 
 export async function POST(req: Request) {
@@ -113,11 +113,13 @@ export async function POST(req: Request) {
 
     // 1. Send Immediate Telegram Notification FIRST (Zero Delay!)
     const targetDate = appDeadline || driveDate;
-    const branches = extracted.eligibilityCriteria?.branches?.join(", ") || "All Branches";
-    const cgpa = extracted.eligibilityCriteria?.cgpaCutoff || "No Cutoff specified";
+    const branches = escapeHtml(extracted.eligibilityCriteria?.branches?.join(", ") || "All Branches");
+    const cgpa = escapeHtml(extracted.eligibilityCriteria?.cgpaCutoff || "No Cutoff specified");
+    const companyEscaped = escapeHtml(extracted.companyName);
+    const roleEscaped = escapeHtml(extracted.roleTitle);
     const deadlineStr = formatDateDDMMYYYY(targetDate);
 
-    const msgText = `🎯 <b>New Drive Detected: ${extracted.companyName}</b>\n\n<b>Role:</b> ${extracted.roleTitle}\n<b>Eligible Branches:</b> ${branches}\n<b>CGPA Cutoff:</b> ${cgpa}\n<b>Deadline/Date:</b> 🗓️ ${deadlineStr}\n\n<i>Reminders have been scheduled for 3 days before, 1 day before, and day of drive.</i>`;
+    const msgText = `🎯 <b>New Drive Detected: ${companyEscaped}</b>\n\n<b>Role:</b> ${roleEscaped}\n<b>Eligible Branches:</b> ${branches}\n<b>CGPA Cutoff:</b> ${cgpa}\n<b>Deadline/Date:</b> 🗓️ ${deadlineStr}\n\n<i>Reminders have been scheduled for 3 days before, 1 day before, and day of drive.</i>`;
 
     const inlineKeyboard = {
       inline_keyboard: [

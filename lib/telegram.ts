@@ -10,6 +10,14 @@ export function getInboundAlias(userId: string): string {
   return `jd_${cleanId}@${INBOUND_DOMAIN}`;
 }
 
+export function escapeHtml(str: string): string {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 export function formatDateDDMMYYYY(dateInput: Date | string | null | undefined): string {
   if (!dateInput) return "Not Specified";
   const d = new Date(dateInput);
@@ -37,9 +45,17 @@ export async function sendTelegramMessage(
   text: string,
   replyMarkup?: any
 ): Promise<boolean> {
+  const chatIdStr = String(chatId);
+
+  // If mock chat ID from local dev simulation, log and return true
+  if (chatIdStr.startsWith("dev_chat_")) {
+    console.log(`[Dev Simulation Chat ${chatIdStr}]:\n${text}`);
+    return true;
+  }
+
   if (!TELEGRAM_BOT_TOKEN) {
     console.warn("[Telegram Bot] TELEGRAM_BOT_TOKEN is not configured. Message logged to console:");
-    console.log(`[Telegram Msg to ${chatId}]:\n${text}`);
+    console.log(`[Telegram Msg to ${chatIdStr}]:\n${text}`);
     return true;
   }
 
@@ -59,8 +75,27 @@ export async function sendTelegramMessage(
 
     if (!res.ok) {
       const err = await res.json();
-      console.error("[Telegram Bot API Error]:", err);
-      return false;
+      console.error("[Telegram Bot API HTML Error]:", err);
+
+      // Fallback: Retry sending as plain text if HTML parsing fails
+      const plainText = text.replace(/<[^>]+>/g, "");
+      const retryRes = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: plainText,
+          reply_markup: replyMarkup,
+          disable_web_page_preview: true,
+        }),
+      });
+
+      if (!retryRes.ok) {
+        const retryErr = await retryRes.json();
+        console.error("[Telegram Bot API Retry Error]:", retryErr);
+        return false;
+      }
+      return true;
     }
 
     return true;
