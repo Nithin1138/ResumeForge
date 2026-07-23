@@ -25,6 +25,7 @@ export function TelegramLinkCard() {
   const [webhookMsg, setWebhookMsg] = useState<string | null>(null);
   const [settingWebhook, setSettingWebhook] = useState(false);
   const [simulating, setSimulating] = useState(false);
+  const [simulatingEmail, setSimulatingEmail] = useState(false);
 
   const fetchStatus = async () => {
     setLoading(true);
@@ -97,6 +98,26 @@ export function TelegramLinkCard() {
     }
   };
 
+  const handleSimulateTestEmail = async () => {
+    setSimulatingEmail(true);
+    setWebhookMsg(null);
+    try {
+      const res = await fetch("/api/resend/dev-simulate-email", {
+        method: "POST",
+      });
+      const json = await res.json();
+      if (json.ok) {
+        setWebhookMsg("🎯 Placement Email Received & AI Parsed! Check server logs & DB.");
+      } else {
+        setWebhookMsg(`Error: ${json.message}`);
+      }
+    } catch (err) {
+      console.error("Email simulation error:", err);
+    } finally {
+      setSimulatingEmail(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-6 bg-surface border border-border/80 rounded-3xl flex items-center justify-center space-x-3 text-text-muted">
@@ -164,9 +185,22 @@ export function TelegramLinkCard() {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-[10px] font-extrabold uppercase tracking-wider text-text-muted">
-              Your Personal Placement Inbound Email Alias
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="block text-[10px] font-extrabold uppercase tracking-wider text-text-muted">
+                Your Personal Placement Inbound Email Alias
+              </label>
+
+              {/* Developer Test Email simulation button */}
+              <button
+                onClick={handleSimulateTestEmail}
+                disabled={simulatingEmail}
+                className="text-[10px] font-bold text-sky-500 hover:underline flex items-center space-x-1 cursor-pointer"
+              >
+                <Zap className="w-3 h-3" />
+                <span>{simulatingEmail ? "Processing AI..." : "Test Placement Email Ingestion"}</span>
+              </button>
+            </div>
+
             <div className="flex items-center space-x-2">
               <div className="flex-1 bg-bg-base border border-border px-3.5 py-2.5 rounded-xl font-mono text-xs font-bold text-primary truncate">
                 {data.inboundAlias}
