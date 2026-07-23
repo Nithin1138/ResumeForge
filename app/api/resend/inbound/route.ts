@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { extractJdInfoWithLLM } from "@/lib/llm-extractor";
 import { sendTelegramMessage } from "@/lib/telegram";
+import { scheduleQStashReminder } from "@/lib/qstash";
 
 export async function POST(req: Request) {
   try {
@@ -138,7 +139,7 @@ export async function POST(req: Request) {
     }
 
     for (const rem of remindersToCreate) {
-      await prisma.reminder.create({
+      const createdRem = await prisma.reminder.create({
         data: {
           jobPostingId: posting.id,
           scheduledFor: rem.scheduledFor,
@@ -146,6 +147,9 @@ export async function POST(req: Request) {
           sent: false,
         },
       });
+
+      // Schedule individual reminder delivery with Upstash QStash at creation time (no polling)
+      await scheduleQStashReminder(createdRem.id, createdRem.scheduledFor);
     }
 
     // Send Immediate Telegram Notification with Inline Buttons
