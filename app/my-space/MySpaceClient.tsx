@@ -966,9 +966,6 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           </div>
         )}
 
-        {/* Telegram JD Reminders & Monitoring Card */}
-        <TelegramLinkCard />
-
         {/* ─── TAB CONTENT WITH SMOOTH ANIMATEPRESENCE ─── */}
         <AnimatePresence mode="wait">
           {activeTab === "profile" && (

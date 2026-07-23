@@ -15,7 +15,8 @@ import {
   Plus,
   ChevronRight,
   LogOut,
-  Menu
+  Menu,
+  Bot
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -84,6 +85,12 @@ export default function DesktopSidebar() {
       href: "/my-space",
       icon: Database,
       active: pathname.startsWith("/my-space"),
+    },
+    {
+      name: "JD Automations",
+      href: "/automations",
+      icon: Bot,
+      active: pathname.startsWith("/automations"),
     },
     {
       name: "Wallet",
