@@ -13,7 +13,7 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
-  Link as LinkIcon
+  Zap
 } from "lucide-react";
 
 export function TelegramLinkCard() {
@@ -24,6 +24,7 @@ export function TelegramLinkCard() {
 
   const [webhookMsg, setWebhookMsg] = useState<string | null>(null);
   const [settingWebhook, setSettingWebhook] = useState(false);
+  const [simulating, setSimulating] = useState(false);
 
   const fetchStatus = async () => {
     setLoading(true);
@@ -73,6 +74,29 @@ export function TelegramLinkCard() {
     }
   };
 
+  const handleSimulateDevLink = async () => {
+    if (!data?.linkToken) return;
+    setSimulating(true);
+    try {
+      const res = await fetch("/api/telegram/dev-simulate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ linkToken: data.linkToken }),
+      });
+      const json = await res.json();
+      if (json.ok) {
+        setWebhookMsg("⚡ Dev Mode: Successfully linked account!");
+        fetchStatus();
+      } else {
+        setWebhookMsg(`Dev Error: ${json.message}`);
+      }
+    } catch (err) {
+      console.error("Dev simulation error:", err);
+    } finally {
+      setSimulating(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-6 bg-surface border border-border/80 rounded-3xl flex items-center justify-center space-x-3 text-text-muted">
@@ -85,6 +109,7 @@ export function TelegramLinkCard() {
   if (!data) return null;
 
   const nativeAppUrl = `tg://resolve?domain=${data.botUsername}&start=${data.linkToken}`;
+  const isLocalhost = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
 
   return (
     <div className="p-6 bg-surface/90 dark:bg-surface/90 border border-border/80 rounded-3xl shadow-xl space-y-5 relative overflow-hidden backdrop-blur-xl">
@@ -177,21 +202,30 @@ export function TelegramLinkCard() {
               <AlertCircle className="w-4.5 h-4.5 shrink-0 text-amber-500" />
               <span>Connect your Telegram account to activate automated placement reminders.</span>
             </div>
-            <button
-              onClick={handleRegisterWebhook}
-              disabled={settingWebhook}
-              className="text-[10px] font-bold underline text-primary cursor-pointer hover:opacity-80 shrink-0 ml-2"
-              title="Register Webhook URL with Telegram API"
-            >
-              {settingWebhook ? "Registering..." : "Sync Webhook"}
-            </button>
           </div>
+
+          {/* Developer Local simulation bar */}
+          {isLocalhost && (
+            <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-center justify-between">
+              <div className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">
+                🛠️ <b>Localhost Detected:</b> Telegram API requires HTTPS. Tap to simulate linking directly on local DB:
+              </div>
+              <button
+                onClick={handleSimulateDevLink}
+                disabled={simulating}
+                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl flex items-center space-x-1 shrink-0 ml-2 cursor-pointer shadow-xs"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>{simulating ? "Linking..." : "Simulate Local Link"}</span>
+              </button>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Option 1: Direct Buttons */}
             <div className="p-4 bg-bg-base border border-border rounded-2xl space-y-2">
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-text-muted block">
-                Option 1: Open in Telegram
+                Option 1: Open Telegram Bot
               </span>
               <div className="grid grid-cols-2 gap-1.5">
                 <a
