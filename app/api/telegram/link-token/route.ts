@@ -38,22 +38,34 @@ export async function GET() {
       });
     }
 
-    // Generate or reuse linking token
+    // Reuse active unexpired linking token if exists, or generate new one
     const tokenIdentifier = `${userId}:telegram-link`;
-    const tokenValue = Math.floor(100000 + Math.random() * 900000).toString();
-    const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 mins
 
-    await prisma.verificationToken.deleteMany({
-      where: { identifier: tokenIdentifier },
-    });
-
-    await prisma.verificationToken.create({
-      data: {
+    let existingTokenRecord = await prisma.verificationToken.findFirst({
+      where: {
         identifier: tokenIdentifier,
-        token: tokenValue,
-        expires,
+        expires: { gt: new Date() },
       },
     });
+
+    let tokenValue = existingTokenRecord?.token;
+
+    if (!tokenValue) {
+      tokenValue = Math.floor(100000 + Math.random() * 900000).toString();
+      const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 mins
+
+      await prisma.verificationToken.deleteMany({
+        where: { identifier: tokenIdentifier },
+      });
+
+      await prisma.verificationToken.create({
+        data: {
+          identifier: tokenIdentifier,
+          token: tokenValue,
+          expires,
+        },
+      });
+    }
 
     const botUsername = process.env.TELEGRAM_BOT_USERNAME || "ATSLiftBot";
     const deepLinkUrl = `https://t.me/${botUsername}?start=${tokenValue}`;

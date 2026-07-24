@@ -89,11 +89,14 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true });
       }
 
-      // Find token in database
+      // Find token in database (supports exact match or cleaned 6-digit match)
+      const cleanToken = tokenArg.replace(/[^0-9]/g, "");
       const verToken = await prisma.verificationToken.findFirst({
         where: {
-          token: tokenArg,
-          expires: { gt: new Date() },
+          OR: [
+            { token: tokenArg },
+            ...(cleanToken ? [{ token: cleanToken }] : []),
+          ],
         },
       });
 
