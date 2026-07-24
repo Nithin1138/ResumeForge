@@ -73,28 +73,29 @@ export async function POST(req: Request) {
 
     const chatId = message.chat.id;
     const telegramUsername = message.from?.username || null;
-    const text = message.text.trim();
+    const text = (message.text || "").trim();
 
-    // Extract any 6-digit link code or token from message
+    // Extract any 6-digit link code or token from message safely
     const digitMatch = text.match(/\b(\d{6})\b/);
-    const tokenArg = digitMatch ? digitMatch[1] : text.split(/\s+/)[1]?.trim();
+    const rawArg = text.split(/\s+/)[1]?.trim();
+    const tokenArg = digitMatch ? digitMatch[1] : (rawArg || "");
 
     // Command: /start or sending 6-digit code
     if (text.startsWith("/start") || digitMatch) {
       if (!tokenArg) {
         await sendTelegramMessage(
           chatId,
-          `👋 <b>Welcome to ATSLift JD Reminder Bot!</b>\n\nTo link your ATSLift account, visit your ATSLift dashboard and click <b>Link Telegram</b> to get your code.\n\nThen send: <code>/start &lt;code&gt;</code>`
+          `👋 <b>Welcome to ATSLift JD Reminder Bot!</b>\n\nTo link your ATSLift account, visit your ATSLift dashboard at <code>/automations</code> and click <b>Link Telegram</b> to get your code.\n\nThen send: <code>/start &lt;code&gt;</code>`
         );
         return NextResponse.json({ ok: true });
       }
 
-      // Find token in database (supports exact match or cleaned 6-digit match)
-      const cleanToken = tokenArg.replace(/[^0-9]/g, "");
+      // Find token in database safely
+      const cleanToken = tokenArg ? tokenArg.replace(/[^0-9]/g, "") : "";
       const verToken = await prisma.verificationToken.findFirst({
         where: {
           OR: [
-            { token: tokenArg },
+            ...(tokenArg ? [{ token: tokenArg }] : []),
             ...(cleanToken ? [{ token: cleanToken }] : []),
           ],
         },
