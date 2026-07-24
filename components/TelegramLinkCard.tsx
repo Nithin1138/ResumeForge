@@ -66,24 +66,6 @@ export function TelegramLinkCard() {
     }
   };
 
-  const handleRegisterWebhook = async () => {
-    setSettingWebhook(true);
-    setWebhookMsg(null);
-    try {
-      const res = await fetch("/api/telegram/setup-webhook");
-      const json = await res.json();
-      if (json.ok) {
-        setWebhookMsg(json.message);
-      } else {
-        setWebhookMsg(`Error: ${json.message}`);
-      }
-    } catch (err: any) {
-      setWebhookMsg("Failed to connect webhook.");
-    } finally {
-      setSettingWebhook(false);
-    }
-  };
-
   const handleSimulateDevLink = async () => {
     if (!data?.linkToken) return;
     setSimulating(true);
@@ -125,6 +107,15 @@ export function TelegramLinkCard() {
     } finally {
       setSimulatingEmail(false);
     }
+  };
+
+  const handleSimulateGmailVerification = () => {
+    setData((prev: any) => ({
+      ...prev,
+      gmailVerificationCode: "847291048",
+      gmailVerificationLink: "https://mail.google.com/mail/vf-847291048",
+    }));
+    setWebhookMsg("🔑 Simulated Gmail Verification Banner! Test 1-Click Approval below.");
   };
 
   const handleManualIngestSubmit = async (e: React.FormEvent) => {
@@ -172,7 +163,6 @@ export function TelegramLinkCard() {
 
   if (!data) return null;
 
-  const nativeAppUrl = `tg://resolve?domain=${data.botUsername}&start=${data.linkToken}`;
   const isLocalhost = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
 
   return (
@@ -278,13 +268,21 @@ export function TelegramLinkCard() {
                 Your Personal Placement Inbound Email Alias
               </label>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2.5">
                 <button
                   onClick={() => setIsModalOpen(true)}
                   className="text-[10px] font-extrabold text-emerald-500 hover:underline flex items-center space-x-1 cursor-pointer bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20"
                 >
                   <PlusCircle className="w-3 h-3" />
                   <span>Paste Real Email</span>
+                </button>
+
+                <button
+                  onClick={handleSimulateGmailVerification}
+                  className="text-[10px] font-bold text-amber-500 hover:underline flex items-center space-x-1 cursor-pointer"
+                >
+                  <ShieldCheck className="w-3 h-3" />
+                  <span>Test Verification Banner</span>
                 </button>
 
                 <button
