@@ -71,9 +71,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // Ignore stale queued messages older than 3 minutes to prevent chat flooding
+    // Ignore stale queued messages older than 5 minutes to prevent chat flooding
     const nowUnix = Math.floor(Date.now() / 1000);
-    if (message.date && (nowUnix - message.date > 180)) {
+    if (message.date && (nowUnix - message.date > 300)) {
       console.log(`[Telegram Webhook]: Ignoring stale queued message from ${nowUnix - message.date}s ago`);
       return NextResponse.json({ ok: true });
     }
@@ -137,23 +137,27 @@ export async function POST(req: Request) {
       const userId = matchedUserId;
       const inboundAlias = getInboundAlias(userId);
 
-      // Upsert TelegramUser
-      await prisma.telegramUser.upsert({
-        where: { userId },
-        create: {
-          userId,
-          telegramChatId: chatId.toString(),
-          telegramUsername,
-          inboundAlias,
+      // Clean up any existing conflicting records for this userId or telegramChatId to prevent P2002 unique constraint errors
+      await prisma.telegramUser.deleteMany({
+        where: {
+          OR: [
+            { userId },
+            { telegramChatId: chatId.toString() },
+          ],
         },
-        update: {
+      });
+
+      // Create fresh TelegramUser link
+      await prisma.telegramUser.create({
+        data: {
+          userId,
           telegramChatId: chatId.toString(),
           telegramUsername,
           inboundAlias,
         },
       });
 
-      // Delete token if exists
+      // Delete verification token if exists
       await prisma.verificationToken.deleteMany({
         where: { identifier: `${userId}:telegram-link` },
       });
