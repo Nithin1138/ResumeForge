@@ -3,7 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { 
   sendTelegramMessage, 
   answerTelegramCallback, 
-  getInboundAlias 
+  getInboundAlias,
+  escapeHtml
 } from "@/lib/telegram";
 
 export async function POST(req: Request) {
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
           if (chatId) {
             await sendTelegramMessage(
               chatId,
-              `📌 <b>${posting.companyName} — ${posting.roleTitle}</b>\nStatus updated to: <b>${statusText}</b>. Future reminders for this posting have been canceled.`
+              `📌 <b>${escapeHtml(posting.companyName)} — ${escapeHtml(posting.roleTitle)}</b>\nStatus updated to: <b>${statusText}</b>. Future reminders for this posting have been canceled.`
             );
           }
         } else {
@@ -64,7 +65,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // 2. Handle Text Messages (/start, /status, or 6-digit linking code)
+    // 2. Handle Text Messages (/start, /status, /help)
     const message = update.message;
     if (!message || !message.text) {
       return NextResponse.json({ ok: true });
@@ -74,15 +75,16 @@ export async function POST(req: Request) {
     const telegramUsername = message.from?.username || null;
     const text = message.text.trim();
 
-    // Extract 6-digit linking code if present (e.g. /start 721548, 721548, or start 721548)
-    const codeMatch = text.match(/\b(\d{6})\b/);
-    const tokenArg = codeMatch ? codeMatch[1] : null;
+    // Extract any 6-digit link code or token from message
+    const digitMatch = text.match(/\b(\d{6})\b/);
+    const tokenArg = digitMatch ? digitMatch[1] : text.split(/\s+/)[1]?.trim();
 
-    if (text.startsWith("/start") || tokenArg) {
+    // Command: /start or sending 6-digit code
+    if (text.startsWith("/start") || digitMatch) {
       if (!tokenArg) {
         await sendTelegramMessage(
           chatId,
-          `👋 <b>Welcome to ATSLift JD Reminder Bot!</b>\n\nTo link your ATSLift account, visit your ATSLift dashboard and tap <b>1-Click Connect Telegram</b>.\n\nOr send your 6-digit code here: <code>/start &lt;code&gt;</code>`
+          `👋 <b>Welcome to ATSLift JD Reminder Bot!</b>\n\nTo link your ATSLift account, visit your ATSLift dashboard and click <b>Link Telegram</b> to get your code.\n\nThen send: <code>/start &lt;code&gt;</code>`
         );
         return NextResponse.json({ ok: true });
       }
@@ -98,7 +100,7 @@ export async function POST(req: Request) {
       if (!verToken || !verToken.identifier.endsWith(":telegram-link")) {
         await sendTelegramMessage(
           chatId,
-          `❌ <b>Invalid or Expired Link Code</b>\n\nPlease refresh your ATSLift dashboard to generate a new 6-digit linking code and try again.`
+          `❌ <b>Invalid or Expired Link Code</b>\n\nPlease refresh your ATSLift dashboard at <code>/automations</code> to generate a new 6-digit linking code and try again.`
         );
         return NextResponse.json({ ok: true });
       }
@@ -138,47 +140,31 @@ export async function POST(req: Request) {
     if (text === "/status") {
       const tgUser = await prisma.telegramUser.findUnique({
         where: { telegramChatId: chatId.toString() },
-        include: {
-          jobPostings: {
-            take: 5,
-            orderBy: { createdAt: "desc" },
-          },
-        },
       });
 
-      if (!tgUser) {
+      if (tgUser) {
         await sendTelegramMessage(
           chatId,
-          `⚠️ Your Telegram account is not linked to ATSLift yet. Visit your dashboard to link your account.`
+          `✅ <b>Account Status: Linked</b>\n\n<b>User ID:</b> <code>${tgUser.userId}</code>\n<b>Forwarding Alias:</b> <code>${tgUser.inboundAlias}</code>\n\nYour bot is actively monitoring placement emails.`
         );
-        return NextResponse.json({ ok: true });
-      }
-
-      const activePostings = tgUser.jobPostings.filter((p) => p.status === "NEW" || p.status === "NOTIFIED");
-      let statusMsg = `📊 <b>ATSLift Monitoring Status</b>\n\n📧 Inbound Alias: <code>${tgUser.inboundAlias}</code>\n🎯 Active Tracked Drives: <b>${activePostings.length}</b>\n\n`;
-
-      if (tgUser.jobPostings.length > 0) {
-        statusMsg += `<b>Recent Drives:</b>\n`;
-        tgUser.jobPostings.forEach((p) => {
-          statusMsg += `• <b>${p.companyName}</b> — ${p.roleTitle} (${p.status})\n`;
-        });
       } else {
-        statusMsg += `No JD emails forwarded yet. Set up your Gmail filter to start receiving automated drive reminders!`;
+        await sendTelegramMessage(
+          chatId,
+          `⚠️ <b>Account Not Linked</b>\n\nVisit your ATSLift dashboard at <code>/automations</code> to link your Telegram account.`
+        );
       }
-
-      await sendTelegramMessage(chatId, statusMsg);
       return NextResponse.json({ ok: true });
     }
 
-    // Default response for unrecognized text
+    // Default fallback responder for any other text message
     await sendTelegramMessage(
       chatId,
-      `🤖 <b>ATSLift Assistant Bot</b>\n\nCommands available:\n• <code>/status</code> — Check active drives & forwarding alias`
+      `🤖 <b>ATSLift Bot Active</b>\n\nSend <code>/start &lt;code&gt;</code> to link your account or <code>/status</code> to check connection status.`
     );
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("Error in Telegram webhook:", error);
-    return NextResponse.json({ ok: true }); // Always return 200 to Telegram
+    console.error("Error in Telegram Webhook:", error);
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }
