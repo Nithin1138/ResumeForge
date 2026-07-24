@@ -360,20 +360,22 @@ export function TelegramLinkCard() {
               </span>
               <div className="grid grid-cols-2 gap-1.5">
                 <a
-                  href={data.deepLinkUrl}
+                  href={`https://web.telegram.org/a/#?tgaddr=tg%3A%2F%2Fresolve%3Fdomain%3D${data.botUsername}%26start%3D${data.linkToken}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="py-2.5 bg-sky-500 hover:bg-sky-600 text-white text-[11px] font-extrabold rounded-xl flex items-center justify-center space-x-1 transition-all cursor-pointer shadow-xs"
                 >
-                  <span>Web Link</span>
+                  <span>Telegram Web</span>
                   <ExternalLink className="w-3 h-3 opacity-80" />
                 </a>
 
                 <a
-                  href={nativeAppUrl}
+                  href={data.deepLinkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="py-2.5 bg-primary hover:opacity-90 text-white text-[11px] font-extrabold rounded-xl flex items-center justify-center space-x-1 transition-all cursor-pointer shadow-xs"
                 >
-                  <span>App Link</span>
+                  <span>Telegram App</span>
                   <Send className="w-3 h-3 opacity-80" />
                 </a>
               </div>
@@ -382,22 +384,19 @@ export function TelegramLinkCard() {
             {/* Option 2: 6-Digit Link Code */}
             <div className="p-4 bg-bg-base border border-border rounded-2xl space-y-2">
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-text-muted block">
-                Option 2: Manual Code Method
+                Option 2: Copy Bot Command
               </span>
               <div className="flex items-center space-x-2">
-                <span className="flex-1 bg-surface border border-border py-1.5 text-center font-mono font-extrabold text-sm tracking-widest text-primary rounded-lg">
-                  {data.linkToken}
-                </span>
                 <button
-                  onClick={() => handleCopy(data.linkToken, "token")}
-                  className="p-2 border border-border hover:bg-surface rounded-lg text-text-muted hover:text-text cursor-pointer"
-                  title="Copy Token"
+                  onClick={() => handleCopy(`/start ${data.linkToken}`, "token")}
+                  className="flex-1 py-2 px-3 bg-surface border border-border hover:border-primary/40 rounded-xl text-xs font-mono font-extrabold text-primary flex items-center justify-between cursor-pointer transition-all"
                 >
-                  {copiedToken ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                  <span>/start {data.linkToken}</span>
+                  {copiedToken ? <Check className="w-4 h-4 text-emerald-500 shrink-0" /> : <Copy className="w-4 h-4 text-text-muted shrink-0" />}
                 </button>
               </div>
               <p className="text-[10px] text-text-muted font-medium text-center">
-                Search <b>@{data.botUsername}</b> on Telegram & send: <code>/start {data.linkToken}</code>
+                Search <b>@{data.botUsername}</b> on Telegram & send the copied command.
               </p>
             </div>
           </div>
