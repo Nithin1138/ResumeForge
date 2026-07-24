@@ -38,41 +38,39 @@ export async function GET() {
       });
     }
 
-    // Reuse active unexpired linking token if exists, or generate new one
-    const tokenIdentifier = `${userId}:telegram-link`;
+    // Ensure static, un-expiring user telegramLinkCode for seamless experience
+    let linkCode = user.telegramLinkCode;
 
-    let existingTokenRecord = await prisma.verificationToken.findFirst({
-      where: {
-        identifier: tokenIdentifier,
-        expires: { gt: new Date() },
-      },
-    });
-
-    let tokenValue = existingTokenRecord?.token;
-
-    if (!tokenValue) {
-      tokenValue = Math.floor(100000 + Math.random() * 900000).toString();
-      const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 mins
-
-      await prisma.verificationToken.deleteMany({
-        where: { identifier: tokenIdentifier },
-      });
-
-      await prisma.verificationToken.create({
-        data: {
-          identifier: tokenIdentifier,
-          token: tokenValue,
-          expires,
-        },
+    if (!linkCode) {
+      linkCode = Math.floor(100000 + Math.random() * 900000).toString();
+      await prisma.user.update({
+        where: { id: userId },
+        data: { telegramLinkCode: linkCode },
       });
     }
 
+    // Sync to verificationToken table with generous 24h expiration
+    const tokenIdentifier = `${userId}:telegram-link`;
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await prisma.verificationToken.deleteMany({
+      where: { identifier: tokenIdentifier },
+    });
+
+    await prisma.verificationToken.create({
+      data: {
+        identifier: tokenIdentifier,
+        token: linkCode,
+        expires,
+      },
+    });
+
     const botUsername = process.env.TELEGRAM_BOT_USERNAME || "ATSLiftBot";
-    const deepLinkUrl = `https://t.me/${botUsername}?start=${tokenValue}`;
+    const deepLinkUrl = `https://t.me/${botUsername}?start=${linkCode}`;
 
     return NextResponse.json({
       isLinked: false,
-      linkToken: tokenValue,
+      linkToken: linkCode,
       deepLinkUrl,
       botUsername,
       expectedAlias: getInboundAlias(userId),

@@ -42,6 +42,7 @@ model User {
   referralCode       String?   @unique
   referredBy         String?
   walletBalance      Int       @default(0)
+  telegramLinkCode   String?   @unique
   accounts           Account[]
   sessions           Session[]
   resumes            Resume[]

@@ -71,6 +71,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
+    // Ignore stale queued messages older than 3 minutes to prevent chat flooding
+    const nowUnix = Math.floor(Date.now() / 1000);
+    if (message.date && (nowUnix - message.date > 180)) {
+      console.log(`[Telegram Webhook]: Ignoring stale queued message from ${nowUnix - message.date}s ago`);
+      return NextResponse.json({ ok: true });
+    }
+
     const chatId = message.chat.id;
     const telegramUsername = message.from?.username || null;
     const text = (message.text || "").trim();
@@ -85,13 +92,15 @@ export async function POST(req: Request) {
       if (!tokenArg) {
         await sendTelegramMessage(
           chatId,
-          `👋 <b>Welcome to ATSLift JD Reminder Bot!</b>\n\nTo link your ATSLift account, visit your ATSLift dashboard at <code>/automations</code> and click <b>Link Telegram</b> to get your code.\n\nThen send: <code>/start &lt;code&gt;</code>`
+          `👋 <b>Welcome to ATSLift JD Reminder Bot!</b>\n\nTo link your ATSLift account, visit your ATSLift dashboard at <code>/automations</code> to get your code.\n\nThen send: <code>/start &lt;code&gt;</code>`
         );
         return NextResponse.json({ ok: true });
       }
 
-      // Find token in database safely
+      // Find user by verificationToken OR User.telegramLinkCode
       const cleanToken = tokenArg ? tokenArg.replace(/[^0-9]/g, "") : "";
+      let matchedUserId: string | null = null;
+
       const verToken = await prisma.verificationToken.findFirst({
         where: {
           OR: [
@@ -101,15 +110,31 @@ export async function POST(req: Request) {
         },
       });
 
-      if (!verToken || !verToken.identifier.endsWith(":telegram-link")) {
+      if (verToken) {
+        matchedUserId = verToken.identifier.replace(":telegram-link", "");
+      } else {
+        const userMatch = await prisma.user.findFirst({
+          where: {
+            OR: [
+              ...(tokenArg ? [{ telegramLinkCode: tokenArg }] : []),
+              ...(cleanToken ? [{ telegramLinkCode: cleanToken }] : []),
+            ],
+          },
+        });
+        if (userMatch) {
+          matchedUserId = userMatch.id;
+        }
+      }
+
+      if (!matchedUserId) {
         await sendTelegramMessage(
           chatId,
-          `❌ <b>Invalid or Expired Link Code</b>\n\nPlease refresh your ATSLift dashboard at <code>/automations</code> to generate a new 6-digit linking code and try again.`
+          `❌ <b>Invalid Link Code</b>\n\nPlease check your 6-digit linking code on your ATSLift dashboard at <code>/automations</code> and try again.`
         );
         return NextResponse.json({ ok: true });
       }
 
-      const userId = verToken.identifier.replace(":telegram-link", "");
+      const userId = matchedUserId;
       const inboundAlias = getInboundAlias(userId);
 
       // Upsert TelegramUser
@@ -128,9 +153,9 @@ export async function POST(req: Request) {
         },
       });
 
-      // Delete token
+      // Delete token if exists
       await prisma.verificationToken.deleteMany({
-        where: { identifier: verToken.identifier },
+        where: { identifier: `${userId}:telegram-link` },
       });
 
       // Welcome Message with Gmail Filter Setup Instructions
