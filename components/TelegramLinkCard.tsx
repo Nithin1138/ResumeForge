@@ -227,6 +227,51 @@ export function TelegramLinkCard() {
             )}
           </div>
 
+          {/* 1-Click Gmail Auto-Forwarding Verification Banner */}
+          {(data.gmailVerificationLink || data.gmailVerificationCode) && (
+            <div className="p-4 bg-amber-500/10 border-2 border-amber-500/30 rounded-2xl space-y-3">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center space-x-2 text-amber-600 dark:text-amber-400 font-extrabold text-xs">
+                  <ShieldCheck className="w-5 h-5 shrink-0" />
+                  <span>🔑 Gmail Auto-Forwarding Verification Requested!</span>
+                </div>
+                {data.gmailVerificationCode && (
+                  <span className="bg-amber-500/20 font-mono text-xs font-black px-2.5 py-1 rounded-lg text-amber-600 dark:text-amber-300">
+                    Code: {data.gmailVerificationCode}
+                  </span>
+                )}
+              </div>
+
+              <p className="text-xs text-text-muted font-medium">
+                Google sent a verification link to confirm Gmail auto-forwarding to your personal alias <code>{data.inboundAlias}</code>.
+              </p>
+
+              <div className="flex items-center space-x-2 pt-1">
+                {data.gmailVerificationLink && (
+                  <a
+                    href={data.gmailVerificationLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold rounded-xl flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer"
+                  >
+                    <span>1-Click Approve Gmail Forwarding</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+
+                {data.gmailVerificationCode && (
+                  <button
+                    onClick={() => handleCopy(data.gmailVerificationCode, "token")}
+                    className="px-3.5 py-2 bg-surface hover:bg-bg-base border border-border text-text text-xs font-bold rounded-xl flex items-center space-x-1.5 cursor-pointer"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>Copy Code</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <label className="block text-[10px] font-extrabold uppercase tracking-wider text-text-muted">

@@ -32,6 +32,8 @@ export async function GET() {
         inboundAlias: existingLink.inboundAlias,
         telegramChatId: existingLink.telegramChatId,
         telegramUsername: existingLink.telegramUsername,
+        gmailVerificationCode: existingLink.gmailVerificationCode,
+        gmailVerificationLink: existingLink.gmailVerificationLink,
         botUsername: process.env.TELEGRAM_BOT_USERNAME || "ATSLiftBot",
       });
     }

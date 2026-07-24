@@ -125,6 +125,15 @@ export async function POST(req: Request) {
       const confirmCode = codeMatch ? codeMatch[1] : null;
       const confirmLink = linkMatch ? linkMatch[1] : null;
 
+      // Store Verification Code and Link in DB so it shows on Website Dashboard
+      await prisma.telegramUser.update({
+        where: { id: matchedTgUser.id },
+        data: {
+          gmailVerificationCode: confirmCode,
+          gmailVerificationLink: confirmLink,
+        },
+      });
+
       let confirmMsg = `🔑 <b>Gmail Auto-Forwarding Confirmation Request Received!</b>\n\nGoogle sent a verification email to complete your Gmail filter setup:\n\n`;
 
       if (confirmCode) {
@@ -134,7 +143,7 @@ export async function POST(req: Request) {
         confirmMsg += `🔗 <b>Verification Link:</b>\n<a href="${confirmLink}">Click Here to Approve Gmail Forwarding</a>\n\n`;
       }
 
-      confirmMsg += `Copy this confirmation code into your Gmail Settings or click the link above to verify and activate auto-forwarding!`;
+      confirmMsg += `Copy this confirmation code into your Gmail Settings or check your ATSLift website dashboard to approve!`;
 
       await sendTelegramMessage(matchedTgUser.telegramChatId, confirmMsg);
       return NextResponse.json({ ok: true, type: "GMAIL_CONFIRMATION" });

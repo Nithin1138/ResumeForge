@@ -366,13 +366,15 @@ enum ReminderType {
 }
 
 model TelegramUser {
-  id                 String       @id @default(cuid())
-  userId             String       @unique
-  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  telegramChatId     String       @unique
-  telegramUsername   String?
-  inboundAlias       String       @unique
-  createdAt          DateTime     @default(now())
+  id                    String       @id @default(cuid())
+  userId                String       @unique
+  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  telegramChatId        String       @unique
+  telegramUsername      String?
+  inboundAlias          String       @unique
+  gmailVerificationCode String?
+  gmailVerificationLink String?
+  createdAt             DateTime     @default(now())
 
   jobPostings        JobPosting[]
 
