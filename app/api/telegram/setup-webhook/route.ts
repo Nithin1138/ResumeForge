@@ -8,7 +8,7 @@ export async function GET(req: Request) {
 
     let domain = paramUrl;
     if (!domain) {
-      const host = req.headers.get("x-forwarded-host") || req.headers.get("host") || "checkeasy.vercel.app";
+      const host = req.headers.get("x-forwarded-host") || req.headers.get("host") || "atslift.app";
       const proto = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
       domain = `${proto}://${host}`;
     }

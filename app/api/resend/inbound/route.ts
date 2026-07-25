@@ -120,10 +120,20 @@ export async function POST(req: Request) {
 
     if (isGmailConfirmation) {
       const codeMatch = fullTextContext.match(/Confirmation code:\s*(\d+)/i) || fullTextContext.match(/\b(\d{7,10})\b/);
-      const linkMatch = fullTextContext.match(/(https:\/\/mail\.google\.com\/mail\/vf-[^\s<">]+)/i);
+      
+      // Extract Google confirmation link across plain text & HTML
+      const linkMatch = 
+        fullTextContext.match(/(https:\/\/mail\.google\.com\/mail\/vf-[^\s<">]+)/i) ||
+        rawHtmlText.match(/(https:\/\/mail\.google\.com\/mail\/vf-[^\s<">]+)/i) ||
+        fullTextContext.match(/(https:\/\/[^\s<">]*google[^\s<">]*\/vf-[^\s<">]+)/i) ||
+        rawHtmlText.match(/(https:\/\/[^\s<">]*google[^\s<">]*\/vf-[^\s<">]+)/i);
 
       const confirmCode = codeMatch ? codeMatch[1] : null;
-      const confirmLink = linkMatch ? linkMatch[1] : null;
+      let confirmLink = linkMatch ? linkMatch[1] : null;
+
+      if (confirmLink) {
+        confirmLink = confirmLink.replace(/&amp;/g, "&").replace(/["'>]+$/, "");
+      }
 
       // Store Verification Code and Link in DB so it shows on Website Dashboard
       await prisma.telegramUser.update({

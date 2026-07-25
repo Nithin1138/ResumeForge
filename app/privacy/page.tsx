@@ -247,7 +247,7 @@ export default function PrivacyPolicy() {
 
     <section id="overview">
       <h2>Overview</h2>
-      <p>ATSLift ("we", "us", "our") operates the website <strong>atslift.vercel.app</strong> and associated services. This Privacy Policy explains how we collect, use, and protect your information when you use our resume-building and ATS optimization tools.</p>
+      <p>ATSLift ("we", "us", "our") operates the website <strong>atslift.app</strong> and associated services. This Privacy Policy explains how we collect, use, and protect your information when you use our resume-building and ATS optimization tools.</p>
       <p>By using ATSLift, you agree to the practices described in this policy. If you do not agree, please discontinue use of the service.</p>
       <div class="callout">
         <p><strong>Short version:</strong> We collect only what's necessary to generate your resume content. We do not sell your data. Resume content is processed in real-time and not permanently stored after generation.</p>

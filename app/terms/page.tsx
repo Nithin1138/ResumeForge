@@ -258,7 +258,7 @@ export default function TermsAndConditions() {
 
     <section id="agreement">
       <h2>Agreement to terms</h2>
-      <p>These Terms and Conditions ("Terms") govern your use of ATSLift, operated by ATSLift Operations ("we", "us", "our"), accessible at <strong>atslift.vercel.app</strong>.</p>
+      <p>These Terms and Conditions ("Terms") govern your use of ATSLift, operated by ATSLift Operations ("we", "us", "our"), accessible at <strong>atslift.app</strong>.</p>
       <p>By accessing or using ATSLift — including the Resume Builder, ATS Grader, or any other feature — you confirm that you have read, understood, and agree to be bound by these Terms. If you do not agree, do not use the service.</p>
     </section>
 

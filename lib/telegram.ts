@@ -2,7 +2,7 @@
 // Helper utilities for Telegram Bot API integration
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const INBOUND_DOMAIN = process.env.INBOUND_EMAIL_DOMAIN || "resend.app";
+const INBOUND_DOMAIN = process.env.INBOUND_EMAIL_DOMAIN || "atslift.app";
 
 export function getInboundAlias(userId: string): string {
   // Generate a clean, short inbound email alias e.g. usr_xyz123@domain.resend.app
