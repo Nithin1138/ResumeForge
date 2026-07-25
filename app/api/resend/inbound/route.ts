@@ -17,16 +17,16 @@ export async function POST(req: Request) {
     const data = payload.data || payload;
 
     // Log payload summary for debugging
-    console.log("[Resend Webhook Event]:", payload.type, data.subject, data.to);
+    console.log("[Inbound Webhook Event]:", payload.type || "Cloudflare/Direct", data.subject, data.to);
 
-    // Resend webhook verification/event type check
-    if (payload.type && payload.type !== "email.received") {
+    // Resend / Cloudflare event type check (allow email.received, cloudflare.email, or direct payload)
+    if (payload.type && payload.type !== "email.received" && payload.type !== "email.inbound" && payload.type !== "cloudflare.email") {
       return NextResponse.json({ message: "Ignored event type" }, { status: 200 });
     }
 
     const email_id = data.email_id || data.id || payload.email_id;
-    const to = data.to || payload.to;
-    const from = data.from || payload.from;
+    const to = data.to || payload.to || payload.recipient;
+    const from = data.from || payload.from || payload.sender;
     const subject = data.subject || payload.subject;
 
     const recipientList: string[] = Array.isArray(to) ? to : (to ? [to] : []);
