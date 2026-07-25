@@ -14,7 +14,6 @@ function extractCleanEmail(raw: string): string {
 export async function POST(req: Request) {
   try {
     const payload = await req.json();
-
     const data = payload.data || payload;
 
     // Log payload summary for debugging
@@ -67,7 +66,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // 3. Fallback: If only 1 Telegram user is linked in DB, use that user (prevents dev/single-user drops)
+    // 3. Fallback: If only 1 Telegram user is linked in DB or default single user, match recent TelegramUser
     if (!matchedTgUser) {
       const firstUser = await prisma.telegramUser.findFirst({
         orderBy: { createdAt: "desc" },
@@ -84,8 +83,8 @@ export async function POST(req: Request) {
     }
 
     // Fetch email content from Resend payload or API
-    let rawEmailText = payload.data.text || payload.data.body || "";
-    let rawHtmlText = payload.data.html || "";
+    let rawEmailText = data.text || data.body || payload.text || "";
+    let rawHtmlText = data.html || payload.html || "";
     const resendApiKey = process.env.RESEND_API_KEY;
 
     if (!rawEmailText && !rawHtmlText && resendApiKey && email_id) {
@@ -100,28 +99,47 @@ export async function POST(req: Request) {
           const emailData = await emailRes.json();
           rawEmailText = emailData.text || "";
           rawHtmlText = emailData.html || "";
+        } else {
+          // Retry with alternate Resend endpoint if needed
+          const emailResAlt = await fetch(`https://api.resend.com/emails/${email_id}`, {
+            headers: {
+              Authorization: `Bearer ${resendApiKey}`,
+            },
+          });
+          if (emailResAlt.ok) {
+            const emailDataAlt = await emailResAlt.json();
+            rawEmailText = emailDataAlt.text || "";
+            rawHtmlText = emailDataAlt.html || "";
+          }
         }
       } catch (err) {
         console.error("[Resend Inbound API Error]:", err);
       }
     }
 
-    // Prepend Email Subject and Sender to raw text context
     const fullTextContext = `Subject: ${subject || ""}\nFrom: ${from || ""}\n\n${rawEmailText}`;
-
-    // Check if this is a Gmail Auto-Forwarding Confirmation Email from Google
     const fromLower = (from || "").toLowerCase();
     const subjectLower = (subject || "").toLowerCase();
+    const bodyContextLower = (fullTextContext + " " + rawHtmlText).toLowerCase();
+
+    // Check if this is a Gmail Auto-Forwarding Confirmation Email from Google
     const isGmailConfirmation =
-      fromLower.includes("forwarding-noreply@google.com") ||
+      fromLower.includes("forwarding-noreply") ||
       fromLower.includes("google.com") ||
-      subjectLower.includes("forwarding confirmation") ||
-      subjectLower.includes("gmail forwarding");
+      subjectLower.includes("confirmation") ||
+      subjectLower.includes("forwarding") ||
+      bodyContextLower.includes("google.com/mail/vf-") ||
+      bodyContextLower.includes("confirmation code");
 
     if (isGmailConfirmation) {
-      const codeMatch = fullTextContext.match(/Confirmation code:\s*(\d+)/i) || fullTextContext.match(/\b(\d{7,10})\b/);
-      
-      // Extract Google confirmation link across plain text & HTML
+      // 1. Code match: 9-digit or 7-10 digit numbers
+      const codeMatch = 
+        fullTextContext.match(/Confirmation code:\s*(\d+)/i) || 
+        fullTextContext.match(/code:\s*(\d+)/i) ||
+        fullTextContext.match(/\b(\d{7,10})\b/) ||
+        rawHtmlText.match(/\b(\d{7,10})\b/);
+
+      // 2. Link match: https://mail.google.com/mail/vf-... or mail-attachment
       const linkMatch = 
         fullTextContext.match(/(https:\/\/mail\.google\.com\/mail\/vf-[^\s<">]+)/i) ||
         rawHtmlText.match(/(https:\/\/mail\.google\.com\/mail\/vf-[^\s<">]+)/i) ||
@@ -163,110 +181,69 @@ export async function POST(req: Request) {
     const extracted = await extractJdInfoWithLLM(fullTextContext, rawHtmlText);
 
     if (!extracted || !extracted.companyName) {
-      // Fallback: Store record and send Telegram message so user is NEVER left in silence!
-      const posting = await prisma.jobPosting.create({
-        data: {
-          telegramUserId: matchedTgUser.id,
-          companyName: subject || "Placement Drive",
-          roleTitle: "Placement Drive Candidate",
-          rawEmailText: fullTextContext,
-          eligibilityCriteria: JSON.stringify({ note: "Parsed from email subject" }),
-          status: "MANUAL_REVIEW",
-        },
-      });
-
-      const fallbackMsg = `📩 <b>Placement Email Received!</b>\n\n<b>Subject:</b> ${escapeHtml(subject || "Placement Drive")}\n<b>From:</b> ${escapeHtml(from || "Placement Cell")}\n\nWe received your email! Check your ATSLift dashboard for full details.`;
-
-      await sendTelegramMessage(matchedTgUser.telegramChatId, fallbackMsg);
-
-      return NextResponse.json({ ok: true, status: "MANUAL_REVIEW" });
+      console.warn("[Resend Inbound] Failed to parse valid JD from email text");
+      return NextResponse.json({ message: "Could not parse placement JD email" }, { status: 200 });
     }
 
-    // Successfully extracted structured data
-    const appDeadline = extracted.applicationDeadline ? new Date(extracted.applicationDeadline) : null;
-    const driveDate = extracted.driveDate ? new Date(extracted.driveDate) : null;
+    const eligText = typeof extracted.eligibilityCriteria === "object"
+      ? (extracted.eligibilityCriteria?.rawEligibilityText || JSON.stringify(extracted.eligibilityCriteria))
+      : (extracted.eligibilityCriteria || "All Branches");
 
-    const posting = await prisma.jobPosting.create({
+    const datesText = extracted.otherImportantDates
+      ? JSON.stringify(extracted.otherImportantDates)
+      : null;
+
+    // Create JobPosting record in database
+    const jobPosting = await prisma.jobPosting.create({
       data: {
         telegramUserId: matchedTgUser.id,
         companyName: extracted.companyName,
-        roleTitle: extracted.roleTitle,
-        rawEmailText: fullTextContext,
-        eligibilityCriteria: JSON.stringify(extracted.eligibilityCriteria || {}),
-        applicationDeadline: appDeadline && !isNaN(appDeadline.getTime()) ? appDeadline : null,
-        driveDate: driveDate && !isNaN(driveDate.getTime()) ? driveDate : null,
-        otherImportantDates: JSON.stringify(extracted.otherImportantDates || []),
-        status: "NOTIFIED",
+        roleTitle: extracted.roleTitle || "Job Opportunity",
+        eligibilityCriteria: eligText,
+        applicationDeadline: extracted.applicationDeadline ? new Date(extracted.applicationDeadline) : null,
+        driveDate: extracted.driveDate ? new Date(extracted.driveDate) : null,
+        otherImportantDates: datesText,
+        rawEmailText: rawEmailText || fullTextContext,
       },
     });
 
-    // 1. Send Immediate Telegram Notification FIRST (Zero Delay & Never Silent!)
-    const targetDate = appDeadline || driveDate;
-    const branches = escapeHtml(extracted.eligibilityCriteria?.branches?.join(", ") || "All Branches");
-    const cgpa = escapeHtml(extracted.eligibilityCriteria?.cgpaCutoff || "No Cutoff specified");
-    const companyEscaped = escapeHtml(extracted.companyName);
-    const roleEscaped = escapeHtml(extracted.roleTitle);
-    const deadlineStr = formatDateDDMMYYYY(targetDate);
+    // Schedule Reminders via QStash if deadline is present
+    if (jobPosting.applicationDeadline) {
+      try {
+        await scheduleQStashReminder(jobPosting.id, jobPosting.applicationDeadline);
+      } catch (err) {
+        console.error("Failed to schedule QStash reminders:", err);
+      }
+    }
 
-    const msgText = `🎯 <b>New Drive Detected: ${companyEscaped}</b>\n\n<b>Role:</b> ${roleEscaped}\n<b>Eligible Branches:</b> ${branches}\n<b>CGPA Cutoff:</b> ${cgpa}\n<b>Deadline/Date:</b> 🗓️ ${deadlineStr}\n\n<i>Reminders have been scheduled for 3 days before, 1 day before, and day of drive.</i>`;
+    // Format & Send Rich Telegram Alert Notification
+    const deadlineFormatted = formatDateDDMMYYYY(jobPosting.applicationDeadline);
+
+    let tgMsg = `🎯 <b>New Placement Drive Detected!</b>\n\n`;
+    tgMsg += `🏢 <b>Company:</b> ${escapeHtml(jobPosting.companyName)}\n`;
+    tgMsg += `💼 <b>Role:</b> ${escapeHtml(jobPosting.roleTitle)}\n`;
+    tgMsg += `🎓 <b>Eligibility Criteria:</b> ${escapeHtml(jobPosting.eligibilityCriteria)}\n`;
+    tgMsg += `⏰ <b>Application Deadline:</b> <b>${deadlineFormatted}</b>\n\n`;
+    tgMsg += `<i>Automatic reminders will be sent 3 days before, 1 day before, and on the morning of the deadline.</i>`;
 
     const inlineKeyboard = {
       inline_keyboard: [
         [
-          { text: "✅ Applied", callback_data: `applied:${posting.id}` },
-          { text: "❌ Not Eligible", callback_data: `not_eligible:${posting.id}` },
-          { text: "⏭️ Skip", callback_data: `skip:${posting.id}` },
+          { text: "✅ Applied", callback_data: `applied:${jobPosting.id}` },
+          { text: "❌ Not Eligible", callback_data: `not_eligible:${jobPosting.id}` },
+          { text: "⏭️ Skip", callback_data: `skip:${jobPosting.id}` },
         ],
       ],
     };
 
-    // Send Telegram message immediately
-    const sent = await sendTelegramMessage(matchedTgUser.telegramChatId, msgText, inlineKeyboard);
-    console.log(`[Telegram Send Result for ${matchedTgUser.telegramChatId}]:`, sent);
+    await sendTelegramMessage(matchedTgUser.telegramChatId, tgMsg, inlineKeyboard);
 
-    // 2. Schedule Reminders in background without blocking initial message response
-    const now = new Date();
-    const remindersToCreate: Array<{ scheduledFor: Date; reminderType: "THREE_DAYS_BEFORE" | "ONE_DAY_BEFORE" | "DAY_OF" }> = [];
-
-    if (targetDate && !isNaN(targetDate.getTime())) {
-      // 3 Days Before
-      const threeDays = new Date(targetDate.getTime() - 3 * 24 * 60 * 60 * 1000);
-      if (threeDays > now) {
-        remindersToCreate.push({ scheduledFor: threeDays, reminderType: "THREE_DAYS_BEFORE" });
-      }
-
-      // 1 Day Before
-      const oneDay = new Date(targetDate.getTime() - 1 * 24 * 60 * 60 * 1000);
-      if (oneDay > now) {
-        remindersToCreate.push({ scheduledFor: oneDay, reminderType: "ONE_DAY_BEFORE" });
-      }
-
-      // Day Of (at 8:00 AM IST on drive/deadline date)
-      const dayOf = new Date(targetDate);
-      dayOf.setHours(8, 0, 0, 0);
-      if (dayOf > now) {
-        remindersToCreate.push({ scheduledFor: dayOf, reminderType: "DAY_OF" });
-      }
-    }
-
-    // Schedule reminders in parallel
-    Promise.allSettled(
-      remindersToCreate.map(async (rem) => {
-        const createdRem = await prisma.reminder.create({
-          data: {
-            jobPostingId: posting.id,
-            scheduledFor: rem.scheduledFor,
-            reminderType: rem.reminderType,
-            sent: false,
-          },
-        });
-        return scheduleQStashReminder(createdRem.id, createdRem.scheduledFor);
-      })
-    ).catch((err) => console.error("Error scheduling background reminders:", err));
-
-    return NextResponse.json({ ok: true, postingId: posting.id });
+    return NextResponse.json({
+      ok: true,
+      jobPostingId: jobPosting.id,
+    });
   } catch (error) {
-    console.error("Error in Resend Inbound Webhook:", error);
+    console.error("Error in /api/resend/inbound:", error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }
