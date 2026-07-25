@@ -10,13 +10,19 @@ const getResendClient = () => {
   return new Resend(apiKey);
 };
 
+export const EMAIL_ADDRESSES = {
+  notifications: "ATSLift Reminders <notifications@atslift.app>",
+  noreply: "ATSLift <noreply@atslift.app>",
+  support: "ATSLift Support <support@atslift.app>",
+};
+
 export async function sendResumeEmail(
   toEmail: string,
   customerName: string,
   resumeId: string,
   plainTextResume: string
 ): Promise<boolean> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://atslift.app";
   const successUrl = `${appUrl}/success/${resumeId}?sandbox=true`;
 
   const emailSubject = "Your ATS Resume Content is Ready — ATSLift";
@@ -49,13 +55,13 @@ ${plainTextResume}
 
       <div style="text-align: center; border-top: 1px solid #d4d1ca; padding-top: 20px; font-size: 11px; color: #7a7974;">
         <p style="margin: 0;">ATSLift — Built by engineering students for engineering students.</p>
-        <p style="margin: 5px 0 0 0;">Secure checkout powered by Razorpay. Need help? Reply to this email.</p>
+        <p style="margin: 5px 0 0 0;">Need help? Contact support@atslift.app</p>
       </div>
     </div>
   `;
 
   const emailText = `Hi ${customerName},\n\nYour resume content is ready. Access it directly here: ${successUrl}\n\nPlain-Text Content:\n\n${plainTextResume}`;
-  const fromEmail = process.env.FROM_EMAIL || "ATSLift <noreply@atslift.in>";
+  const fromEmail = process.env.FROM_EMAIL || EMAIL_ADDRESSES.noreply;
 
   try {
     // Check if SMTP is configured (Gmail/Free SMTP)
@@ -143,7 +149,7 @@ export async function sendOtpEmail(toEmail: string, otp: string, purpose: "signu
     </div>
   `;
   const emailText = `${headingText}\n\n${bodyText}\n\nOTP Code: ${otp}`;
-  const fromEmail = process.env.FROM_EMAIL || "ATSLift <noreply@atslift.in>";
+  const fromEmail = process.env.FROM_EMAIL || EMAIL_ADDRESSES.noreply;
 
   try {
     console.log(`\n==========================================\n🔑 [OTP VERIFICATION CODE FOR ${toEmail}]: ${otp}\n==========================================\n`);
@@ -192,7 +198,7 @@ export async function sendOtpEmail(toEmail: string, otp: string, purpose: "signu
     if (result.error) {
       console.warn("Resend email attempt with default domain failed, retrying with onboarding domain:", result.error);
       result = await resend.emails.send({
-        from: "ATSLift <onboarding@resend.dev>",
+        from: EMAIL_ADDRESSES.noreply,
         to: toEmail,
         subject: emailSubject,
         html: emailHtml,
@@ -212,7 +218,7 @@ export async function sendBroadcastEmail(
   subject: string,
   htmlBody: string
 ): Promise<boolean> {
-  const fromEmail = process.env.FROM_EMAIL || "ATSLift <noreply@atslift.in>";
+  const fromEmail = process.env.FROM_EMAIL || EMAIL_ADDRESSES.notifications;
   const plainText = htmlBody.replace(/<[^>]*>/g, ""); // basic HTML tag strip
   
   try {
@@ -262,5 +268,3 @@ export async function sendBroadcastEmail(
     return false;
   }
 }
-
-
