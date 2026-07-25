@@ -1,6 +1,8 @@
 import React from "react";
 import { Metadata } from "next";
 
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "Terms & Conditions | ATSLift",
   description: "Read the terms and conditions for using ATSLift.",

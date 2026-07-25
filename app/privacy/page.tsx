@@ -1,6 +1,8 @@
 import React from "react";
 import { Metadata } from "next";
 
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "Privacy Policy | ATSLift",
   description: "Learn how ATSLift protects your resume data.",
