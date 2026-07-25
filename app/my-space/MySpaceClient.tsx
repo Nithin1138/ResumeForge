@@ -160,6 +160,12 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const [customNotes, setCustomNotes] = useState("");
   const [pinnedSections, setPinnedSections] = useState<string[]>([]);
 
+  // Profile Photos & Custom Card Errors State
+  const [profileImages, setProfileImages] = useState<string[]>([]);
+  const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
+  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+  const [codingCustomError, setCodingCustomError] = useState<string | null>(null);
+
   // AI Copilot State
   const [companyName, setCompanyName] = useState("");
   const [jobRole, setJobRole] = useState("");
@@ -217,13 +223,13 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         setHackerrank(p.hackerrank || "");
         setGfg(p.gfg || "");
 
-        // Load Coding Profiles
+        // Load Coding Profiles - 3 Famous Platforms default (LeetCode, CodeChef, Codeforces)
         let parsedCoding: CodingProfileItem[] = [];
         try {
           parsedCoding = JSON.parse(p.codingProfilesJson || "[]");
         } catch {}
 
-        const standardPlatforms = ["LeetCode", "Codeforces", "CodeChef", "HackerRank", "GeeksforGeeks"];
+        const standardPlatforms = ["LeetCode", "CodeChef", "Codeforces"];
         const loadedCoding: CodingProfileItem[] = [];
         
         standardPlatforms.forEach(plat => {
@@ -231,14 +237,11 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           if (existing) {
             loadedCoding.push(existing);
           } else {
-            // Check legacy field fallback
             let legacyUser = "";
             let legacyUrl = "";
             if (plat === "LeetCode" && p.leetcode) { legacyUser = p.leetcode; legacyUrl = p.leetcode.includes("leetcode.com") ? p.leetcode : `https://leetcode.com/u/${p.leetcode}`; }
             else if (plat === "Codeforces" && p.codeforces) { legacyUser = p.codeforces; legacyUrl = p.codeforces.includes("codeforces.com") ? p.codeforces : `https://codeforces.com/profile/${p.codeforces}`; }
             else if (plat === "CodeChef" && p.codechef) { legacyUser = p.codechef; legacyUrl = p.codechef.includes("codechef.com") ? p.codechef : `https://codechef.com/users/${p.codechef}`; }
-            else if (plat === "HackerRank" && p.hackerrank) { legacyUser = p.hackerrank; legacyUrl = p.hackerrank.includes("hackerrank.com") ? p.hackerrank : `https://hackerrank.com/${p.hackerrank}`; }
-            else if (plat === "GeeksforGeeks" && p.gfg) { legacyUser = p.gfg; legacyUrl = p.gfg.includes("geeksforgeeks.org") ? p.gfg : `https://www.geeksforgeeks.org/user/${p.gfg}`; }
             
             loadedCoding.push({
               id: plat.toLowerCase(),
@@ -250,6 +253,13 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
             });
           }
         });
+
+        // Preserve non-standard custom profiles from DB
+        parsedCoding.forEach(item => {
+          if (!standardPlatforms.includes(item.platform) && !loadedCoding.some(l => l.id === item.id)) {
+            loadedCoding.push(item);
+          }
+        });
         setCodingProfiles(loadedCoding);
 
         setCollege(p.college || "");
@@ -259,41 +269,49 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         setSummary(p.summary || "");
         setCustomNotes(p.customNotes || "");
 
-        // Load Education List
+        // Load Education List - 4 Standard Levels (UG, 12th, 10th, PG)
         let parsedEdu: EducationItem[] = [];
         try {
           parsedEdu = JSON.parse(p.educationJson || "[]");
         } catch {}
 
-        if (parsedEdu.length === 0 && (p.college || p.branch || p.cgpa || p.graduationYear)) {
-          parsedEdu.push({
-            id: "ug",
-            type: "UG",
-            institution: p.college || "",
-            degree: "Undergraduate Degree",
-            branch: p.branch || "",
-            cgpaOrPercentage: p.cgpa || "",
-            graduationYear: p.graduationYear || "",
-            location: ""
-          });
-        }
-        
-        const standardEduTypes = ["10th", "12th", "UG", "PG"];
+        const standardEduTypes = ["UG", "12th", "10th", "PG"];
+        const finalEdu: EducationItem[] = [];
+
         standardEduTypes.forEach(t => {
-          if (!parsedEdu.some(e => e.type === t)) {
-            parsedEdu.push({
+          const existing = parsedEdu.find(e => e.type === t);
+          if (existing) {
+            finalEdu.push(existing);
+          } else {
+            finalEdu.push({
               id: t.toLowerCase(),
               type: t,
-              institution: "",
-              degree: t === "10th" ? "Secondary School" : t === "12th" ? "Higher Secondary" : t === "UG" ? "Bachelor's" : "Master's",
-              branch: "",
-              cgpaOrPercentage: "",
-              graduationYear: "",
+              institution: t === "UG" ? (p.college || "") : "",
+              degree: t === "10th" ? "Secondary School (10th)" : t === "12th" ? "Higher Secondary (12th)" : t === "UG" ? "B.Tech / Bachelor's" : "Master's Degree",
+              branch: t === "UG" ? (p.branch || "") : "",
+              cgpaOrPercentage: t === "UG" ? (p.cgpa || "") : "",
+              graduationYear: t === "UG" ? (p.graduationYear || "") : "",
               location: ""
             });
           }
         });
-        setEducationList(parsedEdu);
+
+        // Include any custom education items
+        parsedEdu.forEach(e => {
+          if (!standardEduTypes.includes(e.type) && !finalEdu.some(f => f.id === e.id)) {
+            finalEdu.push(e);
+          }
+        });
+        setEducationList(finalEdu);
+
+        // Load Profile Photos & Active Index
+        try {
+          const imgs = JSON.parse(p.profileImagesJson || "[]");
+          if (Array.isArray(imgs)) setProfileImages(imgs);
+        } catch {}
+        if (typeof p.activeImageIndex === "number") {
+          setActiveImageIndex(p.activeImageIndex);
+        }
 
         try {
           const s = JSON.parse(p.skillsJson || "[]");
@@ -432,6 +450,8 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           achievementsJson: JSON.stringify(achievements),
           customFieldsJson: JSON.stringify(customFields),
           pinnedSectionsJson: JSON.stringify(pinnedSections),
+          profileImagesJson: JSON.stringify(profileImages),
+          activeImageIndex,
           customNotes,
         }),
       });
@@ -517,11 +537,23 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   };
 
   const handleAddCodingProfile = () => {
+    // Validation rule: Check if an unfilled custom card already exists
+    const hasEmptyCustom = codingProfiles.some(
+      p => !["LeetCode", "CodeChef", "Codeforces"].includes(p.platform) && !p.username.trim() && !p.url.trim() && (!p.platform.trim() || p.platform === "Other")
+    );
+
+    if (hasEmptyCustom) {
+      setCodingCustomError("Please fill out your current custom profile card before adding another.");
+      setTimeout(() => setCodingCustomError(null), 4000);
+      return;
+    }
+
+    setCodingCustomError(null);
     setCodingProfiles(prev => [
       ...prev,
       {
         id: `custom-${Date.now()}`,
-        platform: "Other",
+        platform: "",
         username: "",
         url: "",
         rating: "",
@@ -532,6 +564,53 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
   const handleRemoveCodingProfile = (id: string) => {
     setCodingProfiles(prev => prev.filter(p => p.id !== id));
+  };
+
+  const handleAddProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageUploadError(null);
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    if (profileImages.length >= 3) {
+      setImageUploadError("Maximum 3 profile photos allowed.");
+      return;
+    }
+
+    const file = files[0];
+
+    // Enforce 5MB limit
+    if (file.size > 5 * 1024 * 1024) {
+      setImageUploadError("Image size exceeds 5MB limit. Please upload a smaller photo to prevent site crashes.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const result = uploadEvent.target?.result as string;
+      if (result) {
+        setProfileImages(prev => {
+          const next = [...prev, result];
+          if (next.length === 1) setActiveImageIndex(0);
+          return next;
+        });
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const handleRemoveProfileImage = (index: number) => {
+    setProfileImages(prev => {
+      const next = prev.filter((_, i) => i !== index);
+      if (activeImageIndex >= next.length) {
+        setActiveImageIndex(Math.max(0, next.length - 1));
+      }
+      return next;
+    });
+  };
+
+  const handleSetActiveImage = (index: number) => {
+    setActiveImageIndex(index);
   };
 
   const handleUpdateEducation = (type: string, field: keyof EducationItem, val: string) => {
@@ -1207,6 +1286,102 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
               </div>
             )}
 
+            {/* SECTION: PROFILE PHOTOS & HEADSHOTS */}
+            {(categoryFilter === "all" || categoryFilter === "personal") && (
+              <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
+                <div className="border-b border-border/40 pb-3 flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="p-2 rounded-xl bg-purple-500/10 text-purple-500">
+                      <User className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="font-semibold text-[15px] text-text">Profile Photos & Headshots</h2>
+                      <p className="text-xs text-text-muted">Upload up to 3 profile photos (Max 5MB each). Select 1 active photo to use.</p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-purple-600 dark:text-purple-400 bg-purple-500/10 border border-purple-500/20 px-3 py-1 rounded-full">
+                    {profileImages.length} / 3 Photos
+                  </span>
+                </div>
+
+                {imageUploadError && (
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-semibold flex items-center space-x-2">
+                    <span>⚠️</span>
+                    <span>{imageUploadError}</span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {profileImages.map((imgUrl, index) => {
+                    const isActive = activeImageIndex === index;
+                    return (
+                      <div
+                        key={index}
+                        className={`p-4 rounded-2xl border transition-all flex flex-col items-center space-y-3 relative ${
+                          isActive
+                            ? "bg-emerald-500/5 border-emerald-500/50 shadow-sm ring-1 ring-emerald-500/30"
+                            : "bg-bg-base border-border/60 hover:border-primary/40"
+                        }`}
+                      >
+                        {isActive && (
+                          <span className="absolute top-3 left-3 px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold shadow-xs flex items-center space-x-1">
+                            <CheckCircle2 className="w-3 h-3" />
+                            <span>Active Photo</span>
+                          </span>
+                        )}
+
+                        {viewMode === "edit" && (
+                          <button
+                            onClick={() => handleRemoveProfileImage(index)}
+                            className="absolute top-3 right-3 p-1.5 rounded-full bg-surface/80 text-text-muted hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+                            title="Delete photo"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+
+                        <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-border shadow-inner mt-2 bg-surface flex items-center justify-center">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={imgUrl} alt={`Headshot ${index + 1}`} className="w-full h-full object-cover" />
+                        </div>
+
+                        {profileImages.length > 1 && (
+                          <button
+                            onClick={() => handleSetActiveImage(index)}
+                            className={`w-full py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center space-x-1 ${
+                              isActive
+                                ? "bg-emerald-500 text-white shadow-xs"
+                                : "bg-surface border border-border text-text-muted hover:text-text hover:border-primary"
+                            }`}
+                          >
+                            <span>{isActive ? "✓ Selected Active" : "Set as Active Photo"}</span>
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  {profileImages.length < 3 && viewMode === "edit" && (
+                    <label className="p-6 rounded-2xl border-2 border-dashed border-border/80 hover:border-primary/60 bg-bg-base/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center text-center space-y-2 cursor-pointer group min-h-[160px]">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAddProfileImage}
+                        className="hidden"
+                      />
+                      <div className="p-3 rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform">
+                        <Plus className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-text block">Upload Headshot</span>
+                        <span className="text-[10px] text-text-muted block">PNG, JPG or WEBP (Max 5MB)</span>
+                      </div>
+                    </label>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* SECTION: CODING & PROBLEM SOLVING PROFILES */}
             {(categoryFilter === "all" || categoryFilter === "coding") && (
               <div className="bg-surface border border-border/60 rounded-2xl p-5 md:p-6 space-y-5">
@@ -1236,11 +1411,18 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                   </div>
                 </div>
 
+                {codingCustomError && (
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-semibold flex items-center space-x-2">
+                    <span className="shrink-0 font-bold">⚠️</span>
+                    <span>{codingCustomError}</span>
+                  </div>
+                )}
+
                 {viewMode === "edit" ? (
                   /* EDIT MODE */
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {codingProfiles.map((p) => {
-                      const isStandard = ["LeetCode", "Codeforces", "CodeChef", "HackerRank", "GeeksforGeeks"].includes(p.platform);
+                      const isStandard = ["LeetCode", "CodeChef", "Codeforces"].includes(p.platform);
                       let colorClass = "bg-amber-500/5 border-amber-500/20";
                       let indicator = "bg-amber-500";
                       if (p.platform === "Codeforces") { colorClass = "bg-blue-500/5 border-blue-500/20"; indicator = "bg-blue-500"; }

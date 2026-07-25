@@ -153,6 +153,8 @@ export async function PUT(req: NextRequest) {
       achievementsJson,
       customFieldsJson,
       pinnedSectionsJson,
+      profileImagesJson,
+      activeImageIndex,
       customNotes,
     } = body;
 
@@ -186,6 +188,8 @@ export async function PUT(req: NextRequest) {
       achievementsJson: typeof achievementsJson === "string" ? achievementsJson : JSON.stringify(achievementsJson || []),
       customFieldsJson: typeof customFieldsJson === "string" ? customFieldsJson : JSON.stringify(customFieldsJson || []),
       pinnedSectionsJson: typeof pinnedSectionsJson === "string" ? pinnedSectionsJson : JSON.stringify(pinnedSectionsJson || []),
+      profileImagesJson: typeof profileImagesJson === "string" ? profileImagesJson : JSON.stringify(profileImagesJson || []),
+      activeImageIndex: typeof activeImageIndex === "number" ? activeImageIndex : 0,
       customNotes,
     };
 

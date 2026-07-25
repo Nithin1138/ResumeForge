@@ -342,6 +342,8 @@ model MasterProfile {
   achievementsJson   String   @default("[]")
   customFieldsJson   String   @default("[]")
   pinnedSectionsJson String   @default("[]")
+  profileImagesJson  String   @default("[]")
+  activeImageIndex   Int      @default(0)
   customNotes        String?  @db.Text
 
   createdAt          DateTime @default(now())
