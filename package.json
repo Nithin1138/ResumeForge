@@ -7,7 +7,8 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "test:email": "node scripts/test-inbound-email.js"
+    "test:email": "node scripts/test-inbound-email.js",
+    "test:email:all": "node scripts/test-all-emails.js"
   },
   "dependencies": {
     "@google/genai": "^2.6.0",
