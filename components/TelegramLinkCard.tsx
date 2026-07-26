@@ -12,10 +12,7 @@ import {
   RefreshCw, 
   Loader2,
   CheckCircle2,
-  AlertCircle,
-  Zap,
-  PlusCircle,
-  X
+  AlertCircle
 } from "lucide-react";
 
 export function TelegramLinkCard() {
@@ -23,18 +20,8 @@ export function TelegramLinkCard() {
   const [data, setData] = useState<any>(null);
   const [copiedAlias, setCopiedAlias] = useState(false);
   const [copiedToken, setCopiedToken] = useState(false);
-
+  const [verifying, setVerifying] = useState(false);
   const [webhookMsg, setWebhookMsg] = useState<string | null>(null);
-  const [settingWebhook, setSettingWebhook] = useState(false);
-  const [simulating, setSimulating] = useState(false);
-  const [simulatingEmail, setSimulatingEmail] = useState(false);
-
-  // Modal State for Manual Email Ingestion
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [manualSubject, setManualSubject] = useState("");
-  const [manualSender, setManualSender] = useState("placement@vitapstudent.ac.in");
-  const [manualBody, setManualBody] = useState("");
-  const [ingesting, setIngesting] = useState(false);
 
   const fetchStatus = async () => {
     setLoading(true);
@@ -66,89 +53,28 @@ export function TelegramLinkCard() {
     }
   };
 
-  const handleSimulateDevLink = async () => {
-    if (!data?.linkToken) return;
-    setSimulating(true);
-    try {
-      const res = await fetch("/api/telegram/dev-simulate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ linkToken: data.linkToken }),
-      });
-      const json = await res.json();
-      if (json.ok) {
-        setWebhookMsg("⚡ Dev Mode: Successfully linked account!");
-        fetchStatus();
-      } else {
-        setWebhookMsg(`Dev Error: ${json.message}`);
-      }
-    } catch (err) {
-      console.error("Dev simulation error:", err);
-    } finally {
-      setSimulating(false);
+  const handleApproveVerification = async (linkToOpen?: string) => {
+    if (linkToOpen) {
+      window.open(linkToOpen, "_blank", "noopener,noreferrer");
     }
-  };
 
-  const handleSimulateTestEmail = async () => {
-    setSimulatingEmail(true);
-    setWebhookMsg(null);
+    setVerifying(true);
     try {
-      const res = await fetch("/api/resend/dev-simulate-email", {
+      const res = await fetch("/api/telegram/verify-gmail-forwarding", {
         method: "POST",
       });
-      const json = await res.json();
-      if (json.ok) {
-        setWebhookMsg("🎯 Placement Email Received & AI Parsed! Check server logs & DB.");
-      } else {
-        setWebhookMsg(`Error: ${json.message}`);
+      if (res.ok) {
+        setWebhookMsg("🎉 Gmail Auto-Forwarding Verified! Sent notification to Telegram.");
+        setData((prev: any) => ({
+          ...prev,
+          gmailVerificationCode: null,
+          gmailVerificationLink: null,
+        }));
       }
     } catch (err) {
-      console.error("Email simulation error:", err);
+      console.error("Failed to verify Gmail forwarding:", err);
     } finally {
-      setSimulatingEmail(false);
-    }
-  };
-
-  const handleSimulateGmailVerification = () => {
-    setData((prev: any) => ({
-      ...prev,
-      gmailVerificationCode: "847291048",
-      gmailVerificationLink: "https://mail.google.com/mail/vf-847291048",
-    }));
-    setWebhookMsg("🔑 Simulated Gmail Verification Banner! Test 1-Click Approval below.");
-  };
-
-  const handleManualIngestSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!manualBody.trim()) return;
-
-    setIngesting(true);
-    setWebhookMsg(null);
-    try {
-      const res = await fetch("/api/resend/manual-ingest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          emailSubject: manualSubject,
-          sender: manualSender,
-          emailBody: manualBody,
-        }),
-      });
-
-      const json = await res.json();
-      if (json.ok) {
-        setWebhookMsg("🎯 Real Placement Email AI Parsed & Sent to Telegram!");
-        setIsModalOpen(false);
-        setManualBody("");
-        setManualSubject("");
-      } else {
-        setWebhookMsg(`Ingest Error: ${json.message}`);
-      }
-    } catch (err) {
-      console.error("Manual ingest error:", err);
-      setWebhookMsg("Failed to ingest placement email.");
-    } finally {
-      setIngesting(false);
+      setVerifying(false);
     }
   };
 
@@ -162,8 +88,6 @@ export function TelegramLinkCard() {
   }
 
   if (!data) return null;
-
-  const isLocalhost = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
 
   return (
     <div className="p-6 bg-surface/90 dark:bg-surface/90 border border-border/80 rounded-3xl shadow-xl space-y-5 relative overflow-hidden backdrop-blur-xl">
@@ -197,8 +121,11 @@ export function TelegramLinkCard() {
       </div>
 
       {webhookMsg && (
-        <div className="p-3 bg-primary/10 border border-primary/20 text-primary text-xs rounded-xl font-bold">
-          {webhookMsg}
+        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs rounded-xl font-bold flex items-center justify-between">
+          <span>{webhookMsg}</span>
+          <button onClick={() => setWebhookMsg(null)} className="text-xs hover:underline cursor-pointer">
+            Dismiss
+          </button>
         </div>
       )}
 
@@ -236,17 +163,16 @@ export function TelegramLinkCard() {
                 Google sent a verification link to confirm Gmail auto-forwarding to your personal alias <code>{data.inboundAlias}</code>.
               </p>
 
-              <div className="flex items-center space-x-2 pt-1">
+              <div className="flex flex-wrap items-center gap-2 pt-1">
                 {data.gmailVerificationLink && (
-                  <a
-                    href={data.gmailVerificationLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold rounded-xl flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer"
+                  <button
+                    onClick={() => handleApproveVerification(data.gmailVerificationLink)}
+                    disabled={verifying}
+                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold rounded-xl flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer disabled:opacity-50"
                   >
-                    <span>1-Click Approve Gmail Forwarding</span>
+                    <span>{verifying ? "Verifying..." : "1-Click Approve Gmail Forwarding"}</span>
                     <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                  </button>
                 )}
 
                 {data.gmailVerificationCode && (
@@ -258,43 +184,23 @@ export function TelegramLinkCard() {
                     <span>Copy Code</span>
                   </button>
                 )}
+
+                <button
+                  onClick={() => handleApproveVerification()}
+                  disabled={verifying}
+                  className="px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs font-extrabold rounded-xl flex items-center space-x-1.5 cursor-pointer transition-all"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Mark Verified</span>
+                </button>
               </div>
             </div>
           )}
 
           <div className="space-y-2">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <label className="block text-[10px] font-extrabold uppercase tracking-wider text-text-muted">
-                Your Personal Placement Inbound Email Alias
-              </label>
-
-              <div className="flex items-center space-x-2.5">
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="text-[10px] font-extrabold text-emerald-500 hover:underline flex items-center space-x-1 cursor-pointer bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20"
-                >
-                  <PlusCircle className="w-3 h-3" />
-                  <span>Paste Real Email</span>
-                </button>
-
-                <button
-                  onClick={handleSimulateGmailVerification}
-                  className="text-[10px] font-bold text-amber-500 hover:underline flex items-center space-x-1 cursor-pointer"
-                >
-                  <ShieldCheck className="w-3 h-3" />
-                  <span>Test Verification Banner</span>
-                </button>
-
-                <button
-                  onClick={handleSimulateTestEmail}
-                  disabled={simulatingEmail}
-                  className="text-[10px] font-bold text-sky-500 hover:underline flex items-center space-x-1 cursor-pointer"
-                >
-                  <Zap className="w-3 h-3" />
-                  <span>{simulatingEmail ? "Processing AI..." : "Test Simulation"}</span>
-                </button>
-              </div>
-            </div>
+            <label className="block text-[10px] font-extrabold uppercase tracking-wider text-text-muted">
+              Your Personal Placement Inbound Email Alias
+            </label>
 
             <div className="flex items-center space-x-2">
               <div className="flex-1 bg-bg-base border border-border px-3.5 py-2.5 rounded-xl font-mono text-xs font-bold text-primary truncate">
@@ -316,10 +222,11 @@ export function TelegramLinkCard() {
               <Mail className="w-3.5 h-3.5 text-primary" />
               <span>Gmail Auto-Forwarding Instructions:</span>
             </h4>
-            <ol className="list-decimal list-inside space-y-1 text-[11px] text-text-muted font-medium leading-relaxed">
-              <li>Open Gmail on desktop ⚙️ ➔ <b>See all settings</b> ➔ <b>Filters and Blocked Addresses</b>.</li>
-              <li>Click <b>Create a new filter</b> ➔ enter your placement cell email (e.g. <code>placement.ac.in</code>) in <b>From</b>.</li>
-              <li>Select <b>Forward it to</b> and enter <code>{data.inboundAlias}</code>.</li>
+            <ol className="list-decimal list-inside space-y-1.5 text-[11px] text-text-muted font-medium leading-relaxed">
+              <li>Open Gmail on desktop ⚙️ ➔ <b>See all settings</b> ➔ <b>Forwarding and POP/IMAP</b> (or <b>Filters and Blocked Addresses</b>).</li>
+              <li>Click <b>Add a forwarding address</b> and enter <code>{data.inboundAlias}</code>.</li>
+              <li><b>Approve Google Verification</b>: Click <b>1-Click Approve Gmail Forwarding</b> in the banner above (or enter the verification code sent to your alias).</li>
+              <li>Create a filter for your placement cell email (e.g. <code>placement.ac.in</code>) ➔ select <b>Forward it to {data.inboundAlias}</b>.</li>
             </ol>
           </div>
         </div>
@@ -332,23 +239,6 @@ export function TelegramLinkCard() {
               <span>Connect your Telegram account to activate automated placement reminders.</span>
             </div>
           </div>
-
-          {/* Developer Local simulation bar */}
-          {isLocalhost && (
-            <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-center justify-between">
-              <div className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">
-                🛠️ <b>Localhost Detected:</b> Telegram API requires HTTPS. Tap to simulate linking directly on local DB:
-              </div>
-              <button
-                onClick={handleSimulateDevLink}
-                disabled={simulating}
-                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl flex items-center space-x-1 shrink-0 ml-2 cursor-pointer shadow-xs"
-              >
-                <Zap className="w-3.5 h-3.5" />
-                <span>{simulating ? "Linking..." : "Simulate Local Link"}</span>
-              </button>
-            </div>
-          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Option 1: Direct Buttons */}
@@ -397,96 +287,6 @@ export function TelegramLinkCard() {
                 Search <b>@{data.botUsername}</b> on Telegram & send the copied command.
               </p>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Manual Real Email Ingestion Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface border border-border rounded-3xl p-6 max-w-lg w-full space-y-4 shadow-2xl relative">
-            <div className="flex items-center justify-between border-b border-border/40 pb-3">
-              <h3 className="font-extrabold text-base text-text flex items-center space-x-2">
-                <PlusCircle className="w-5 h-5 text-emerald-500" />
-                <span>Parse Real Placement Email</span>
-              </h3>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="p-1 rounded-lg text-text-muted hover:text-text cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleManualIngestSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-extrabold text-text mb-1">
-                  Email Subject
-                </label>
-                <input
-                  type="text"
-                  value={manualSubject}
-                  onChange={(e) => setManualSubject(e.target.value)}
-                  placeholder="e.g. Tekion | Placement Drive / Internship - 2027 Batch"
-                  className="w-full px-3.5 py-2.5 bg-bg-base border border-border/80 rounded-xl text-xs text-text focus:outline-none focus:ring-2 focus:ring-primary/40 font-medium"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-extrabold text-text mb-1">
-                  Placement Cell Sender Email
-                </label>
-                <input
-                  type="text"
-                  value={manualSender}
-                  onChange={(e) => setManualSender(e.target.value)}
-                  placeholder="cdc@vitapstudent.ac.in"
-                  className="w-full px-3.5 py-2.5 bg-bg-base border border-border/80 rounded-xl text-xs text-text focus:outline-none focus:ring-2 focus:ring-primary/40 font-medium"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-extrabold text-text mb-1">
-                  Paste Placement Email Content / Table *
-                </label>
-                <textarea
-                  rows={6}
-                  value={manualBody}
-                  onChange={(e) => setManualBody(e.target.value)}
-                  placeholder="Paste the placement email text, criteria table, CTC, and deadline dates here..."
-                  required
-                  className="w-full p-3 bg-bg-base border border-border/80 rounded-xl text-xs text-text focus:outline-none focus:ring-2 focus:ring-primary/40 font-mono resize-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-end space-x-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-surface hover:bg-bg-base text-text-muted text-xs font-bold rounded-xl cursor-pointer"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  disabled={ingesting}
-                  className="px-5 py-2.5 bg-primary hover:opacity-90 text-white text-xs font-extrabold rounded-xl flex items-center space-x-2 transition-all cursor-pointer shadow-xs"
-                >
-                  {ingesting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Parsing AI...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-4 h-4" />
-                      <span>Parse & Notify Telegram</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}
