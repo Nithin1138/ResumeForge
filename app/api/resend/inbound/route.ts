@@ -29,16 +29,19 @@ export async function POST(req: Request) {
     const from = data.from || payload.from || payload.sender;
     const subject = data.subject || payload.subject;
 
-    const recipientList: string[] = Array.isArray(to) ? to : (to ? [to] : []);
+    const recipientList: string[] = Array.isArray(to) ? [...to] : (to ? [to] : []);
+    if (payload.delivered_to) recipientList.push(payload.delivered_to);
+    if (payload.forwarded_to) recipientList.push(payload.forwarded_to);
+    if (data.delivered_to) recipientList.push(data.delivered_to);
 
-    // Find the inbound alias matching a TelegramUser in DB
+    // Find the inbound alias or user email matching a TelegramUser in DB
     let matchedTgUser = null;
 
     for (const rawRecipient of recipientList) {
       const cleanAddr = extractCleanEmail(rawRecipient);
       const prefix = cleanAddr.split("@")[0]; // e.g. "jd_cmrv1w4kb000"
 
-      // 1. Try exact email match
+      // 1. Try exact inboundAlias match
       let tgUser = await prisma.telegramUser.findFirst({
         where: {
           inboundAlias: {
@@ -48,7 +51,21 @@ export async function POST(req: Request) {
         },
       });
 
-      // 2. Try prefix match (e.g. jd_cmrv1w4kb000)
+      // 2. Try user email match (e.g. personalprojects1009@gmail.com)
+      if (!tgUser) {
+        tgUser = await prisma.telegramUser.findFirst({
+          where: {
+            user: {
+              email: {
+                equals: cleanAddr,
+                mode: "insensitive",
+              },
+            },
+          },
+        });
+      }
+
+      // 3. Try prefix match (e.g. jd_cmrv1w4kb000)
       if (!tgUser && prefix && prefix.startsWith("jd_")) {
         tgUser = await prisma.telegramUser.findFirst({
           where: {
