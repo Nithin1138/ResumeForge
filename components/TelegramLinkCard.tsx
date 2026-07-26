@@ -1,18 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-  Send, 
-  Copy, 
-  Check, 
-  ShieldCheck, 
-  Mail, 
-  ExternalLink, 
-  Sparkles, 
-  RefreshCw, 
+import {
+  Send,
+  Copy,
+  Check,
+  ShieldCheck,
+  Mail,
+  ExternalLink,
+  Sparkles,
+  RefreshCw,
   Loader2,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  RotateCcw
 } from "lucide-react";
 
 export function TelegramLinkCard() {
@@ -21,6 +22,7 @@ export function TelegramLinkCard() {
   const [copiedAlias, setCopiedAlias] = useState(false);
   const [copiedToken, setCopiedToken] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const [webhookMsg, setWebhookMsg] = useState<string | null>(null);
 
   const fetchStatus = async () => {
@@ -78,6 +80,24 @@ export function TelegramLinkCard() {
     }
   };
 
+  const handleReset = async () => {
+    if (!window.confirm("Are you sure you want to reset your Telegram connection & email alias? A fresh alias and link code will be generated.")) {
+      return;
+    }
+    setResetting(true);
+    try {
+      const res = await fetch("/api/telegram/reset", { method: "POST" });
+      if (res.ok) {
+        setWebhookMsg("🔄 Reset successful! Fresh email alias & Telegram link code generated.");
+        await fetchStatus();
+      }
+    } catch (err) {
+      console.error("Failed to reset Telegram state:", err);
+    } finally {
+      setResetting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-6 bg-surface border border-border/80 rounded-3xl flex items-center justify-center space-x-3 text-text-muted">
@@ -111,13 +131,25 @@ export function TelegramLinkCard() {
           </div>
         </div>
 
-        <button
-          onClick={fetchStatus}
-          className="p-2 text-text-muted hover:text-primary rounded-xl transition-colors cursor-pointer"
-          title="Refresh Status"
-        >
-          <RefreshCw className="w-4 h-4" />
-        </button>
+        <div className="flex items-center space-x-1.5">
+          <button
+            onClick={handleReset}
+            disabled={resetting}
+            className="px-2.5 py-1.5 text-xs font-extrabold text-red-500 hover:text-white hover:bg-red-500/90 bg-red-500/10 border border-red-500/20 rounded-xl transition-all cursor-pointer flex items-center space-x-1 disabled:opacity-50"
+            title="Reset Telegram connection and generate a new personal alias"
+          >
+            {resetting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RotateCcw className="w-3.5 h-3.5" />}
+            <span>{resetting ? "Resetting..." : "Reset"}</span>
+          </button>
+
+          <button
+            onClick={fetchStatus}
+            className="p-2 text-text-muted hover:text-primary rounded-xl transition-colors cursor-pointer"
+            title="Refresh Status"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {webhookMsg && (
@@ -226,11 +258,11 @@ export function TelegramLinkCard() {
               <li>Open Gmail on desktop ⚙️ ➔ <b>See all settings</b> ➔ <b>Forwarding and POP/IMAP</b> (or <b>Filters and Blocked Addresses</b>).</li>
               <li>Click <b>Add a forwarding address</b> ➔ enter <code>{data.inboundAlias}</code>.</li>
               <li><b>Approve Verification</b>: Click <b>1-Click Approve Gmail Forwarding</b> in the banner above (or enter the verification code sent to your alias).</li>
-              <li>Click <b>Create a new filter</b> ➔ enter your placement cell domain in <b>From</b> (e.g. <code>vitap.ac.in</code> or <code>vitapstudent.ac.in</code>) ➔ click <b>Create filter</b>.</li>
+              <li>Click <b>Create a new filter</b> ➔ enter your placement cell domain in <b>From</b> (e.g. <code>vitapstudent.ac.in</code>) ➔ click <b>Create filter</b>.</li>
               <li>Check the box <b>☑️ Forward it to:</b> ➔ select <code>{data.inboundAlias}</code> from the dropdown menu ➔ click <b>Create filter</b>.</li>
             </ol>
             <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold pt-1">
-              📌 <b>Crucial Note:</b> Make sure your Gmail filter <code>From:</code> covers official placement domains like <code>vitap.ac.in</code> so all CDC emails are forwarded!
+              📌 <b>Note:</b> Gmail filters automatically forward all <b>new incoming placement emails</b> received from this moment onward.
             </p>
           </div>
         </div>
