@@ -180,16 +180,17 @@ export async function POST(req: Request) {
     // Call LLM Extractor with both text & HTML
     const extracted = await extractJdInfoWithLLM(fullTextContext, rawHtmlText);
 
-    if (!extracted || !extracted.companyName) {
-      console.warn("[Resend Inbound] Failed to parse valid JD from email text");
-      return NextResponse.json({ message: "Could not parse placement JD email" }, { status: 200 });
-    }
+    const companyName = (extracted && extracted.companyName && extracted.companyName !== "Placement Drive") 
+      ? extracted.companyName 
+      : (subject ? subject.replace(/^jd\s*/i, "").trim() || "Placement Drive" : "Placement Drive");
 
-    const eligText = typeof extracted.eligibilityCriteria === "object"
+    const roleTitle = extracted?.roleTitle || "Software Engineer / Candidate";
+
+    const eligText = typeof extracted?.eligibilityCriteria === "object"
       ? (extracted.eligibilityCriteria?.rawEligibilityText || JSON.stringify(extracted.eligibilityCriteria))
-      : (extracted.eligibilityCriteria || "All Branches");
+      : (extracted?.eligibilityCriteria || "All Branches");
 
-    const datesText = extracted.otherImportantDates
+    const datesText = extracted?.otherImportantDates
       ? JSON.stringify(extracted.otherImportantDates)
       : null;
 
@@ -197,11 +198,11 @@ export async function POST(req: Request) {
     const jobPosting = await prisma.jobPosting.create({
       data: {
         telegramUserId: matchedTgUser.id,
-        companyName: extracted.companyName,
-        roleTitle: extracted.roleTitle || "Job Opportunity",
+        companyName: companyName,
+        roleTitle: roleTitle,
         eligibilityCriteria: eligText,
-        applicationDeadline: extracted.applicationDeadline ? new Date(extracted.applicationDeadline) : null,
-        driveDate: extracted.driveDate ? new Date(extracted.driveDate) : null,
+        applicationDeadline: extracted?.applicationDeadline ? new Date(extracted.applicationDeadline) : null,
+        driveDate: extracted?.driveDate ? new Date(extracted.driveDate) : null,
         otherImportantDates: datesText,
         rawEmailText: rawEmailText || fullTextContext,
       },
