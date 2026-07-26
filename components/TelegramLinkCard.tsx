@@ -224,10 +224,14 @@ export function TelegramLinkCard() {
             </h4>
             <ol className="list-decimal list-inside space-y-1.5 text-[11px] text-text-muted font-medium leading-relaxed">
               <li>Open Gmail on desktop ⚙️ ➔ <b>See all settings</b> ➔ <b>Forwarding and POP/IMAP</b> (or <b>Filters and Blocked Addresses</b>).</li>
-              <li>Click <b>Add a forwarding address</b> and enter <code>{data.inboundAlias}</code>.</li>
-              <li><b>Approve Google Verification</b>: Click <b>1-Click Approve Gmail Forwarding</b> in the banner above (or enter the verification code sent to your alias).</li>
-              <li>Create a filter for your placement cell email (e.g. <code>placement.ac.in</code>) ➔ select <b>Forward it to {data.inboundAlias}</b>.</li>
+              <li>Click <b>Add a forwarding address</b> ➔ enter <code>{data.inboundAlias}</code>.</li>
+              <li><b>Approve Verification</b>: Click <b>1-Click Approve Gmail Forwarding</b> in the banner above (or enter the verification code sent to your alias).</li>
+              <li>Click <b>Create a new filter</b> ➔ enter your placement cell domain in <b>From</b> (e.g. <code>vitapstudent.ac.in</code>) ➔ click <b>Create filter</b>.</li>
+              <li>Check the box <b>☑️ Forward it to:</b> ➔ select <code>{data.inboundAlias}</code> from the dropdown menu ➔ click <b>Create filter</b>.</li>
             </ol>
+            <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold pt-1">
+              📌 <b>Note:</b> Gmail filters automatically forward all <b>new incoming placement emails</b> received from this moment onward.
+            </p>
           </div>
         </div>
       ) : (
