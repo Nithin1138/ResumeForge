@@ -140,13 +140,15 @@ export async function POST(req: Request) {
     const bodyContextLower = (fullTextContext + " " + rawHtmlText).toLowerCase();
 
     // Check if this is a Gmail Auto-Forwarding Confirmation Email from Google
+    // IMPORTANT: Be very specific here — forwarded real emails also contain google.com links in the wrapper HTML.
+    // Only flag as confirmation if sender is explicitly Google's forwarding noreply address,
+    // OR the subject specifically mentions forwarding/confirmation,
+    // OR the body contains the distinctive Gmail verification URL pattern.
     const isGmailConfirmation =
-      fromLower.includes("forwarding-noreply") ||
-      fromLower.includes("google.com") ||
-      subjectLower.includes("confirmation") ||
-      subjectLower.includes("forwarding") ||
+      fromLower.includes("forwarding-noreply@google.com") ||
+      (subjectLower.includes("gmail forwarding") && subjectLower.includes("confirmation")) ||
       bodyContextLower.includes("google.com/mail/vf-") ||
-      bodyContextLower.includes("confirmation code");
+      (bodyContextLower.includes("confirmation code") && fromLower.includes("google.com"));
 
     if (isGmailConfirmation) {
       // 1. Code match: 9-digit or 7-10 digit numbers
