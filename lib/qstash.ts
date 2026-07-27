@@ -15,7 +15,18 @@ export async function scheduleQStashReminder(
 
   try {
     const destinationUrl = `${APP_URL}/api/qstash/send-reminder`;
-    const notBeforeSec = Math.floor(scheduledFor.getTime() / 1000);
+    
+    // Upstash free tier has a max delay of 7 days (604,800 seconds)
+    const maxDelayMs = 604800 * 1000;
+    const now = Date.now();
+    let scheduledTimeMs = scheduledFor.getTime();
+    
+    if (scheduledTimeMs - now > maxDelayMs) {
+      console.warn(`[QStash] Scheduled date ${scheduledFor.toISOString()} exceeds 7-day free tier limit. Capping to 7 days from now.`);
+      scheduledTimeMs = now + maxDelayMs - 60000; // 7 days minus 1 minute buffer
+    }
+
+    const notBeforeSec = Math.floor(scheduledTimeMs / 1000);
 
     const res = await fetch(`https://qstash.upstash.io/v2/publish/${destinationUrl}`, {
       method: "POST",
