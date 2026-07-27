@@ -162,8 +162,8 @@ export async function POST(req: Request) {
         where: { identifier: `${userId}:telegram-link` },
       });
 
-      // Welcome Message with Gmail Filter Setup Instructions
-      const welcomeMsg = `🎉 <b>Account Successfully Linked!</b>\n\nYour ATSLift account is connected. Here is your personal JD forwarding email alias:\n\n📧 <code>${inboundAlias}</code>\n\n<b>How to set up auto-forwarding in Gmail (2 minutes):</b>\n1. Open Gmail on desktop ⚙️ ➔ <b>See all settings</b>.\n2. Click <b>Filters and Blocked Addresses</b> ➔ <b>Create a new filter</b>.\n3. In <b>From</b>, enter your placement cell email (e.g. <code>placement.ac.in</code> or <code>cdc.ac.in</code>).\n4. Click <b>Create filter</b>, select <b>Forward it to</b> ➔ add <code>${inboundAlias}</code>.\n\nWhenever a placement email arrives, ATSLift will extract the company, role, eligibility & deadlines and send you instant Telegram reminders!`;
+      // Welcome Message with Google Sheets Auto-Sync Instructions
+      const welcomeMsg = `🎉 <b>Account Successfully Linked!</b>\n\nYour ATSLift account is connected. Here is your personal Inbound Alias:\n\n📧 <code>${inboundAlias}</code>\n\n<b>How to set up Auto-Sync (15 seconds):</b>\n1. Open your ATSLift dashboard at https://atslift.app/automations.\n2. Click the link to <b>Make a Copy of the Google Sheet Template</b>.\n3. Paste your alias <code>${inboundAlias}</code> into cell <b>B1</b>.\n4. Click <b>🚀 ATSLift</b> ➔ <b>Start Sync</b> in the sheet's top menu.\n\nYour Google Sheet will now automatically sync all new placement emails to Telegram every 1 minute!`;
 
       await sendTelegramMessage(chatId, welcomeMsg);
       return NextResponse.json({ ok: true });

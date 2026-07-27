@@ -176,62 +176,9 @@ export function TelegramLinkCard() {
             )}
           </div>
 
-          {/* 1-Click Gmail Auto-Forwarding Verification Banner */}
-          {(data.gmailVerificationLink || data.gmailVerificationCode) && (
-            <div className="p-4 bg-amber-500/10 border-2 border-amber-500/30 rounded-2xl space-y-3">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center space-x-2 text-amber-600 dark:text-amber-400 font-extrabold text-xs">
-                  <ShieldCheck className="w-5 h-5 shrink-0" />
-                  <span>🔑 Gmail Auto-Forwarding Verification Requested!</span>
-                </div>
-                {data.gmailVerificationCode && (
-                  <span className="bg-amber-500/20 font-mono text-xs font-black px-2.5 py-1 rounded-lg text-amber-600 dark:text-amber-300">
-                    Code: {data.gmailVerificationCode}
-                  </span>
-                )}
-              </div>
-
-              <p className="text-xs text-text-muted font-medium">
-                Google sent a verification link to confirm Gmail auto-forwarding to your personal alias <code>{data.inboundAlias}</code>.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-2 pt-1">
-                {data.gmailVerificationLink && (
-                  <button
-                    onClick={() => handleApproveVerification(data.gmailVerificationLink)}
-                    disabled={verifying}
-                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold rounded-xl flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer disabled:opacity-50"
-                  >
-                    <span>{verifying ? "Verifying..." : "1-Click Approve Gmail Forwarding"}</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </button>
-                )}
-
-                {data.gmailVerificationCode && (
-                  <button
-                    onClick={() => handleCopy(data.gmailVerificationCode, "token")}
-                    className="px-3.5 py-2 bg-surface hover:bg-bg-base border border-border text-text text-xs font-bold rounded-xl flex items-center space-x-1.5 cursor-pointer"
-                  >
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy Code</span>
-                  </button>
-                )}
-
-                <button
-                  onClick={() => handleApproveVerification()}
-                  disabled={verifying}
-                  className="px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs font-extrabold rounded-xl flex items-center space-x-1.5 cursor-pointer transition-all"
-                >
-                  <Check className="w-3.5 h-3.5" />
-                  <span>Mark Verified</span>
-                </button>
-              </div>
-            </div>
-          )}
-
           <div className="space-y-2">
             <label className="block text-[10px] font-extrabold uppercase tracking-wider text-text-muted">
-              Your Personal Placement Inbound Email Alias
+              Your Personal Inbound Alias
             </label>
 
             <div className="flex items-center space-x-2">
@@ -243,27 +190,54 @@ export function TelegramLinkCard() {
                 className="px-4 py-2.5 bg-primary hover:opacity-90 text-white text-xs font-extrabold rounded-xl flex items-center space-x-1.5 transition-all cursor-pointer shadow-xs"
               >
                 {copiedAlias ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                <span>{copiedAlias ? "Copied!" : "Copy Email"}</span>
+                <span>{copiedAlias ? "Copied!" : "Copy Alias"}</span>
               </button>
             </div>
           </div>
 
-          {/* Quick Setup Instructions */}
-          <div className="p-4 bg-bg-base/60 border border-border/60 rounded-2xl space-y-2 text-xs">
-            <h4 className="font-extrabold text-text flex items-center space-x-1.5">
-              <Mail className="w-3.5 h-3.5 text-primary" />
-              <span>Gmail Auto-Forwarding Instructions:</span>
-            </h4>
-            <ol className="list-decimal list-inside space-y-1.5 text-[11px] text-text-muted font-medium leading-relaxed">
-              <li>Open Gmail on desktop ⚙️ ➔ <b>See all settings</b> ➔ <b>Forwarding and POP/IMAP</b> (or <b>Filters and Blocked Addresses</b>).</li>
-              <li>Click <b>Add a forwarding address</b> ➔ enter <code>{data.inboundAlias}</code>.</li>
-              <li><b>Approve Verification</b>: Click <b>1-Click Approve Gmail Forwarding</b> in the banner above (or enter the verification code sent to your alias).</li>
-              <li>Click <b>Create a new filter</b> ➔ enter your placement cell domain in <b>From</b> (e.g. <code>vitapstudent.ac.in</code>) ➔ click <b>Create filter</b>.</li>
-              <li>Check the box <b>☑️ Forward it to:</b> ➔ select <code>{data.inboundAlias}</code> from the dropdown menu ➔ click <b>Create filter</b>.</li>
-            </ol>
-            <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold pt-1">
-              📌 <b>Note:</b> Gmail filters automatically forward all <b>new incoming placement emails</b> received from this moment onward.
+          {/* New Google Sheets Auto-Sync Instructions */}
+          <div className="p-5 bg-primary/5 border border-primary/20 rounded-3xl space-y-4 text-xs">
+            <div className="flex items-center space-x-2">
+              <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+              </div>
+              <h4 className="font-extrabold text-sm text-text">
+                1-Click Google Sheets Auto-Sync (Recommended)
+              </h4>
+            </div>
+
+            <p className="text-[11px] text-text-muted font-medium leading-relaxed">
+              Standard email forwarding often fails due to strict college security (DMARC) policies. Use our custom Google Sheet to safely sync placement emails from your Gmail to Telegram in 30 seconds.
             </p>
+
+            <ol className="list-decimal list-inside space-y-2.5 text-[11px] text-text-muted font-medium leading-relaxed">
+              <li>
+                Click here to{" "}
+                <a
+                  href="https://docs.google.com/spreadsheets/d/1I4cFk_dQoEOoS1CYa44mLlEfeZemHgSIr_WbYMtZmLE/copy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-1 text-primary hover:underline font-extrabold"
+                >
+                  <span>Make a Copy of the Sync Sheet Template</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>.
+              </li>
+              <li>
+                In your copied sheet, paste your Personal Inbound Alias (shown above) into cell <b>B1</b>.
+              </li>
+              <li>
+                In cell <b>B2</b>, enter the search filter for your college domains (e.g. <code>from:(vitstudent.ac.in OR vitapstudent.ac.in)</code>).
+              </li>
+              <li>
+                In the sheet menu bar, click <b>🚀 ATSLift</b> ➔ <b>Start Sync</b> (approve Google permissions on the first run).
+              </li>
+            </ol>
+
+            <div className="pt-2 border-t border-border/40 flex items-center justify-between text-[10px] font-semibold text-text-muted">
+              <span>⚡ Checks Gmail every 1 minute</span>
+              <span>🔒 100% Secure & Private</span>
+            </div>
           </div>
         </div>
       ) : (
