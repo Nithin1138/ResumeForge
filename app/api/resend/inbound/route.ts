@@ -13,26 +13,49 @@ function extractCleanEmail(raw: string): string {
 
 export async function POST(req: Request) {
   try {
-    const payload = await req.json();
-    const data = payload.data || payload;
+    const contentType = req.headers.get("content-type") || "";
+    let payload: Record<string, unknown> = {};
 
-    // Log payload summary for debugging
-    console.log("[Inbound Webhook Event]:", payload.type || "Cloudflare/Direct", data.subject, data.to);
+    if (contentType.includes("application/json")) {
+      payload = await req.json();
+    } else if (contentType.includes("application/x-www-form-urlencoded") || contentType.includes("multipart/form-data")) {
+      const form = await req.formData();
+      for (const [key, val] of form.entries()) {
+        payload[key] = val;
+      }
+    } else {
+      // Raw body (Cloudflare may send raw email or plain text)
+      const rawBody = await req.text();
+      try {
+        payload = JSON.parse(rawBody);
+      } catch {
+        // Not JSON — treat raw body as email text fallback
+        payload = { text: rawBody, type: "cloudflare.email" };
+      }
+    }
+
+    const data = (payload.data as Record<string, unknown>) || payload;
+
+    // Log FULL payload for debugging — critical for diagnosing Cloudflare format
+    console.log("[Inbound Webhook] ContentType:", contentType);
+    console.log("[Inbound Webhook] Keys:", Object.keys(payload).join(", "));
+    console.log("[Inbound Webhook] type:", payload.type, "| subject:", data.subject || payload.subject, "| to:", data.to || payload.to || payload.recipient, "| from:", data.from || payload.from || payload.sender);
 
     // Resend / Cloudflare event type check (allow email.received, cloudflare.email, or direct payload)
     if (payload.type && payload.type !== "email.received" && payload.type !== "email.inbound" && payload.type !== "cloudflare.email") {
+      console.log("[Inbound Webhook] Ignored event type:", payload.type);
       return NextResponse.json({ message: "Ignored event type" }, { status: 200 });
     }
 
-    const email_id = data.email_id || data.id || payload.email_id;
+    const email_id = String(data.email_id || data.id || payload.email_id || "");
     const to = data.to || payload.to || payload.recipient;
-    const from = data.from || payload.from || payload.sender;
-    const subject = data.subject || payload.subject;
+    const from = String(data.from || payload.from || payload.sender || "");
+    const subject = String(data.subject || payload.subject || "");
 
-    const recipientList: string[] = Array.isArray(to) ? [...to] : (to ? [to] : []);
-    if (payload.delivered_to) recipientList.push(payload.delivered_to);
-    if (payload.forwarded_to) recipientList.push(payload.forwarded_to);
-    if (data.delivered_to) recipientList.push(data.delivered_to);
+    const recipientList: string[] = Array.isArray(to) ? [...(to as string[])] : (to ? [String(to)] : []);
+    if (payload.delivered_to) recipientList.push(String(payload.delivered_to));
+    if (payload.forwarded_to) recipientList.push(String(payload.forwarded_to));
+    if (data.delivered_to) recipientList.push(String(data.delivered_to));
 
     // Find the inbound alias or user email matching a TelegramUser in DB
     let matchedTgUser = null;
@@ -100,8 +123,8 @@ export async function POST(req: Request) {
     }
 
     // Fetch email content from Resend payload or API
-    let rawEmailText = data.text || data.body || payload.text || "";
-    let rawHtmlText = data.html || payload.html || "";
+    let rawEmailText = String(data.text || data.body || payload.text || "");
+    let rawHtmlText = String(data.html || payload.html || "");
     const resendApiKey = process.env.RESEND_API_KEY;
 
     if (!rawEmailText && !rawHtmlText && resendApiKey && email_id) {
