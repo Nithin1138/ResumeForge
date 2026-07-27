@@ -17,13 +17,17 @@ import {
 } from "lucide-react";
 
 export function TelegramLinkCard() {
-  const [loading, setLoading] = useState(true);
+   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
   const [copiedAlias, setCopiedAlias] = useState(false);
   const [copiedToken, setCopiedToken] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [webhookMsg, setWebhookMsg] = useState<string | null>(null);
+
+  // New Spreadsheet Link states
+  const [pastedUrl, setPastedUrl] = useState("");
+  const [savingUrl, setSavingUrl] = useState(false);
 
   const fetchStatus = async () => {
     setLoading(true);
@@ -77,6 +81,35 @@ export function TelegramLinkCard() {
       console.error("Failed to verify Gmail forwarding:", err);
     } finally {
       setVerifying(false);
+    }
+  };
+
+  const handleLinkSpreadsheet = async (urlToSave: string) => {
+    if (urlToSave && !urlToSave.toLowerCase().startsWith("https://docs.google.com/spreadsheets")) {
+      alert("Please enter a valid Google Sheets URL (should start with https://docs.google.com/spreadsheets)");
+      return;
+    }
+
+    setSavingUrl(true);
+    try {
+      const res = await fetch("/api/telegram/save-spreadsheet-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: urlToSave }),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        setData((prev: any) => ({
+          ...prev,
+          syncSpreadsheetUrl: json.syncSpreadsheetUrl,
+        }));
+        setPastedUrl("");
+        setWebhookMsg(urlToSave ? "✅ Google Sheet linked successfully!" : "🔄 Spreadsheet link removed.");
+      }
+    } catch (err) {
+      console.error("Failed to link spreadsheet:", err);
+    } finally {
+      setSavingUrl(false);
     }
   };
 
@@ -212,16 +245,41 @@ export function TelegramLinkCard() {
 
             <ol className="list-decimal list-inside space-y-2.5 text-[11px] text-text-muted font-medium leading-relaxed">
               <li>
-                Click here to{" "}
-                <a
-                  href="https://docs.google.com/spreadsheets/d/1I4cFk_dQoEOoS1CYa44mLlEfeZemHgSIr_WbYMtZmLE/copy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-1 text-primary hover:underline font-extrabold"
-                >
-                  <span>Make a Copy of the Sync Sheet Template</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>.
+                {data.syncSpreadsheetUrl ? (
+                  <span>
+                    Open your linked{" "}
+                    <a
+                      href={data.syncSpreadsheetUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center space-x-1 text-primary hover:underline font-extrabold"
+                    >
+                      <span>Google Sync Sheet</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>{" "}
+                    (or click{" "}
+                    <button
+                      onClick={() => handleLinkSpreadsheet("")}
+                      className="text-red-500 hover:underline font-bold bg-transparent border-none p-0 cursor-pointer"
+                    >
+                      Unlink Sheet
+                    </button>
+                    ).
+                  </span>
+                ) : (
+                  <span>
+                    Click here to{" "}
+                    <a
+                      href="https://docs.google.com/spreadsheets/d/1I4cFk_dQoEOoS1CYa44mLlEfeZemHgSIr_WbYMtZmLE/copy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center space-x-1 text-primary hover:underline font-extrabold"
+                    >
+                      <span>Make a Copy of the Sync Sheet Template</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>.
+                  </span>
+                )}
               </li>
               <li>
                 In your copied sheet, paste your Personal Inbound Alias (shown above) into cell <b>B1</b>.
@@ -234,7 +292,32 @@ export function TelegramLinkCard() {
               </li>
             </ol>
 
-            <div className="pt-2 border-t border-border/40 flex items-center justify-between text-[10px] font-semibold text-text-muted">
+            {/* Link Input Field if not linked */}
+            {!data.syncSpreadsheetUrl && (
+              <div className="pt-3 border-t border-border/40 space-y-2">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wider text-text-muted">
+                  🔗 Link your Spreadsheet URL (to avoid copying it again)
+                </label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="url"
+                    placeholder="https://docs.google.com/spreadsheets/d/.../edit"
+                    value={pastedUrl}
+                    onChange={(e) => setPastedUrl(e.target.value)}
+                    className="flex-1 bg-bg-base border border-border px-3 py-2 rounded-xl text-xs text-text outline-hidden focus:border-primary/50"
+                  />
+                  <button
+                    onClick={() => handleLinkSpreadsheet(pastedUrl)}
+                    disabled={savingUrl || !pastedUrl}
+                    className="px-3.5 py-2 bg-primary hover:opacity-90 disabled:opacity-50 text-white text-xs font-extrabold rounded-xl transition-all cursor-pointer shadow-xs whitespace-nowrap"
+                  >
+                    {savingUrl ? "Saving..." : "Link Sheet"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="pt-2.5 border-t border-border/40 flex items-center justify-between text-[10px] font-semibold text-text-muted">
               <span>⚡ Checks Gmail every 1 minute</span>
               <span>🔒 100% Secure & Private</span>
             </div>

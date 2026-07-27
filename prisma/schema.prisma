@@ -377,6 +377,7 @@ model TelegramUser {
   inboundAlias          String       @unique
   gmailVerificationCode String?
   gmailVerificationLink String?
+  syncSpreadsheetUrl    String?
   createdAt             DateTime     @default(now())
 
   jobPostings        JobPosting[]
