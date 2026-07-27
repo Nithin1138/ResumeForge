@@ -228,9 +228,23 @@ export async function POST(req: Request) {
 
     const roleTitle = extracted?.roleTitle || "Software Engineer / Candidate";
 
-    const eligText = typeof extracted?.eligibilityCriteria === "object"
-      ? (extracted.eligibilityCriteria?.rawEligibilityText || JSON.stringify(extracted.eligibilityCriteria))
-      : (extracted?.eligibilityCriteria || "All Branches");
+    let eligText: string;
+    if (typeof extracted?.eligibilityCriteria === "object" && extracted.eligibilityCriteria !== null) {
+      const ec = extracted.eligibilityCriteria as Record<string, unknown>;
+      if (ec.rawEligibilityText) {
+        eligText = String(ec.rawEligibilityText);
+      } else {
+        // Convert structured object to human-readable text
+        const parts: string[] = [];
+        if (ec.branches && Array.isArray(ec.branches)) parts.push(`Branches: ${(ec.branches as string[]).join(", ")}`);
+        if (ec.cgpaCutoff) parts.push(`CGPA: ${ec.cgpaCutoff}`);
+        if (ec.backlogPolicy) parts.push(String(ec.backlogPolicy));
+        if (ec.percentageCutoff) parts.push(`${ec.percentageCutoff}`);
+        eligText = parts.length > 0 ? parts.join(" | ") : "All Branches";
+      }
+    } else {
+      eligText = String(extracted?.eligibilityCriteria || "All Branches");
+    }
 
     const datesText = extracted?.otherImportantDates
       ? JSON.stringify(extracted.otherImportantDates)
@@ -262,10 +276,23 @@ export async function POST(req: Request) {
     // Format & Send Rich Telegram Alert Notification
     const deadlineFormatted = formatDateDDMMYYYY(jobPosting.applicationDeadline);
 
+    // Sanitize eligibility text — strip any JSON artifacts before sending to Telegram
+    const safeEligText = jobPosting.eligibilityCriteria
+      .replace(/^\{.*\}$/, (json) => {
+        try {
+          const obj = JSON.parse(json) as Record<string, unknown>;
+          const parts: string[] = [];
+          if (obj.branches && Array.isArray(obj.branches)) parts.push(`Branches: ${(obj.branches as string[]).join(", ")}`);
+          if (obj.cgpaCutoff) parts.push(`CGPA: ${obj.cgpaCutoff}`);
+          if (obj.backlogPolicy) parts.push(String(obj.backlogPolicy));
+          return parts.length > 0 ? parts.join(" | ") : json;
+        } catch { return json; }
+      });
+
     let tgMsg = `🎯 <b>New Placement Drive Detected!</b>\n\n`;
     tgMsg += `🏢 <b>Company:</b> ${escapeHtml(jobPosting.companyName)}\n`;
     tgMsg += `💼 <b>Role:</b> ${escapeHtml(jobPosting.roleTitle)}\n`;
-    tgMsg += `🎓 <b>Eligibility Criteria:</b> ${escapeHtml(jobPosting.eligibilityCriteria)}\n`;
+    tgMsg += `🎓 <b>Eligibility Criteria:</b> ${escapeHtml(safeEligText)}\n`;
     tgMsg += `⏰ <b>Application Deadline:</b> <b>${deadlineFormatted}</b>\n\n`;
     tgMsg += `<i>Automatic reminders will be sent 3 days before, 1 day before, and on the morning of the deadline.</i>`;
 
@@ -279,7 +306,12 @@ export async function POST(req: Request) {
       ],
     };
 
-    await sendTelegramMessage(matchedTgUser.telegramChatId, tgMsg, inlineKeyboard);
+    console.log(`[Inbound] Sending Telegram to chatId: ${matchedTgUser.telegramChatId}, company: ${jobPosting.companyName}`);
+    const tgResult = await sendTelegramMessage(matchedTgUser.telegramChatId, tgMsg, inlineKeyboard);
+    console.log(`[Inbound] Telegram send result: ${tgResult}`);
+    if (!tgResult) {
+      console.error(`[Inbound] Telegram message FAILED for jobPosting: ${jobPosting.id}`);
+    }
 
     return NextResponse.json({
       ok: true,
