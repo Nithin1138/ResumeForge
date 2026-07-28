@@ -226,7 +226,10 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         // Load Coding Profiles - 3 Famous Platforms default (LeetCode, CodeChef, Codeforces)
         let parsedCoding: CodingProfileItem[] = [];
         try {
-          parsedCoding = JSON.parse(p.codingProfilesJson || "[]");
+          const parsed = JSON.parse(p.codingProfilesJson || "[]");
+          if (Array.isArray(parsed)) {
+            parsedCoding = parsed;
+          }
         } catch {}
 
         const standardPlatforms = ["LeetCode", "CodeChef", "Codeforces"];
@@ -272,7 +275,10 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         // Load Education List - 4 Standard Levels (UG, 12th, 10th, PG)
         let parsedEdu: EducationItem[] = [];
         try {
-          parsedEdu = JSON.parse(p.educationJson || "[]");
+          const parsed = JSON.parse(p.educationJson || "[]");
+          if (Array.isArray(parsed)) {
+            parsedEdu = parsed;
+          }
         } catch {}
 
         const standardEduTypes = ["UG", "12th", "10th", "PG"];
