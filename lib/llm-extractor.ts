@@ -155,20 +155,18 @@ ${cleanedText}
 
 CRITICAL INSTRUCTIONS (MUST BE 100% ACCURATE):
 1. "companyName": Extract the exact name of the company hiring (e.g. Nutanix, Honeywell, Tekion, Amazon, TCS, Microsoft, etc.). Look in table fields like "Name of the Company", "Company Name", or email headers. If unspecified, use "Placement Drive".
-2. "roleTitle": Extract the exact job role, designation, or hiring type (e.g. SDE Intern, Software Engineer, Full Time + Internship, Super Dream Internship, etc.).
+2. "roleTitle": Extract the exact job designation or role offered (e.g. "Software Track Intern", "SDE Intern", "Embedded Specialist Intern", "Graduate Engineer Trainee").
+   - WARNING: Do NOT use VIT placement categories (like "Super Dream Internship", "Dream Placement", "Super Dream", "Dream", etc.) as the role title. Look at the "Job Designation Offered", "Designation", or "Designation Offered" field in the email.
 3. "eligibilityCriteria":
    - "branches": Array of eligible branch strings (e.g. ["CSE", "IT", "ECE", "EEE"]).
    - "cgpaCutoff": Cutoff/criteria (e.g. "7.5 CGPA", "No CGPA Cutoff").
    - "backlogPolicy": Backlog rules (e.g. "No standing backlogs", "Active backlogs allowed").
    - "rawEligibilityText": A clean, concise bulleted summary of ALL eligibility criteria. Do not miss any details like 10th/12th percentages or branch limitations.
-4. "packageDetails": Extract the compensation package, CTC, salary, or monthly stipend (e.g., "12 LPA", "50k stipend", "₹45,000/month", "Not Specified"). Look for terms like "Package", "CTC", "Salary", or "Stipend".
-5. "applicationDeadline": The exact registration/application deadline date and time.
-   *CRITICAL TIMEZONE & DATE RULES FOR INDIAN PLACEMENTS:*
-   - Dates in Indian emails use DD/MM/YYYY format! For example, "01/08/2026" or "01-08-2026" means 1st August 2026 (NOT January 8th).
-   - Carefully read the day, month, and year. Do not invert day and month.
-   - If a time is mentioned (e.g., "10:30 PM", "5:00 PM", "11:59 PM"), combine it with the date to produce the correct ISO 8601 string.
-   - Convert the date and time to a valid ISO 8601 string in Indian Standard Time (GMT+5:30) or UTC (e.g., "2026-08-01T17:00:00.000Z"). Return null if no deadline is specified.
-6. "driveDate": ISO 8601 Date string or null if no drive date is mentioned.
+4. "packageDetails": Extract the compensation package, CTC, salary, or monthly stipend (e.g., "9 LPA + 1.2 JB (10.2 LPA) if converted, Stipend: 36000 per month"). Look for terms like "Package", "CTC", "Salary", or "Stipend". Combine CTC and Stipend if both are mentioned.
+5. "deadlineDateLocal": YYYY-MM-DD in Indian local time (e.g. "2026-07-28"). Remember, Indian date format is DD/MM/YYYY. For "28-07-2026", return "2026-07-28".
+6. "deadlineTimeLocal": HH:mm (24-hour format) in Indian local time (e.g. "12:00" for 12noon, "17:00" for 5:00 PM, "23:59" if not specified).
+7. "driveDateLocal": YYYY-MM-DD in Indian local time or null if no drive date is mentioned.
+8. "driveTimeLocal": HH:mm in Indian local time or null if no drive time is mentioned.
 
 REQUIRED JSON STRUCTURE (Return ONLY raw JSON, no markdown wrappers, no explanations):
 {
@@ -181,14 +179,18 @@ REQUIRED JSON STRUCTURE (Return ONLY raw JSON, no markdown wrappers, no explanat
     "rawEligibilityText": "B.Tech CSE/IT with 7.5 CGPA, 70% in 10th & 12th, and no active backlogs."
   },
   "packageDetails": "CTC / Stipend Details",
-  "applicationDeadline": "YYYY-MM-DDTHH:mm:ssZ",
-  "driveDate": "YYYY-MM-DDTHH:mm:ssZ",
+  "deadlineDateLocal": "YYYY-MM-DD",
+  "deadlineTimeLocal": "HH:mm",
+  "driveDateLocal": "YYYY-MM-DD",
+  "driveTimeLocal": "HH:mm",
   "otherImportantDates": []
 }
 
 Today's Date: ${new Date().toISOString()}
 Return ONLY valid JSON.
 `;
+
+  let extractedObj: any = null;
 
   // 1. Try Gemini 1.5 Flash API
   const geminiKey = process.env.GEMINI_API_KEY;
@@ -211,10 +213,7 @@ Return ONLY valid JSON.
         const data = await res.json();
         const rawJsonStr = data.candidates?.[0]?.content?.parts?.[0]?.text;
         if (rawJsonStr) {
-          const parsed = JSON.parse(rawJsonStr);
-          if (parsed.companyName) {
-            return parsed as ExtractedJdData;
-          }
+          extractedObj = JSON.parse(rawJsonStr);
         }
       }
     } catch (err) {
@@ -223,36 +222,69 @@ Return ONLY valid JSON.
   }
 
   // 2. Fallback to Groq API if configured
-  const groqKey = process.env.GROQ_API_KEY;
-  if (groqKey) {
-    try {
-      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${groqKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
-          messages: [{ role: "user", content: prompt }],
-          response_format: { type: "json_object" },
-          temperature: 0.1,
-        }),
-      });
+  if (!extractedObj) {
+    const groqKey = process.env.GROQ_API_KEY;
+    if (groqKey) {
+      try {
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${groqKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile",
+            messages: [{ role: "user", content: prompt }],
+            response_format: { type: "json_object" },
+            temperature: 0.1,
+          }),
+        });
 
-      if (res.ok) {
-        const data = await res.json();
-        const rawJsonStr = data.choices?.[0]?.message?.content;
-        if (rawJsonStr) {
-          const parsed = JSON.parse(rawJsonStr);
-          if (parsed.companyName) {
-            return parsed as ExtractedJdData;
+        if (res.ok) {
+          const data = await res.json();
+          const rawJsonStr = data.choices?.[0]?.message?.content;
+          if (rawJsonStr) {
+            extractedObj = JSON.parse(rawJsonStr);
           }
         }
+      } catch (err) {
+        console.warn("[LLM Extraction - Groq Error]:", err);
       }
-    } catch (err) {
-      console.warn("[LLM Extraction - Groq Error]:", err);
     }
+  }
+
+  if (extractedObj && extractedObj.companyName) {
+    // Process local date-times into ISO strings
+    let applicationDeadline = null;
+    let driveDate = null;
+
+    if (extractedObj.deadlineDateLocal) {
+      const time = extractedObj.deadlineTimeLocal || "23:59";
+      const localStr = `${extractedObj.deadlineDateLocal}T${time}:00+05:30`;
+      const d = new Date(localStr);
+      if (!isNaN(d.getTime())) {
+        applicationDeadline = d.toISOString();
+      }
+    }
+
+    if (extractedObj.driveDateLocal) {
+      const time = extractedObj.driveTimeLocal || "09:00";
+      const localStr = `${extractedObj.driveDateLocal}T${time}:00+05:30`;
+      const d = new Date(localStr);
+      if (!isNaN(d.getTime())) {
+        driveDate = d.toISOString();
+      }
+    }
+
+    return {
+      companyName: extractedObj.companyName,
+      roleTitle: extractedObj.roleTitle,
+      eligibilityCriteria: extractedObj.eligibilityCriteria,
+      packageDetails: extractedObj.packageDetails,
+      applicationDeadline,
+      driveDate,
+      otherImportantDates: extractedObj.otherImportantDates || [],
+    };
   }
 
   // Final Guaranteed Fallback Parser (Zero-Failure Guarantee)
