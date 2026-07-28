@@ -584,22 +584,52 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
 
     const file = files[0];
 
-    // Enforce 5MB limit
-    if (file.size > 5 * 1024 * 1024) {
-      setImageUploadError("Image size exceeds 5MB limit. Please upload a smaller photo to prevent site crashes.");
+    // Enforce 10MB safety limit on file loading to prevent browser memory issues
+    if (file.size > 10 * 1024 * 1024) {
+      setImageUploadError("File size is too large (exceeds 10MB limit). Please upload a smaller image.");
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (uploadEvent) => {
-      const result = uploadEvent.target?.result as string;
-      if (result) {
-        setProfileImages(prev => {
-          const next = [...prev, result];
-          if (next.length === 1) setActiveImageIndex(0);
-          return next;
-        });
-      }
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX_WIDTH = 500;
+        const MAX_HEIGHT = 500;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedBase64 = canvas.toDataURL("image/jpeg", 0.8);
+          
+          setProfileImages(prev => {
+            const next = [...prev, compressedBase64];
+            if (next.length === 1) setActiveImageIndex(0);
+            return next;
+          });
+        }
+      };
+      img.onerror = () => {
+        setImageUploadError("Failed to process image file.");
+      };
+      img.src = uploadEvent.target?.result as string;
     };
     reader.readAsDataURL(file);
     e.target.value = "";
