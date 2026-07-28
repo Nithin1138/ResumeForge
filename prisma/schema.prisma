@@ -394,6 +394,7 @@ model JobPosting {
   roleTitle            String
   rawEmailText         String         @db.Text
   eligibilityCriteria  String         @db.Text
+  packageDetails       String?        // e.g. "12 LPA", "50k stipend", etc.
   applicationDeadline  DateTime?
   driveDate            DateTime?
   otherImportantDates  String?        @db.Text

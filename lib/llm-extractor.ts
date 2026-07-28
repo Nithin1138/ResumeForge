@@ -10,6 +10,7 @@ export interface ExtractedJdData {
     backlogPolicy?: string;
     rawEligibilityText?: string;
   };
+  packageDetails?: string | null; // e.g. CTC, Salary, or Stipend info
   applicationDeadline?: string | null; // ISO Date String
   driveDate?: string | null; // ISO Date String
   otherImportantDates?: Array<{ event: string; date: string }>;
@@ -71,6 +72,7 @@ function heuristicFallbackParse(text: string): ExtractedJdData {
   let role = "Software Engineer / Intern";
   let deadlineStr: string | null = null;
   let eligibility = "All Branches";
+  let stipendOrCtc: string | null = null;
 
   // Match Company Name (e.g. "Name of the Company : Nutanix", "Company: Nutanix", "Nutanix Placement Drive")
   const companyMatch = text.match(/(?:Company Name|Name of the Company|Company|Organization)\s*[:\-\s]+\s*([A-Za-z0-9\.\-\s]+)/i);
@@ -89,9 +91,20 @@ function heuristicFallbackParse(text: string): ExtractedJdData {
   if (deadlineMatch) {
     const rawD = deadlineMatch[1].trim().split("\n")[0];
     const cleanD = rawD.replace(/\(.*?\)/g, "").trim();
-    const parsedD = new Date(cleanD);
-    if (!isNaN(parsedD.getTime())) {
-      deadlineStr = parsedD.toISOString();
+    
+    // Custom check for DD/MM/YYYY format in fallback regex
+    const ddmmyyyyMatch = cleanD.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+    if (ddmmyyyyMatch) {
+      const d = parseInt(ddmmyyyyMatch[1], 10);
+      const m = parseInt(ddmmyyyyMatch[2], 10) - 1; // 0-indexed
+      const y = parseInt(ddmmyyyyMatch[3], 10);
+      const dateObj = new Date(Date.UTC(y, m, d, 18, 30, 0)); // Default to 11:59 PM IST (18:30 UTC)
+      deadlineStr = dateObj.toISOString();
+    } else {
+      const parsedD = new Date(cleanD);
+      if (!isNaN(parsedD.getTime())) {
+        deadlineStr = parsedD.toISOString();
+      }
     }
   }
 
@@ -101,12 +114,19 @@ function heuristicFallbackParse(text: string): ExtractedJdData {
     eligibility = eligMatch[1].trim();
   }
 
+  // Match Stipend / CTC Fallback
+  const stipendMatch = text.match(/(?:Stipend|CTC|Package|Salary)\s*[:\-\s]+\s*([^\n]+)/i);
+  if (stipendMatch) {
+    stipendOrCtc = stipendMatch[1].trim().slice(0, 80);
+  }
+
   return {
     companyName: company,
     roleTitle: role,
     eligibilityCriteria: {
       rawEligibilityText: eligibility,
     },
+    packageDetails: stipendOrCtc,
     applicationDeadline: deadlineStr,
     driveDate: null,
     otherImportantDates: [],
@@ -125,23 +145,30 @@ export async function extractJdInfoWithLLM(
   }
 
   const prompt = `
-You are an expert Job Description & Placement Drive Parser for Engineering Students.
-Parse the following placement cell email text (which may contain converted HTML tables) and extract structured information in strict JSON format ONLY.
+You are an expert Job Description & Placement Drive Parser for Indian Engineering College Placement Cells.
+Your goal is to extract extremely accurate, 100% correct placement details from the following email text (which contains placement announcements).
 
 EMAIL TEXT:
 """
 ${cleanedText}
 """
 
-CRITICAL INSTRUCTIONS:
-1. "companyName": Extract the actual company name hiring in this drive (e.g. Nutanix, Tekion, Amazon, TCS, etc.). Look in table fields like "Name of the Company" or email headers. If unspecified, use "Placement Drive".
-2. "roleTitle": Extract the exact role title or category (e.g. SDE, Software Engineer, Super dream Internship/Placement, etc.).
+CRITICAL INSTRUCTIONS (MUST BE 100% ACCURATE):
+1. "companyName": Extract the exact name of the company hiring (e.g. Nutanix, Honeywell, Tekion, Amazon, TCS, Microsoft, etc.). Look in table fields like "Name of the Company", "Company Name", or email headers. If unspecified, use "Placement Drive".
+2. "roleTitle": Extract the exact job role, designation, or hiring type (e.g. SDE Intern, Software Engineer, Full Time + Internship, Super Dream Internship, etc.).
 3. "eligibilityCriteria":
-   - "branches": Array of eligible branch strings (e.g. ["CSE", "IT", "ECE"]).
-   - "cgpaCutoff": Cutoff mentioned in email (e.g. "7.5 CGPA or 75% in X, XII & Degree").
-   - "backlogPolicy": Backlog policy (e.g. "No Standing Arrears").
-4. "applicationDeadline": ISO 8601 Date string (e.g. "2026-07-27T10:00:00Z") or null if no deadline mentioned.
-5. "driveDate": ISO 8601 Date string or null if no drive date mentioned.
+   - "branches": Array of eligible branch strings (e.g. ["CSE", "IT", "ECE", "EEE"]).
+   - "cgpaCutoff": Cutoff/criteria (e.g. "7.5 CGPA", "No CGPA Cutoff").
+   - "backlogPolicy": Backlog rules (e.g. "No standing backlogs", "Active backlogs allowed").
+   - "rawEligibilityText": A clean, concise bulleted summary of ALL eligibility criteria. Do not miss any details like 10th/12th percentages or branch limitations.
+4. "packageDetails": Extract the compensation package, CTC, salary, or monthly stipend (e.g., "12 LPA", "50k stipend", "₹45,000/month", "Not Specified"). Look for terms like "Package", "CTC", "Salary", or "Stipend".
+5. "applicationDeadline": The exact registration/application deadline date and time.
+   *CRITICAL TIMEZONE & DATE RULES FOR INDIAN PLACEMENTS:*
+   - Dates in Indian emails use DD/MM/YYYY format! For example, "01/08/2026" or "01-08-2026" means 1st August 2026 (NOT January 8th).
+   - Carefully read the day, month, and year. Do not invert day and month.
+   - If a time is mentioned (e.g., "10:30 PM", "5:00 PM", "11:59 PM"), combine it with the date to produce the correct ISO 8601 string.
+   - Convert the date and time to a valid ISO 8601 string in Indian Standard Time (GMT+5:30) or UTC (e.g., "2026-08-01T17:00:00.000Z"). Return null if no deadline is specified.
+6. "driveDate": ISO 8601 Date string or null if no drive date is mentioned.
 
 REQUIRED JSON STRUCTURE (Return ONLY raw JSON, no markdown wrappers, no explanations):
 {
@@ -150,8 +177,10 @@ REQUIRED JSON STRUCTURE (Return ONLY raw JSON, no markdown wrappers, no explanat
   "eligibilityCriteria": {
     "branches": ["CS", "IT"],
     "cgpaCutoff": "7.5 CGPA",
-    "backlogPolicy": "No Standing Arrears"
+    "backlogPolicy": "No Standing Arrears",
+    "rawEligibilityText": "B.Tech CSE/IT with 7.5 CGPA, 70% in 10th & 12th, and no active backlogs."
   },
+  "packageDetails": "CTC / Stipend Details",
   "applicationDeadline": "YYYY-MM-DDTHH:mm:ssZ",
   "driveDate": "YYYY-MM-DDTHH:mm:ssZ",
   "otherImportantDates": []

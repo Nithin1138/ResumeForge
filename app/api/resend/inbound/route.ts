@@ -257,6 +257,7 @@ export async function POST(req: Request) {
         companyName: companyName,
         roleTitle: roleTitle,
         eligibilityCriteria: eligText,
+        packageDetails: extracted?.packageDetails || null,
         applicationDeadline: extracted?.applicationDeadline ? new Date(extracted.applicationDeadline) : null,
         driveDate: extracted?.driveDate ? new Date(extracted.driveDate) : null,
         otherImportantDates: datesText,
@@ -292,9 +293,11 @@ export async function POST(req: Request) {
     let tgMsg = `🎯 <b>New Placement Drive Detected!</b>\n\n`;
     tgMsg += `🏢 <b>Company:</b> ${escapeHtml(jobPosting.companyName)}\n`;
     tgMsg += `💼 <b>Role:</b> ${escapeHtml(jobPosting.roleTitle)}\n`;
-    tgMsg += `🎓 <b>Eligibility Criteria:</b> ${escapeHtml(safeEligText)}\n`;
-    tgMsg += `⏰ <b>Application Deadline:</b> <b>${deadlineFormatted}</b>\n\n`;
-    tgMsg += `<i>Automatic reminders will be sent 3 days before, 1 day before, and on the morning of the deadline.</i>`;
+    tgMsg += `🎓 <b>Eligibility:</b> ${escapeHtml(safeEligText)}\n`;
+    if (jobPosting.packageDetails) {
+      tgMsg += `💰 <b>CTC / Stipend:</b> ${escapeHtml(jobPosting.packageDetails)}\n`;
+    }
+    tgMsg += `⏰ <b>Application Deadline:</b> <b>${deadlineFormatted}</b>`;
 
     const inlineKeyboard = {
       inline_keyboard: [
