@@ -278,59 +278,9 @@ export async function POST(req: Request) {
     let eligReason = "";
     let unmetCriteriaJson = "[]";
     let matchedCriteriaSummary = "";
+    let atsScoreSection = "";
+    let atsEdgeCaseNotice = "";
 
-    // ONLY run Phase 2 eligibility evaluation if feature is turned ON by user!
-    if (isAtsEnabled) {
-      try {
-        const evalRes = await evaluateUserEligibility({
-          userId: matchedTgUser.userId,
-          rawEmailText: jobPosting.rawEmailText,
-          eligibilityCriteriaText: jobPosting.eligibilityCriteria,
-        });
-
-        eligCheckResult = evalRes.result;
-        eligReason = evalRes.reason;
-        unmetCriteriaJson = JSON.stringify(evalRes.unmetCriteria || []);
-        matchedCriteriaSummary = evalRes.matchedCriteriaSummary || "";
-
-        // Update JobPosting record with eligibility check results
-        await prisma.jobPosting.update({
-          where: { id: jobPosting.id },
-          data: {
-            eligibilityCheckResult: eligCheckResult,
-            eligibilityReason: eligReason,
-            unmetCriteria: unmetCriteriaJson,
-            ...(eligCheckResult === "not_eligible" ? { status: "NOT_ELIGIBLE" } : {}),
-          },
-        });
-      } catch (evalErr) {
-        console.error("Eligibility check failed for jobPosting:", jobPosting.id, evalErr);
-      }
-
-      // IF NOT ELIGIBLE & Feature ON: Suppress Telegram notification entirely
-      if (eligCheckResult === "not_eligible") {
-        console.log(`[Inbound] Notification SUPPRESSED for jobPosting ${jobPosting.id} - Student Not Eligible: ${eligReason}`);
-        return NextResponse.json({
-          ok: true,
-          jobPostingId: jobPosting.id,
-          notified: false,
-          reason: eligReason,
-        });
-      }
-    } else {
-      console.log(`[Inbound] Feature OFF: Proceeding with Phase 1 notification behavior for jobPosting ${jobPosting.id}`);
-    }
-
-    // Schedule Reminders via QStash if deadline is present
-    if (jobPosting.applicationDeadline) {
-      try {
-        await scheduleQStashReminder(jobPosting.id, jobPosting.applicationDeadline);
-      } catch (err) {
-        console.error("Failed to schedule QStash reminders:", err);
-      }
-    }
-
-    // Format & Send Rich Telegram Alert Notification
     const deadlineFormatted = formatDateDDMMYYYY(jobPosting.applicationDeadline);
 
     // Sanitize eligibility text — strip any JSON artifacts before sending to Telegram
@@ -346,24 +296,53 @@ export async function POST(req: Request) {
         } catch { return json; }
       });
 
-    let atsScoreSection = "";
-    let atsEdgeCaseNotice = "";
-
-    // If feature toggle is ON, attempt automated ATS Scoring with 12-second max timeout
+    // ONLY run Phase 2 eligibility evaluation & ATS scoring if feature is turned ON by user!
     if (isAtsEnabled) {
-      try {
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("TIMED_OUT")), 12000)
-        );
-
-        const scorePromise = runAtsScoreCheck({
+      const [eligResult, atsResult] = await Promise.allSettled([
+        evaluateUserEligibility({
+          userId: matchedTgUser.userId,
+          rawEmailText: jobPosting.rawEmailText,
+          eligibilityCriteriaText: jobPosting.eligibilityCriteria,
+        }),
+        runAtsScoreCheck({
           userId: matchedTgUser.userId,
           jobPostingId: jobPosting.id,
           triggeredBy: "auto_notification",
+        }),
+      ]);
+
+      if (eligResult.status === "fulfilled") {
+        const evalRes = eligResult.value;
+        eligCheckResult = evalRes.result;
+        eligReason = evalRes.reason;
+        unmetCriteriaJson = JSON.stringify(evalRes.unmetCriteria || []);
+        matchedCriteriaSummary = evalRes.matchedCriteriaSummary || "";
+
+        // Update JobPosting record with eligibility check results
+        await prisma.jobPosting.update({
+          where: { id: jobPosting.id },
+          data: {
+            eligibilityCheckResult: eligCheckResult,
+            eligibilityReason: eligReason,
+            unmetCriteria: unmetCriteriaJson,
+            ...(eligCheckResult === "not_eligible" ? { status: "NOT_ELIGIBLE" } : {}),
+          },
         });
+      }
 
-        const scoreResult = (await Promise.race([scorePromise, timeoutPromise])) as any;
+      // IF NOT ELIGIBLE & Feature ON: Suppress Telegram notification entirely
+      if (eligCheckResult === "not_eligible") {
+        console.log(`[Inbound] Notification SUPPRESSED for jobPosting ${jobPosting.id} - Student Not Eligible: ${eligReason}`);
+        return NextResponse.json({
+          ok: true,
+          jobPostingId: jobPosting.id,
+          notified: false,
+          reason: eligReason,
+        });
+      }
 
+      if (atsResult.status === "fulfilled") {
+        const scoreResult = atsResult.value;
         if (scoreResult && typeof scoreResult.overallScore === "number") {
           const scoreTier =
             scoreResult.overallScore >= 80
@@ -382,7 +361,7 @@ export async function POST(req: Request) {
           if (topGaps.length < 3 && Array.isArray(scoreResult.improvements)) {
             for (const imp of scoreResult.improvements) {
               if (topGaps.length >= 3) break;
-              const text = typeof imp === "string" ? imp : imp?.suggestion || imp?.title;
+              const text = typeof imp === "string" ? imp : (imp?.suggestion || "");
               if (text && !topGaps.includes(text)) {
                 topGaps.push(text);
               }
@@ -394,8 +373,9 @@ export async function POST(req: Request) {
             atsScoreSection += `\n⚡ <b>Top Improvements:</b> ${safeGaps}`;
           }
         }
-      } catch (atsErr: any) {
-        console.warn("[Inbound ATS Score Auto-check warning]:", atsErr?.message || atsErr);
+      } else {
+        const atsErr = atsResult.reason;
+        console.warn("[Inbound ATS Score Auto-check error]:", atsErr?.message || atsErr);
 
         if (atsErr?.message === "NO_RESUME_FOUND") {
           atsEdgeCaseNotice = `\n\nℹ️ <i>Add a resume to My Space to see inline ATS match scores & gap analysis on new drive alerts.</i>`;
@@ -403,6 +383,8 @@ export async function POST(req: Request) {
           atsEdgeCaseNotice = `\n\nℹ️ <i>Daily automated ATS scoring limit reached (10/10 checks today). Use "Check ATS Readiness" inside the app to score this drive manually.</i>`;
         }
       }
+    } else {
+      console.log(`[Inbound] Feature OFF: Proceeding with Phase 1 notification behavior for jobPosting ${jobPosting.id}`);
     }
 
     const displayEligText = (isAtsEnabled && matchedCriteriaSummary) ? matchedCriteriaSummary : safeEligText;
