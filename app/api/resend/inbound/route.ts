@@ -277,6 +277,7 @@ export async function POST(req: Request) {
     let eligCheckResult = "uncertain";
     let eligReason = "";
     let unmetCriteriaJson = "[]";
+    let matchedCriteriaSummary = "";
 
     // ONLY run Phase 2 eligibility evaluation if feature is turned ON by user!
     if (isAtsEnabled) {
@@ -290,6 +291,7 @@ export async function POST(req: Request) {
         eligCheckResult = evalRes.result;
         eligReason = evalRes.reason;
         unmetCriteriaJson = JSON.stringify(evalRes.unmetCriteria || []);
+        matchedCriteriaSummary = evalRes.matchedCriteriaSummary || "";
 
         // Update JobPosting record with eligibility check results
         await prisma.jobPosting.update({
@@ -404,10 +406,12 @@ export async function POST(req: Request) {
       }
     }
 
+    const displayEligText = (isAtsEnabled && matchedCriteriaSummary) ? matchedCriteriaSummary : safeEligText;
+
     let tgMsg = `🎯 <b>New Placement Drive Detected!</b>\n\n`;
     tgMsg += `🏢 <b>Company:</b> ${escapeHtml(jobPosting.companyName)}\n`;
     tgMsg += `💼 <b>Role:</b> ${escapeHtml(jobPosting.roleTitle)}\n`;
-    tgMsg += `🎓 <b>Eligibility:</b> ${escapeHtml(safeEligText)}\n`;
+    tgMsg += `🎓 <b>Eligibility:</b> ${escapeHtml(displayEligText)}\n`;
     if (jobPosting.packageDetails) {
       tgMsg += `💰 <b>CTC / Stipend:</b> ${escapeHtml(jobPosting.packageDetails)}\n`;
     }

@@ -9,6 +9,7 @@ export interface EligibilityCheckResult {
   result: EligibilityResultType;
   reason: string;
   unmetCriteria: string[];
+  matchedCriteriaSummary?: string;
 }
 
 export function buildEligibilityPrompt(profileText: string, rawEmailText: string, eligibilityCriteriaText: string): string {
@@ -30,14 +31,16 @@ CRITICAL EVALUATION RULES:
 3. "uncertain": Set to "uncertain" if ANY of the following apply:
    - The criteria is vague or unstated in the email.
    - The student's profile is missing a field needed to check (e.g. student hasn't entered CGPA, or email requires 12th % and profile lacks 12th %).
-   - The email specifies backlog/arrears policy (e.g. "No standing backlogs") and the profile does not explicitly mention backlog status.
    *NOTE: It is critical NOT to wrongly reject a student. When in doubt, return "uncertain".*
+4. "matched_summary": Produce a concise 1-line personalized match summary for THIS SPECIFIC STUDENT (e.g., "B.Tech CSE | CGPA ≥ 6.0 | 0 Active Backlogs").
+   - CRITICAL RULE FOR BRANCHES: Do NOT dump all 10-15 eligible branches listed in the JD email! Output ONLY the student's specific branch that matched (e.g., "B.Tech CSE" instead of "All B.Tech CSE, ECE, EEE, Mech...").
 
 STRICT JSON OUTPUT FORMAT (Respond ONLY with valid JSON, no markdown wrappers, no commentary):
 {
   "eligible": true, // true, false, or "uncertain"
   "reason": "Clear 1-sentence explanation of the match or mismatch.",
-  "unmet_criteria": ["Array of specific criteria strings not met, if any"]
+  "unmet_criteria": ["Array of specific criteria strings not met, if any"],
+  "matched_summary": "B.Tech CSE | CGPA ≥ 6.0 Cutoff Met | 0 Standing Arrears"
 }`;
 }
 
@@ -130,6 +133,7 @@ Target Role: ${user.resumes[0].targetRole || "N/A"}`;
       result: resultType,
       reason: String(parsed.reason || "Eligibility evaluated."),
       unmetCriteria: Array.isArray(parsed.unmet_criteria) ? parsed.unmet_criteria.map(String) : [],
+      matchedCriteriaSummary: parsed.matched_summary ? String(parsed.matched_summary) : undefined,
     };
   } catch (error: any) {
     console.error("[evaluateUserEligibility error]:", error);

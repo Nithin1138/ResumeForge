@@ -138,6 +138,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
   const [branch, setBranch] = useState("");
   const [cgpa, setCgpa] = useState("");
   const [graduationYear, setGraduationYear] = useState("");
+  const [activeBacklogs, setActiveBacklogs] = useState("0");
+  const [backlogHistory, setBacklogHistory] = useState("0");
+  const [academicGapYears, setAcademicGapYears] = useState("0");
   const [educationList, setEducationList] = useState<EducationItem[]>([]);
   const [summary, setSummary] = useState("");
   
@@ -269,6 +272,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
         setBranch(p.branch || "");
         setCgpa(p.cgpa || "");
         setGraduationYear(p.graduationYear || "");
+        setActiveBacklogs(p.activeBacklogs ?? "0");
+        setBacklogHistory(p.backlogHistory ?? "0");
+        setAcademicGapYears(p.academicGapYears ?? "0");
         setSummary(p.summary || "");
         setCustomNotes(p.customNotes || "");
 
@@ -447,6 +453,9 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
           branch,
           cgpa,
           graduationYear,
+          activeBacklogs,
+          backlogHistory,
+          academicGapYears,
           educationJson: JSON.stringify(educationList),
           summary,
           skillsJson: JSON.stringify(skills),
@@ -1776,6 +1785,49 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                           </div>
                         </div>
                       ))}
+                    </div>
+
+                    {/* Placement Eligibility Academic Details (Backlogs & Gap Years) */}
+                    <div className="p-4 border border-primary/30 rounded-2xl bg-primary/5 space-y-3">
+                      <div className="flex items-center space-x-2 border-b border-primary/20 pb-2">
+                        <GraduationCap className="w-4 h-4 text-primary shrink-0" />
+                        <span className="text-xs font-extrabold text-primary uppercase tracking-wider">Placement Cell Eligibility Details</span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Active Backlogs (Current Arrears)</label>
+                          <input
+                            type="text"
+                            value={activeBacklogs}
+                            onChange={(e) => setActiveBacklogs(e.target.value)}
+                            placeholder="0"
+                            className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Total Backlog History (Cleared)</label>
+                          <input
+                            type="text"
+                            value={backlogHistory}
+                            onChange={(e) => setBacklogHistory(e.target.value)}
+                            placeholder="0"
+                            className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Academic Gap Years</label>
+                          <input
+                            type="text"
+                            value={academicGapYears}
+                            onChange={(e) => setAcademicGapYears(e.target.value)}
+                            placeholder="0"
+                            className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text text-xs font-semibold focus:outline-none"
+                          />
+                        </div>
+                      </div>
                     </div>
 
                     <div className="space-y-1.5 pt-2">

@@ -79,6 +79,9 @@ export function formatProfileDataForPrompt(profile: any): string {
   lines.push(`Branch: ${profile.branch || "N/A"}`);
   lines.push(`CGPA: ${profile.cgpa || "N/A"}`);
   lines.push(`Graduation Year: ${profile.graduationYear || "N/A"}`);
+  lines.push(`Active Backlogs (Arrears): ${profile.activeBacklogs !== null && profile.activeBacklogs !== undefined ? profile.activeBacklogs : "0"}`);
+  lines.push(`Total Backlog History: ${profile.backlogHistory !== null && profile.backlogHistory !== undefined ? profile.backlogHistory : "0"}`);
+  lines.push(`Academic Gap Years: ${profile.academicGapYears !== null && profile.academicGapYears !== undefined ? profile.academicGapYears : "0"}`);
   lines.push(`Notice Period: ${profile.noticePeriod || "N/A"}`);
 
   if (profile.github) lines.push(`GitHub: ${profile.github}`);

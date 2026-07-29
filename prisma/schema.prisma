@@ -333,6 +333,9 @@ model MasterProfile {
   branch             String?
   cgpa               String?
   graduationYear     String?
+  activeBacklogs     String?         // e.g. "0", "1"
+  backlogHistory     String?         // e.g. "0", "1"
+  academicGapYears   String?         // e.g. "0", "1"
   educationJson      String          @default("[]")
   summary            String?         @db.Text
 
