@@ -266,45 +266,56 @@ export async function POST(req: Request) {
       },
     });
 
-    // Evaluate User Eligibility against My Space Profile Data
+    // Check if user has turned ON Phase 2 ATS & Eligibility Feature
+    const fullUser = await prisma.user.findUnique({
+      where: { id: matchedTgUser.userId },
+      include: { masterProfile: true },
+    });
+    const isAtsEnabled = fullUser?.masterProfile?.atsCheckEnabled ?? false;
+
     let eligCheckResult = "uncertain";
     let eligReason = "";
     let unmetCriteriaJson = "[]";
 
-    try {
-      const evalRes = await evaluateUserEligibility({
-        userId: matchedTgUser.userId,
-        rawEmailText: jobPosting.rawEmailText,
-        eligibilityCriteriaText: jobPosting.eligibilityCriteria,
-      });
+    // ONLY run Phase 2 eligibility evaluation if feature is turned ON by user!
+    if (isAtsEnabled) {
+      try {
+        const evalRes = await evaluateUserEligibility({
+          userId: matchedTgUser.userId,
+          rawEmailText: jobPosting.rawEmailText,
+          eligibilityCriteriaText: jobPosting.eligibilityCriteria,
+        });
 
-      eligCheckResult = evalRes.result;
-      eligReason = evalRes.reason;
-      unmetCriteriaJson = JSON.stringify(evalRes.unmetCriteria || []);
+        eligCheckResult = evalRes.result;
+        eligReason = evalRes.reason;
+        unmetCriteriaJson = JSON.stringify(evalRes.unmetCriteria || []);
 
-      // Update JobPosting record with eligibility check results
-      await prisma.jobPosting.update({
-        where: { id: jobPosting.id },
-        data: {
-          eligibilityCheckResult: eligCheckResult,
-          eligibilityReason: eligReason,
-          unmetCriteria: unmetCriteriaJson,
-          ...(eligCheckResult === "not_eligible" ? { status: "NOT_ELIGIBLE" } : {}),
-        },
-      });
-    } catch (evalErr) {
-      console.error("Eligibility check failed for jobPosting:", jobPosting.id, evalErr);
-    }
+        // Update JobPosting record with eligibility check results
+        await prisma.jobPosting.update({
+          where: { id: jobPosting.id },
+          data: {
+            eligibilityCheckResult: eligCheckResult,
+            eligibilityReason: eligReason,
+            unmetCriteria: unmetCriteriaJson,
+            ...(eligCheckResult === "not_eligible" ? { status: "NOT_ELIGIBLE" } : {}),
+          },
+        });
+      } catch (evalErr) {
+        console.error("Eligibility check failed for jobPosting:", jobPosting.id, evalErr);
+      }
 
-    // IF NOT ELIGIBLE: Suppress Telegram notification entirely as instructed!
-    if (eligCheckResult === "not_eligible") {
-      console.log(`[Inbound] Notification SUPPRESSED for jobPosting ${jobPosting.id} - Student Not Eligible: ${eligReason}`);
-      return NextResponse.json({
-        ok: true,
-        jobPostingId: jobPosting.id,
-        notified: false,
-        reason: eligReason,
-      });
+      // IF NOT ELIGIBLE & Feature ON: Suppress Telegram notification entirely
+      if (eligCheckResult === "not_eligible") {
+        console.log(`[Inbound] Notification SUPPRESSED for jobPosting ${jobPosting.id} - Student Not Eligible: ${eligReason}`);
+        return NextResponse.json({
+          ok: true,
+          jobPostingId: jobPosting.id,
+          notified: false,
+          reason: eligReason,
+        });
+      }
+    } else {
+      console.log(`[Inbound] Feature OFF: Proceeding with Phase 1 notification behavior for jobPosting ${jobPosting.id}`);
     }
 
     // Schedule Reminders via QStash if deadline is present
@@ -341,8 +352,8 @@ export async function POST(req: Request) {
     }
     tgMsg += `⏰ <b>Application Deadline:</b> <b>${deadlineFormatted}</b>`;
 
-    // Append caveat note if eligibility is UNCERTAIN
-    if (eligCheckResult === "uncertain") {
+    // Append caveat note if eligibility is UNCERTAIN (only when Phase 2 feature is ON)
+    if (isAtsEnabled && eligCheckResult === "uncertain") {
       tgMsg += `\n\n⚠️ <i>Note: Eligibility couldn't be fully verified — check the criteria yourself. (${escapeHtml(eligReason || "Profile or JD criteria unverified")})</i>`;
     }
 

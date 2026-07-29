@@ -235,7 +235,9 @@ export default function AutomationsClient() {
                 </div>
               </div>
               <p className="text-xs text-text-muted font-medium pl-11">
-                Audit keyword match, bullet point impact, and structural gaps between your My Space profile and placement JDs.
+                {atsCheckEnabled
+                  ? "Phase 2 Active: Incoming placement drives are automatically filtered against your My Space profile, and ATS score audits are enabled."
+                  : "Phase 1 Mode (OFF): All placement drives trigger immediate Telegram alerts without eligibility filtering. Turn ON to enable filtering & ATS scoring."}
               </p>
             </div>
 
