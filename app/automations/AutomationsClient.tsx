@@ -240,16 +240,22 @@ export default function AutomationsClient() {
                 const branches = criteria.branches?.join(", ") || "All Engineering Branches";
                 const cgpa = criteria.cgpaCutoff || "No Cutoff Specified";
                 const deadline = formatDateDDMMYYYY(posting.applicationDeadline || posting.driveDate);
+                const isNotEligible = posting.status === "NOT_ELIGIBLE" || posting.eligibilityCheckResult === "not_eligible";
+                const isUncertain = posting.eligibilityCheckResult === "uncertain";
 
                 return (
                   <div
                     key={posting.id}
-                    className="p-5 bg-surface/90 border border-border/80 rounded-3xl space-y-4 shadow-sm hover:border-primary/40 transition-all flex flex-col justify-between"
+                    className={`p-5 border rounded-3xl space-y-4 shadow-sm transition-all flex flex-col justify-between ${
+                      isNotEligible
+                        ? "bg-surface/50 border-red-500/20 opacity-80"
+                        : "bg-surface/90 border-border/80 hover:border-primary/40"
+                    }`}
                   >
                     <div className="space-y-3">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="font-extrabold text-base text-text">
+                          <h3 className={`font-extrabold text-base ${isNotEligible ? "text-text-muted" : "text-text"}`}>
                             {posting.companyName}
                           </h3>
                           <p className="text-xs font-bold text-primary">
@@ -273,6 +279,25 @@ export default function AutomationsClient() {
                           <span><b>Deadline:</b> 🗓️ {deadline}</span>
                         </div>
                       </div>
+
+                      {/* Filtered Reason Callout */}
+                      {posting.eligibilityReason && (
+                        <div className={`p-3 rounded-xl text-xs font-medium border flex items-start space-x-2 ${
+                          isNotEligible
+                            ? "bg-red-500/10 border-red-500/20 text-red-500"
+                            : isUncertain
+                            ? "bg-amber-500/10 border-amber-500/20 text-amber-600"
+                            : "bg-emerald-500/10 border-emerald-500/20 text-emerald-600"
+                        }`}>
+                          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                          <div>
+                            <span className="font-bold">
+                              {isNotEligible ? "Filtered from Telegram (Ineligible): " : isUncertain ? "Eligibility Verification: " : "Eligibility Match: "}
+                            </span>
+                            <span>{posting.eligibilityReason}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Actions Row: Score my resume + Status Update */}

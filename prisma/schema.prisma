@@ -402,6 +402,11 @@ model JobPosting {
   driveDate            DateTime?
   otherImportantDates  String?         @db.Text
   status               PostingStatus   @default(NEW)
+
+  eligibilityCheckResult String?       // "eligible" | "not_eligible" | "uncertain"
+  eligibilityReason      String?       @db.Text
+  unmetCriteria          String?       @db.Text // JSON stringified array of unmet criteria
+
   createdAt            DateTime        @default(now())
 
   reminders            Reminder[]
