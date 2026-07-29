@@ -349,11 +349,11 @@ export async function POST(req: Request) {
     let atsScoreSection = "";
     let atsEdgeCaseNotice = "";
 
-    // If feature toggle is ON, attempt automated ATS Scoring with 4-second max timeout
+    // If feature toggle is ON, attempt automated ATS Scoring with 12-second max timeout
     if (isAtsEnabled) {
       try {
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("TIMED_OUT")), 4000)
+          setTimeout(() => reject(new Error("TIMED_OUT")), 12000)
         );
 
         const scorePromise = runAtsScoreCheck({
@@ -367,12 +367,12 @@ export async function POST(req: Request) {
         if (scoreResult && typeof scoreResult.overallScore === "number") {
           const scoreTier =
             scoreResult.overallScore >= 80
-              ? "High Match"
+              ? "Strong Match"
               : scoreResult.overallScore >= 60
               ? "Moderate Match"
-              : "Low Match";
+              : "Needs Improvement";
 
-          atsScoreSection += `\n\n🎯 <b>ATS Match: ${scoreResult.overallScore}/100 — ${scoreTier}</b>`;
+          atsScoreSection += `\n\n🎯 <b>ATS Match Score: ${scoreResult.overallScore}% (${scoreTier})</b>`;
 
           // Format top actionable keyword & section improvements
           const topGaps: string[] = [];
@@ -398,11 +398,10 @@ export async function POST(req: Request) {
         console.warn("[Inbound ATS Score Auto-check warning]:", atsErr?.message || atsErr);
 
         if (atsErr?.message === "NO_RESUME_FOUND") {
-          atsEdgeCaseNotice = `\n\nℹ️ <i>Add a resume to My Space to get ATS scoring on future alerts.</i>`;
+          atsEdgeCaseNotice = `\n\nℹ️ <i>Add a resume to My Space to see inline ATS match scores & gap analysis on new drive alerts.</i>`;
         } else if (atsErr?.message?.includes("limit reached")) {
-          atsEdgeCaseNotice = `\n\nℹ️ <i>Daily ATS check limit reached — see full analysis in-app.</i>`;
+          atsEdgeCaseNotice = `\n\nℹ️ <i>Daily automated ATS scoring limit reached (10/10 checks today). Use "Check ATS Readiness" inside the app to score this drive manually.</i>`;
         }
-        // Timed out or other error: fallback cleanly to normal alert without delaying message
       }
     }
 

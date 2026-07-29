@@ -195,25 +195,42 @@ export async function runAtsScoreCheck(params: {
   });
 
   if (!masterProfile) {
-    // Attempt auto-populate from latest resume
-    const userResumes = await prisma.resume.findMany({
+    const latestResume = await prisma.resume.findFirst({
       where: { userId, abandoned: false },
       orderBy: { createdAt: "desc" },
-      take: 1,
     });
 
-    if (userResumes.length === 0) {
+    if (!latestResume) {
       throw new Error("NO_RESUME_FOUND");
     }
 
-    // Call /api/user/my-space trigger or fetch again
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      include: { masterProfile: true },
-    });
-    masterProfile = user?.masterProfile || null;
-
-    if (!masterProfile) {
+    try {
+      const inputData = JSON.parse(latestResume.inputData || "{}");
+      const personal = inputData.personal || {};
+      masterProfile = {
+        id: "temp",
+        userId,
+        fullName: personal.fullName || "",
+        phone: personal.phone || "",
+        location: personal.city || personal.location || "",
+        github: personal.github || "",
+        linkedin: personal.linkedin || "",
+        portfolio: personal.portfolio || "",
+        college: personal.collegeName || latestResume.college || "",
+        branch: personal.branch || latestResume.branch || "",
+        cgpa: personal.cgpa || latestResume.cgpa || "",
+        summary: inputData.summary || "",
+        skillsJson: JSON.stringify(Array.isArray(inputData.skills) ? inputData.skills : []),
+        projectsJson: JSON.stringify(Array.isArray(inputData.projects) ? inputData.projects : []),
+        experiencesJson: JSON.stringify(Array.isArray(inputData.internships) ? inputData.internships : (Array.isArray(inputData.experience) ? inputData.experience : [])),
+        certificationsJson: JSON.stringify(Array.isArray(inputData.certifications) ? inputData.certifications : []),
+        achievementsJson: JSON.stringify(Array.isArray(inputData.achievements) ? inputData.achievements : []),
+        activeBacklogs: "0",
+        backlogHistory: "0",
+        academicGapYears: "0",
+        atsCheckEnabled: true,
+      } as any;
+    } catch (e) {
       throw new Error("NO_RESUME_FOUND");
     }
   }
@@ -286,7 +303,7 @@ ${jobPosting.rawEmailText}`;
   const createdCheck = await prisma.atsScoreCheck.create({
     data: {
       userId,
-      masterProfileId: masterProfile.id,
+      masterProfileId: (masterProfile && masterProfile.id !== "temp") ? masterProfile.id : null,
       jobPostingId: jobPosting?.id || null,
       overallScore: parsedOutput.overall_score,
       keywordGaps: JSON.stringify(parsedOutput.keyword_gaps),
