@@ -50,6 +50,7 @@ model User {
   masterProfile      MasterProfile?
   telegramUser       TelegramUser?
   walletTransactions WalletTransaction[]
+  atsScoreChecks     AtsScoreCheck[]
   createdAt          DateTime  @default(now())
 }
 
@@ -306,9 +307,9 @@ model CoverLetter {
 }
 
 model MasterProfile {
-  id                 String   @id @default(cuid())
-  userId             String   @unique
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 String          @id @default(cuid())
+  userId             String          @unique
+  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   fullName           String?
   email              String?
@@ -326,28 +327,30 @@ model MasterProfile {
   codechef           String?
   hackerrank         String?
   gfg                String?
-  codingProfilesJson String   @default("[]")
+  codingProfilesJson String          @default("[]")
 
   college            String?
   branch             String?
   cgpa               String?
   graduationYear     String?
-  educationJson      String   @default("[]")
-  summary            String?  @db.Text
+  educationJson      String          @default("[]")
+  summary            String?         @db.Text
 
-  skillsJson         String   @default("[]")
-  projectsJson       String   @default("[]")
-  experiencesJson    String   @default("[]")
-  certificationsJson String   @default("[]")
-  achievementsJson   String   @default("[]")
-  customFieldsJson   String   @default("[]")
-  pinnedSectionsJson String   @default("[]")
-  profileImagesJson  String   @default("[]")
-  activeImageIndex   Int      @default(0)
-  customNotes        String?  @db.Text
+  skillsJson         String          @default("[]")
+  projectsJson       String          @default("[]")
+  experiencesJson    String          @default("[]")
+  certificationsJson String          @default("[]")
+  achievementsJson   String          @default("[]")
+  customFieldsJson   String          @default("[]")
+  pinnedSectionsJson String          @default("[]")
+  profileImagesJson  String          @default("[]")
+  activeImageIndex   Int             @default(0)
+  customNotes        String?         @db.Text
 
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  atsScoreChecks     AtsScoreCheck[]
+
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
 
   @@index([userId])
 }
@@ -387,21 +390,22 @@ model TelegramUser {
 }
 
 model JobPosting {
-  id                   String         @id @default(cuid())
+  id                   String          @id @default(cuid())
   telegramUserId       String
-  telegramUser         TelegramUser   @relation(fields: [telegramUserId], references: [id], onDelete: Cascade)
+  telegramUser         TelegramUser    @relation(fields: [telegramUserId], references: [id], onDelete: Cascade)
   companyName          String
   roleTitle            String
-  rawEmailText         String         @db.Text
-  eligibilityCriteria  String         @db.Text
-  packageDetails       String?        // e.g. "12 LPA", "50k stipend", etc.
+  rawEmailText         String          @db.Text
+  eligibilityCriteria  String          @db.Text
+  packageDetails       String?         // e.g. "12 LPA", "50k stipend", etc.
   applicationDeadline  DateTime?
   driveDate            DateTime?
-  otherImportantDates  String?        @db.Text
-  status               PostingStatus  @default(NEW)
-  createdAt            DateTime       @default(now())
+  otherImportantDates  String?         @db.Text
+  status               PostingStatus   @default(NEW)
+  createdAt            DateTime        @default(now())
 
   reminders            Reminder[]
+  atsScoreChecks       AtsScoreCheck[]
 
   @@index([telegramUserId])
   @@index([status])
@@ -418,5 +422,29 @@ model Reminder {
 
   @@index([jobPostingId])
   @@index([scheduledFor, sent])
+}
+
+model AtsScoreCheck {
+  id                    String         @id @default(cuid())
+  userId                String
+  user                  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  masterProfileId       String?
+  masterProfile         MasterProfile? @relation(fields: [masterProfileId], references: [id], onDelete: SetNull)
+  myspaceResumeVersion  Int?
+  jobPostingId          String?
+  jobPosting            JobPosting?    @relation(fields: [jobPostingId], references: [id], onDelete: SetNull)
+
+  overallScore          Int
+  keywordGaps           String         @db.Text
+  structuralIssues      String         @db.Text
+  contentIssues         String         @db.Text
+  improvements          String         @db.Text
+  strengths             String         @db.Text
+
+  createdAt             DateTime       @default(now())
+
+  @@index([userId])
+  @@index([jobPostingId])
+  @@index([masterProfileId])
 }
 
