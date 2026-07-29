@@ -70,6 +70,16 @@ export default function AutomationsClient() {
     fetchPostings(false);
     fetchAtsCheckMetadata();
 
+    // Deep link handler from Telegram Update Resume button
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const postingId = urlParams.get("openAtsCheck");
+      if (postingId) {
+        setSelectedPostingId(postingId);
+        setIsAtsModalOpen(true);
+      }
+    }
+
     // Auto-poll every 4 seconds so Telegram inline button clicks reflect dynamically on site!
     const interval = setInterval(() => {
       fetchPostings(true);

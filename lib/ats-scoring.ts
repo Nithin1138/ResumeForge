@@ -176,8 +176,9 @@ export async function getDailyAtsCheckCount(userId: string): Promise<number> {
 export async function runAtsScoreCheck(params: {
   userId: string;
   jobPostingId?: string;
+  triggeredBy?: "manual" | "auto_notification";
 }): Promise<AtsCheckResult> {
-  const { userId, jobPostingId } = params;
+  const { userId, jobPostingId, triggeredBy = "manual" } = params;
 
   // 1. Enforce Rate Limit
   const dailyCount = await getDailyAtsCheckCount(userId);
@@ -290,6 +291,7 @@ ${jobPosting.rawEmailText}`;
       contentIssues: JSON.stringify(parsedOutput.content_issues),
       improvements: JSON.stringify(parsedOutput.improvements),
       strengths: JSON.stringify(parsedOutput.strengths),
+      triggeredBy,
     },
   });
 

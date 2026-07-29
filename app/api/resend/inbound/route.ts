@@ -4,6 +4,7 @@ import { extractJdInfoWithLLM } from "@/lib/llm-extractor";
 import { sendTelegramMessage, formatDateDDMMYYYY, escapeHtml } from "@/lib/telegram";
 import { scheduleQStashReminder } from "@/lib/qstash";
 import { evaluateUserEligibility } from "@/lib/eligibility-checker";
+import { runAtsScoreCheck } from "@/lib/ats-scoring";
 
 function extractCleanEmail(raw: string): string {
   if (!raw) return "";
@@ -343,6 +344,66 @@ export async function POST(req: Request) {
         } catch { return json; }
       });
 
+    let atsScoreSection = "";
+    let atsEdgeCaseNotice = "";
+
+    // If feature toggle is ON, attempt automated ATS Scoring with 4-second max timeout
+    if (isAtsEnabled) {
+      try {
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("TIMED_OUT")), 4000)
+        );
+
+        const scorePromise = runAtsScoreCheck({
+          userId: matchedTgUser.userId,
+          jobPostingId: jobPosting.id,
+          triggeredBy: "auto_notification",
+        });
+
+        const scoreResult = (await Promise.race([scorePromise, timeoutPromise])) as any;
+
+        if (scoreResult && typeof scoreResult.overallScore === "number") {
+          const scoreTier =
+            scoreResult.overallScore >= 80
+              ? "High Match"
+              : scoreResult.overallScore >= 60
+              ? "Moderate Match"
+              : "Low Match";
+
+          atsScoreSection += `\n\n🎯 <b>ATS Match: ${scoreResult.overallScore}/100 — ${scoreTier}</b>`;
+
+          // Format top actionable keyword & section improvements
+          const topGaps: string[] = [];
+          if (Array.isArray(scoreResult.keywordGaps) && scoreResult.keywordGaps.length > 0) {
+            topGaps.push(...scoreResult.keywordGaps.slice(0, 3));
+          }
+          if (topGaps.length < 3 && Array.isArray(scoreResult.improvements)) {
+            for (const imp of scoreResult.improvements) {
+              if (topGaps.length >= 3) break;
+              const text = typeof imp === "string" ? imp : imp?.suggestion || imp?.title;
+              if (text && !topGaps.includes(text)) {
+                topGaps.push(text);
+              }
+            }
+          }
+
+          if (topGaps.length > 0) {
+            const safeGaps = topGaps.map((g) => escapeHtml(g.replace(/^\[.*?\]\s*/, ""))).join(", ");
+            atsScoreSection += `\n⚡ <b>Top Improvements:</b> ${safeGaps}`;
+          }
+        }
+      } catch (atsErr: any) {
+        console.warn("[Inbound ATS Score Auto-check warning]:", atsErr?.message || atsErr);
+
+        if (atsErr?.message === "NO_RESUME_FOUND") {
+          atsEdgeCaseNotice = `\n\nℹ️ <i>Add a resume to My Space to get ATS scoring on future alerts.</i>`;
+        } else if (atsErr?.message?.includes("limit reached")) {
+          atsEdgeCaseNotice = `\n\nℹ️ <i>Daily ATS check limit reached — see full analysis in-app.</i>`;
+        }
+        // Timed out or other error: fallback cleanly to normal alert without delaying message
+      }
+    }
+
     let tgMsg = `🎯 <b>New Placement Drive Detected!</b>\n\n`;
     tgMsg += `🏢 <b>Company:</b> ${escapeHtml(jobPosting.companyName)}\n`;
     tgMsg += `💼 <b>Role:</b> ${escapeHtml(jobPosting.roleTitle)}\n`;
@@ -352,20 +413,40 @@ export async function POST(req: Request) {
     }
     tgMsg += `⏰ <b>Application Deadline:</b> <b>${deadlineFormatted}</b>`;
 
+    if (atsScoreSection) {
+      tgMsg += atsScoreSection;
+    } else if (atsEdgeCaseNotice) {
+      tgMsg += atsEdgeCaseNotice;
+    }
+
     // Append caveat note if eligibility is UNCERTAIN (only when Phase 2 feature is ON)
     if (isAtsEnabled && eligCheckResult === "uncertain") {
       tgMsg += `\n\n⚠️ <i>Note: Eligibility couldn't be fully verified — check the criteria yourself. (${escapeHtml(eligReason || "Profile or JD criteria unverified")})</i>`;
     }
 
-    const inlineKeyboard = {
-      inline_keyboard: [
-        [
-          { text: "✅ Applied", callback_data: `applied:${jobPosting.id}` },
-          { text: "❌ Not Eligible", callback_data: `not_eligible:${jobPosting.id}` },
-          { text: "⏭️ Skip", callback_data: `skip:${jobPosting.id}` },
-        ],
-      ],
-    };
+    // Build Inline Buttons: If ATS is ON, swap "Not Eligible" with "Update Resume" deep-link
+    const baseUrl = process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://atslift.com");
+    const deepLinkUrl = `${baseUrl.replace(/\/$/, "")}/automations?openAtsCheck=${jobPosting.id}`;
+
+    const inlineKeyboard = isAtsEnabled
+      ? {
+          inline_keyboard: [
+            [
+              { text: "📝 Update Resume", url: deepLinkUrl },
+              { text: "✅ Applied", callback_data: `applied:${jobPosting.id}` },
+              { text: "⏭️ Skip", callback_data: `skip:${jobPosting.id}` },
+            ],
+          ],
+        }
+      : {
+          inline_keyboard: [
+            [
+              { text: "✅ Applied", callback_data: `applied:${jobPosting.id}` },
+              { text: "❌ Not Eligible", callback_data: `not_eligible:${jobPosting.id}` },
+              { text: "⏭️ Skip", callback_data: `skip:${jobPosting.id}` },
+            ],
+          ],
+        };
 
     console.log(`[Inbound] Sending Telegram to chatId: ${matchedTgUser.telegramChatId}, company: ${jobPosting.companyName}`);
     const tgResult = await sendTelegramMessage(matchedTgUser.telegramChatId, tgMsg, inlineKeyboard);

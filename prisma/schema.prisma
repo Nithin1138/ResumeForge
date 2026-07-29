@@ -447,6 +447,7 @@ model AtsScoreCheck {
   contentIssues         String         @db.Text
   improvements          String         @db.Text
   strengths             String         @db.Text
+  triggeredBy           String         @default("manual") // "manual" | "auto_notification"
 
   createdAt             DateTime       @default(now())
 
