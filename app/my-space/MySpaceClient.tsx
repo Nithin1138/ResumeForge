@@ -917,7 +917,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
     <AppLayout>
       <div className="space-y-6">
         {/* ─── COMPACT HEADER ─── */}
-        <div className="flex flex-col gap-5">
+        <div className="sticky top-[57px] lg:top-0 bg-bg-base/95 backdrop-blur-md z-30 pt-1 pb-4 border-b border-border/30 -mx-4 px-4 md:-mx-8 md:px-8 flex flex-col gap-5">
           {/* Row 1: Identity + Actions */}
           <div className="flex items-center justify-between">
             <div className="min-w-0">
