@@ -347,6 +347,8 @@ model MasterProfile {
   activeImageIndex   Int             @default(0)
   customNotes        String?         @db.Text
 
+  atsCheckEnabled    Boolean         @default(false)
+
   atsScoreChecks     AtsScoreCheck[]
 
   createdAt          DateTime        @default(now())

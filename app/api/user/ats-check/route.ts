@@ -75,6 +75,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       hasResumeInMySpace: hasProfileOrResume,
+      atsCheckEnabled: user.masterProfile?.atsCheckEnabled ?? false,
       dailyCount,
       dailyLimit: DAILY_ATS_CHECK_LIMIT,
       checks: formattedChecks,
@@ -82,6 +83,49 @@ export async function GET(req: NextRequest) {
   } catch (error: any) {
     console.error("GET /api/user/ats-check error:", error);
     return NextResponse.json({ error: error.message || "Failed to load score checks" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized access: Please sign in." }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: { masterProfile: true, resumes: { take: 1 } },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const hasProfileOrResume = !!user.masterProfile || user.resumes.length > 0;
+    if (!hasProfileOrResume) {
+      return NextResponse.json(
+        { error: "NO_RESUME_FOUND", message: "Build at least one resume or complete My Space profile before enabling ATS Readiness Checker." },
+        { status: 400 }
+      );
+    }
+
+    const { enabled } = await req.json();
+
+    const updatedProfile = await prisma.masterProfile.upsert({
+      where: { userId: user.id },
+      update: { atsCheckEnabled: !!enabled },
+      create: {
+        userId: user.id,
+        fullName: user.name || "",
+        atsCheckEnabled: !!enabled,
+      },
+    });
+
+    return NextResponse.json({ success: true, atsCheckEnabled: updatedProfile.atsCheckEnabled });
+  } catch (error: any) {
+    console.error("PATCH /api/user/ats-check error:", error);
+    return NextResponse.json({ error: error.message || "Failed to update feature state" }, { status: 500 });
   }
 }
 

@@ -29,12 +29,14 @@ export default function AutomationsClient() {
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  // ATS Scoring Modal State
+  // ATS Scoring Modal & Toggle State
   const [isAtsModalOpen, setIsAtsModalOpen] = useState(false);
   const [selectedPostingId, setSelectedPostingId] = useState<string | undefined>(undefined);
   const [selectedPostingTitle, setSelectedPostingTitle] = useState<string | undefined>(undefined);
   const [selectedCompanyName, setSelectedCompanyName] = useState<string | undefined>(undefined);
   const [hasResumeInMySpace, setHasResumeInMySpace] = useState<boolean>(true);
+  const [atsCheckEnabled, setAtsCheckEnabled] = useState<boolean>(false);
+  const [togglingAts, setTogglingAts] = useState<boolean>(false);
 
   const fetchPostings = useCallback(async (isSilent = false) => {
     if (!isSilent) setLoading(true);
@@ -57,6 +59,7 @@ export default function AutomationsClient() {
       if (res.ok) {
         const data = await res.json();
         setHasResumeInMySpace(!!data.hasResumeInMySpace);
+        setAtsCheckEnabled(!!data.atsCheckEnabled);
       }
     } catch (err) {
       console.error("Failed to fetch ATS metadata:", err);
@@ -85,6 +88,26 @@ export default function AutomationsClient() {
     };
   }, [fetchPostings, fetchAtsCheckMetadata]);
 
+  const handleToggleAtsFeature = async () => {
+    if (!hasResumeInMySpace) return;
+    setTogglingAts(true);
+    try {
+      const res = await fetch("/api/user/ats-check", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enabled: !atsCheckEnabled }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAtsCheckEnabled(!!data.atsCheckEnabled);
+      }
+    } catch (err) {
+      console.error("Failed to toggle ATS feature:", err);
+    } finally {
+      setTogglingAts(false);
+    }
+  };
+
   const handleUpdateStatus = async (postingId: string, newStatus: string) => {
     setUpdatingId(postingId);
     try {
@@ -106,6 +129,9 @@ export default function AutomationsClient() {
   };
 
   const handleOpenGeneralAtsCheck = () => {
+    if (!atsCheckEnabled && hasResumeInMySpace) {
+      handleToggleAtsFeature();
+    }
     setSelectedPostingId(undefined);
     setSelectedPostingTitle(undefined);
     setSelectedCompanyName(undefined);
@@ -113,6 +139,9 @@ export default function AutomationsClient() {
   };
 
   const handleOpenPostingAtsCheck = (posting: any) => {
+    if (!atsCheckEnabled && hasResumeInMySpace) {
+      handleToggleAtsFeature();
+    }
     setSelectedPostingId(posting.id);
     setSelectedPostingTitle(posting.roleTitle);
     setSelectedCompanyName(posting.companyName);
@@ -181,6 +210,68 @@ export default function AutomationsClient() {
 
         {/* Telegram Bot Connection & Alias Card */}
         <TelegramLinkCard />
+
+        {/* ATS Readiness & Gap Analysis Activation Control Card */}
+        <div className="p-6 bg-surface/90 border border-border/80 rounded-3xl space-y-4 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-9 h-9 rounded-2xl bg-primary/15 text-primary flex items-center justify-center font-bold">
+                  <Target className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-base font-extrabold text-text flex items-center space-x-2">
+                    <span>ATS Readiness & Gap Analysis</span>
+                    {atsCheckEnabled ? (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                        Feature Active ✅
+                      </span>
+                    ) : (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-gray-500/10 text-text-muted border border-gray-500/20">
+                        Disabled / Off ⚪
+                      </span>
+                    )}
+                  </h2>
+                </div>
+              </div>
+              <p className="text-xs text-text-muted font-medium pl-11">
+                Audit keyword match, bullet point impact, and structural gaps between your My Space profile and placement JDs.
+              </p>
+            </div>
+
+            <div className="shrink-0 pl-11 sm:pl-0">
+              {!hasResumeInMySpace ? (
+                <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center space-x-3 text-xs text-amber-600 font-bold">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  <span>Requires at least 1 built resume or completed My Space profile to turn on</span>
+                  <a
+                    href="/my-space"
+                    className="px-3 py-1.5 bg-amber-500 text-white rounded-xl font-extrabold hover:bg-amber-600 transition-all text-[11px] shrink-0"
+                  >
+                    Go to My Space →
+                  </a>
+                </div>
+              ) : (
+                <button
+                  onClick={handleToggleAtsFeature}
+                  disabled={togglingAts}
+                  className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold flex items-center space-x-2 transition-all cursor-pointer border ${
+                    atsCheckEnabled
+                      ? "bg-emerald-500 text-white border-emerald-600 shadow-sm hover:bg-emerald-600"
+                      : "bg-surface hover:bg-bg-base border-border/80 text-text"
+                  }`}
+                >
+                  {togglingAts ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-4 h-4" />
+                  )}
+                  <span>{atsCheckEnabled ? "Feature Turned ON" : "Turn ON Feature"}</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
 
         {/* Tracked Placement Drives Section */}
         <div className="space-y-5">
