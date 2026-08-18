@@ -717,6 +717,67 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                 </p>
               </div>
 
+        {/* Section: Professional Summary Editor Card */}
+        <div className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs print:hidden space-y-4">
+          <div className="flex justify-between items-center border-b border-border/40 pb-3">
+            <div className="flex items-center space-x-2">
+              <FileText className="w-4 h-4 text-primary" />
+              <h3 className="text-xs font-bold text-primary tracking-wider uppercase">Professional Summary</h3>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => {
+                  const currentSum = liveResume?.summary !== undefined ? liveResume.summary : (output?.summary || "");
+                  handleRegenerateSection("summary", "summary", currentSum, (newSummary) => {
+                    setLiveResume((prev: any) => {
+                      if (!prev) return { ...output, summary: newSummary };
+                      return { ...prev, summary: newSummary };
+                    });
+                  });
+                }}
+                disabled={regeneratingStates["summary"]}
+                className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"
+              >
+                {regeneratingStates["summary"] ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-primary" />}
+                <span>{regeneratingStates["summary"] ? "Enhancing..." : "AI Re-generate"}</span>
+              </button>
+              <button
+                onClick={() => {
+                  const currentSum = liveResume?.summary !== undefined ? liveResume.summary : (output?.summary || "");
+                  copyToClipboard(currentSum, "summary");
+                }}
+                className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
+              >
+                {copiedStates["summary"] ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedStates["summary"] ? "Copied!" : "Copy Summary"}</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">
+              Edit Professional Summary (Live Preview Sync)
+            </label>
+            <textarea
+              rows={3}
+              value={liveResume?.summary !== undefined ? liveResume.summary : (output?.summary || "")}
+              onChange={(e) => {
+                const val = e.target.value;
+                setLiveResume((prev: any) => {
+                  if (!prev) return { ...output, summary: val };
+                  return { ...prev, summary: val };
+                });
+              }}
+              placeholder="Write a concise 2-3 sentence professional summary..."
+              className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary transition-colors leading-relaxed"
+            />
+            <div className="flex items-center justify-between text-[10px] text-text-muted">
+              <span>💡 Keep summary concise (2-3 sentences) for optimal ATS scanning & page density.</span>
+              <span>{((liveResume?.summary !== undefined ? liveResume.summary : output?.summary) || "").length} characters</span>
+            </div>
+          </div>
+        </div>
+
         {/* Section: Skills Badges Card */}
         <div className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs print:hidden">
           <div className="flex justify-between items-center mb-5 border-b border-border/40 pb-3">

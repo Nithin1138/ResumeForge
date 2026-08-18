@@ -367,7 +367,10 @@ export default function ResumePreviewPanel({
             height: auto !important;
             overflow: visible !important;
           }
-          body > *:not(#resume-modal-portal) {
+          header, nav, footer, .print\:hidden {
+            display: none !important;
+          }
+          body:has(#resume-modal-portal) > *:not(#resume-modal-portal) {
             display: none !important;
           }
           #resume-modal-portal {
@@ -380,6 +383,7 @@ export default function ResumePreviewPanel({
             background: white !important;
           }
           .print-exact {
+            display: block !important;
             position: relative !important;
             left: 0 !important;
             top: 0 !important;
@@ -393,6 +397,7 @@ export default function ResumePreviewPanel({
             border: none !important;
             overflow: visible !important;
             background-image: none !important;
+            visibility: visible !important;
             page-break-before: avoid !important;
             page-break-after: avoid !important;
             break-before: avoid !important;
