@@ -177,14 +177,14 @@ export async function POST(req: Request) {
 
     if (isGmailConfirmation) {
       // 1. Code match: 9-digit or 7-10 digit numbers
-      const codeMatch = 
-        fullTextContext.match(/Confirmation code:\s*(\d+)/i) || 
+      const codeMatch =
+        fullTextContext.match(/Confirmation code:\s*(\d+)/i) ||
         fullTextContext.match(/code:\s*(\d+)/i) ||
         fullTextContext.match(/\b(\d{7,10})\b/) ||
         rawHtmlText.match(/\b(\d{7,10})\b/);
 
       // 2. Link match: https://mail.google.com/mail/vf-... or mail-attachment
-      const linkMatch = 
+      const linkMatch =
         fullTextContext.match(/(https:\/\/mail\.google\.com\/mail\/vf-[^\s<">]+)/i) ||
         rawHtmlText.match(/(https:\/\/mail\.google\.com\/mail\/vf-[^\s<">]+)/i) ||
         fullTextContext.match(/(https:\/\/[^\s<">]*google[^\s<">]*\/vf-[^\s<">]+)/i) ||
@@ -224,8 +224,8 @@ export async function POST(req: Request) {
     // Call LLM Extractor with both text & HTML
     const extracted = await extractJdInfoWithLLM(fullTextContext, rawHtmlText);
 
-    const companyName = (extracted && extracted.companyName && extracted.companyName !== "Placement Drive") 
-      ? extracted.companyName 
+    const companyName = (extracted && extracted.companyName && extracted.companyName !== "Placement Drive")
+      ? extracted.companyName
       : (subject ? subject.replace(/^jd\s*/i, "").trim() || "Placement Drive" : "Placement Drive");
 
     const roleTitle = extracted?.roleTitle || "Software Engineer / Candidate";
@@ -348,8 +348,8 @@ export async function POST(req: Request) {
             scoreResult.overallScore >= 80
               ? "Strong Match"
               : scoreResult.overallScore >= 60
-              ? "Moderate Match"
-              : "Needs Improvement";
+                ? "Moderate Match"
+                : "Needs Improvement";
 
           atsScoreSection += `\n\n🎯 <b>ATS Match Score: ${scoreResult.overallScore}% (${scoreTier})</b>`;
 
@@ -415,23 +415,23 @@ export async function POST(req: Request) {
 
     const inlineKeyboard = isAtsEnabled
       ? {
-          inline_keyboard: [
-            [
-              { text: "📝 Update Resume", url: deepLinkUrl },
-              { text: "✅ Applied", callback_data: `applied:${jobPosting.id}` },
-              { text: "⏭️ Skip", callback_data: `skip:${jobPosting.id}` },
-            ],
+        inline_keyboard: [
+          [
+            { text: "📝 Update Resume", url: deepLinkUrl },
+            { text: "✅ Applied", callback_data: `applied:${jobPosting.id}` },
+            { text: "⏭️ Skip", callback_data: `skip:${jobPosting.id}` },
           ],
-        }
+        ],
+      }
       : {
-          inline_keyboard: [
-            [
-              { text: "✅ Applied", callback_data: `applied:${jobPosting.id}` },
-              { text: "❌ Not Eligible", callback_data: `not_eligible:${jobPosting.id}` },
-              { text: "⏭️ Skip", callback_data: `skip:${jobPosting.id}` },
-            ],
+        inline_keyboard: [
+          [
+            { text: "✅ Applied", callback_data: `applied:${jobPosting.id}` },
+            { text: "❌ Not Eligible", callback_data: `not_eligible:${jobPosting.id}` },
+            { text: "⏭️ Skip", callback_data: `skip:${jobPosting.id}` },
           ],
-        };
+        ],
+      };
 
     console.log(`[Inbound] Sending Telegram to chatId: ${matchedTgUser.telegramChatId}, company: ${jobPosting.companyName}`);
     const tgResult = await sendTelegramMessage(matchedTgUser.telegramChatId, tgMsg, inlineKeyboard);

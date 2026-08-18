@@ -140,9 +140,11 @@ export default function ResumePreviewPanel({
   const isCompact = templateDef.spacingDensity === "compact";
   const isSpacious = templateDef.spacingDensity === "spacious";
 
-  const sectionMarginBottom = isCompact ? "6pt" : isSpacious ? "14pt" : "10pt";
-  const baseFontSize = isCompact ? "9.5pt" : "10.5pt";
-  const bulletMarginBottom = isCompact ? "1pt" : "1.5pt";
+  const sectionMarginBottom = isCompact ? "5pt" : isSpacious ? "11pt" : "7.5pt";
+  const baseFontSize = isCompact ? "9.5pt" : "10pt";
+  const bulletMarginBottom = isCompact ? "0.75pt" : "1.25pt";
+  const sidePadding = isCompact ? "40px" : isSpacious ? "52px" : "44px";
+  const headerFooterHeight = isCompact ? "28px" : isSpacious ? "40px" : "34px";
 
   const renderSummarySection = () => {
     if (!includeSummary && !d.summary) return null;
@@ -433,17 +435,17 @@ export default function ResumePreviewPanel({
         <table style={{ width: "100%", borderCollapse: "collapse", borderSpacing: 0 }}>
           <thead style={{ display: "table-header-group" }}>
             <tr>
-              <td style={{ height: "48px", padding: 0, border: "none" }}></td>
+              <td style={{ height: headerFooterHeight, padding: 0, border: "none" }}></td>
             </tr>
           </thead>
           <tfoot style={{ display: "table-footer-group" }}>
             <tr>
-              <td style={{ height: "48px", padding: 0, border: "none" }}></td>
+              <td style={{ height: headerFooterHeight, padding: 0, border: "none" }}></td>
             </tr>
           </tfoot>
           <tbody>
             <tr>
-              <td style={{ paddingLeft: "64px", paddingRight: "64px", paddingBottom: "0", border: "none", verticalAlign: "top" }}>
+              <td style={{ paddingLeft: sidePadding, paddingRight: sidePadding, paddingBottom: "0", border: "none", verticalAlign: "top" }}>
                 
                 <div style={{ marginBottom: "12pt" }}>
                   <div style={{
