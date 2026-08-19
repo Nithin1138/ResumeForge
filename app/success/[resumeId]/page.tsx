@@ -105,9 +105,6 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   const [activeProjectVariants, setActiveProjectVariants] = useState<Record<number, number>>({});
   const [scoreMode, setScoreMode] = useState<"resume" | "role">("resume");
   
-  const [editingProjectIdx, setEditingProjectIdx] = useState<number | null>(null);
-  const [projectEditTexts, setProjectEditTexts] = useState<Record<number, { title: string; techStack: string; bulletsText: string }>>({});
-  
   const [isEditingSkills, setIsEditingSkills] = useState(false);
   const [newSkillInput, setNewSkillInput] = useState<Record<number, string>>({});
 
@@ -182,6 +179,9 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
     });
   };
 
+  const [editingProjectIdx, setEditingProjectIdx] = useState<number | null>(null);
+  const [projectEditTexts, setProjectEditTexts] = useState<Record<number, { title: string; techStack: string; duration: string; bulletsText: string }>>({});
+
   const startEditingProject = (idx: number, proj: any) => {
     setEditingProjectIdx(idx);
     setProjectEditTexts((prev) => ({
@@ -189,6 +189,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
       [idx]: {
         title: proj.title || "",
         techStack: proj.techStack || "",
+        duration: proj.duration || "",
         bulletsText: (proj.bullets || []).join("\n"),
       },
     }));
@@ -199,7 +200,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
     if (!currentEdit) return;
 
     const newBullets = currentEdit.bulletsText
-      .split("\n")
+      .split(/\n|(?<=\.)\s*[*•]\s*|\s+\*\s+/)
       .map((line) => line.replace(/^[\s•\-\*]+/, "").trim())
       .filter(Boolean);
 
@@ -209,6 +210,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
       if (next.projects && next.projects[idx]) {
         next.projects[idx].title = currentEdit.title.trim() || next.projects[idx].title;
         next.projects[idx].techStack = currentEdit.techStack.trim() || next.projects[idx].techStack;
+        next.projects[idx].duration = currentEdit.duration.trim() || next.projects[idx].duration;
         next.projects[idx].bullets = newBullets;
       }
       return next;
@@ -1173,7 +1175,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                 {isEditingThisProj ? (
                   /* Bulk Edit Mode for All Bullet Points & Details */
                   <div className="space-y-4 pt-1 animate-fade-in">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div>
                         <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Project Title</label>
                         <input
@@ -1183,7 +1185,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                             const val = e.target.value;
                             setProjectEditTexts(prev => ({
                               ...prev,
-                              [idx]: { ...(prev[idx] || { title: "", techStack: "", bulletsText: "" }), title: val }
+                              [idx]: { ...(prev[idx] || { title: "", techStack: "", duration: "", bulletsText: "" }), title: val }
                             }));
                           }}
                           className="w-full px-3 py-2 rounded-xl border border-border bg-bg-base text-text text-xs font-bold focus:outline-none focus:border-primary"
@@ -1198,7 +1200,23 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                             const val = e.target.value;
                             setProjectEditTexts(prev => ({
                               ...prev,
-                              [idx]: { ...(prev[idx] || { title: "", techStack: "", bulletsText: "" }), techStack: val }
+                              [idx]: { ...(prev[idx] || { title: "", techStack: "", duration: "", bulletsText: "" }), techStack: val }
+                            }));
+                          }}
+                          className="w-full px-3 py-2 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Timeline (Month & Year)</label>
+                        <input
+                          type="text"
+                          value={projectEditTexts[idx]?.duration || ""}
+                          placeholder="e.g. Jan 2025 – Mar 2025"
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setProjectEditTexts(prev => ({
+                              ...prev,
+                              [idx]: { ...(prev[idx] || { title: "", techStack: "", duration: "", bulletsText: "" }), duration: val }
                             }));
                           }}
                           className="w-full px-3 py-2 rounded-xl border border-border bg-bg-base text-text text-xs font-semibold focus:outline-none focus:border-primary"
