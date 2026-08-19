@@ -3,7 +3,7 @@
 import { use, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap, Sparkles, RotateCcw, ShieldCheck, Edit3 } from "lucide-react";
+import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap, Sparkles, RotateCcw, ShieldCheck, Edit3, Plus, Trash2, ArrowUp, ArrowDown, X, GripVertical } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { FullResumeOutput } from "@/types/resume";
@@ -107,6 +107,80 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   
   const [editingProjectIdx, setEditingProjectIdx] = useState<number | null>(null);
   const [projectEditTexts, setProjectEditTexts] = useState<Record<number, { title: string; techStack: string; bulletsText: string }>>({});
+  
+  const [isEditingSkills, setIsEditingSkills] = useState(false);
+  const [newSkillInput, setNewSkillInput] = useState<Record<number, string>>({});
+
+  const handleUpdateCategoryName = (catIdx: number, newName: string) => {
+    setLiveResume((prev: any) => {
+      const baseSkills = prev?.skills ? [...prev.skills] : [...(output?.skills || [])];
+      const nextSkills = JSON.parse(JSON.stringify(baseSkills));
+      if (nextSkills[catIdx]) {
+        nextSkills[catIdx].category = newName;
+      }
+      return { ...(prev || output), skills: nextSkills };
+    });
+  };
+
+  const handleAddSkillBadge = (catIdx: number) => {
+    const skillToAdd = (newSkillInput[catIdx] || "").trim();
+    if (!skillToAdd) return;
+    setLiveResume((prev: any) => {
+      const baseSkills = prev?.skills ? [...prev.skills] : [...(output?.skills || [])];
+      const nextSkills = JSON.parse(JSON.stringify(baseSkills));
+      if (nextSkills[catIdx]) {
+        if (!Array.isArray(nextSkills[catIdx].skills)) nextSkills[catIdx].skills = [];
+        nextSkills[catIdx].skills.push(skillToAdd);
+      }
+      return { ...(prev || output), skills: nextSkills };
+    });
+    setNewSkillInput(prev => ({ ...prev, [catIdx]: "" }));
+  };
+
+  const handleDeleteSkillBadge = (catIdx: number, skillIdx: number) => {
+    setLiveResume((prev: any) => {
+      const baseSkills = prev?.skills ? [...prev.skills] : [...(output?.skills || [])];
+      const nextSkills = JSON.parse(JSON.stringify(baseSkills));
+      if (nextSkills[catIdx] && Array.isArray(nextSkills[catIdx].skills)) {
+        nextSkills[catIdx].skills.splice(skillIdx, 1);
+      }
+      return { ...(prev || output), skills: nextSkills };
+    });
+  };
+
+  const handleDeleteCategoryRow = (catIdx: number) => {
+    setLiveResume((prev: any) => {
+      const baseSkills = prev?.skills ? [...prev.skills] : [...(output?.skills || [])];
+      const nextSkills = JSON.parse(JSON.stringify(baseSkills));
+      nextSkills.splice(catIdx, 1);
+      return { ...(prev || output), skills: nextSkills };
+    });
+  };
+
+  const handleMoveCategoryRow = (catIdx: number, direction: "up" | "down") => {
+    setLiveResume((prev: any) => {
+      const baseSkills = prev?.skills ? [...prev.skills] : [...(output?.skills || [])];
+      const nextSkills = JSON.parse(JSON.stringify(baseSkills));
+      const targetIdx = direction === "up" ? catIdx - 1 : catIdx + 1;
+      if (targetIdx < 0 || targetIdx >= nextSkills.length) return prev;
+      const temp = nextSkills[catIdx];
+      nextSkills[catIdx] = nextSkills[targetIdx];
+      nextSkills[targetIdx] = temp;
+      return { ...(prev || output), skills: nextSkills };
+    });
+  };
+
+  const handleAddCategoryRow = () => {
+    setLiveResume((prev: any) => {
+      const baseSkills = prev?.skills ? [...prev.skills] : [...(output?.skills || [])];
+      const nextSkills = JSON.parse(JSON.stringify(baseSkills));
+      nextSkills.push({
+        category: "New Skill Category",
+        skills: ["Skill 1"]
+      });
+      return { ...(prev || output), skills: nextSkills };
+    });
+  };
 
   const startEditingProject = (idx: number, proj: any) => {
     setEditingProjectIdx(idx);
@@ -779,60 +853,183 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
         </div>
 
         {/* Section: Skills Badges Card */}
-        <div className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs print:hidden">
-          <div className="flex justify-between items-center mb-5 border-b border-border/40 pb-3">
-            <h3 className="text-xs font-bold text-primary tracking-wider uppercase">Technical Core Skills</h3>
-            <div className="flex items-center space-x-2">
-              {isSkillsReordered && (
-                <button
-                  onClick={handleRevertSkills}
-                  className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Revert Order</span>
-                </button>
-              )}
-              <button
-                onClick={handleSmartOrder}
-                disabled={isSmartOrdering}
-                className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"
-              >
-                {isSmartOrdering ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-primary" />}
-                <span>{isSmartOrdering ? "Ordering..." : "Smart Order"}</span>
-              </button>
-              <button
-                onClick={() => {
-                  const skillsText = (output.skills || [])
-                    .filter(s => s && Array.isArray(s.skills) && s.skills.length > 0)
-                    .map(s => `${s.category}: ${s.skills.join(", ")}`)
-                    .join("\n");
-                  copyToClipboard(skillsText, "skills");
-                }}
-                className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
-              >
-                {copiedStates["skills"] ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedStates["skills"] ? "Copied!" : "Copy Skills"}</span>
-              </button>
-            </div>
-          </div>
+        {(() => {
+          const activeSkills: Array<{ category: string; skills: string[] }> = liveResume?.skills ?? output?.skills ?? [];
 
-          <div className="columns-1 md:columns-2 gap-6 [column-fill:balance]">
-            {(output.skills || [])
-              .filter(cat => cat && Array.isArray(cat.skills) && cat.skills.length > 0)
-              .map((cat, idx) => (
-                <div key={idx} className="break-inside-avoid inline-block w-full space-y-2 mb-5">
-                  <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{cat.category}</span>
-                  <div className="flex flex-wrap gap-2">
-                    {(cat.skills || []).map((skillName, sIdx) => (
-                      <span key={sIdx} className="text-xs bg-bg-base border border-border px-2.5 py-1 rounded-md font-bold text-text">
-                        {skillName}
-                      </span>
-                    ))}
-                  </div>
+          return (
+            <div className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs print:hidden">
+              <div className="flex justify-between items-center mb-5 border-b border-border/40 pb-3 flex-wrap gap-2">
+                <h3 className="text-xs font-bold text-primary tracking-wider uppercase">Technical Core Skills</h3>
+                <div className="flex items-center space-x-2">
+                  {isSkillsReordered && (
+                    <button
+                      onClick={handleRevertSkills}
+                      className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Revert Order</span>
+                    </button>
+                  )}
+
+                  {/* Edit Skills button (placed directly to the LEFT of Smart Order) */}
+                  <button
+                    onClick={() => setIsEditingSkills(!isEditingSkills)}
+                    className={`text-xs font-semibold transition-all flex items-center space-x-1 border px-3 py-1.5 rounded-full cursor-pointer ${
+                      isEditingSkills
+                        ? "bg-primary text-white border-primary shadow-xs"
+                        : "border-border bg-bg-base/30 text-text-muted hover:text-primary hover:border-primary/40"
+                    }`}
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>{isEditingSkills ? "Done Editing" : "Edit Skills"}</span>
+                  </button>
+
+                  <button
+                    onClick={handleSmartOrder}
+                    disabled={isSmartOrdering}
+                    className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer disabled:opacity-50"
+                  >
+                    {isSmartOrdering ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-primary" />}
+                    <span>{isSmartOrdering ? "Ordering..." : "Smart Order"}</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      const skillsText = activeSkills
+                        .filter(s => s && Array.isArray(s.skills) && s.skills.length > 0)
+                        .map(s => `${s.category}: ${s.skills.join(", ")}`)
+                        .join("\n");
+                      copyToClipboard(skillsText, "skills");
+                    }}
+                    className="text-xs font-semibold text-text-muted hover:text-primary transition-colors flex items-center space-x-1 border border-border bg-bg-base/30 px-2.5 py-1.5 rounded-full cursor-pointer"
+                  >
+                    {copiedStates["skills"] ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedStates["skills"] ? "Copied!" : "Copy Skills"}</span>
+                  </button>
                 </div>
-              ))}
-          </div>
-        </div>
+              </div>
+
+              {isEditingSkills ? (
+                /* Interactive Edit Mode for Categories and Badges */
+                <div className="space-y-5 animate-fade-in">
+                  {activeSkills.map((cat: any, catIdx: number) => (
+                    <div key={catIdx} className="bg-bg-base/60 border border-border rounded-xl p-4 relative space-y-3">
+                      {/* Row Header with Reorder, Category Name Input, Delete Row */}
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center space-x-2 flex-1">
+                          <div className="flex items-center space-x-1 bg-surface border border-border rounded-lg p-0.5 shrink-0">
+                            <button
+                              onClick={() => handleMoveCategoryRow(catIdx, "up")}
+                              disabled={catIdx === 0}
+                              className="p-1 hover:bg-border/40 rounded text-text-muted disabled:opacity-30 cursor-pointer"
+                              title="Move Category Up"
+                            >
+                              <ArrowUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleMoveCategoryRow(catIdx, "down")}
+                              disabled={catIdx === activeSkills.length - 1}
+                              className="p-1 hover:bg-border/40 rounded text-text-muted disabled:opacity-30 cursor-pointer"
+                              title="Move Category Down"
+                            >
+                              <ArrowDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          <input
+                            type="text"
+                            value={cat.category || ""}
+                            onChange={(e) => handleUpdateCategoryName(catIdx, e.target.value)}
+                            placeholder="Category Name (e.g. Programming Languages)"
+                            className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-surface text-text text-xs font-bold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+
+                        <button
+                          onClick={() => handleDeleteCategoryRow(catIdx)}
+                          className="p-1.5 rounded-lg text-error hover:bg-error/10 border border-error/20 transition-colors cursor-pointer shrink-0"
+                          title="Delete Category Row"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* Skill Badges with Delete Buttons */}
+                      <div className="flex flex-wrap items-center gap-2 pt-1">
+                        {(cat.skills || []).map((skillName: string, sIdx: number) => (
+                          <span
+                            key={sIdx}
+                            className="inline-flex items-center gap-1.5 text-xs bg-surface border border-border px-2.5 py-1 rounded-md font-bold text-text group"
+                          >
+                            <span>{skillName}</span>
+                            <button
+                              onClick={() => handleDeleteSkillBadge(catIdx, sIdx)}
+                              className="text-text-muted hover:text-error transition-colors cursor-pointer"
+                              title="Remove Skill Badge"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Add Skill Badge Input */}
+                      <div className="flex items-center space-x-2 pt-1">
+                        <input
+                          type="text"
+                          value={newSkillInput[catIdx] || ""}
+                          onChange={(e) => setNewSkillInput(prev => ({ ...prev, [catIdx]: e.target.value }))}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              handleAddSkillBadge(catIdx);
+                            }
+                          }}
+                          placeholder="Add new skill badge..."
+                          className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-surface text-text text-xs font-medium focus:outline-none focus:border-primary"
+                        />
+                        <button
+                          onClick={() => handleAddSkillBadge(catIdx)}
+                          className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-xs font-bold flex items-center space-x-1 cursor-pointer shrink-0"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add Skill</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Add New Category Row Button */}
+                  <button
+                    onClick={handleAddCategoryRow}
+                    className="w-full py-3 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary bg-primary/5 text-primary text-xs font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Skill Category Row</span>
+                  </button>
+                </div>
+              ) : (
+                /* Standard Display View */
+                <div className="columns-1 md:columns-2 gap-6 [column-fill:balance]">
+                  {activeSkills
+                    .filter((cat: any) => cat && Array.isArray(cat.skills) && cat.skills.length > 0)
+                    .map((cat: any, idx: number) => (
+                      <div key={idx} className="break-inside-avoid inline-block w-full space-y-2 mb-5">
+                        <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">{cat.category}</span>
+                        <div className="flex flex-wrap gap-2">
+                          {(cat.skills || []).map((skillName: string, sIdx: number) => (
+                            <span key={sIdx} className="text-xs bg-bg-base border border-border px-2.5 py-1 rounded-md font-bold text-text">
+                              {skillName}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Section: Academic Projects */}
         {output.projects && output.projects.length > 0 && (
@@ -942,7 +1139,8 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                           (newText) => {
                             setLiveResume((prev: any) => {
                               const next = JSON.parse(JSON.stringify(prev));
-                              next.projects[idx].bullets = newText.split("\n").filter(Boolean);
+                              const rawBullets = newText.split(/\n|(?<=\.)\s*[*•]\s*|\s+\*\s+/).filter(Boolean);
+                              next.projects[idx].bullets = rawBullets.map(b => b.replace(/^[\s*•\-–\d\.]+\s*/, "").trim()).filter(Boolean);
                               return next;
                             });
                           },

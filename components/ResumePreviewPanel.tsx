@@ -230,6 +230,32 @@ export default function ResumePreviewPanel({
     );
   };
 
+function cleanBulletList(bulletsInput: any): string[] {
+  if (!bulletsInput) return [];
+  let rawList: string[] = [];
+  if (Array.isArray(bulletsInput)) {
+    rawList = bulletsInput.flatMap((item) => {
+      if (typeof item === "string") {
+        return item.split(/\n|(?<=\.)\s*[*•]\s*|\s+\*\s+/);
+      }
+      return item;
+    });
+  } else if (typeof bulletsInput === "string") {
+    rawList = bulletsInput.split(/\n|(?<=\.)\s*[*•]\s*|\s+\*\s+/);
+  }
+
+  const result: string[] = [];
+  for (let str of rawList) {
+    if (!str || typeof str !== "string") continue;
+    let cleaned = str.replace(/^[\s*•\-–\d\.]+\s*/, "").trim();
+    cleaned = cleaned.replace(/\s+\*\s+/g, " ");
+    if (cleaned.length > 0) {
+      result.push(cleaned);
+    }
+  }
+  return result;
+}
+
   const renderProjectsSection = () => {
     if (projectsList.length === 0) return null;
     return (
@@ -269,7 +295,7 @@ export default function ResumePreviewPanel({
               {proj.techStack}
             </div>
             <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: "3pt 0 0 0", fontSize: "9.5pt" }}>
-              {proj.bullets?.map((b: string, bIdx: number) => (
+              {cleanBulletList(proj.bullets).map((b: string, bIdx: number) => (
                 <li key={bIdx} style={{ marginBottom: bulletMarginBottom, lineHeight: 1.35 }}>{b}</li>
               ))}
             </ul>
@@ -291,7 +317,7 @@ export default function ResumePreviewPanel({
               <span style={{ color: "#555", flexShrink: 0, fontSize: "9.5pt", textAlign: "right", marginLeft: "10px" }}>{exp.duration}</span>
             </div>
             <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: "3pt 0 0 0", fontSize: "9.5pt" }}>
-              {exp.bullets?.map((b: string, bIdx: number) => (
+              {cleanBulletList(exp.bullets).map((b: string, bIdx: number) => (
                 <li key={bIdx} style={{ marginBottom: bulletMarginBottom, lineHeight: 1.35 }}>{b}</li>
               ))}
             </ul>
@@ -313,7 +339,7 @@ export default function ResumePreviewPanel({
       <div key="achievements" style={{ marginBottom: sectionMarginBottom, pageBreakInside: "avoid", breakInside: "avoid" }}>
         <SectionTitle accentColor={templateDef.accentColor}>Key Achievements</SectionTitle>
         <ul style={{ listStyleType: "disc", paddingLeft: "14px", margin: 0, fontSize: "9.5pt" }}>
-          {achievementsList.map((ach: string, idx: number) => (
+          {cleanBulletList(achievementsList).map((ach: string, idx: number) => (
             <li key={idx} style={{ marginBottom: bulletMarginBottom, lineHeight: 1.35 }}>{ach}</li>
           ))}
         </ul>
@@ -358,16 +384,20 @@ export default function ResumePreviewPanel({
         @media print {
           @page {
             size: A4 portrait;
-            margin: 0;
+            margin: 0mm !important;
           }
           html, body {
             background: white !important;
             color: black !important;
             margin: 0 !important;
             padding: 0 !important;
-            width: 100% !important;
-            height: auto !important;
-            overflow: visible !important;
+            width: 210mm !important;
+            max-width: 210mm !important;
+            height: 297mm !important;
+            max-height: 297mm !important;
+            overflow: hidden !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
           header, nav, footer, .print\:hidden {
             display: none !important;
@@ -377,33 +407,43 @@ export default function ResumePreviewPanel({
           }
           #resume-modal-portal {
             display: block !important;
-            position: static !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
             margin: 0 !important;
             padding: 0 !important;
-            width: 100% !important;
-            height: auto !important;
+            width: 210mm !important;
+            height: 297mm !important;
             background: white !important;
+            overflow: hidden !important;
           }
           .print-exact {
             display: block !important;
-            position: relative !important;
+            position: absolute !important;
             left: 0 !important;
             top: 0 !important;
-            margin: 0 auto !important;
+            margin: 0 !important;
             padding: 0 !important;
             width: 210mm !important;
             max-width: 210mm !important;
+            height: 297mm !important;
+            max-height: 297mm !important;
             transform: none !important;
             box-shadow: none !important;
             border-radius: 0 !important;
             border: none !important;
-            overflow: visible !important;
+            overflow: hidden !important;
             background-image: none !important;
+            background: white !important;
             visibility: visible !important;
+            box-sizing: border-box !important;
             page-break-before: avoid !important;
             page-break-after: avoid !important;
             break-before: avoid !important;
             break-after: avoid !important;
+          }
+          .print-exact * {
+            box-sizing: border-box !important;
           }
         }
       `}</style>
