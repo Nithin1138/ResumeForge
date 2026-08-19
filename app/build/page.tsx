@@ -1219,24 +1219,30 @@ function BuildPageContent() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between flex-wrap gap-1">
-                    <label className="block text-sm font-semibold">12th Score / Result</label>
-                    <div className="flex bg-surface border border-border rounded-lg p-0.5 text-[11px] font-bold">
-                      {(["Percentage", "CGPA", "Marks", "Grade"] as const).map((st) => (
-                        <button
-                          key={st}
-                          type="button"
-                          onClick={() => updatePersonal({ scoreType12th: st })}
-                          className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
-                            (formData.personal.scoreType12th || "Percentage") === st
-                              ? "bg-primary text-white shadow-xs"
-                              : "text-text-muted hover:text-text"
-                          }`}
-                        >
-                          {st === "Percentage" ? "% (Percentage)" : st}
-                        </button>
-                      ))}
-                    </div>
+                  <label className="block text-sm font-semibold">
+                    {formData.personal.scoreType12th === "CGPA"
+                      ? "12th CGPA"
+                      : formData.personal.scoreType12th === "Marks"
+                      ? "12th Total Marks"
+                      : "12th Percentage"}
+                  </label>
+                  <div className="flex items-center gap-5 py-1">
+                    {(["CGPA", "Percentage", "Marks"] as const).map((st) => {
+                      const isChecked = (formData.personal.scoreType12th || "Percentage") === st;
+                      return (
+                        <label key={st} className="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => updatePersonal({ scoreType12th: st })}
+                            className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary cursor-pointer accent-primary"
+                          />
+                          <span className={`text-xs font-bold ${isChecked ? "text-primary font-extrabold" : "text-text-muted"}`}>
+                            {st}
+                          </span>
+                        </label>
+                      );
+                    })}
                   </div>
                   <input
                     type="text"
@@ -1246,8 +1252,6 @@ function BuildPageContent() {
                         ? "e.g. 9.8 / 10.0"
                         : formData.personal.scoreType12th === "Marks"
                         ? "e.g. 980 / 1000"
-                        : formData.personal.scoreType12th === "Grade"
-                        ? "e.g. A+"
                         : "e.g. 98.6%"
                     }
                     value={formData.personal.marks12th || ""}
@@ -1316,24 +1320,30 @@ function BuildPageContent() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between flex-wrap gap-1">
-                    <label className="block text-sm font-semibold">10th Score / Result</label>
-                    <div className="flex bg-surface border border-border rounded-lg p-0.5 text-[11px] font-bold">
-                      {(["Percentage", "CGPA", "Marks", "Grade"] as const).map((st) => (
-                        <button
-                          key={st}
-                          type="button"
-                          onClick={() => updatePersonal({ scoreType10th: st })}
-                          className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
-                            (formData.personal.scoreType10th || "Percentage") === st
-                              ? "bg-primary text-white shadow-xs"
-                              : "text-text-muted hover:text-text"
-                          }`}
-                        >
-                          {st === "Percentage" ? "% (Percentage)" : st}
-                        </button>
-                      ))}
-                    </div>
+                  <label className="block text-sm font-semibold">
+                    {formData.personal.scoreType10th === "CGPA"
+                      ? "10th CGPA"
+                      : formData.personal.scoreType10th === "Marks"
+                      ? "10th Total Marks"
+                      : "10th Percentage"}
+                  </label>
+                  <div className="flex items-center gap-5 py-1">
+                    {(["CGPA", "Percentage", "Marks"] as const).map((st) => {
+                      const isChecked = (formData.personal.scoreType10th || "Percentage") === st;
+                      return (
+                        <label key={st} className="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => updatePersonal({ scoreType10th: st })}
+                            className="w-4 h-4 rounded-xs border-border text-primary focus:ring-primary cursor-pointer accent-primary"
+                          />
+                          <span className={`text-xs font-bold ${isChecked ? "text-primary font-extrabold" : "text-text-muted"}`}>
+                            {st}
+                          </span>
+                        </label>
+                      );
+                    })}
                   </div>
                   <input
                     type="text"
@@ -1343,8 +1353,6 @@ function BuildPageContent() {
                         ? "e.g. 10.0 / 10.0"
                         : formData.personal.scoreType10th === "Marks"
                         ? "e.g. 480 / 500"
-                        : formData.personal.scoreType10th === "Grade"
-                        ? "e.g. A+"
                         : "e.g. 92.4%"
                     }
                     value={formData.personal.marks10th || ""}

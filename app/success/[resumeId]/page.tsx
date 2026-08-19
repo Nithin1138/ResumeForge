@@ -1132,25 +1132,31 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                             className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
                           />
                         </div>
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between">
-                            <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Score / Result</label>
-                            <div className="flex bg-surface border border-border rounded-md p-0.5 text-[9px] font-bold">
-                              {(["Percentage", "CGPA", "Marks", "Grade"] as const).map((st) => (
-                                <button
-                                  key={st}
-                                  type="button"
-                                  onClick={() => updateEducationState({ twelfthEducation: { ...twelfthEdu, scoreType: st } })}
-                                  className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
-                                    (twelfthEdu.scoreType || "Percentage") === st
-                                      ? "bg-primary text-white"
-                                      : "text-text-muted hover:text-text"
-                                  }`}
-                                >
-                                  {st === "Percentage" ? "%" : st}
-                                </button>
-                              ))}
-                            </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">
+                            {twelfthEdu.scoreType === "CGPA"
+                              ? "12th CGPA"
+                              : twelfthEdu.scoreType === "Marks"
+                              ? "12th Total Marks"
+                              : "12th Percentage"}
+                          </label>
+                          <div className="flex items-center gap-3 py-0.5">
+                            {(["CGPA", "Percentage", "Marks"] as const).map((st) => {
+                              const isChecked = (twelfthEdu.scoreType || "Percentage") === st;
+                              return (
+                                <label key={st} className="flex items-center gap-1.5 cursor-pointer select-none">
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() => updateEducationState({ twelfthEducation: { ...twelfthEdu, scoreType: st } })}
+                                    className="w-3.5 h-3.5 rounded-xs border-border text-primary focus:ring-primary cursor-pointer accent-primary"
+                                  />
+                                  <span className={`text-[11px] font-bold ${isChecked ? "text-primary font-extrabold" : "text-text-muted"}`}>
+                                    {st}
+                                  </span>
+                                </label>
+                              );
+                            })}
                           </div>
                           <input
                             type="text"
@@ -1161,8 +1167,6 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                                 ? "e.g. 9.8 / 10.0"
                                 : twelfthEdu.scoreType === "Marks"
                                 ? "e.g. 980 / 1000"
-                                : twelfthEdu.scoreType === "Grade"
-                                ? "e.g. A+"
                                 : "e.g. 98.6%"
                             }
                             className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
@@ -1226,25 +1230,31 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                             className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
                           />
                         </div>
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between">
-                            <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Score / Result</label>
-                            <div className="flex bg-surface border border-border rounded-md p-0.5 text-[9px] font-bold">
-                              {(["Percentage", "CGPA", "Marks", "Grade"] as const).map((st) => (
-                                <button
-                                  key={st}
-                                  type="button"
-                                  onClick={() => updateEducationState({ tenthEducation: { ...tenthEdu, scoreType: st } })}
-                                  className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
-                                    (tenthEdu.scoreType || "Percentage") === st
-                                      ? "bg-primary text-white"
-                                      : "text-text-muted hover:text-text"
-                                  }`}
-                                >
-                                  {st === "Percentage" ? "%" : st}
-                                </button>
-                              ))}
-                            </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">
+                            {tenthEdu.scoreType === "CGPA"
+                              ? "10th CGPA"
+                              : tenthEdu.scoreType === "Marks"
+                              ? "10th Total Marks"
+                              : "10th Percentage"}
+                          </label>
+                          <div className="flex items-center gap-3 py-0.5">
+                            {(["CGPA", "Percentage", "Marks"] as const).map((st) => {
+                              const isChecked = (tenthEdu.scoreType || "Percentage") === st;
+                              return (
+                                <label key={st} className="flex items-center gap-1.5 cursor-pointer select-none">
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() => updateEducationState({ tenthEducation: { ...tenthEdu, scoreType: st } })}
+                                    className="w-3.5 h-3.5 rounded-xs border-border text-primary focus:ring-primary cursor-pointer accent-primary"
+                                  />
+                                  <span className={`text-[11px] font-bold ${isChecked ? "text-primary font-extrabold" : "text-text-muted"}`}>
+                                    {st}
+                                  </span>
+                                </label>
+                              );
+                            })}
                           </div>
                           <input
                             type="text"
@@ -1255,8 +1265,6 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                                 ? "e.g. 10.0 / 10.0"
                                 : tenthEdu.scoreType === "Marks"
                                 ? "e.g. 480 / 500"
-                                : tenthEdu.scoreType === "Grade"
-                                ? "e.g. A+"
                                 : "e.g. 92.4%"
                             }
                             className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"

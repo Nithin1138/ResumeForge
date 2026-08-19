@@ -56,6 +56,7 @@ export default function ResumeModal({
     inputData: {
       ...rawInputData,
       personal: {
+        ...(rawInputData?.personal || {}),
         fullName: rawInputData?.personal?.fullName || activeResume?.title || "Candidate Name",
         email: rawInputData?.personal?.email || "",
         phone: rawInputData?.personal?.phone || "",

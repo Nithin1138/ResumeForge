@@ -44,6 +44,7 @@ import { LogoutButton } from "@/components/DashboardActions";
 import HeaderWalletBadge from "@/components/HeaderWalletBadge";
 import AppLayout from "@/components/AppLayout";
 import { TelegramLinkCard } from "@/components/TelegramLinkCard";
+import { formatEducationScore } from "@/components/ResumePreviewPanel";
 
 interface ProjectItem {
   id: string;
@@ -522,7 +523,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
       educationList.length > 0 ? `--- ACADEMICS & EDUCATION ---` : null,
       ...educationList.map(e => {
         if (!e.institution) return null;
-        return `[${e.type}] ${e.institution} - ${e.degree || "N/A"} (${e.branch || "N/A"}) | Grade: ${e.cgpaOrPercentage} | Year: ${e.graduationYear} | Location: ${e.location || "N/A"}`;
+        return `[${e.type}] ${e.institution} - ${e.degree || "N/A"} (${e.branch || "N/A"}) | ${formatEducationScore(e.cgpaOrPercentage)} | Year: ${e.graduationYear} | Location: ${e.location || "N/A"}`;
       }),
       summary ? `Bio Summary: ${summary}` : null,
       ``,
@@ -1855,7 +1856,7 @@ export default function MySpaceClient({ userEmail }: { userEmail: string }) {
                             <button
                               onClick={(event) => {
                                 event.stopPropagation();
-                                copyToClipboard(`${e.type}: ${e.institution} | Degree: ${e.degree || "N/A"} | Branch: ${e.branch || "N/A"} | Grade: ${e.cgpaOrPercentage} | Year: ${e.graduationYear} | Location: ${e.location || "N/A"}`, e.type);
+                                copyToClipboard(`${e.type}: ${e.institution} | Degree: ${e.degree || "N/A"} | Branch: ${e.branch || "N/A"} | ${formatEducationScore(e.cgpaOrPercentage)} | Year: ${e.graduationYear} | Location: ${e.location || "N/A"}`, e.type);
                               }}
                               className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary/10 transition-all cursor-pointer flex items-center gap-1 text-[9px] font-bold"
                               title="Copy full education string"
