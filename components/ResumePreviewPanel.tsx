@@ -434,24 +434,19 @@ function cleanBulletList(bulletsInput: any): string[] {
           header, nav, footer, .print\:hidden {
             display: none !important;
           }
-          body:has(#resume-modal-portal) > *:not(#resume-modal-portal) {
-            display: none !important;
+          html, body, main, div:not(#resume-print-target):not(#resume-modal-portal) {
+            overflow: visible !important;
+            height: auto !important;
+            max-height: none !important;
+            float: none !important;
+            position: static !important;
+            flex: none !important;
+            grid: none !important;
+            transform: none !important;
           }
-          #resume-modal-portal {
+          #resume-print-target, .print-exact {
             display: block !important;
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 210mm !important;
-            height: 297mm !important;
-            background: white !important;
-            overflow: hidden !important;
-          }
-          .print-exact {
-            display: block !important;
-            position: absolute !important;
+            position: fixed !important;
             left: 0 !important;
             top: 0 !important;
             margin: 0 !important;
@@ -469,17 +464,16 @@ function cleanBulletList(bulletsInput: any): string[] {
             background: white !important;
             visibility: visible !important;
             box-sizing: border-box !important;
-            page-break-before: avoid !important;
-            page-break-after: avoid !important;
-            break-before: avoid !important;
-            break-after: avoid !important;
+            z-index: 999999 !important;
           }
-          .print-exact * {
+          #resume-print-target *, .print-exact * {
             box-sizing: border-box !important;
+            visibility: visible !important;
           }
         }
       `}</style>
       <div
+        id="resume-print-target"
         className="print-exact"
         ref={contentRef}
         style={{
