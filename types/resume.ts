@@ -143,6 +143,18 @@ export interface FullResumeOutput {
     year: string;
     cgpa: string;
   };
+  twelfthEducation?: {
+    degree: string;
+    institution: string;
+    year: string;
+    cgpa: string;
+  };
+  tenthEducation?: {
+    degree: string;
+    institution: string;
+    year: string;
+    cgpa: string;
+  };
   projects: {
     title: string;
     techStack: string;

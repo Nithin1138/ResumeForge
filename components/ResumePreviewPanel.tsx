@@ -36,6 +36,8 @@ export interface LiveResumeData {
   achievements: string[];
   education: { institution: string; degree: string; year: string; cgpa: string };
   pgEducation?: { institution: string; degree: string; year: string; cgpa: string } | null;
+  twelfthEducation?: { institution: string; degree: string; year: string; cgpa: string } | null;
+  tenthEducation?: { institution: string; degree: string; year: string; cgpa: string } | null;
 }
 
 interface Props {
@@ -120,6 +122,8 @@ export default function ResumePreviewPanel({
     achievements: liveData?.achievements ?? output?.achievements ?? [],
     education: liveData?.education ?? output?.education ?? {},
     pgEducation: liveData?.pgEducation ?? output?.pgEducation ?? null,
+    twelfthEducation: liveData?.twelfthEducation ?? output?.twelfthEducation ?? null,
+    tenthEducation: liveData?.tenthEducation ?? output?.tenthEducation ?? null,
   };
 
   const p = resume?.inputData?.personal || {};
@@ -159,31 +163,56 @@ export default function ResumePreviewPanel({
   };
 
   const renderEducationSection = () => {
-    if (!d.education?.institution && !d.pgEducation) return null;
+    const hasEdu = d.education?.institution || d.pgEducation || d.twelfthEducation || d.tenthEducation;
+    if (!hasEdu) return null;
     return (
       <div key="education" style={{ marginBottom: sectionMarginBottom, pageBreakInside: "avoid", breakInside: "avoid" }}>
         <SectionTitle accentColor={templateDef.accentColor}>Education</SectionTitle>
         {d.pgEducation && (
-          <div style={{ marginBottom: "6pt" }}>
+          <div style={{ marginBottom: "5pt" }}>
             <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "4px", alignItems: "baseline", fontSize: "10pt", fontWeight: "bold" }}>
               <span style={{ flex: 1 }}>{d.pgEducation.institution}</span>
               <span style={{ color: "#555", fontWeight: "normal", flexShrink: 0, fontSize: "9.5pt", textAlign: "right" }}>Graduation: {d.pgEducation.year}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "4px", alignItems: "baseline", fontSize: "9.5pt", color: "#444", marginTop: "1pt" }}>
               <span style={{ flex: 1 }}>{d.pgEducation.degree}</span>
-              <span style={{ flexShrink: 0, textAlign: "right" }}>CGPA: {d.pgEducation.cgpa}</span>
+              {d.pgEducation.cgpa && <span style={{ flexShrink: 0, textAlign: "right" }}>CGPA: {d.pgEducation.cgpa}</span>}
             </div>
           </div>
         )}
         {d.education?.institution && (
-          <div>
+          <div style={{ marginBottom: (d.twelfthEducation || d.tenthEducation) ? "5pt" : 0 }}>
             <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "4px", alignItems: "baseline", fontSize: "10pt", fontWeight: "bold" }}>
               <span style={{ flex: 1 }}>{d.education.institution}</span>
               <span style={{ color: "#555", fontWeight: "normal", flexShrink: 0, fontSize: "9.5pt", textAlign: "right" }}>Graduation: {d.education.year}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "4px", alignItems: "baseline", fontSize: "9.5pt", color: "#444", marginTop: "1pt" }}>
-              <span style={{ flex: 1 }}>{d.education.degree} ({ip?.personal?.branch || "Engineering"})</span>
-              <span style={{ flexShrink: 0, textAlign: "right" }}>CGPA: {d.education.cgpa}</span>
+              <span style={{ flex: 1 }}>{d.education.degree}</span>
+              {d.education.cgpa && <span style={{ flexShrink: 0, textAlign: "right" }}>CGPA: {d.education.cgpa}</span>}
+            </div>
+          </div>
+        )}
+        {d.twelfthEducation && (
+          <div style={{ marginBottom: d.tenthEducation ? "5pt" : 0 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "4px", alignItems: "baseline", fontSize: "10pt", fontWeight: "bold" }}>
+              <span style={{ flex: 1 }}>{d.twelfthEducation.institution}</span>
+              <span style={{ color: "#555", fontWeight: "normal", flexShrink: 0, fontSize: "9.5pt", textAlign: "right" }}>Year: {d.twelfthEducation.year}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "4px", alignItems: "baseline", fontSize: "9.5pt", color: "#444", marginTop: "1pt" }}>
+              <span style={{ flex: 1 }}>{d.twelfthEducation.degree || "Class XII / Intermediate"}</span>
+              {d.twelfthEducation.cgpa && <span style={{ flexShrink: 0, textAlign: "right" }}>Grade: {d.twelfthEducation.cgpa}</span>}
+            </div>
+          </div>
+        )}
+        {d.tenthEducation && (
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "4px", alignItems: "baseline", fontSize: "10pt", fontWeight: "bold" }}>
+              <span style={{ flex: 1 }}>{d.tenthEducation.institution}</span>
+              <span style={{ color: "#555", fontWeight: "normal", flexShrink: 0, fontSize: "9.5pt", textAlign: "right" }}>Year: {d.tenthEducation.year}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "4px", alignItems: "baseline", fontSize: "9.5pt", color: "#444", marginTop: "1pt" }}>
+              <span style={{ flex: 1 }}>{d.tenthEducation.degree || "Class X / SSC"}</span>
+              {d.tenthEducation.cgpa && <span style={{ flexShrink: 0, textAlign: "right" }}>Grade: {d.tenthEducation.cgpa}</span>}
             </div>
           </div>
         )}

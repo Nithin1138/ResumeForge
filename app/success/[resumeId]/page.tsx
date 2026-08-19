@@ -3,7 +3,7 @@
 import { use, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap, Sparkles, RotateCcw, ShieldCheck, Edit3, Plus, Trash2, ArrowUp, ArrowDown, X, GripVertical } from "lucide-react";
+import { Loader2, CheckCircle2, Copy, Download, RefreshCw, FileText, Printer, ArrowLeft, Check, AlertTriangle, Lock, Zap, Sparkles, RotateCcw, ShieldCheck, Edit3, Plus, Trash2, ArrowUp, ArrowDown, X, GripVertical, ChevronLeft, ChevronRight, GraduationCap } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { FullResumeOutput } from "@/types/resume";
@@ -107,6 +107,8 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   
   const [isEditingSkills, setIsEditingSkills] = useState(false);
   const [newSkillInput, setNewSkillInput] = useState<Record<number, string>>({});
+  const [skillInputModes, setSkillInputModes] = useState<Record<number, "single" | "comma">>({});
+  const [isEditingEducation, setIsEditingEducation] = useState(false);
 
   const handleUpdateCategoryName = (catIdx: number, newName: string) => {
     setLiveResume((prev: any) => {
@@ -140,6 +142,44 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
       const nextSkills = JSON.parse(JSON.stringify(baseSkills));
       if (nextSkills[catIdx] && Array.isArray(nextSkills[catIdx].skills)) {
         nextSkills[catIdx].skills.splice(skillIdx, 1);
+      }
+      return { ...(prev || output), skills: nextSkills };
+    });
+  };
+
+  const handleMoveSkillBadge = (catIdx: number, skillIdx: number, direction: "left" | "right") => {
+    setLiveResume((prev: any) => {
+      const baseSkills = prev?.skills ? [...prev.skills] : [...(output?.skills || [])];
+      const nextSkills = JSON.parse(JSON.stringify(baseSkills));
+      if (nextSkills[catIdx] && Array.isArray(nextSkills[catIdx].skills)) {
+        const targetIdx = direction === "left" ? skillIdx - 1 : skillIdx + 1;
+        if (targetIdx < 0 || targetIdx >= nextSkills[catIdx].skills.length) return prev;
+        const temp = nextSkills[catIdx].skills[skillIdx];
+        nextSkills[catIdx].skills[skillIdx] = nextSkills[catIdx].skills[targetIdx];
+        nextSkills[catIdx].skills[targetIdx] = temp;
+      }
+      return { ...(prev || output), skills: nextSkills };
+    });
+  };
+
+  const handleAddBulkSkills = (catIdx: number, rawInput: string) => {
+    if (!rawInput.trim()) return;
+    const newSkills = rawInput
+      .split(",")
+      .map(s => s.trim())
+      .filter(Boolean);
+    if (newSkills.length === 0) return;
+
+    setLiveResume((prev: any) => {
+      const baseSkills = prev?.skills ? [...prev.skills] : [...(output?.skills || [])];
+      const nextSkills = JSON.parse(JSON.stringify(baseSkills));
+      if (nextSkills[catIdx]) {
+        if (!Array.isArray(nextSkills[catIdx].skills)) nextSkills[catIdx].skills = [];
+        newSkills.forEach(s => {
+          if (!nextSkills[catIdx].skills.includes(s)) {
+            nextSkills[catIdx].skills.push(s);
+          }
+        });
       }
       return { ...(prev || output), skills: nextSkills };
     });
@@ -854,6 +894,350 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
           </div>
         </div>
 
+        {/* Section: Education & Qualifications Card (Placed under Professional Summary) */}
+        {(() => {
+          const edu = liveResume?.education ?? output?.education ?? {};
+          const pgEdu = liveResume?.pgEducation ?? output?.pgEducation ?? null;
+          const twelfthEdu = liveResume?.twelfthEducation ?? output?.twelfthEducation ?? null;
+          const tenthEdu = liveResume?.tenthEducation ?? output?.tenthEducation ?? null;
+
+          const updateEducationState = (updates: any) => {
+            setLiveResume((prev: any) => ({
+              ...(prev || output),
+              ...updates,
+            }));
+          };
+
+          return (
+            <div className="bg-surface border border-border rounded-2xl p-6 relative shadow-xs print:hidden space-y-4">
+              <div className="flex justify-between items-center border-b border-border/40 pb-3 flex-wrap gap-2">
+                <div className="flex items-center space-x-2">
+                  <GraduationCap className="w-4 h-4 text-primary" />
+                  <h3 className="text-xs font-bold text-primary tracking-wider uppercase">Education & Qualifications</h3>
+                </div>
+                <button
+                  onClick={() => setIsEditingEducation(!isEditingEducation)}
+                  className={`text-xs font-semibold transition-all flex items-center space-x-1 border px-3 py-1.5 rounded-full cursor-pointer ${
+                    isEditingEducation
+                      ? "bg-primary text-white border-primary shadow-xs"
+                      : "border-border bg-bg-base/30 text-text-muted hover:text-primary hover:border-primary/40"
+                  }`}
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>{isEditingEducation ? "Done Editing" : "Edit Education"}</span>
+                </button>
+              </div>
+
+              {isEditingEducation ? (
+                <div className="space-y-5 animate-fade-in">
+                  {/* Main Degree / Undergraduate */}
+                  <div className="bg-bg-base/60 border border-border rounded-xl p-4 space-y-3">
+                    <span className="text-[10px] font-extrabold text-primary uppercase tracking-wider block">🎓 Main Degree / Undergraduate</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Institution / University</label>
+                        <input
+                          type="text"
+                          value={edu.institution || ""}
+                          onChange={(e) => updateEducationState({ education: { ...edu, institution: e.target.value } })}
+                          placeholder="e.g. VELLORE INSTITUTE OF TECHNOLOGY - AP"
+                          className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-bold focus:outline-none focus:border-primary"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Degree & Branch</label>
+                        <input
+                          type="text"
+                          value={edu.degree || ""}
+                          onChange={(e) => updateEducationState({ education: { ...edu, degree: e.target.value } })}
+                          placeholder="e.g. B.Tech in Computer Science and Engineering"
+                          className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Graduation Year / Timeline</label>
+                        <input
+                          type="text"
+                          value={edu.year || ""}
+                          onChange={(e) => updateEducationState({ education: { ...edu, year: e.target.value } })}
+                          placeholder="e.g. 2021 – 2025"
+                          className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">CGPA / Percentage</label>
+                        <input
+                          type="text"
+                          value={edu.cgpa || ""}
+                          onChange={(e) => updateEducationState({ education: { ...edu, cgpa: e.target.value } })}
+                          placeholder="e.g. 9.17 / 10.0"
+                          className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Postgraduate (PG) */}
+                  <div className="bg-bg-base/60 border border-border rounded-xl p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold text-primary uppercase tracking-wider block">🎓 Postgraduate (PG) Degree</span>
+                      {!pgEdu ? (
+                        <button
+                          onClick={() => updateEducationState({ pgEducation: { institution: "", degree: "M.Tech / M.S. in Computer Science", year: "2025 – 2027", cgpa: "9.0" } })}
+                          className="text-[10px] font-bold text-primary hover:underline flex items-center space-x-1 cursor-pointer"
+                        >
+                          <Plus className="w-3 h-3" />
+                          <span>Enable PG Section</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => updateEducationState({ pgEducation: null })}
+                          className="text-[10px] font-bold text-error hover:underline flex items-center space-x-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Remove PG</span>
+                        </button>
+                      )}
+                    </div>
+                    {pgEdu && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div>
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">PG Institution</label>
+                          <input
+                            type="text"
+                            value={pgEdu.institution || ""}
+                            onChange={(e) => updateEducationState({ pgEducation: { ...pgEdu, institution: e.target.value } })}
+                            placeholder="e.g. IIT Madras"
+                            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-bold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">PG Degree</label>
+                          <input
+                            type="text"
+                            value={pgEdu.degree || ""}
+                            onChange={(e) => updateEducationState({ pgEducation: { ...pgEdu, degree: e.target.value } })}
+                            placeholder="e.g. M.Tech in Artificial Intelligence"
+                            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Graduation Year</label>
+                          <input
+                            type="text"
+                            value={pgEdu.year || ""}
+                            onChange={(e) => updateEducationState({ pgEducation: { ...pgEdu, year: e.target.value } })}
+                            placeholder="e.g. 2025 – 2027"
+                            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">PG CGPA</label>
+                          <input
+                            type="text"
+                            value={pgEdu.cgpa || ""}
+                            onChange={(e) => updateEducationState({ pgEducation: { ...pgEdu, cgpa: e.target.value } })}
+                            placeholder="e.g. 9.2 / 10.0"
+                            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Class 12th / Intermediate */}
+                  <div className="bg-bg-base/60 border border-border rounded-xl p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold text-primary uppercase tracking-wider block">🏫 Class 12th / Intermediate</span>
+                      {!twelfthEdu ? (
+                        <button
+                          onClick={() => updateEducationState({ twelfthEducation: { institution: "", degree: "Intermediate / Class XII (MPC)", year: "2021", cgpa: "95.4%" } })}
+                          className="text-[10px] font-bold text-primary hover:underline flex items-center space-x-1 cursor-pointer"
+                        >
+                          <Plus className="w-3 h-3" />
+                          <span>Enable 12th Section</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => updateEducationState({ twelfthEducation: null })}
+                          className="text-[10px] font-bold text-error hover:underline flex items-center space-x-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Remove 12th</span>
+                        </button>
+                      )}
+                    </div>
+                    {twelfthEdu && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div>
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Junior College / School</label>
+                          <input
+                            type="text"
+                            value={twelfthEdu.institution || ""}
+                            onChange={(e) => updateEducationState({ twelfthEducation: { ...twelfthEdu, institution: e.target.value } })}
+                            placeholder="e.g. Sri Chaitanya Junior College"
+                            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-bold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Stream / Qualification</label>
+                          <input
+                            type="text"
+                            value={twelfthEdu.degree || ""}
+                            onChange={(e) => updateEducationState({ twelfthEducation: { ...twelfthEdu, degree: e.target.value } })}
+                            placeholder="e.g. Intermediate / Class XII (MPC)"
+                            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Completion Year</label>
+                          <input
+                            type="text"
+                            value={twelfthEdu.year || ""}
+                            onChange={(e) => updateEducationState({ twelfthEducation: { ...twelfthEdu, year: e.target.value } })}
+                            placeholder="e.g. 2021"
+                            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Marks / Percentage / CGPA</label>
+                          <input
+                            type="text"
+                            value={twelfthEdu.cgpa || ""}
+                            onChange={(e) => updateEducationState({ twelfthEducation: { ...twelfthEdu, cgpa: e.target.value } })}
+                            placeholder="e.g. 96.2% or 9.6 CGPA"
+                            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Class 10th / SSC */}
+                  <div className="bg-bg-base/60 border border-border rounded-xl p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold text-primary uppercase tracking-wider block">🏫 Class 10th / SSC</span>
+                      {!tenthEdu ? (
+                        <button
+                          onClick={() => updateEducationState({ tenthEducation: { institution: "", degree: "Class X (SSC)", year: "2019", cgpa: "10.0 CGPA" } })}
+                          className="text-[10px] font-bold text-primary hover:underline flex items-center space-x-1 cursor-pointer"
+                        >
+                          <Plus className="w-3 h-3" />
+                          <span>Enable 10th Section</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => updateEducationState({ tenthEducation: null })}
+                          className="text-[10px] font-bold text-error hover:underline flex items-center space-x-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Remove 10th</span>
+                        </button>
+                      )}
+                    </div>
+                    {tenthEdu && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div>
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">School Name</label>
+                          <input
+                            type="text"
+                            value={tenthEdu.institution || ""}
+                            onChange={(e) => updateEducationState({ tenthEducation: { ...tenthEdu, institution: e.target.value } })}
+                            placeholder="e.g. St. Xaviers High School"
+                            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-bold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Board / Qualification</label>
+                          <input
+                            type="text"
+                            value={tenthEdu.degree || ""}
+                            onChange={(e) => updateEducationState({ tenthEducation: { ...tenthEdu, degree: e.target.value } })}
+                            placeholder="e.g. Class X (SSC Board)"
+                            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Completion Year</label>
+                          <input
+                            type="text"
+                            value={tenthEdu.year || ""}
+                            onChange={(e) => updateEducationState({ tenthEducation: { ...tenthEdu, year: e.target.value } })}
+                            placeholder="e.g. 2019"
+                            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">CGPA / Grade</label>
+                          <input
+                            type="text"
+                            value={tenthEdu.cgpa || ""}
+                            onChange={(e) => updateEducationState({ tenthEducation: { ...tenthEdu, cgpa: e.target.value } })}
+                            placeholder="e.g. 10.0 CGPA"
+                            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                /* Display View for Education */
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  {pgEdu && (
+                    <div className="p-3 rounded-xl bg-bg-base/40 border border-border flex justify-between items-center flex-wrap gap-2">
+                      <div>
+                        <span className="font-bold text-text block">{pgEdu.institution || 'Postgraduate'}</span>
+                        <span className="text-text-muted">{pgEdu.degree}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-primary block">{pgEdu.cgpa ? `CGPA: ${pgEdu.cgpa}` : ''}</span>
+                        <span className="text-text-muted text-[10px]">{pgEdu.year}</span>
+                      </div>
+                    </div>
+                  )}
+                  {edu.institution && (
+                    <div className="p-3 rounded-xl bg-bg-base/40 border border-border flex justify-between items-center flex-wrap gap-2">
+                      <div>
+                        <span className="font-bold text-text block">{edu.institution}</span>
+                        <span className="text-text-muted">{edu.degree}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-primary block">{edu.cgpa ? `CGPA: ${edu.cgpa}` : ''}</span>
+                        <span className="text-text-muted text-[10px]">{edu.year}</span>
+                      </div>
+                    </div>
+                  )}
+                  {twelfthEdu && (
+                    <div className="p-3 rounded-xl bg-bg-base/40 border border-border flex justify-between items-center flex-wrap gap-2">
+                      <div>
+                        <span className="font-bold text-text block">{twelfthEdu.institution || 'Class XII / Intermediate'}</span>
+                        <span className="text-text-muted">{twelfthEdu.degree}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-primary block">{twelfthEdu.cgpa ? `Grade: ${twelfthEdu.cgpa}` : ''}</span>
+                        <span className="text-text-muted text-[10px]">{twelfthEdu.year}</span>
+                      </div>
+                    </div>
+                  )}
+                  {tenthEdu && (
+                    <div className="p-3 rounded-xl bg-bg-base/40 border border-border flex justify-between items-center flex-wrap gap-2">
+                      <div>
+                        <span className="font-bold text-text block">{tenthEdu.institution || 'Class X / SSC'}</span>
+                        <span className="text-text-muted">{tenthEdu.degree}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-primary block">{tenthEdu.cgpa ? `Grade: ${tenthEdu.cgpa}` : ''}</span>
+                        <span className="text-text-muted text-[10px]">{tenthEdu.year}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
         {/* Section: Skills Badges Card */}
         {(() => {
           const activeSkills: Array<{ category: string; skills: string[] }> = liveResume?.skills ?? output?.skills ?? [];
@@ -956,17 +1340,38 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                         </button>
                       </div>
 
-                      {/* Skill Badges with Delete Buttons */}
+                      {/* Skill Badges with Reorder [‹] [›] and Delete Buttons */}
                       <div className="flex flex-wrap items-center gap-2 pt-1">
                         {(cat.skills || []).map((skillName: string, sIdx: number) => (
                           <span
                             key={sIdx}
-                            className="inline-flex items-center gap-1.5 text-xs bg-surface border border-border px-2.5 py-1 rounded-md font-bold text-text group"
+                            className="inline-flex items-center gap-1.5 text-xs bg-surface border border-border px-2 py-1 rounded-md font-bold text-text group"
                           >
+                            <div className="flex items-center space-x-0.5 opacity-60 hover:opacity-100">
+                              <button
+                                type="button"
+                                onClick={() => handleMoveSkillBadge(catIdx, sIdx, "left")}
+                                disabled={sIdx === 0}
+                                className="p-0.5 hover:bg-border/40 rounded disabled:opacity-20 cursor-pointer"
+                                title="Move Badge Left"
+                              >
+                                <ChevronLeft className="w-3 h-3" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleMoveSkillBadge(catIdx, sIdx, "right")}
+                                disabled={sIdx === (cat.skills || []).length - 1}
+                                className="p-0.5 hover:bg-border/40 rounded disabled:opacity-20 cursor-pointer"
+                                title="Move Badge Right"
+                              >
+                                <ChevronRight className="w-3 h-3" />
+                              </button>
+                            </div>
                             <span>{skillName}</span>
                             <button
+                              type="button"
                               onClick={() => handleDeleteSkillBadge(catIdx, sIdx)}
-                              className="text-text-muted hover:text-error transition-colors cursor-pointer"
+                              className="text-text-muted hover:text-error transition-colors cursor-pointer ml-0.5"
                               title="Remove Skill Badge"
                             >
                               <X className="w-3.5 h-3.5" />
@@ -975,34 +1380,92 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                         ))}
                       </div>
 
-                      {/* Add Skill Badge Input */}
-                      <div className="flex items-center space-x-2 pt-1">
-                        <input
-                          type="text"
-                          value={newSkillInput[catIdx] || ""}
-                          onChange={(e) => setNewSkillInput(prev => ({ ...prev, [catIdx]: e.target.value }))}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              e.preventDefault();
-                              handleAddSkillBadge(catIdx);
-                            }
-                          }}
-                          placeholder="Add new skill badge..."
-                          className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-surface text-text text-xs font-medium focus:outline-none focus:border-primary"
-                        />
-                        <button
-                          onClick={() => handleAddSkillBadge(catIdx)}
-                          className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-xs font-bold flex items-center space-x-1 cursor-pointer shrink-0"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>Add Skill</span>
-                        </button>
+                      {/* Dual Input Mode: Single vs Comma Separated */}
+                      <div className="space-y-2 pt-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Add Skills Input Type:</span>
+                          <div className="flex items-center space-x-1 bg-surface border border-border rounded-lg p-0.5">
+                            <button
+                              type="button"
+                              onClick={() => setSkillInputModes(prev => ({ ...prev, [catIdx]: "single" }))}
+                              className={`px-2 py-0.5 text-[10px] font-bold rounded transition-all cursor-pointer ${
+                                (skillInputModes[catIdx] || "single") === "single"
+                                  ? "bg-primary text-white shadow-xs"
+                                  : "text-text-muted hover:text-text"
+                              }`}
+                            >
+                              Single Skill
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setSkillInputModes(prev => ({ ...prev, [catIdx]: "comma" }))}
+                              className={`px-2 py-0.5 text-[10px] font-bold rounded transition-all cursor-pointer ${
+                                skillInputModes[catIdx] === "comma"
+                                  ? "bg-primary text-white shadow-xs"
+                                  : "text-text-muted hover:text-text"
+                              }`}
+                            >
+                              Comma Separated (Bulk)
+                            </button>
+                          </div>
+                        </div>
+
+                        {skillInputModes[catIdx] === "comma" ? (
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="text"
+                              value={newSkillInput[catIdx] || ""}
+                              onChange={(e) => setNewSkillInput(prev => ({ ...prev, [catIdx]: e.target.value }))}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  handleAddBulkSkills(catIdx, newSkillInput[catIdx] || "");
+                                }
+                              }}
+                              placeholder="e.g. Java, Python, React, PostgreSQL, Tailwind CSS..."
+                              className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-surface text-text text-xs font-medium focus:outline-none focus:border-primary"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleAddBulkSkills(catIdx, newSkillInput[catIdx] || "")}
+                              className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-xs font-bold flex items-center space-x-1 cursor-pointer shrink-0"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>Add Bulk</span>
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="text"
+                              value={newSkillInput[catIdx] || ""}
+                              onChange={(e) => setNewSkillInput(prev => ({ ...prev, [catIdx]: e.target.value }))}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  handleAddSkillBadge(catIdx);
+                                }
+                              }}
+                              placeholder="Add single skill badge..."
+                              className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-surface text-text text-xs font-medium focus:outline-none focus:border-primary"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleAddSkillBadge(catIdx)}
+                              className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-xs font-bold flex items-center space-x-1 cursor-pointer shrink-0"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>Add Skill</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
 
                   {/* Add New Category Row Button */}
                   <button
+                    type="button"
                     onClick={handleAddCategoryRow}
                     className="w-full py-3 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary bg-primary/5 text-primary text-xs font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer"
                   >
