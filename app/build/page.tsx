@@ -1218,12 +1218,38 @@ function BuildPageContent() {
                     {["2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"].map(y => <option key={y} value={y}>{y}</option>)}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Marks / Percentage</label>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between flex-wrap gap-1">
+                    <label className="block text-sm font-semibold">12th Score / Result</label>
+                    <div className="flex bg-surface border border-border rounded-lg p-0.5 text-[11px] font-bold">
+                      {(["Percentage", "CGPA", "Marks", "Grade"] as const).map((st) => (
+                        <button
+                          key={st}
+                          type="button"
+                          onClick={() => updatePersonal({ scoreType12th: st })}
+                          className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
+                            (formData.personal.scoreType12th || "Percentage") === st
+                              ? "bg-primary text-white shadow-xs"
+                              : "text-text-muted hover:text-text"
+                          }`}
+                        >
+                          {st === "Percentage" ? "% (Percentage)" : st}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <input
                     type="text"
                     className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                    placeholder="e.g. 92.4%"
+                    placeholder={
+                      formData.personal.scoreType12th === "CGPA"
+                        ? "e.g. 9.8 / 10.0"
+                        : formData.personal.scoreType12th === "Marks"
+                        ? "e.g. 980 / 1000"
+                        : formData.personal.scoreType12th === "Grade"
+                        ? "e.g. A+"
+                        : "e.g. 98.6%"
+                    }
                     value={formData.personal.marks12th || ""}
                     onChange={(e) => updatePersonal({ marks12th: e.target.value })}
                   />
@@ -1289,12 +1315,38 @@ function BuildPageContent() {
                     {["2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023"].map(y => <option key={y} value={y}>{y}</option>)}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Marks / Percentage</label>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between flex-wrap gap-1">
+                    <label className="block text-sm font-semibold">10th Score / Result</label>
+                    <div className="flex bg-surface border border-border rounded-lg p-0.5 text-[11px] font-bold">
+                      {(["Percentage", "CGPA", "Marks", "Grade"] as const).map((st) => (
+                        <button
+                          key={st}
+                          type="button"
+                          onClick={() => updatePersonal({ scoreType10th: st })}
+                          className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
+                            (formData.personal.scoreType10th || "Percentage") === st
+                              ? "bg-primary text-white shadow-xs"
+                              : "text-text-muted hover:text-text"
+                          }`}
+                        >
+                          {st === "Percentage" ? "% (Percentage)" : st}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <input
                     type="text"
                     className="w-full px-4 py-3 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-hidden text-sm"
-                    placeholder="e.g. 88.6%"
+                    placeholder={
+                      formData.personal.scoreType10th === "CGPA"
+                        ? "e.g. 10.0 / 10.0"
+                        : formData.personal.scoreType10th === "Marks"
+                        ? "e.g. 480 / 500"
+                        : formData.personal.scoreType10th === "Grade"
+                        ? "e.g. A+"
+                        : "e.g. 92.4%"
+                    }
                     value={formData.personal.marks10th || ""}
                     onChange={(e) => updatePersonal({ marks10th: e.target.value })}
                   />

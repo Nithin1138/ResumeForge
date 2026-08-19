@@ -45,7 +45,29 @@ function finalizeResumeOutput(
   formData: ResumeFormData
 ): FullResumeOutput {
   const sanitized = sanitizeEmptyArrays(result, formData);
-  return optimizeResumeForAts(sanitized, processedSkills);
+  const optimized = optimizeResumeForAts(sanitized, processedSkills);
+
+  const twelfthEducation = formData.personal.has12th ? {
+    institution: formData.personal.school12thName || "",
+    degree: formData.personal.board12th ? `Class XII / Intermediate (${formData.personal.board12th})` : "Class XII / Intermediate",
+    year: formData.personal.passYear12th || "",
+    cgpa: formData.personal.marks12th || "",
+    scoreType: formData.personal.scoreType12th || "Percentage"
+  } : undefined;
+
+  const tenthEducation = formData.personal.has10th ? {
+    institution: formData.personal.school10thName || "",
+    degree: formData.personal.board10th ? `Class X / SSC (${formData.personal.board10th})` : "Class X / SSC",
+    year: formData.personal.passYear10th || "",
+    cgpa: formData.personal.marks10th || "",
+    scoreType: formData.personal.scoreType10th || "Percentage"
+  } : undefined;
+
+  return {
+    ...optimized,
+    ...(twelfthEducation ? { twelfthEducation } : {}),
+    ...(tenthEducation ? { tenthEducation } : {}),
+  };
 }
 
 // Generate realistic mock data using student's actual inputs

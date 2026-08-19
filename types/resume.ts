@@ -30,12 +30,14 @@ export interface PersonalInfo {
   has12th?: boolean;
   school12thName?: string;
   marks12th?: string;        // percentage or CGPA string
+  scoreType12th?: "Percentage" | "CGPA" | "Marks" | "Grade";
   board12th?: string;        // e.g. CBSE, ICSE, State board
   passYear12th?: string;
   // 10th
   has10th?: boolean;
   school10thName?: string;
   marks10th?: string;
+  scoreType10th?: "Percentage" | "CGPA" | "Marks" | "Grade";
   board10th?: string;
   passYear10th?: string;
 }
@@ -148,12 +150,14 @@ export interface FullResumeOutput {
     institution: string;
     year: string;
     cgpa: string;
+    scoreType?: string;
   };
   tenthEducation?: {
     degree: string;
     institution: string;
     year: string;
     cgpa: string;
+    scoreType?: string;
   };
   projects: {
     title: string;

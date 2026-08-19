@@ -36,9 +36,57 @@ export interface LiveResumeData {
   achievements: string[];
   education: { institution: string; degree: string; year: string; cgpa: string };
   pgEducation?: { institution: string; degree: string; year: string; cgpa: string } | null;
-  twelfthEducation?: { institution: string; degree: string; year: string; cgpa: string } | null;
-  tenthEducation?: { institution: string; degree: string; year: string; cgpa: string } | null;
+  twelfthEducation?: { institution: string; degree: string; year: string; cgpa: string; scoreType?: string } | null;
+  tenthEducation?: { institution: string; degree: string; year: string; cgpa: string; scoreType?: string } | null;
 }
+
+export const formatEducationScore = (score: string, scoreType?: string): string => {
+  if (!score || !score.trim()) return "";
+  const trimmed = score.trim();
+
+  // If already formatted with a label prefix
+  if (/^(percentage|cgpa|marks|grade|score)\s*:/i.test(trimmed)) {
+    return trimmed;
+  }
+
+  // Explicit type provided by user
+  if (scoreType === "Percentage") {
+    return trimmed.endsWith("%") ? `Percentage: ${trimmed}` : `Percentage: ${trimmed}%`;
+  }
+  if (scoreType === "CGPA") {
+    return trimmed.toLowerCase().includes("cgpa") ? trimmed : `CGPA: ${trimmed}`;
+  }
+  if (scoreType === "Marks") {
+    return `Marks: ${trimmed}`;
+  }
+  if (scoreType === "Grade") {
+    return `Grade: ${trimmed}`;
+  }
+
+  // Intelligent auto-detection fallback
+  if (trimmed.endsWith("%")) {
+    return `Percentage: ${trimmed}`;
+  }
+  if (/cgpa/i.test(trimmed)) {
+    return trimmed;
+  }
+  const num = parseFloat(trimmed);
+  if (!isNaN(num)) {
+    if (num > 10 && num <= 100) {
+      return `Percentage: ${trimmed}%`;
+    }
+    if (num > 100) {
+      return `Marks: ${trimmed}`;
+    }
+    if (num <= 10) {
+      return `CGPA: ${trimmed}`;
+    }
+  }
+  if (/^[A-O][+-]?$/i.test(trimmed)) {
+    return `Grade: ${trimmed}`;
+  }
+  return `Percentage: ${trimmed}`;
+};
 
 interface Props {
   resume: any;        // raw resume record (for personal info)
@@ -53,6 +101,7 @@ interface Props {
 import { getTemplateById } from "@/lib/templatesConfig";
 
 function SectionTitle({ children, accentColor }: { children: React.ReactNode; accentColor?: string }) {
+  const color = accentColor || "#1e293b";
   return (
     <div style={{ marginBottom: "5pt", marginTop: "8pt" }}>
       <div style={{
@@ -60,12 +109,14 @@ function SectionTitle({ children, accentColor }: { children: React.ReactNode; ac
         fontWeight: "bold",
         textTransform: "uppercase",
         letterSpacing: "0.5px",
-        color: accentColor || "#111",
-        marginBottom: "2pt"
+        color: color,
+        paddingBottom: "2pt",
+        borderBottom: `1.5px solid ${color}`,
+        width: "100%",
+        boxSizing: "border-box",
       }}>
         {children}
       </div>
-      <div style={{ height: "1px", backgroundColor: accentColor || "#333", width: "100%" }} />
     </div>
   );
 }
@@ -122,8 +173,20 @@ export default function ResumePreviewPanel({
     achievements: liveData?.achievements ?? output?.achievements ?? [],
     education: liveData?.education ?? output?.education ?? {},
     pgEducation: liveData?.pgEducation ?? output?.pgEducation ?? null,
-    twelfthEducation: liveData?.twelfthEducation ?? output?.twelfthEducation ?? null,
-    tenthEducation: liveData?.tenthEducation ?? output?.tenthEducation ?? null,
+    twelfthEducation: liveData?.twelfthEducation ?? output?.twelfthEducation ?? (resume?.inputData?.personal?.has12th ? {
+      institution: resume.inputData.personal.school12thName,
+      degree: resume.inputData.personal.board12th ? `Class XII / Intermediate (${resume.inputData.personal.board12th})` : "Class XII / Intermediate",
+      year: resume.inputData.personal.passYear12th,
+      cgpa: resume.inputData.personal.marks12th,
+      scoreType: resume.inputData.personal.scoreType12th
+    } : null),
+    tenthEducation: liveData?.tenthEducation ?? output?.tenthEducation ?? (resume?.inputData?.personal?.has10th ? {
+      institution: resume.inputData.personal.school10thName,
+      degree: resume.inputData.personal.board10th ? `Class X / SSC (${resume.inputData.personal.board10th})` : "Class X / SSC",
+      year: resume.inputData.personal.passYear10th,
+      cgpa: resume.inputData.personal.marks10th,
+      scoreType: resume.inputData.personal.scoreType10th
+    } : null),
   };
 
   const p = resume?.inputData?.personal || {};
@@ -155,6 +218,7 @@ export default function ResumePreviewPanel({
     if (!d.summary) return null;
     return (
       <div key="summary" style={{ marginBottom: sectionMarginBottom }}>
+        <SectionTitle accentColor={templateDef.accentColor}>Professional Summary</SectionTitle>
         <p style={{ fontSize: isCompact ? "9pt" : "10pt", textAlign: "justify", margin: 0, padding: 0 }}>
           {d.summary}
         </p>
@@ -200,7 +264,11 @@ export default function ResumePreviewPanel({
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "4px", alignItems: "baseline", fontSize: "9.5pt", color: "#444", marginTop: "1pt" }}>
               <span style={{ flex: 1 }}>{d.twelfthEducation.degree || "Class XII / Intermediate"}</span>
-              {d.twelfthEducation.cgpa && <span style={{ flexShrink: 0, textAlign: "right" }}>Grade: {d.twelfthEducation.cgpa}</span>}
+              {d.twelfthEducation.cgpa && (
+                <span style={{ flexShrink: 0, textAlign: "right" }}>
+                  {formatEducationScore(d.twelfthEducation.cgpa, d.twelfthEducation.scoreType || ip?.personal?.scoreType12th)}
+                </span>
+              )}
             </div>
           </div>
         )}
@@ -212,7 +280,11 @@ export default function ResumePreviewPanel({
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "4px", alignItems: "baseline", fontSize: "9.5pt", color: "#444", marginTop: "1pt" }}>
               <span style={{ flex: 1 }}>{d.tenthEducation.degree || "Class X / SSC"}</span>
-              {d.tenthEducation.cgpa && <span style={{ flexShrink: 0, textAlign: "right" }}>Grade: {d.tenthEducation.cgpa}</span>}
+              {d.tenthEducation.cgpa && (
+                <span style={{ flexShrink: 0, textAlign: "right" }}>
+                  {formatEducationScore(d.tenthEducation.cgpa, d.tenthEducation.scoreType || ip?.personal?.scoreType10th)}
+                </span>
+              )}
             </div>
           </div>
         )}

@@ -9,7 +9,7 @@ import confetti from "canvas-confetti";
 import { FullResumeOutput } from "@/types/resume";
 import { calculateDynamicMetrics } from "@/lib/atsScoring";
 import { getLocalSession } from "@/lib/authClient";
-import ResumePreviewPanel from "@/components/ResumePreviewPanel";
+import ResumePreviewPanel, { formatEducationScore } from "@/components/ResumePreviewPanel";
 import CoverLetterModal from "@/components/CoverLetterModal";
 import AIVerificationSection from "@/components/AIVerificationSection";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -1132,13 +1132,39 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                             className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
                           />
                         </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">Marks / Percentage / CGPA</label>
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Score / Result</label>
+                            <div className="flex bg-surface border border-border rounded-md p-0.5 text-[9px] font-bold">
+                              {(["Percentage", "CGPA", "Marks", "Grade"] as const).map((st) => (
+                                <button
+                                  key={st}
+                                  type="button"
+                                  onClick={() => updateEducationState({ twelfthEducation: { ...twelfthEdu, scoreType: st } })}
+                                  className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
+                                    (twelfthEdu.scoreType || "Percentage") === st
+                                      ? "bg-primary text-white"
+                                      : "text-text-muted hover:text-text"
+                                  }`}
+                                >
+                                  {st === "Percentage" ? "%" : st}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
                           <input
                             type="text"
                             value={twelfthEdu.cgpa || ""}
                             onChange={(e) => updateEducationState({ twelfthEducation: { ...twelfthEdu, cgpa: e.target.value } })}
-                            placeholder="e.g. 96.2% or 9.6 CGPA"
+                            placeholder={
+                              twelfthEdu.scoreType === "CGPA"
+                                ? "e.g. 9.8 / 10.0"
+                                : twelfthEdu.scoreType === "Marks"
+                                ? "e.g. 980 / 1000"
+                                : twelfthEdu.scoreType === "Grade"
+                                ? "e.g. A+"
+                                : "e.g. 98.6%"
+                            }
                             className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
                           />
                         </div>
@@ -1152,7 +1178,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                       <span className="text-[10px] font-extrabold text-primary uppercase tracking-wider block">🏫 Class 10th / SSC</span>
                       {!tenthEdu ? (
                         <button
-                          onClick={() => updateEducationState({ tenthEducation: { institution: "", degree: "Class X (SSC)", year: "2019", cgpa: "10.0 CGPA" } })}
+                          onClick={() => updateEducationState({ tenthEducation: { institution: "", degree: "Class X (SSC)", year: "2019", cgpa: "10.0 CGPA", scoreType: "CGPA" } })}
                           className="text-[10px] font-bold text-primary hover:underline flex items-center space-x-1 cursor-pointer"
                         >
                           <Plus className="w-3 h-3" />
@@ -1200,13 +1226,39 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                             className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
                           />
                         </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">CGPA / Grade</label>
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Score / Result</label>
+                            <div className="flex bg-surface border border-border rounded-md p-0.5 text-[9px] font-bold">
+                              {(["Percentage", "CGPA", "Marks", "Grade"] as const).map((st) => (
+                                <button
+                                  key={st}
+                                  type="button"
+                                  onClick={() => updateEducationState({ tenthEducation: { ...tenthEdu, scoreType: st } })}
+                                  className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
+                                    (tenthEdu.scoreType || "Percentage") === st
+                                      ? "bg-primary text-white"
+                                      : "text-text-muted hover:text-text"
+                                  }`}
+                                >
+                                  {st === "Percentage" ? "%" : st}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
                           <input
                             type="text"
                             value={tenthEdu.cgpa || ""}
                             onChange={(e) => updateEducationState({ tenthEducation: { ...tenthEdu, cgpa: e.target.value } })}
-                            placeholder="e.g. 10.0 CGPA"
+                            placeholder={
+                              tenthEdu.scoreType === "CGPA"
+                                ? "e.g. 10.0 / 10.0"
+                                : tenthEdu.scoreType === "Marks"
+                                ? "e.g. 480 / 500"
+                                : tenthEdu.scoreType === "Grade"
+                                ? "e.g. A+"
+                                : "e.g. 92.4%"
+                            }
                             className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs font-semibold focus:outline-none focus:border-primary"
                           />
                         </div>
@@ -1248,7 +1300,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                         <span className="text-text-muted">{twelfthEdu.degree}</span>
                       </div>
                       <div className="text-right">
-                        <span className="font-bold text-primary block">{twelfthEdu.cgpa ? `Grade: ${twelfthEdu.cgpa}` : ''}</span>
+                        <span className="font-bold text-primary block">{twelfthEdu.cgpa ? formatEducationScore(twelfthEdu.cgpa, twelfthEdu.scoreType) : ''}</span>
                         <span className="text-text-muted text-[10px]">{twelfthEdu.year}</span>
                       </div>
                     </div>
@@ -1260,7 +1312,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                         <span className="text-text-muted">{tenthEdu.degree}</span>
                       </div>
                       <div className="text-right">
-                        <span className="font-bold text-primary block">{tenthEdu.cgpa ? `Grade: ${tenthEdu.cgpa}` : ''}</span>
+                        <span className="font-bold text-primary block">{tenthEdu.cgpa ? formatEducationScore(tenthEdu.cgpa, tenthEdu.scoreType) : ''}</span>
                         <span className="text-text-muted text-[10px]">{tenthEdu.year}</span>
                       </div>
                     </div>
