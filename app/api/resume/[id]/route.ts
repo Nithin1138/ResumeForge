@@ -73,7 +73,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { resumeName, categoryTag, inputData } = body;
+    const { resumeName, categoryTag, inputData, outputFull } = body;
 
     const resume = await prisma.resume.findUnique({ where: { id } });
     if (!resume) {
@@ -95,6 +95,7 @@ export async function PATCH(
         ...(resumeName !== undefined && { resumeName: resumeName || null }),
         ...(categoryTag !== undefined && { categoryTag: categoryTag || "blue" }),
         ...(inputData !== undefined && { inputData: typeof inputData === "string" ? inputData : JSON.stringify(inputData) }),
+        ...(outputFull !== undefined && { outputFull: typeof outputFull === "string" ? outputFull : JSON.stringify(outputFull) }),
       },
     });
 

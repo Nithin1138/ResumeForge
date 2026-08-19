@@ -421,8 +421,20 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
         
         setResume(data);
         if (data.paymentStatus === "PAID" && data.outputFull) {
-          setLiveResume(data.outputFull);
-          const original = typeof data.outputFull === "string" ? JSON.parse(data.outputFull) : data.outputFull;
+          const localSaved = typeof window !== "undefined" ? localStorage.getItem(`resume_edit_${resumeId}`) : null;
+          let activeData = data.outputFull;
+          if (localSaved) {
+            try {
+              const parsedLocal = JSON.parse(localSaved);
+              if (parsedLocal && typeof parsedLocal === "object") {
+                activeData = parsedLocal;
+              }
+            } catch (e) {
+              console.error("Failed to parse local resume edit cache", e);
+            }
+          }
+          setLiveResume(activeData);
+          const original = typeof activeData === "string" ? JSON.parse(activeData) : activeData;
           setDensityCache({ normal: original });
           if (data.inputData?.options?.jobDescription) {
             setCustomJD(data.inputData.options.jobDescription);
@@ -441,6 +453,27 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
     };
     fetchOrUnlockResume();
   }, [resumeId, isSandbox]);
+
+  // Auto-save live edits to localStorage & debounced sync to backend database
+  useEffect(() => {
+    if (!liveResume || !resumeId) return;
+
+    try {
+      localStorage.setItem(`resume_edit_${resumeId}`, JSON.stringify(liveResume));
+    } catch (e) {
+      console.error("Error saving resume edit to localStorage", e);
+    }
+
+    const timer = setTimeout(() => {
+      fetch(`/api/resume/${resumeId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ outputFull: liveResume }),
+      }).catch((err) => console.error("Error auto-saving resume edits to server:", err));
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [liveResume, resumeId]);
 
   const triggerConfetti = () => {
     confetti({
