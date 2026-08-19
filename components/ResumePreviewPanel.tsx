@@ -276,7 +276,10 @@ function cleanBulletList(bulletsInput: any): string[] {
   const result: string[] = [];
   for (let str of rawList) {
     if (!str || typeof str !== "string") continue;
-    let cleaned = str.replace(/^[\s*•\-–\d\.]+\s*/, "").trim();
+    // Remove leading bullet symbols, asterisks, dashes, dots, whitespace
+    let cleaned = str.replace(/^[•\*\-\–\—\s]+/, "").trim();
+    // Remove leading list numbers like "1. ", "1) ", "2. ", "3: " (preserve ordinals like "2nd", "1st", "3rd")
+    cleaned = cleaned.replace(/^\d+[\.\)\:\-]\s+/, "").trim();
     cleaned = cleaned.replace(/\s+\*\s+/g, " ");
     if (cleaned.length > 0) {
       result.push(cleaned);
