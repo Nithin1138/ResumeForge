@@ -180,8 +180,11 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
     let responseText = "";
     let linkPrompt = "";
     let pdfText = "";
-    const isPDF = file.type === "application/pdf" || file.name.endsWith(".pdf");
-    const isDocx = file.name.endsWith(".docx");
+    const fileName = (file.name || "").toLowerCase();
+    const fileType = (file.type || "").toLowerCase();
+    const isPDF = fileType === "application/pdf" || fileName.endsWith(".pdf");
+    const isDocx = fileName.endsWith(".docx") || fileName.endsWith(".doc") || fileType.includes("wordprocessingml") || fileType.includes("msword");
+    const isImage = fileType.startsWith("image/") || fileName.endsWith(".png") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".webp");
 
     try {
       let response;
@@ -320,6 +323,32 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
             temperature: 0,
           }
         });
+      } else if (isImage) {
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const base64String = buffer.toString("base64");
+
+        let imageMime = file.type || "image/jpeg";
+        if (fileName.endsWith(".png")) imageMime = "image/png";
+        else if (fileName.endsWith(".webp")) imageMime = "image/webp";
+        else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) imageMime = "image/jpeg";
+
+        response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: [
+            { text: prompt + "\n\n[INSTRUCTION]: Accurately read all resume details from this uploaded image and extract structured data fields." },
+            {
+              inlineData: {
+                data: base64String,
+                mimeType: imageMime
+              }
+            }
+          ],
+          config: {
+            responseMimeType: "application/json",
+            temperature: 0,
+          }
+        });
       } else {
         // Handle DOCX or TXT
         if (isDocx) {
@@ -372,6 +401,8 @@ Return ONLY a valid JSON object matching this exact structure exactly (no markdo
         const arrayBuffer = await file.arrayBuffer();
         const result = await mammoth.convertToHtml({ buffer: Buffer.from(arrayBuffer) });
         fallbackText = result.value.replace(/<[^>]+>/g, " ");
+      } else if (isImage) {
+        throw new Error(`Gemini vision scan failed (${geminiError.message || "Vision API error"}). Please upload a PDF or DOCX file.`);
       } else {
         fallbackText = await file.text();
       }

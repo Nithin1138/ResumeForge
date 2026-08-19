@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
+import * as mammoth from "mammoth";
 import { generateGroqFallback } from "@/lib/gemini";
 import { PDF_WORKER_BASE64 } from "@/lib/pdfWorkerBase64";
 let PDFParse: any = null;
@@ -9,8 +10,20 @@ try {
   if (typeof (global as any).DOMMatrix === "undefined") {
     (global as any).DOMMatrix = class DOMMatrix {};
   }
+  if (typeof (global as any).ImageData === "undefined") {
+    (global as any).ImageData = class ImageData {};
+  }
+  if (typeof (global as any).Path2D === "undefined") {
+    (global as any).Path2D = class Path2D {};
+  }
+  const originalWarn = console.warn;
+  console.warn = (...args: any[]) => {
+    if (args[0] && typeof args[0] === "string" && (args[0].includes("@napi-rs/canvas") || args[0].includes("ImageData"))) return;
+    originalWarn(...args);
+  };
   const pdfParseMod = require("pdf-parse");
   PDFParse = pdfParseMod.PDFParse || pdfParseMod;
+  console.warn = originalWarn;
 } catch (e: any) {
   console.warn("Failed to load pdf-parse:", e.message || e);
 }
@@ -36,7 +49,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const file = formData.get("file") as File | null;
+    const file = (formData.get("file") || formData.get("resume")) as File | null;
 
     if (!file) {
       return NextResponse.json(
@@ -76,7 +89,12 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const isPDF = file.type === "application/pdf" || file.name.endsWith(".pdf");
+    const fileName = (file.name || "").toLowerCase();
+    const fileType = (file.type || "").toLowerCase();
+
+    const isPDF = fileType === "application/pdf" || fileName.endsWith(".pdf");
+    const isDocx = fileName.endsWith(".docx") || fileName.endsWith(".doc") || fileType.includes("wordprocessingml") || fileType.includes("msword");
+    const isImage = fileType.startsWith("image/") || fileName.endsWith(".png") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".webp");
 
     const prompt = `
 You are an expert ATS (Applicant Tracking System) used by top-tier tech companies.
@@ -190,11 +208,12 @@ Return ONLY a valid JSON object matching this exact structure:
     let responseText = "";
     let linkPrompt = "";
     let pdfText = "";
+    let resumeText = "";
 
     try {
       const ai = new GoogleGenAI({ apiKey });
-      
       let contents: any[] = [];
+
       if (isPDF) {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
@@ -287,8 +306,35 @@ Return ONLY a valid JSON object matching this exact structure:
             }
           }
         ];
+      } else if (isImage) {
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const base64String = buffer.toString("base64");
+
+        let imageMime = file.type || "image/jpeg";
+        if (fileName.endsWith(".png")) imageMime = "image/png";
+        else if (fileName.endsWith(".webp")) imageMime = "image/webp";
+        else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) imageMime = "image/jpeg";
+
+        contents = [
+          { 
+            text: prompt + "\n\n[INSTRUCTION]: Read the resume text directly from this uploaded resume image with high OCR accuracy. Evaluate the resume structure, formatting readability, and content signals from the visual image." 
+          },
+          {
+            inlineData: {
+              data: base64String,
+              mimeType: imageMime
+            }
+          }
+        ];
+      } else if (isDocx) {
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const result = await mammoth.convertToHtml({ buffer });
+        resumeText = result.value.replace(/<[^>]+>/g, " ");
+        contents = [prompt + "\n\nRESUME TEXT (Extracted from DOCX):\n" + resumeText.substring(0, 15000)];
       } else {
-        const resumeText = await file.text();
+        resumeText = await file.text();
         contents = [prompt + "\n\nRESUME TEXT:\n" + resumeText.substring(0, 15000)];
       }
 
@@ -309,7 +355,7 @@ Return ONLY a valid JSON object matching this exact structure:
       
       try {
         // Fallback text extraction if Gemini fails
-        let fallbackText = pdfText;
+        let fallbackText = pdfText || resumeText;
         if (!fallbackText) {
           if (isPDF) {
             if (!PDFParser) {
@@ -323,6 +369,13 @@ Return ONLY a valid JSON object matching this exact structure:
               pdfParser.on("pdfParser_dataReady", () => resolve(pdfParser.getRawTextContent()));
               pdfParser.parseBuffer(buffer);
             });
+          } else if (isDocx) {
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            const result = await mammoth.convertToHtml({ buffer });
+            fallbackText = result.value.replace(/<[^>]+>/g, " ");
+          } else if (isImage) {
+            throw new Error(`Gemini failed on image scan (${geminiError.message || "Vision API error"}). Please upload a PDF or Word version.`);
           } else {
             fallbackText = await file.text();
           }
@@ -331,7 +384,7 @@ Return ONLY a valid JSON object matching this exact structure:
         responseText = await generateGroqFallback(prompt + "\n\nRESUME TEXT:\n" + fallbackText, true);
       } catch (groqError: any) {
         console.error("Groq fallback also failed:", groqError);
-        throw new Error("All AI generation engines are currently exhausted or unavailable.");
+        throw new Error(groqError.message || "All AI generation engines are currently exhausted or unavailable.");
       }
     }
 

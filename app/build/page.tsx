@@ -2513,10 +2513,10 @@ function BuildPageContent() {
               <span className="tracking-wide">Reset</span>
             </button>
 
-            <label className={`relative text-sm text-white transition-all duration-300 ease-in-out font-bold cursor-pointer px-6 py-2.5 rounded-[14px] flex items-center space-x-2 shadow-[0_2px_10px_rgba(1,105,111,0.2)] hover:shadow-[0_6px_20px_rgba(1,105,111,0.3)] hover:-translate-y-0.5 ${isParsing ? 'bg-primary/70 cursor-wait' : 'bg-primary hover:bg-[#014e52]'}`} title="Auto-fill form from a PDF or DOCX resume">
+            <label className={`relative text-sm text-white transition-all duration-300 ease-in-out font-bold cursor-pointer px-6 py-2.5 rounded-[14px] flex items-center space-x-2 shadow-[0_2px_10px_rgba(1,105,111,0.2)] hover:shadow-[0_6px_20px_rgba(1,105,111,0.3)] hover:-translate-y-0.5 ${isParsing ? 'bg-primary/70 cursor-wait' : 'bg-primary hover:bg-[#014e52]'}`} title="Auto-fill form from a PDF, Word (DOCX), or Image resume">
               {isParsing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               <span className="tracking-wide">{isParsing ? 'Parsing Document...' : 'Auto-Fill from Resume'}</span>
-              <input type="file" accept=".pdf,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={handleAutoFillUpload} className="hidden" disabled={isParsing} />
+              <input type="file" accept=".pdf,application/pdf,.docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword,image/png,image/jpeg,image/webp,image/jpg,.png,.jpg,.jpeg,.webp" onChange={handleAutoFillUpload} className="hidden" disabled={isParsing} />
             </label>
             <ThemeToggle />
           </div>

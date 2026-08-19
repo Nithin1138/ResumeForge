@@ -9,7 +9,7 @@ import {
   UploadCloud, FileText, CheckCircle, 
   ArrowRight, AlertCircle, RefreshCw,
   Award, TrendingUp, ShieldCheck,
-  Cpu, Database, Code, ScanLine, Layout, Briefcase, Zap
+  Cpu, Database, Code, ScanLine, Layout, Briefcase, Zap, Image as ImageIcon
 } from "lucide-react";
 
 interface CategoryScore {
@@ -26,6 +26,30 @@ interface ATSResult {
   extractedData?: any;
 }
 
+const isSupportedResumeFile = (file: File): boolean => {
+  const fileName = (file.name || "").toLowerCase();
+  const fileType = (file.type || "").toLowerCase();
+  return (
+    fileType === "application/pdf" ||
+    fileName.endsWith(".pdf") ||
+    fileName.endsWith(".docx") ||
+    fileName.endsWith(".doc") ||
+    fileType.includes("wordprocessingml") ||
+    fileType.includes("msword") ||
+    fileType.startsWith("image/") ||
+    fileName.endsWith(".png") ||
+    fileName.endsWith(".jpg") ||
+    fileName.endsWith(".jpeg") ||
+    fileName.endsWith(".webp")
+  );
+};
+
+const isImageFile = (file: File): boolean => {
+  const fileName = (file.name || "").toLowerCase();
+  const fileType = (file.type || "").toLowerCase();
+  return fileType.startsWith("image/") || fileName.endsWith(".png") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".webp");
+};
+
 const SCORING_CRITERIA = [
   { name: "Keyword Match", weightage: 35, description: "Density and relevance of technical keywords.", icon: Database },
   { name: "Parsing & Structure", weightage: 25, description: "Machine readability and formatting integrity.", icon: Code },
@@ -37,7 +61,7 @@ const SCORING_CRITERIA = [
 
 const LOADING_STEPS = [
   "Initializing audit...",
-  "Parsing document structure...",
+  "Parsing document structure & visual layout...",
   "Extracting semantic signals...",
   "Cross-referencing keywords...",
   "Evaluating recruiter readability...",
@@ -84,11 +108,11 @@ export default function ATSCheckPage() {
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const droppedFile = e.dataTransfer.files[0];
-      if (droppedFile.type === "application/pdf" || droppedFile.name.endsWith(".pdf")) {
+      if (isSupportedResumeFile(droppedFile)) {
         setFile(droppedFile);
         setError(null);
       } else {
-        setError("Please upload a PDF file.");
+        setError("Please upload a PDF, DOCX, or Image (PNG, JPG, WebP) resume file.");
       }
     }
   };
@@ -96,11 +120,11 @@ export default function ATSCheckPage() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
-      if (selectedFile.type === "application/pdf" || selectedFile.name.endsWith(".pdf")) {
+      if (isSupportedResumeFile(selectedFile)) {
         setFile(selectedFile);
         setError(null);
       } else {
-        setError("Please upload a PDF file.");
+        setError("Please upload a PDF, DOCX, or Image (PNG, JPG, WebP) resume file.");
       }
     }
   };
@@ -244,21 +268,25 @@ export default function ATSCheckPage() {
                         type="file"
                         ref={fileInputRef}
                         onChange={handleFileSelect}
-                        accept=".pdf,application/pdf"
+                        accept=".pdf,application/pdf,.docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword,image/png,image/jpeg,image/webp,image/jpg,.png,.jpg,.jpeg,.webp"
                         className="hidden"
                       />
                       
                       {file ? (
                         <div className="flex flex-col items-center">
-                          <FileText className="w-10 h-10 md:w-12 md:h-12 text-primary mb-3.5" />
+                          {isImageFile(file) ? (
+                            <ImageIcon className="w-10 h-10 md:w-12 md:h-12 text-primary mb-3.5" />
+                          ) : (
+                            <FileText className="w-10 h-10 md:w-12 md:h-12 text-primary mb-3.5" />
+                          )}
                           <p className="font-bold text-text text-base md:text-xl mb-1 truncate max-w-[200px] md:max-w-[250px]">{file.name}</p>
                           <p className="text-xs md:text-sm text-text-muted">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center">
                           <UploadCloud className="w-8 h-8 md:w-10 md:h-10 text-text-muted mb-3.5" />
-                          <p className="font-bold text-text text-sm md:text-lg mb-1">Tap to select your resume PDF</p>
-                          <p className="text-xs text-text-muted">Max size: 5MB</p>
+                          <p className="font-bold text-text text-sm md:text-lg mb-1">Tap to select your resume (PDF, Word, or Image)</p>
+                          <p className="text-xs text-text-muted">Supports PDF, DOCX, PNG, JPG, WebP • Max 5MB</p>
                         </div>
                       )}
                     </div>
@@ -266,7 +294,7 @@ export default function ATSCheckPage() {
                     <div className="mt-4 flex items-start space-x-2 text-left bg-surface/50 border border-border p-3 rounded-xl w-full">
                       <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
                       <p className="text-xs text-text-muted leading-relaxed">
-                        <strong className="text-text">100% Private Audit:</strong> Your PDF is processed entirely in-memory and is <strong>never stored</strong> or sent to third-party databases.
+                        <strong className="text-text">100% Private Audit:</strong> Your resume is processed entirely in-memory and is <strong>never stored</strong> or sent to third-party databases.
                       </p>
                     </div>
 
