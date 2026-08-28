@@ -101,32 +101,22 @@ interface Props {
 import { getTemplateById } from "@/lib/templatesConfig";
 
 function SectionTitle({ children, accentColor }: { children: React.ReactNode; accentColor?: string }) {
-  const color = accentColor || "#1e293b";
+  const color = accentColor || "#111827";
   return (
-    <div style={{ marginBottom: "5pt", marginTop: "8pt", width: "100%" }}>
+    <div style={{ marginBottom: "4.5pt", marginTop: "8pt", width: "100%" }}>
       <div style={{
-        fontSize: "11pt",
+        fontSize: "10.5pt",
         fontWeight: "bold",
         textTransform: "uppercase",
         letterSpacing: "0.5px",
         color: color,
-        paddingBottom: "1.5pt",
+        paddingBottom: "2pt",
+        borderBottom: "1px solid #cbd5e1",
         width: "100%",
+        boxSizing: "border-box",
       }}>
         {children}
       </div>
-      <div
-        className="section-divider-line"
-        style={{
-          width: "100%",
-          height: "1.5px",
-          minHeight: "1.5px",
-          backgroundColor: color,
-          borderBottom: `1.5px solid ${color}`,
-          display: "block",
-          marginTop: "1px",
-        }}
-      />
     </div>
   );
 }
@@ -551,19 +541,8 @@ function cleanBulletList(bulletsInput: any): string[] {
           #resume-print-target *, .print-exact * {
             box-sizing: border-box !important;
             visibility: visible !important;
-          }
-          .section-divider-line {
-            display: block !important;
-            width: 100% !important;
-            height: 1.5pt !important;
-            min-height: 1.5pt !important;
-            border-bottom: 1.5pt solid currentColor !important;
-            background-color: currentColor !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
-            visibility: visible !important;
-            margin-top: 1pt !important;
-            margin-bottom: 3pt !important;
           }
         }
       `}</style>
