@@ -258,6 +258,26 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
 
     setEditingProjectIdx(null);
   };
+
+  const handleDeleteProject = (idx: number) => {
+    if (typeof window !== "undefined" && !window.confirm("Are you sure you want to delete this project from your resume?")) {
+      return;
+    }
+    setLiveResume((prev: any) => {
+      const currentOutput = prev || output;
+      const next = JSON.parse(JSON.stringify(currentOutput));
+      if (next.projects && Array.isArray(next.projects)) {
+        next.projects.splice(idx, 1);
+      }
+      return next;
+    });
+    setProjectEditTexts((prev) => {
+      const copy = { ...prev };
+      delete copy[idx];
+      return copy;
+    });
+    setEditingProjectIdx(null);
+  };
   
   const [density, setDensity] = useState<"concise" | "normal" | "expand">("normal");
   const [isAdjustingDensity, setIsAdjustingDensity] = useState(false);
@@ -1687,6 +1707,18 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                       <span>{isEditingThisProj ? "Editing" : "Edit Points"}</span>
                     </button>
 
+                    {isEditingThisProj && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteProject(idx)}
+                        className="text-xs font-semibold text-error hover:bg-error/10 border border-error/30 transition-all flex items-center space-x-1.5 px-3 py-1.5 rounded-full cursor-pointer"
+                        title="Delete this project"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Delete</span>
+                      </button>
+                    )}
+
                     <button
                       onClick={() => {
                         const inputProj = resume?.inputData?.projects?.[idx];
@@ -1799,20 +1831,33 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                       />
                     </div>
 
-                    <div className="flex items-center justify-end space-x-2 pt-1">
+                    <div className="flex items-center justify-between pt-1">
                       <button
-                        onClick={() => setEditingProjectIdx(null)}
-                        className="px-4 py-2 rounded-xl border border-border bg-bg-base text-text-muted text-xs font-bold hover:text-text transition-colors cursor-pointer"
+                        type="button"
+                        onClick={() => handleDeleteProject(idx)}
+                        className="px-3.5 py-2 rounded-xl border border-error/30 bg-error/10 text-error hover:bg-error hover:text-white text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs"
                       >
-                        Cancel
+                        <Trash2 className="w-4 h-4" />
+                        <span>Delete Project</span>
                       </button>
-                      <button
-                        onClick={() => saveProjectEdit(idx)}
-                        className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-xs flex items-center space-x-1.5 cursor-pointer"
-                      >
-                        <Check className="w-4 h-4" />
-                        <span>Save All Points</span>
-                      </button>
+
+                      <div className="flex items-center space-x-2">
+                        <button
+                          type="button"
+                          onClick={() => setEditingProjectIdx(null)}
+                          className="px-4 py-2 rounded-xl border border-border bg-bg-base text-text-muted text-xs font-bold hover:text-text transition-colors cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => saveProjectEdit(idx)}
+                          className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-xs flex items-center space-x-1.5 cursor-pointer"
+                        >
+                          <Check className="w-4 h-4" />
+                          <span>Save All Points</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ) : (
