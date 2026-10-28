@@ -56,10 +56,10 @@ export default function CoverLetterPreview({
 
   if (isLoading) {
     return (
-      <div className="w-full bg-white text-zinc-900 shadow-2xl border border-zinc-200 rounded-lg p-12 flex flex-col items-center justify-center min-h-[640px] text-center space-y-4">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
-        <h3 className="font-serif text-lg font-bold text-zinc-800">Generating Single-Page Cover Letter...</h3>
-        <p className="text-xs text-zinc-500 max-w-sm">
+      <div className="w-full bg-white text-zinc-900 shadow-2xl border border-zinc-200 rounded-lg p-6 sm:p-12 flex flex-col items-center justify-center min-h-[280px] sm:min-h-[440px] lg:min-h-[580px] text-center space-y-4">
+        <Loader2 className="w-8 h-8 sm:w-10 sm:h-10 text-primary animate-spin" />
+        <h3 className="font-serif text-base sm:text-lg font-bold text-zinc-800">Generating Single-Page Cover Letter...</h3>
+        <p className="text-[11px] sm:text-xs text-zinc-500 max-w-sm">
           Aligning target role, company requirements, and candidate background...
         </p>
       </div>
@@ -68,12 +68,12 @@ export default function CoverLetterPreview({
 
   if (!data) {
     return (
-      <div className="w-full bg-white/70 text-zinc-700 border-2 border-dashed border-zinc-300 rounded-lg p-12 flex flex-col items-center justify-center min-h-[640px] text-center space-y-4">
-        <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-          <FileText className="w-7 h-7" />
+      <div className="w-full bg-white/70 text-zinc-700 border-2 border-dashed border-zinc-300 rounded-lg p-6 sm:p-12 flex flex-col items-center justify-center min-h-[280px] sm:min-h-[440px] lg:min-h-[580px] text-center space-y-3 sm:space-y-4">
+        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+          <FileText className="w-6 h-6 sm:w-7 sm:h-7" />
         </div>
-        <h3 className="font-serif text-xl font-bold text-zinc-800">Cover Letter Preview</h3>
-        <p className="text-xs text-zinc-500 max-w-sm font-medium leading-relaxed">
+        <h3 className="font-serif text-lg sm:text-xl font-bold text-zinc-800">Cover Letter Preview</h3>
+        <p className="text-[11px] sm:text-xs text-zinc-500 max-w-sm font-medium leading-relaxed">
           Fill your target application details and click <span className="font-bold text-primary">"Generate Cover Letter"</span> to construct your ATS-aligned single-page document.
         </p>
       </div>
@@ -87,7 +87,7 @@ export default function CoverLetterPreview({
   return (
     <div
       id="cover-letter-document"
-      className="w-full max-w-[210mm] aspect-[210/297] min-h-[297mm] bg-white text-zinc-900 shadow-2xl border border-zinc-200/90 rounded-sm p-8 sm:p-12 md:p-14 flex flex-col justify-between font-sans text-xs leading-relaxed relative select-text mx-auto my-0 box-border"
+      className="w-full max-w-[210mm] aspect-[210/297] min-h-[auto] sm:min-h-[297mm] bg-white text-zinc-900 shadow-2xl border border-zinc-200/90 rounded-sm p-6 sm:p-10 md:p-14 flex flex-col justify-between font-sans text-xs leading-relaxed relative select-text mx-auto my-0 box-border overflow-x-hidden"
     >
       {/* ── TOP HEADER (Matching Resume Template Accent & Header Style) ── */}
       <div>

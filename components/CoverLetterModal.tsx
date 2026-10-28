@@ -62,6 +62,7 @@ export default function CoverLetterModal({
   const [coverLetter, setCoverLetter] = useState<CoverLetterData | null>(initialCoverLetter || null);
   const [mounted, setMounted] = useState(false);
   const [zoomScale, setZoomScale] = useState<number>(0.65);
+  const [mobileTab, setMobileTab] = useState<"form" | "preview">(initialCoverLetter ? "preview" : "form");
 
   useEffect(() => {
     setMounted(true);
@@ -160,6 +161,7 @@ export default function CoverLetterModal({
       const data = await res.json();
       if (data.coverLetter) {
         setCoverLetter(data.coverLetter);
+        setMobileTab("preview");
       }
     } catch (err: any) {
       alert(err.message || "Failed to generate cover letter. Please try again.");
@@ -335,11 +337,44 @@ export default function CoverLetterModal({
           </div>
         )}
 
+        {/* Mobile View Switcher (< lg screens) */}
+        {!readOnly && (
+          <div className="lg:hidden flex items-center p-2 bg-surface border-b border-border/80 gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setMobileTab("form")}
+              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                mobileTab === "form"
+                  ? "bg-primary text-white shadow-xs"
+                  : "bg-bg-base/80 text-text-muted hover:text-text border border-border/60"
+              }`}
+            >
+              <Sliders className="w-3.5 h-3.5" />
+              <span>1. Application Details</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileTab("preview")}
+              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                mobileTab === "preview"
+                  ? "bg-primary text-white shadow-xs"
+                  : "bg-bg-base/80 text-text-muted hover:text-text border border-border/60"
+              }`}
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>2. Live Preview</span>
+              {coverLetter && (
+                <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+              )}
+            </button>
+          </div>
+        )}
+
         {/* Main Content Area */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-y-auto divide-y lg:divide-y-0 lg:divide-x divide-border/60">
           {/* Left Form Controls Panel */}
           {!readOnly && (
-            <div className="lg:col-span-5 p-4 md:p-6 space-y-4 overflow-y-auto bg-surface/40">
+            <div className={`lg:col-span-5 p-4 md:p-6 space-y-4 overflow-y-auto bg-surface/40 ${mobileTab === "form" ? "block" : "hidden lg:block"}`}>
             
             {/* Direct Candidate Details Accordion (If no resume passed) */}
             {isDirectMode && (
@@ -604,8 +639,24 @@ export default function CoverLetterModal({
           )}
 
           {/* Right Document Preview Panel */}
-          <div className={`${readOnly ? "lg:col-span-12 max-w-3xl mx-auto w-full" : "lg:col-span-7"} p-4 md:p-6 flex flex-col justify-between bg-bg-base/30 space-y-4`}>
-            <div className="flex-1 overflow-y-auto min-h-[420px] flex items-center justify-center">
+          <div className={`${readOnly ? "lg:col-span-12 max-w-3xl mx-auto w-full" : "lg:col-span-7"} p-3 sm:p-4 md:p-6 flex flex-col justify-between bg-bg-base/30 space-y-4 ${mobileTab === "preview" ? "flex" : "hidden lg:flex"}`}>
+            {/* Mobile Header in Preview */}
+            {!readOnly && (
+              <div className="lg:hidden flex items-center justify-between pb-2 border-b border-border/50">
+                <button
+                  type="button"
+                  onClick={() => setMobileTab("form")}
+                  className="text-xs text-primary font-bold flex items-center gap-1.5 cursor-pointer hover:underline"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>← Edit Application Details</span>
+                </button>
+                <span className="text-[10px] text-text-muted font-bold">
+                  {coverLetter ? "Generated Letter" : "Draft Preview"}
+                </span>
+              </div>
+            )}
+            <div className="flex-1 overflow-y-auto min-h-[300px] sm:min-h-[420px] flex items-center justify-center">
               <CoverLetterPreview
                 data={coverLetter}
                 isLoading={isGenerating}
