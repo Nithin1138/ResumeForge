@@ -5,7 +5,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon_Serverless-336791?style=flat-square&logo=postgresql)](https://neon.tech/)
 [![Prisma](https://img.shields.io/badge/Prisma-7.x-2D3748?style=flat-square&logo=prisma)](https://www.prisma.io/)
 [![Gemini](https://img.shields.io/badge/AI_Engine-Google_Gemini-8E75C2?style=flat-square&logo=google)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Tests-15_Passed-brightgreen?style=flat-square&logo=node.js)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-20_Passed-brightgreen?style=flat-square&logo=node.js)](tests/)
 
 > **Live Platform:** [atslift.app](https://atslift.app)  
 > **Master Technical Interview Guide & Architecture Deep-Dive:** [RESUME.md](RESUME.md)
@@ -70,7 +70,7 @@ flowchart LR
 The test suite runs with zero external test framework bloat using Node's built-in test runner:
 
 ```bash
-# Run all unit and integration tests
+# Run all 20 unit, integration, and navigation tests
 npm test
 
 # Run stress & concurrency benchmarks against live routes
@@ -81,10 +81,16 @@ npm run test:email:all
 ```
 
 ### Test Coverage Highlights:
+- **`tests/unit/navigation.test.ts`**: Mobile drawer & 1-thumb bottom navigation route uniqueness, valid paths, and active matching logic.
 - **`tests/unit/atsFormatting.test.ts`**: Section extraction, line limits, and tech stack deduplication.
 - **`tests/unit/atsScoring.test.ts`**: ATS gap analysis, score boundary clamping [35, 95], and heuristic fallbacks.
 - **`tests/unit/eligibilityChecker.test.ts`**: Multi-branch matching rules, CGPA cutoffs, and non-rejection uncertain fallbacks.
 - **`tests/integration/apiFlow.test.ts`**: Webhook payload validation, HMAC SHA-256 signature verification, and schema integrity.
+
+### Quick Manual Verification Flows:
+1. **ATS Check & Rate Limiting (`/api/ats-check`)**: Upload a PDF or Word file under 5MB. Files >5MB or unsupported formats receive clean, student-friendly error advice. Rate limited to 10 requests/min per IP.
+2. **Sandbox Payment Flow**: Navigate to payment and append `?sandbox=true` to instantly test webhook unlocking without live INR charges.
+3. **Platform Health Ping (`/api/health`)**: Query `GET /api/health` for real-time uptime, PostgreSQL connection status, and AI engine availability.
 
 ---
 

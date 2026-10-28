@@ -43,24 +43,81 @@ if (PDFParse) {
   }
 }
 
-// Configure maximum size (e.g., 5MB)
+// Configure maximum size (5MB standard for candidate resumes)
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+// In-Memory Sliding Window Rate Limiter (10 requests per 60s per client)
+interface RateLimitRecord {
+  count: number;
+  resetAt: number;
+}
+const rateLimitMap = new Map<string, RateLimitRecord>();
+
+function checkRateLimit(ip: string, limit = 10, windowMs = 60_000): { allowed: boolean; retryAfter?: number } {
+  const now = Date.now();
+  
+  // Periodic pruning of expired entries
+  if (rateLimitMap.size > 500) {
+    for (const [key, val] of rateLimitMap.entries()) {
+      if (val.resetAt < now) rateLimitMap.delete(key);
+    }
+  }
+
+  const record = rateLimitMap.get(ip);
+  if (!record || record.resetAt < now) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + windowMs });
+    return { allowed: true };
+  }
+
+  if (record.count >= limit) {
+    return { allowed: false, retryAfter: Math.ceil((record.resetAt - now) / 1000) };
+  }
+
+  record.count += 1;
+  return { allowed: true };
+}
 
 export async function POST(req: NextRequest) {
   try {
+    // 1. Client IP rate limiting to prevent abuse
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "anonymous_client";
+    const rateCheck = checkRateLimit(clientIp, 10, 60_000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: "You've submitted multiple ATS checks quickly. Please wait a minute before analyzing another document.",
+          hint: "ATS checks are free, but limited to 10 per minute per candidate to keep service fast for all students.",
+          code: "RATE_LIMITED",
+          retryAfter: rateCheck.retryAfter,
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(rateCheck.retryAfter || 60),
+          },
+        }
+      );
+    }
+
     const formData = await req.formData();
     const file = (formData.get("file") || formData.get("resume")) as File | null;
 
     if (!file) {
       return NextResponse.json(
-        { error: "No file provided" },
+        {
+          error: "No resume file was attached. Please select a PDF (.pdf) or Word (.docx) document to evaluate your ATS score.",
+          code: "NO_FILE"
+        },
         { status: 400 }
       );
     }
 
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: "File size exceeds 5MB limit" },
+        {
+          error: "File size exceeds 5MB limit. Most recruiter ATS portals reject oversized files—try compressing your PDF or saving without high-res embedded graphics.",
+          code: "FILE_TOO_LARGE"
+        },
         { status: 400 }
       );
     }
@@ -407,10 +464,16 @@ Return ONLY a valid JSON object matching this exact structure:
 
   } catch (error: any) {
     console.error("API /api/ats-check POST error:", error?.message || error);
-    const isClientError = error?.message?.includes("File size exceeds") || error?.message?.includes("No file provided");
+    const msg = error?.message || "";
+    const isClientError = msg.includes("5MB limit") || msg.includes("No resume file") || msg.includes("Unsupported document");
     return NextResponse.json(
-      { error: isClientError ? error.message : "Our AI parsing engine encountered a temporary issue. Please try again in a moment." },
+      { 
+        error: isClientError ? msg : "Our ATS analysis engine encountered a temporary issue while scanning your resume. Please check your document and try again.",
+        hint: "Tip: Ensure your PDF has selectable text and is not an encrypted or flattened scanned image.",
+        code: isClientError ? "INVALID_INPUT" : "SCAN_FAILED"
+      },
       { status: isClientError ? 400 : 500 }
     );
   }
 }
+

@@ -368,7 +368,7 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
     const fetchOrUnlockResume = async () => {
       try {
         if (isSandbox) {
-          // Trigger local webhook simulation to mark resume as PAID in SQLite
+          // Trigger local webhook simulation to mark resume as PAID in database
           await fetch("/api/payment/webhook", {
             method: "POST",
             headers: { "Content-Type": "application/json" },

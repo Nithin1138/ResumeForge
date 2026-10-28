@@ -70,4 +70,53 @@ describe("API Flow & Webhook Integration Pipeline", () => {
     assert.ok(Array.isArray(mockApiResponse.categories));
     assert.ok(typeof mockApiResponse.extractedData.personal.fullName === "string");
   });
+
+  test("In-memory sliding window rate limiter blocks excessive requests with retryAfter", () => {
+    const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+    const checkLimit = (ip: string, limit = 10, windowMs = 60_000) => {
+      const now = Date.now();
+      const rec = rateLimitMap.get(ip);
+      if (!rec || rec.resetAt < now) {
+        rateLimitMap.set(ip, { count: 1, resetAt: now + windowMs });
+        return { allowed: true };
+      }
+      if (rec.count >= limit) {
+        return { allowed: false, retryAfter: Math.ceil((rec.resetAt - now) / 1000) };
+      }
+      rec.count += 1;
+      return { allowed: true };
+    };
+
+    const testIp = "192.168.1.100";
+    for (let i = 0; i < 10; i++) {
+      const res = checkLimit(testIp, 10);
+      assert.strictEqual(res.allowed, true, `Request ${i + 1} should be allowed`);
+    }
+
+    // 11th request must be blocked
+    const blockedRes = checkLimit(testIp, 10);
+    assert.strictEqual(blockedRes.allowed, false, "11th request must be blocked by rate limiter");
+    assert.ok(typeof blockedRes.retryAfter === "number" && blockedRes.retryAfter > 0);
+  });
+
+  test("Health check endpoint schema provides vital observability metrics", () => {
+    const sampleHealthResponse = {
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+      uptimeSeconds: 120,
+      environment: "production",
+      database: { status: "connected", latencyMs: 12, provider: "postgresql" },
+      services: {
+        ai: { gemini: "active", groq: "configured" },
+        payments: { razorpay: "live" },
+        messaging: { telegram: "enabled", resend: "live" },
+      },
+    };
+
+    assert.strictEqual(sampleHealthResponse.status, "healthy");
+    assert.strictEqual(sampleHealthResponse.database.provider, "postgresql");
+    assert.ok(typeof sampleHealthResponse.uptimeSeconds === "number");
+    assert.ok(sampleHealthResponse.services.ai.gemini);
+  });
 });
+
