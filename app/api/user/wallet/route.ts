@@ -12,6 +12,19 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const isLite = req.nextUrl.searchParams.get("lite") === "true";
+
+    if (isLite) {
+      const user = await prisma.user.findFirst({
+        where: { email: session.user.email },
+        select: { walletBalance: true },
+      });
+      return NextResponse.json(
+        { balance: user?.walletBalance || 0 },
+        { headers: { "Cache-Control": "private, max-age=15, stale-while-revalidate=30" } }
+      );
+    }
+
     const user = await prisma.user.findFirst({
       where: { email: session.user.email },
       include: {

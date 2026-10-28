@@ -21,11 +21,11 @@ import {
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-let globalWalletCache: number | null = null;
+import { getCachedWalletBalance } from "@/lib/walletClient";
 
 export default function DesktopSidebar() {
   const pathname = usePathname();
-  const [walletBalance, setWalletBalance] = useState<number | null>(globalWalletCache);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
   useEffect(() => {
@@ -34,15 +34,16 @@ export default function DesktopSidebar() {
       if (saved === "true") setIsCollapsed(true);
     }
 
-    fetch("/api/user/wallet")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data && typeof data.balance === "number") {
-          globalWalletCache = data.balance;
-          setWalletBalance(data.balance);
-        }
-      })
-      .catch(() => {});
+    let isMounted = true;
+    getCachedWalletBalance().then((bal) => {
+      if (isMounted && typeof bal === "number") {
+        setWalletBalance(bal);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const toggleSidebar = () => {

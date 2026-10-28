@@ -22,14 +22,45 @@ export default async function DashboardPage() {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    include: {
+    select: {
+      id: true,
+      masterProfile: true,
       resumes: {
         orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          createdAt: true,
+          resumeName: true,
+          targetRole: true,
+          college: true,
+          cgpa: true,
+          paymentStatus: true,
+          outputFull: true,
+        },
       },
       coverLetters: {
         orderBy: { createdAt: "desc" },
+        take: 10,
+        select: {
+          id: true,
+          createdAt: true,
+          companyName: true,
+          targetRole: true,
+          tone: true,
+          candidateName: true,
+          candidateLocation: true,
+          candidateEmail: true,
+          candidatePhone: true,
+          openingParagraph: true,
+          bodyParagraph: true,
+          closingParagraph: true,
+          salutation: true,
+          signOff: true,
+          subject: true,
+          recipient: true,
+          categoryTag: true,
+        },
       },
-      masterProfile: true,
     },
   });
 

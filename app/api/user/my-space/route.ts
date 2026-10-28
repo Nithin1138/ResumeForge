@@ -14,12 +14,11 @@ export async function GET(req: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
         masterProfile: true,
-        resumes: {
-          orderBy: { createdAt: "desc" },
-          take: 1,
-        },
       },
     });
 
@@ -29,12 +28,18 @@ export async function GET(req: NextRequest) {
 
     let masterProfile = user.masterProfile;
 
-    // Auto-populate from latest resume if MasterProfile doesn't exist yet!
-    if (!masterProfile && user.resumes.length > 0) {
+    // Auto-populate from latest resume ONLY if MasterProfile doesn't exist yet!
+    if (!masterProfile) {
       try {
-        const latestResume = user.resumes[0];
-        const inputData = JSON.parse(latestResume.inputData || "{}");
-        const personal = inputData.personal || {};
+        const latestResume = await prisma.resume.findFirst({
+          where: { userId: user.id },
+          orderBy: { createdAt: "desc" },
+          select: { inputData: true, targetRole: true, college: true, branch: true, cgpa: true },
+        });
+
+        if (latestResume) {
+          const inputData = JSON.parse(latestResume.inputData || "{}");
+          const personal = inputData.personal || {};
 
         let extractedSkills: string[] = [];
         let extractedCertifications: string[] = [];
@@ -91,6 +96,7 @@ export async function GET(req: NextRequest) {
             ]),
           },
         });
+        }
       } catch (e) {
         console.error("Auto-populate master profile failed:", e);
       }

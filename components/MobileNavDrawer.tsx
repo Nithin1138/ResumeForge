@@ -22,6 +22,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "./theme-toggle";
 import { signOut } from "next-auth/react";
 
+import { getCachedWalletBalance } from "@/lib/walletClient";
+
 interface MobileNavDrawerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -31,17 +33,18 @@ export default function MobileNavDrawer({ isOpen, onClose }: MobileNavDrawerProp
   const pathname = usePathname();
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
 
-  // Fetch wallet balance
+  // Fetch cached wallet balance
   useEffect(() => {
     if (isOpen) {
-      fetch("/api/user/wallet")
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (data && typeof data.balance === "number") {
-            setWalletBalance(data.balance);
-          }
-        })
-        .catch(() => {});
+      let isMounted = true;
+      getCachedWalletBalance().then((bal) => {
+        if (isMounted && typeof bal === "number") {
+          setWalletBalance(bal);
+        }
+      });
+      return () => {
+        isMounted = false;
+      };
     }
   }, [isOpen]);
 
@@ -163,6 +166,7 @@ export default function MobileNavDrawer({ isOpen, onClose }: MobileNavDrawerProp
             <div className="p-4 border-b border-border/50 flex items-center justify-between">
               <Link
                 href="/dashboard"
+                prefetch={true}
                 onClick={onClose}
                 className="flex items-center space-x-2.5 overflow-hidden"
               >
@@ -189,6 +193,7 @@ export default function MobileNavDrawer({ isOpen, onClose }: MobileNavDrawerProp
             <div className="p-3.5 space-y-2 border-b border-border/40 bg-bg-base/30">
               <Link
                 href="/build"
+                prefetch={true}
                 onClick={onClose}
                 className="w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary/95 text-white text-xs font-black flex items-center justify-center space-x-2 shadow-sm transition-all cursor-pointer"
               >
@@ -208,6 +213,7 @@ export default function MobileNavDrawer({ isOpen, onClose }: MobileNavDrawerProp
                   <Link
                     key={item.name}
                     href={item.href}
+                    prefetch={true}
                     onClick={onClose}
                     className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer relative ${
                       item.active

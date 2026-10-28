@@ -3,19 +3,21 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Wallet } from "lucide-react";
+import { getCachedWalletBalance } from "@/lib/walletClient";
 
 export default function HeaderWalletBadge() {
   const [balance, setBalance] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("/api/user/wallet")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data && typeof data.balance === "number") {
-          setBalance(data.balance);
-        }
-      })
-      .catch(() => {});
+    let isMounted = true;
+    getCachedWalletBalance().then((bal) => {
+      if (isMounted && typeof bal === "number") {
+        setBalance(bal);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   if (balance === null) return null;

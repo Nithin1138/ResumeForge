@@ -4,7 +4,10 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle, Flame, ShieldCheck, Sparkles, ChevronDown, Award, XCircle, Eye, TrendingUp, Check, Menu, X } from "lucide-react";
 import { getLocalSession } from "@/lib/authClient";
-import CoverLetterModal from "@/components/CoverLetterModal";
+import dynamic from "next/dynamic";
+const CoverLetterModal = dynamic(() => import("@/components/CoverLetterModal"), {
+  ssr: false,
+});
 import { motion, AnimatePresence } from "framer-motion";
 
 const containerVariants = {

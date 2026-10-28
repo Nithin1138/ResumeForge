@@ -46,7 +46,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
             </button>
 
             {/* Logo Link to Dashboard */}
-            <Link href="/dashboard" className="flex items-center space-x-2">
+            <Link href="/dashboard" prefetch={true} className="flex items-center space-x-2">
               <img
                 src="/logo.png"
                 alt="ATSLift Logo"
@@ -62,6 +62,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
             <HeaderWalletBadge />
             <Link 
               href="/my-space" 
+              prefetch={true}
               className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-full border border-primary/40 bg-primary/10 text-primary text-xs font-bold hover:bg-primary/20 transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs" 
               title="My Space Vault & AI Assistant"
             >

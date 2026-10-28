@@ -1,7 +1,22 @@
 import type { Metadata, Viewport } from "next";
+import { Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/AuthProvider";
+
+const instrumentSerif = Instrument_Serif({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -37,7 +52,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased selection:bg-primary/20" suppressHydrationWarning>
-      <body className="min-h-full flex flex-col bg-bg-base text-text selection:bg-primary/20">
+      <head>
+        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap"
+        />
+      </head>
+      <body className={`${instrumentSerif.variable} ${jetbrainsMono.variable} min-h-full flex flex-col bg-bg-base text-text selection:bg-primary/20`}>
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
             {children}

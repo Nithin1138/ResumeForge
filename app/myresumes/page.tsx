@@ -15,9 +15,21 @@ export default async function MyResumesPage() {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    include: {
+    select: {
+      id: true,
       resumes: {
         orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          resumeName: true,
+          targetRole: true,
+          branch: true,
+          cgpa: true,
+          college: true,
+          createdAt: true,
+          paymentStatus: true,
+          categoryTag: true,
+        },
       },
     },
   });
@@ -35,7 +47,7 @@ export default async function MyResumesPage() {
     college: r.college,
     createdAt: r.createdAt.toISOString(),
     paymentStatus: r.paymentStatus,
-    inputData: r.inputData,
+    inputData: "",
     categoryTag: r.categoryTag || "blue",
   }));
 

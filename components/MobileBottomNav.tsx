@@ -33,6 +33,7 @@ export default function MobileBottomNav({ onOpenMenu, isMenuOpen }: MobileBottom
         {/* 1. Dashboard */}
         <Link
           href="/dashboard"
+          prefetch={true}
           className={`flex flex-col items-center justify-center py-1 rounded-xl transition-all ${
             isDashboard
               ? "text-primary font-black"
@@ -48,6 +49,7 @@ export default function MobileBottomNav({ onOpenMenu, isMenuOpen }: MobileBottom
         {/* 2. Resumes */}
         <Link
           href="/myresumes"
+          prefetch={true}
           className={`flex flex-col items-center justify-center py-1 rounded-xl transition-all ${
             isResumes
               ? "text-primary font-black"
@@ -64,6 +66,7 @@ export default function MobileBottomNav({ onOpenMenu, isMenuOpen }: MobileBottom
         <div className="flex flex-col items-center justify-center">
           <Link
             href="/build"
+            prefetch={true}
             aria-label="Build New Resume"
             className="w-11 h-11 -mt-4 rounded-full bg-primary hover:bg-primary/90 text-white flex items-center justify-center shadow-md hover:shadow-lg transition-all transform active:scale-95 border-2 border-surface cursor-pointer"
           >
@@ -75,6 +78,7 @@ export default function MobileBottomNav({ onOpenMenu, isMenuOpen }: MobileBottom
         {/* 4. My Space */}
         <Link
           href="/my-space"
+          prefetch={true}
           className={`flex flex-col items-center justify-center py-1 rounded-xl transition-all ${
             isMySpace
               ? "text-primary font-black"
