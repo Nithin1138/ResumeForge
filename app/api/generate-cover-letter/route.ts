@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { generateLlmText, hasLlmConfigured } from "@/lib/llm";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { getCleanSignOff } from "@/lib/coverLetter";
 
 export async function POST(req: NextRequest) {
   try {
@@ -71,7 +72,7 @@ CRITICAL INSTRUCTIONS:
    - "openingParagraph": String (Paragraph 1: Clear hook expressing genuine interest in the ${candidateRole} role at ${company}, introducing candidate's background in ${candidateBranch} from ${candidateCollege}.)
    - "bodyParagraph": String (Paragraph 2: Highlight core technical accomplishments, system architecture skills, or key engineering projects, proving capability and metric-driven impact.)
    - "closingParagraph": String (Paragraph 3: Reiteration of value add, alignment with ${company}'s engineering culture, and a proactive call to action for an interview.)
-   - "signOff": String (e.g. "Sincerely,\n${candidateName}")
+   - "signOff": String (Closing greeting only, e.g. "Sincerely," or "Best regards,")
 
 CANDIDATE DETAILS:
 Name: ${candidateName}
@@ -100,7 +101,7 @@ Return ONLY raw valid JSON matching the schema described. No markdown formatting
         openingParagraph: `I am writing to express my strong interest in the ${candidateRole} position at ${company}. Having closely followed ${company}'s technical innovations, I am eager to bring my background in ${candidateBranch} from ${candidateCollege} to your engineering team.`,
         bodyParagraph: `During my academic coursework and hands-on project work, I developed scalable applications utilizing modern frameworks, system design principles, and database management. I focused on building robust APIs, optimizing backend throughput, and implementing clean software architectures that deliver reliable user experiences.`,
         closingParagraph: `I am excited about the opportunity to contribute my technical foundation and problem-solving drive to ${company}. Thank you for your time and consideration; I look forward to discussing how my background aligns with your engineering goals.`,
-        signOff: `Sincerely,\n${candidateName}`
+        signOff: "Sincerely,"
       };
     } else {
       const responseText = await generateLlmText(prompt, { json: true });
@@ -109,6 +110,10 @@ Return ONLY raw valid JSON matching the schema described. No markdown formatting
         cleanedText = cleanedText.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
       }
       coverLetterData = JSON.parse(cleanedText);
+    }
+
+    if (coverLetterData && typeof coverLetterData === "object") {
+      coverLetterData.signOff = getCleanSignOff(coverLetterData.signOff, candidateName);
     }
 
     // Auto-save to PostgreSQL database if user is logged in

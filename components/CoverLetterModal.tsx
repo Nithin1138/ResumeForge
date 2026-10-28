@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, Sparkles, Copy, Check, Printer, Loader2, Building2, Briefcase, Sliders, FileText, User, GraduationCap, ChevronDown, ChevronUp, ArrowRight, MapPin, ArrowLeft } from "lucide-react";
-import CoverLetterPreview, { CoverLetterData } from "./CoverLetterPreview";
+import CoverLetterPreview, { CoverLetterData, getCleanSignOff } from "./CoverLetterPreview";
 
 interface CoverLetterModalProps {
   isOpen: boolean;
@@ -172,7 +172,8 @@ export default function CoverLetterModal({
 
   const handleCopyText = () => {
     if (!coverLetter) return;
-    const fullText = `${coverLetter.salutation || ""}\n\n${coverLetter.openingParagraph || ""}\n\n${coverLetter.bodyParagraph || ""}\n\n${coverLetter.closingParagraph || ""}\n\n${coverLetter.signOff || ""}`;
+    const cleanSignOff = getCleanSignOff(coverLetter.signOff, candidateName);
+    const fullText = `${coverLetter.salutation || ""}\n\n${coverLetter.openingParagraph || ""}\n\n${coverLetter.bodyParagraph || ""}\n\n${coverLetter.closingParagraph || ""}\n\n${cleanSignOff}\n${candidateName || "Candidate Name"}`;
     navigator.clipboard.writeText(fullText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

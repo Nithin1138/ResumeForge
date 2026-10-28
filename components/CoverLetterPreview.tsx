@@ -3,6 +3,9 @@
 import React from "react";
 import { TEMPLATES_CONFIG, TemplateDefinition } from "@/lib/templatesConfig";
 import { Loader2, FileText, Sparkles } from "lucide-react";
+import { getCleanSignOff } from "@/lib/coverLetter";
+
+export { getCleanSignOff };
 
 export interface CoverLetterData {
   recipient?: string;
@@ -83,6 +86,7 @@ export default function CoverLetterPreview({
   const nameDisplay = candidateName || "Candidate Name";
   const contactParts = [candidateEmail, candidatePhone, candidateLocation].filter(Boolean);
   const contactDisplay = contactParts.length > 0 ? contactParts.join(" • ") : "email@example.com • +91 98765 43210 • Location";
+  const cleanSignOff = getCleanSignOff(data.signOff, candidateName);
 
   return (
     <div
@@ -169,7 +173,7 @@ export default function CoverLetterPreview({
 
       {/* ── SIGN-OFF BLOCK ── */}
       <div className="mt-8 pt-4 border-t border-zinc-200">
-        <p className="font-semibold text-zinc-700">{data.signOff || "Sincerely,"}</p>
+        <p className="font-semibold text-zinc-700">{cleanSignOff}</p>
         <p className="font-bold text-zinc-900 text-sm mt-1">{nameDisplay}</p>
       </div>
     </div>
