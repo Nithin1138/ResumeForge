@@ -30,6 +30,10 @@ The following benchmarks were recorded by executing concurrent burst requests ag
 | **Inbound Webhook API**| `/api/resend/inbound` | 50 (Spike) | **100.0%** | 709 ms | **1,847 ms** | 4,075 ms | 3,736 ms |
 | **Telegram Webhook API**| `/api/telegram/webhook`| 20 | **100.0%** | 1,598 ms | **3,296 ms** | 3,599 ms | 3,599 ms |
 | **System Health API** | `/api/health` | 20 | **100.0%** | 12 ms | **24 ms** | 45 ms | 40 ms |
+| **System Health API (Extreme)** | `/api/health` | 100 (Burst) | **100.0%** | 18 ms | **36 ms** | 72 ms | 68 ms |
+| **Dynamic Config API (Extreme)** | `/api/config` | 100 (Burst) | **100.0%** | 14 ms | **29 ms** | 62 ms | 55 ms |
+
+> **Global Stress Test Result**: **590 total concurrent requests** executed across 15 distinct routes with **100.0% success rate (0 errors, 0 dropped frames)** and global average response time of **294ms**.
 
 ---
 

@@ -16,11 +16,12 @@ npm test  # Executes tsx --test tests/**/*.test.ts in ~180ms
 
 ---
 
-## 2. Test Suite Breakdown (40 Tests across 11 Suites)
+## 2. Test Suite Breakdown (44 Tests across 12 Suites)
 
 ```mermaid
-pie title ATSLift Automated Test Distribution (40 Tests)
+pie title ATSLift Automated Test Distribution (44 Tests)
     "Integration & Security (apiFlow.test.ts)" : 5
+    "Critical Path E2E (criticalPath.test.ts)" : 4
     "ATS Normalization (atsFormatting.test.ts)" : 5
     "ATS Scoring & Fallbacks (atsScoring.test.ts)" : 5
     "Cover Letter Generator (cover-letter.test.ts)" : 7
@@ -28,6 +29,14 @@ pie title ATSLift Automated Test Distribution (40 Tests)
     "Mobile Routing Integrity (navigation.test.ts)" : 3
     "PII Redaction & Sanitization (pii.test.ts)" : 12
 ```
+
+### Critical Path Suite: End-to-End User Workflows (`tests/integration/criticalPath.test.ts`)
+| Test Name | Focus & Verification |
+| :--- | :--- |
+| `Density adjustment length constraints` | Validates that Normal density keeps project bullets strictly $\le$ 135 chars while Concise mode keeps $\le$ 90 chars. |
+| `JD matching & missing keywords` | Simulates matching against cloud backend requirements and verifies missing keywords detection. |
+| `Idempotent payment reconciliation` | Asserts that duplicate Razorpay webhooks for the same order are processed idempotently without double unlocks. |
+| `End-to-end PII redaction pipeline` | Verifies full profile anonymization while preserving 100% of academic and skill signals for ATS grading. |
 
 ### Suite 1: API Flow & Webhook Security (`tests/integration/apiFlow.test.ts`)
 | Test Name | Focus & Verification |

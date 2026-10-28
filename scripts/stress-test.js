@@ -121,8 +121,22 @@ async function runFullStressTest() {
   console.log(`  [Automations Spike 50] Avg: ${spikeMetrics2.avgMs}ms | P95: ${spikeMetrics2.p95Ms}ms | Success: ${spikeMetrics2.successRate}%`);
   console.log(`  [Inbound API Spike 50] Avg: ${spikeMetrics3.avgMs}ms | P95: ${spikeMetrics3.p95Ms}ms | Success: ${spikeMetrics3.successRate}%`);
 
+  // Batch 4: Extreme 100-Concurrency Stress Test
+  console.log("\n▶ Phase 4: Extreme Concurrency Stress Test (100 Concurrent Connections)...");
+  const extreme1 = await runBenchmarkForRoute({ name: "System Health API (100 Concurrency)", path: "/api/health" }, 100);
+  const extreme2 = await runBenchmarkForRoute({ name: "Dynamic Config API (100 Concurrency)", path: "/api/config" }, 100);
+  allMetrics.push(extreme1, extreme2);
+
+  console.log(`  [Health API 100] Avg: ${extreme1.avgMs}ms | P95: ${extreme1.p95Ms}ms | Success: ${extreme1.successRate}%`);
+  console.log(`  [Config API 100] Avg: ${extreme2.avgMs}ms | P95: ${extreme2.p95Ms}ms | Success: ${extreme2.successRate}%`);
+
+  const totalReqs = allMetrics.reduce((sum, m) => sum + m.totalRequests, 0);
+  const successfulReqs = allMetrics.reduce((sum, m) => sum + m.successfulRequests, 0);
+  const globalSuccessRate = ((successfulReqs / totalReqs) * 100).toFixed(1);
+  const globalAvgMs = Math.round(allMetrics.reduce((sum, m) => sum + m.avgMs, 0) / allMetrics.length);
+
   console.log("\n==================================================");
-  console.log("📊 STRESS TEST COMPLETED SUCCESSFULLY!");
+  console.log(`📊 STRESS TEST COMPLETED: ${successfulReqs}/${totalReqs} requests succeeded (${globalSuccessRate}% success rate, Global Avg: ${globalAvgMs}ms)`);
   console.log("==================================================\n");
 
   // Output JSON formatted metrics for report generator
