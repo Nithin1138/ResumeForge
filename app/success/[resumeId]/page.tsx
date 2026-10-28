@@ -9,6 +9,7 @@ import confetti from "canvas-confetti";
 import { FullResumeOutput } from "@/types/resume";
 import { calculateDynamicMetrics } from "@/lib/atsScoring";
 import { getLocalSession } from "@/lib/authClient";
+import { normalizeNormalBullet } from "@/lib/atsFormatting";
 import ResumePreviewPanel, { formatEducationScore } from "@/components/ResumePreviewPanel";
 import CoverLetterModal from "@/components/CoverLetterModal";
 import AIVerificationSection from "@/components/AIVerificationSection";
@@ -345,7 +346,23 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
     : (resume?.outputFull 
         ? (typeof resume.outputFull === "string" ? JSON.parse(resume.outputFull) : resume.outputFull)
         : {});
-  const output = parsedOutput as FullResumeOutput;
+
+  // In normal mode, ensure project and experience bullets are formatted strictly to 1-1.5 lines
+  const output = useMemo(() => {
+    const raw = parsedOutput as FullResumeOutput;
+    if (density !== "normal" || !raw || !raw.projects) return raw;
+    return {
+      ...raw,
+      projects: (raw.projects || []).map((p: any) => ({
+        ...p,
+        bullets: Array.isArray(p.bullets) ? p.bullets.map(normalizeNormalBullet) : p.bullets,
+      })),
+      experience: (raw.experience || []).map((e: any) => ({
+        ...e,
+        bullets: Array.isArray(e.bullets) ? e.bullets.map(normalizeNormalBullet) : e.bullets,
+      })),
+    } as FullResumeOutput;
+  }, [parsedOutput, density]);
   const activeRoleIndex = activeProjectVariants?.[0] || 0;
 
   const isSkillsReordered = useMemo(() => {
@@ -1731,7 +1748,7 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
                             setLiveResume((prev: any) => {
                               const next = JSON.parse(JSON.stringify(prev));
                               const rawBullets = newText.split(/\n|(?<=\.)\s*[*•]\s*|\s+\*\s+/).filter(Boolean);
-                              next.projects[idx].bullets = rawBullets.map(b => b.replace(/^[\s*•\-–\d\.]+\s*/, "").trim()).filter(Boolean);
+                              next.projects[idx].bullets = rawBullets.map(b => normalizeNormalBullet(b.replace(/^[\s*•\-–\d\.]+\s*/, "").trim())).filter(Boolean);
                               return next;
                             });
                           },

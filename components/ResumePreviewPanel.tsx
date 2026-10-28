@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import { Lock } from "lucide-react";
+import { normalizeNormalBullet } from "@/lib/atsFormatting";
 
 // A4 paper at 96 dpi
 const NATURAL_W = 794;
@@ -354,7 +355,7 @@ function cleanBulletList(bulletsInput: any): string[] {
     cleaned = cleaned.replace(/^\d+[\.\)\:\-]\s+/, "").trim();
     cleaned = cleaned.replace(/\s+\*\s+/g, " ");
     if (cleaned.length > 0) {
-      result.push(cleaned);
+      result.push(normalizeNormalBullet(cleaned));
     }
   }
   return result;

@@ -1,7 +1,7 @@
 // tests/unit/atsFormatting.test.ts
 import { test, describe } from "node:test";
 import assert from "node:assert";
-import { trimSkillsToLineLimit, normalizeTechStack } from "../../lib/atsFormatting";
+import { trimSkillsToLineLimit, normalizeTechStack, normalizeNormalBullet } from "../../lib/atsFormatting";
 import { formatProfileDataForPrompt, buildAtsScoringPrompt } from "../../lib/ats-scoring";
 
 describe("ATS Formatting & Section Normalization", () => {
@@ -74,5 +74,29 @@ describe("ATS Formatting & Section Normalization", () => {
     assert.ok(prompt.includes("=== TARGET JOB DESCRIPTION (JD) ==="));
     assert.ok(prompt.includes("overall_score"));
     assert.ok(prompt.includes("STRICT JSON OUTPUT FORMAT"));
+  });
+
+  test("normalizeNormalBullet strips boilerplate and limits length to 1-1.5 lines", () => {
+    // 1. Tests the exact runaway string from the user's screenshot
+    const bloatedBullet1 = "Architected and implemented a high-performance system for Engineered a spatial demand forecasting pipeline, trained LightGBM quantile models with time-aware cross-validation, and delivered interpretable location recommendations via a FastAPI REST service., optimizing request latencies and response pipelines.";
+    const normalized1 = normalizeNormalBullet(bloatedBullet1);
+    assert.ok(normalized1.length <= 135, `Length ${normalized1.length} must be <= 135 characters (1-1.5 lines)`);
+    assert.ok(!normalized1.includes("Architected and implemented a high-performance system for"));
+    assert.ok(!normalized1.includes("optimizing request latencies and response pipelines"));
+    assert.ok(normalized1.endsWith("."));
+
+    // 2. Tests the second runaway string from the screenshot
+    const bloatedBullet2 = "Integrated a robust backend to handle Processed 711K+ hourly observations in H3-indexed cells to produce next-hour demand estimates for mobile vendors. Quantified demand risk by outputting calibrated uncertainty bounds. Surfaced top-N optimal vendor spots per query by integrating SHAP explanations and geographic scoring., scaling concurrency to handle 100+ simulated requests per second.";
+    const normalized2 = normalizeNormalBullet(bloatedBullet2);
+    assert.ok(normalized2.length <= 135, `Length ${normalized2.length} must be <= 135 characters (1-1.5 lines)`);
+    assert.ok(!normalized2.includes("Integrated a robust backend to handle"));
+    assert.ok(!normalized2.includes("scaling concurrency to handle 100+"));
+    assert.ok(normalized2.startsWith("Processed 711K+"));
+    assert.ok(normalized2.endsWith("."));
+
+    // 3. Tests preserving an already concise 1-1.5 line bullet
+    const goodBullet = "Engineered a spatial demand forecasting pipeline with time-aware cross-validation.";
+    const preserved = normalizeNormalBullet(goodBullet);
+    assert.strictEqual(preserved, goodBullet);
   });
 });

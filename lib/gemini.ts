@@ -1,6 +1,6 @@
 import { ResumeFormData, FullResumeOutput } from "@/types/resume";
 import { generateTechnicalSkills, SkillCategoryOutput } from "@/lib/skillsEngine";
-import { normalizeTechStack, optimizeResumeForAts } from "@/lib/atsFormatting";
+import { normalizeTechStack, optimizeResumeForAts, normalizeNormalBullet } from "@/lib/atsFormatting";
 import { generateLlmText, hasLlmConfigured } from "@/lib/llm";
 
 export { callGroq as generateGroqFallback } from "@/lib/llm";
@@ -99,8 +99,40 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
     cgpa: `${personal.pgCgpa || "9.0"} / 10.0`
   } : undefined;
 
-  // Build high-impact project bullets
+  // Build high-impact, clean 1 to 1.5 line project bullets (strictly 70-125 chars)
   const mockProjects = (projects.length > 0 && !isEmptyArray(projects)) ? projects.map((proj, idx) => {
+    let bulletsList: string[] = [];
+
+    if (Array.isArray(proj.bullets) && proj.bullets.length > 0) {
+      bulletsList = proj.bullets.map(b => normalizeNormalBullet(String(b))).filter(Boolean);
+    }
+
+    if (bulletsList.length === 0) {
+      const desc = (proj.description || "").trim();
+      const keyResult = (proj.keyResult || "").trim();
+
+      // Bullet 1: Core technical build / architecture (1-1.5 lines)
+      let b1 = desc
+        ? normalizeNormalBullet(desc)
+        : "Built modular backend services and data workflows for core system operations.";
+      if (b1.length < 65) {
+        b1 = "Architected high-throughput services, decreasing API query response times by 30%.";
+      }
+
+      // Bullet 2: Scalability, metrics, or data processing (1-1.5 lines)
+      let b2 = keyResult
+        ? normalizeNormalBullet(keyResult)
+        : "Engineered scalable data ingestion pipelines handling 50k+ daily transaction records.";
+      if (b2.length < 65) {
+        b2 = "Optimized database caching and indexing, scaling concurrency to 100+ req/sec.";
+      }
+
+      // Bullet 3: Performance, reliability, or deployment (1-1.5 lines)
+      const b3 = "Streamlined deployment pipelines, decreasing application loading times by 25%.";
+
+      bulletsList = [b1, b2, b3].map(normalizeNormalBullet);
+    }
+
     return {
       title: proj.title || `Project ${idx + 1}`,
       techStack: normalizeTechStack(proj.techStack || "React, Node.js"),
@@ -108,13 +140,7 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
       link: proj.githubLink || proj.link || "",
       githubLink: proj.githubLink || "",
       liveLink: proj.liveLink || "",
-
-
-      bullets: [
-        `Architected and implemented a high-performance system for ${proj.description || "core product operations"}, optimizing request latencies and response pipelines.`,
-        `Integrated a robust backend to handle ${proj.keyResult || "core key features"}, scaling concurrency to handle 100+ simulated requests per second.`,
-        `Streamlined deployment processes and client-side page rendering pathways, decreasing application loading times by 25%.`
-      ]
+      bullets: bulletsList.map(normalizeNormalBullet)
     };
   }) : (options?.noProjects ? [] : [
     {
@@ -123,23 +149,23 @@ const generateMockResume = (formData: ResumeFormData): FullResumeOutput => {
       duration: "Jan 2025 – Mar 2025",
       link: "https://github.com/student/ai-prep",
       bullets: [
-        "Built a full-stack automated behavioral interview prep portal, handling 150+ concurrent mock test sessions.",
-        "Engineered real-time audio-to-text scoring modules, increasing interview performance rating metrics by 35%.",
-        "Optimized client-side rendering pathways using React and Next.js, reducing interactive latency by 20%."
-      ]
+        "Built an automated interview portal handling 150+ concurrent mock test sessions.",
+        "Engineered real-time audio evaluation modules, boosting scoring accuracy by 35%.",
+        "Optimized client-side rendering pathways, reducing interactive latency by 20%."
+      ].map(normalizeNormalBullet)
     }
   ]);
 
-  // Build internships
+  // Build internships (1 to 1.5 lines each)
   const mockExperience = (internships.length > 0 && !isEmptyArray(internships)) ? internships.map((intern) => {
     return {
       company: intern.company || "Startup Tech",
       role: intern.role || "SDE Intern",
       duration: intern.duration || "May 2025 – Jul 2025",
       bullets: [
-        `Developed and optimized critical backend routes using ${intern.techUsed || "Node.js, Express"}, reducing page load times for 2,000+ daily visitors by 25%.`,
-        `Collaborated in agile team sprints to deploy key features: ${intern.workDone || "data reporting metrics"}, resolving 15+ bug reports.`,
-        `Configured CI/CD pipelines to automate testing and verification steps, improving deployment reliability by 30%.`
+        normalizeNormalBullet(`Developed and optimized backend routes using ${intern.techUsed || "Node.js"}, reducing page load times by 25%.`),
+        normalizeNormalBullet(`Collaborated in agile team sprints to deploy key features: ${intern.workDone || "data reporting workflows"}.`),
+        normalizeNormalBullet(`Configured CI/CD automated test pipelines, improving deployment reliability by 30%.`)
       ]
     };
   }) : [];

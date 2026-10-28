@@ -59,6 +59,7 @@ export interface ProjectInfo {
   liveLink?: string;    // Live demo / deployed URL
   duration: string;
   isFlash?: boolean;
+  bullets?: string[];
 }
 
 

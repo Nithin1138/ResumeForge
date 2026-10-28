@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateLlmText } from "@/lib/llm";
+import { normalizeNormalBullet } from "@/lib/atsFormatting";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -27,15 +28,17 @@ The target density option selected is: ${density.toUpperCase()}.
 
 DENSITY INSTRUCTIONS:
 1. CONCISE:
-   - Make every project and experience bullet point short, punchy, compact, and highly dense.
-   - Target character count: STRICTLY between 50 and 80 characters per bullet point.
+   - Make every project and experience bullet point short, punchy, compact, and strictly 1 single line.
+   - Target character count: STRICTLY between 45 and 75 characters per bullet point.
    - Summarize achievements to be short and brief.
 2. NORMAL:
-   - Standard resume length.
-   - Target character count: STRICTLY between 65 and 135 characters per bullet point.
+   - Standard engineering resume length (STRICTLY 1 to 1.5 lines on an A4 resume page).
+   - Target character count: STRICTLY between 70 and 120 characters per bullet point (maximum 130 characters).
+   - Each bullet must be a single punchy sentence starting with a strong action verb and highlighting impact/metric.
+   - Under NO circumstances output multi-sentence paragraphs, run-on clauses, or bullets longer than 1.5 lines.
 3. EXPAND:
-   - Elaborate slightly, adding more detail about the technical context, implementation, or impact.
-   - Target character count: STRICTLY between 130 and 180 characters per bullet point.
+   - Elaborate with deeper technical context and metrics.
+   - Target character count: STRICTLY between 140 and 190 characters per bullet point (2 to 2.5 lines).
 
 CRITICAL RULES:
 1. DO NOT change the core meaning, projects, metrics, or technologies used. Keep all numerical impact values (e.g. percentages, number of requests, latency figures) and technical terms EXACTLY the same.
@@ -83,6 +86,22 @@ ${JSON.stringify({
     }
 
     const jsonResult = JSON.parse(cleanedText);
+
+    if (density === "normal") {
+      if (Array.isArray(jsonResult.projects)) {
+        jsonResult.projects = jsonResult.projects.map((p: any) => ({
+          ...p,
+          bullets: Array.isArray(p.bullets) ? p.bullets.map(normalizeNormalBullet) : p.bullets,
+        }));
+      }
+      if (Array.isArray(jsonResult.experience)) {
+        jsonResult.experience = jsonResult.experience.map((e: any) => ({
+          ...e,
+          bullets: Array.isArray(e.bullets) ? e.bullets.map(normalizeNormalBullet) : e.bullets,
+        }));
+      }
+    }
+
     return NextResponse.json(jsonResult);
   } catch (error: any) {
     console.error("API /api/adjust-density POST error:", error);

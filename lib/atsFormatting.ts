@@ -72,6 +72,68 @@ function recalculateAtsScore(breakdown: FullResumeOutput["breakdown"]): number {
   return Object.values(breakdown).reduce((sum, v) => sum + v, 0);
 }
 
+/**
+ * Normalizes resume project and experience bullet points to strictly 1 to 1.5 lines
+ * (target: between 70 and 125 characters, maximum 135 characters).
+ * Strips accidental repetitive boilerplate prefixes, suffixes, and run-on paragraphs.
+ */
+export function normalizeNormalBullet(rawBullet: string): string {
+  if (!rawBullet || typeof rawBullet !== "string") return "";
+  let b = rawBullet.trim();
+
+  // 1. Remove leading list/bullet markers
+  b = b.replace(/^[•\*\-\–\—\s]+/, "").replace(/^\d+[\.\)\:\-]\s+/, "").trim();
+
+  // 2. Strip template wrappers that cause runaway length and double verbs
+  b = b.replace(/^Architected and implemented a high-performance system for\s+/i, "");
+  b = b.replace(/^Integrated a robust backend to handle\s+/i, "");
+  b = b.replace(/^Streamlined deployment processes and client-side page rendering pathways,\s+/i, "Streamlined deployment pipelines, ");
+
+  // Strip boilerplate suffixes
+  b = b.replace(/[,\s]*[.,]\s*optimizing request latencies and response pipelines\.?$/i, "");
+  b = b.replace(/[,\s]*[.,]\s*scaling concurrency to handle 100\+ simulated requests per second\.?$/i, "");
+  b = b.replace(/[.,\s]+$/, "").trim();
+
+  // 3. Fix double verbs or strange capitalization at start
+  b = b.charAt(0).toUpperCase() + b.slice(1);
+
+  // 4. If bullet contains multiple complete sentences, take the first complete punchy sentence
+  if (b.length > 130) {
+    const firstSentenceMatch = b.match(/^([^.?!]+[.?!])(?:\s+[A-Z]|$)/);
+    if (firstSentenceMatch && firstSentenceMatch[1].trim().length >= 60 && firstSentenceMatch[1].trim().length <= 135) {
+      b = firstSentenceMatch[1].trim();
+    }
+  }
+
+  // 5. If still over 135 chars, find natural clause break (comma, semicolon, 'and', 'by') between 70 and 125 chars
+  if (b.length > 135) {
+    const sub = b.slice(0, 130);
+    const breakIdx = Math.max(
+      sub.lastIndexOf(", "),
+      sub.lastIndexOf("; "),
+      sub.lastIndexOf(" - "),
+      sub.lastIndexOf(" by "),
+      sub.lastIndexOf(" and ")
+    );
+    if (breakIdx >= 65) {
+      b = sub.slice(0, breakIdx).trim();
+    } else {
+      const lastSpace = sub.lastIndexOf(" ");
+      if (lastSpace >= 65) {
+        b = sub.slice(0, lastSpace).trim();
+      }
+    }
+  }
+
+  // Ensure trailing single period
+  b = b.replace(/[.,\s]+$/, "").trim();
+  if (b.length > 0 && !/[.!?]$/.test(b)) {
+    b += ".";
+  }
+
+  return b;
+}
+
 export function optimizeResumeForAts(
   resume: FullResumeOutput,
   processedSkills: SkillCategoryOutput[]
@@ -86,6 +148,16 @@ export function optimizeResumeForAts(
   const optimizedProjects = (resume.projects || []).map((proj) => ({
     ...proj,
     techStack: normalizeTechStack(proj.techStack),
+    bullets: Array.isArray(proj.bullets)
+      ? proj.bullets.map(normalizeNormalBullet).filter(Boolean)
+      : proj.bullets,
+  }));
+
+  const optimizedExperience = (resume.experience || []).map((exp) => ({
+    ...exp,
+    bullets: Array.isArray(exp.bullets)
+      ? exp.bullets.map(normalizeNormalBullet).filter(Boolean)
+      : exp.bullets,
   }));
 
   const hasCoreSections =
