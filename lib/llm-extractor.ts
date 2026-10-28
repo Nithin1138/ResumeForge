@@ -1,5 +1,6 @@
 // lib/llm-extractor.ts
 // Extract structured Placement Drive / JD information from forwarded email text & HTML tables
+import { redactPiiFromText } from "@/lib/pii";
 
 export interface ExtractedJdData {
   companyName: string;
@@ -59,6 +60,9 @@ export function cleanEmailText(rawEmail: string, rawHtml?: string): string {
     .replace(/^From:.*?\nDate:.*?\nSubject:.*?\nTo:.*?\n/gm, "")
     .replace(/^>+/gm, "") // Strip quoted text angle brackets
     .trim();
+
+  // Redact personal student contact details (phone, email) from forwarded text
+  cleaned = redactPiiFromText(cleaned, { maskOnly: true });
 
   if (cleaned.length > 15000) {
     cleaned = cleaned.slice(0, 15000) + "\n...[text truncated]";

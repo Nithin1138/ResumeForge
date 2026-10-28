@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sanitizeLogData } from "@/lib/pii";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,12 +11,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required tracking parameters" }, { status: 400 });
     }
 
+    const cleanMetadata = metadata ? sanitizeLogData(metadata) : null;
+
     const event = await prisma.analyticsEvent.create({
       data: {
         sessionId,
         eventType,
         page,
-        metadata: metadata ? JSON.stringify(metadata) : null
+        metadata: cleanMetadata ? JSON.stringify(cleanMetadata) : null
       }
     });
 

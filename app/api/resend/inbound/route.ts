@@ -5,6 +5,7 @@ import { sendTelegramMessage, formatDateDDMMYYYY, escapeHtml } from "@/lib/teleg
 import { scheduleQStashReminder } from "@/lib/qstash";
 import { evaluateUserEligibility } from "@/lib/eligibility-checker";
 import { runAtsScoreCheck } from "@/lib/ats-scoring";
+import { maskEmail, maskIdentifier } from "@/lib/pii";
 
 function extractCleanEmail(raw: string): string {
   if (!raw) return "";
@@ -38,10 +39,10 @@ export async function POST(req: Request) {
 
     const data = (payload.data as Record<string, unknown>) || payload;
 
-    // Log FULL payload for debugging — critical for diagnosing Cloudflare format
+    // Log payload for debugging with PII masking
     console.log("[Inbound Webhook] ContentType:", contentType);
     console.log("[Inbound Webhook] Keys:", Object.keys(payload).join(", "));
-    console.log("[Inbound Webhook] type:", payload.type, "| subject:", data.subject || payload.subject, "| to:", data.to || payload.to || payload.recipient, "| from:", data.from || payload.from || payload.sender);
+    console.log("[Inbound Webhook] type:", payload.type, "| subject:", data.subject || payload.subject, "| to:", maskEmail(String(data.to || payload.to || payload.recipient || "")), "| from:", maskEmail(String(data.from || payload.from || payload.sender || "")));
 
     // Resend / Cloudflare event type check (allow email.received, cloudflare.email, or direct payload)
     if (payload.type && payload.type !== "email.received" && payload.type !== "email.inbound" && payload.type !== "cloudflare.email") {
@@ -433,7 +434,7 @@ export async function POST(req: Request) {
         ],
       };
 
-    console.log(`[Inbound] Sending Telegram to chatId: ${matchedTgUser.telegramChatId}, company: ${jobPosting.companyName}`);
+    console.log(`[Inbound] Sending Telegram to chatId: ${maskIdentifier(matchedTgUser.telegramChatId)}, company: ${jobPosting.companyName}`);
     const tgResult = await sendTelegramMessage(matchedTgUser.telegramChatId, tgMsg, inlineKeyboard);
     console.log(`[Inbound] Telegram send result: ${tgResult}`);
     if (!tgResult) {

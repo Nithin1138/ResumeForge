@@ -1,5 +1,6 @@
 // lib/logger.ts
-// Structured Observability & Production Logger for ATSLift
+// Structured Observability & Production Logger for ATSLift with PII Redaction
+import { sanitizeLogData, redactPiiFromText } from "@/lib/pii";
 
 export type LogLevel = "debug" | "info" | "warn" | "error";
 
@@ -11,48 +12,18 @@ export interface LogContext {
   [key: string]: any;
 }
 
-const SENSITIVE_KEYS = [
-  "password",
-  "secret",
-  "token",
-  "apikey",
-  "api_key",
-  "authorization",
-  "cookie",
-  "gemini_api_key",
-  "nextauth_secret",
-];
-
-function sanitize(data: any): any {
-  if (data === null || data === undefined) return data;
-  if (typeof data !== "object") return data;
-
-  if (Array.isArray(data)) {
-    return data.map(sanitize);
-  }
-
-  const clean: Record<string, any> = {};
-  for (const [key, val] of Object.entries(data)) {
-    if (SENSITIVE_KEYS.some((s) => key.toLowerCase().includes(s))) {
-      clean[key] = "[REDACTED]";
-    } else if (typeof val === "object") {
-      clean[key] = sanitize(val);
-    } else {
-      clean[key] = val;
-    }
-  }
-  return clean;
-}
-
 class Logger {
   private isProd = process.env.NODE_ENV === "production";
 
   private formatMessage(level: LogLevel, message: string, context?: LogContext): string {
+    const cleanMessage = redactPiiFromText(message, { maskOnly: true });
+    const cleanContext = context ? sanitizeLogData(context) : undefined;
+
     const entry = {
       timestamp: new Date().toISOString(),
       level: level.toUpperCase(),
-      message,
-      ...(context ? sanitize(context) : {}),
+      message: cleanMessage,
+      ...(cleanContext ? cleanContext : {}),
     };
 
     if (this.isProd) {
@@ -60,8 +31,8 @@ class Logger {
     }
 
     const duration = context?.durationMs ? ` (${context.durationMs}ms)` : "";
-    const ctxString = context ? ` ${JSON.stringify(sanitize(context))}` : "";
-    return `[${entry.timestamp}] [${level.toUpperCase()}] ${message}${duration}${ctxString}`;
+    const ctxString = cleanContext ? ` ${JSON.stringify(cleanContext)}` : "";
+    return `[${entry.timestamp}] [${level.toUpperCase()}] ${cleanMessage}${duration}${ctxString}`;
   }
 
   info(message: string, context?: LogContext): void {

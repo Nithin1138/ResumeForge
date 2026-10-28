@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { generateLlmText } from "@/lib/llm";
 import { logger } from "@/lib/logger";
+import { anonymizeProfileForAts, redactPiiFromText } from "@/lib/pii";
 
 export const DAILY_ATS_CHECK_LIMIT = 10;
 
@@ -33,18 +34,20 @@ export interface AtsScoringOutput {
  * Can be iterated independently from execution logic.
  */
 export function buildAtsScoringPrompt(profileDataText: string, jobPostingText?: string): string {
+  const cleanProfile = redactPiiFromText(profileDataText);
+  const cleanJd = jobPostingText ? redactPiiFromText(jobPostingText) : undefined;
   return `You are an expert ATS (Applicant Tracking System) Auditor and Senior Technical Recruiter.
 Analyze the following student resume/profile data against ${
-    jobPostingText ? "the provided Job Description (JD)" : "general engineering ATS standards"
+    cleanJd ? "the provided Job Description (JD)" : "general engineering ATS standards"
   }.
 
 === STUDENT RESUME / MY SPACE PROFILE DATA ===
-${profileDataText}
+${cleanProfile}
 
 ${
-  jobPostingText
+  cleanJd
     ? `=== TARGET JOB DESCRIPTION (JD) ===
-${jobPostingText}`
+${cleanJd}`
     : "=== NO SPECIFIC JD PROVIDED (General ATS Readiness Evaluation) ==="
 }
 
@@ -71,31 +74,35 @@ STRICT JSON OUTPUT FORMAT (Respond ONLY with valid JSON, no markdown wrappers, n
 }
 
 /** Helper to format MasterProfile into a clean readable text representation */
-export function formatProfileDataForPrompt(profile: any): string {
+export function formatProfileDataForPrompt(
+  profile: any,
+  options?: { anonymize?: boolean }
+): string {
+  const target = options?.anonymize ? anonymizeProfileForAts(profile) : profile;
   const lines: string[] = [];
 
-  lines.push(`Full Name: ${profile.fullName || "N/A"}`);
-  lines.push(`Email: ${profile.email || "N/A"}`);
-  lines.push(`College: ${profile.college || "N/A"}`);
-  lines.push(`Branch: ${profile.branch || "N/A"}`);
-  lines.push(`CGPA: ${profile.cgpa || "N/A"}`);
-  lines.push(`Graduation Year: ${profile.graduationYear || "N/A"}`);
-  lines.push(`Active Backlogs (Arrears): ${profile.activeBacklogs !== null && profile.activeBacklogs !== undefined ? profile.activeBacklogs : "0"}`);
-  lines.push(`Total Backlog History: ${profile.backlogHistory !== null && profile.backlogHistory !== undefined ? profile.backlogHistory : "0"}`);
-  lines.push(`Academic Gap Years: ${profile.academicGapYears !== null && profile.academicGapYears !== undefined ? profile.academicGapYears : "0"}`);
-  lines.push(`Notice Period: ${profile.noticePeriod || "N/A"}`);
+  lines.push(`Full Name: ${target.fullName || "N/A"}`);
+  lines.push(`Email: ${target.email || "N/A"}`);
+  lines.push(`College: ${target.college || "N/A"}`);
+  lines.push(`Branch: ${target.branch || "N/A"}`);
+  lines.push(`CGPA: ${target.cgpa || "N/A"}`);
+  lines.push(`Graduation Year: ${target.graduationYear || "N/A"}`);
+  lines.push(`Active Backlogs (Arrears): ${target.activeBacklogs !== null && target.activeBacklogs !== undefined ? target.activeBacklogs : "0"}`);
+  lines.push(`Total Backlog History: ${target.backlogHistory !== null && target.backlogHistory !== undefined ? target.backlogHistory : "0"}`);
+  lines.push(`Academic Gap Years: ${target.academicGapYears !== null && target.academicGapYears !== undefined ? target.academicGapYears : "0"}`);
+  lines.push(`Notice Period: ${target.noticePeriod || "N/A"}`);
 
-  if (profile.github) lines.push(`GitHub: ${profile.github}`);
-  if (profile.linkedin) lines.push(`LinkedIn: ${profile.linkedin}`);
-  if (profile.portfolio) lines.push(`Portfolio: ${profile.portfolio}`);
+  if (target.github) lines.push(`GitHub: ${target.github}`);
+  if (target.linkedin) lines.push(`LinkedIn: ${target.linkedin}`);
+  if (target.portfolio) lines.push(`Portfolio: ${target.portfolio}`);
 
-  if (profile.summary) {
-    lines.push(`\n--- SUMMARY ---\n${profile.summary}`);
+  if (target.summary) {
+    lines.push(`\n--- SUMMARY ---\n${target.summary}`);
   }
 
   // Skills
   try {
-    const skills = JSON.parse(profile.skillsJson || "[]");
+    const skills = JSON.parse(target.skillsJson || "[]");
     if (Array.isArray(skills) && skills.length > 0) {
       lines.push(`\n--- SKILLS ---\n${skills.join(", ")}`);
     }
@@ -360,8 +367,8 @@ ${jobPosting.rawEmailText}`;
     }
   }
 
-  // 4. Format Profile Data
-  const profileText = formatProfileDataForPrompt(masterProfile);
+  // 4. Format Profile Data (Anonymized for blind ATS audit & LLM privacy)
+  const profileText = formatProfileDataForPrompt(masterProfile, { anonymize: true });
 
   // 5. LLM Call with 1 Retry mechanism + Graceful Fallback
   const prompt = buildAtsScoringPrompt(profileText, jobPostingText || undefined);

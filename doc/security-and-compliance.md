@@ -75,18 +75,25 @@ Candidate resumes are parsed directly in server memory without writing unverifie
 
 ---
 
-## 5. Structured Observability & Credential Redaction
+## 5. Structured Observability & PII Redaction Suite
 
-The centralized logger in [lib/logger.ts](../lib/logger.ts) sanitizes all log outputs to ensure sensitive student tokens and credentials never leak into server telemetry or Vercel logs:
+The centralized logger in [lib/logger.ts](../lib/logger.ts) and enterprise PII engine in [lib/pii.ts](../lib/pii.ts) sanitize all logs, analytics, and LLM audit pipelines to ensure candidate PII and credentials never leak into server telemetry or external APIs:
 
-- **Redacted Keys**: Passwords, API tokens, Authorization headers, and payment secrets are automatically masked:
+- **PII & Credential Redaction**: Automatically scrubs authentication secrets AND candidate personal identifiable information (emails, phone numbers, Aadhaar, SSN, tokens):
   ```json
   {
-    "event": "payment_webhook_processed",
+    "event": "user_action_logged",
+    "email": "n***r@gmail.com",
+    "phone": "+91 ******3210",
     "signature": "[REDACTED]",
-    "secret": "[REDACTED]"
+    "token": "[REDACTED]"
   }
   ```
+- **Blind ATS Evaluation & AI Privacy**:
+  - In [lib/ats-scoring.ts](../lib/ats-scoring.ts), candidate profiles are anonymized (`anonymizeProfileForAts`) before generating prompt texts. Personal phone numbers, real emails, and profile links are masked, ensuring unbiased recruiter scoring and preventing candidate contact exposure to external AI models.
+  - Job description forwarding cleaner ([lib/llm-extractor.ts](../lib/llm-extractor.ts)) automatically scrubs student contact info and roll numbers from forwarded placement emails.
+- **Analytics Sanitization**:
+  - In [app/api/analytics/events/route.ts](../app/api/analytics/events/route.ts), all event metadata is deep-sanitized with `sanitizeLogData` before persisting to `prisma.analyticsEvent`.
 - **Error Categorization**: Distinguishes between expected client validation errors (HTTP 400) and critical system exceptions (HTTP 500), avoiding false alerts in Sentry or Datadog.
 
 ---
