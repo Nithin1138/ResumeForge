@@ -9,6 +9,13 @@ import {
 
 export async function POST(req: Request) {
   try {
+    // Verify Telegram secret token header if configured in production
+    const secretToken = req.headers.get("x-telegram-bot-api-secret-token");
+    const configuredSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
+    if (configuredSecret && configuredSecret !== "mock" && configuredSecret !== "xxx" && secretToken !== configuredSecret) {
+      return NextResponse.json({ error: "Unauthorized webhook request" }, { status: 401 });
+    }
+
     const update = await req.json();
 
     // 1. Handle Inline Button Callback Queries

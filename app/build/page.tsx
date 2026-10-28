@@ -510,7 +510,7 @@ function BuildPageContent() {
     try {
       let sid = localStorage.getItem("atslift_session_id");
       if (!sid) {
-        sid = "session_" + Math.random().toString(36).substring(2, 15);
+        sid = typeof crypto !== "undefined" && crypto.randomUUID ? `session_${crypto.randomUUID()}` : `session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
         localStorage.setItem("atslift_session_id", sid);
       }
       fetch("/api/analytics/events", {

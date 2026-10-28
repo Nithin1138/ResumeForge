@@ -14,6 +14,16 @@ export async function DELETE(
     }
 
     const { id } = await params;
+    const coverLetter = await prisma.coverLetter.findUnique({ where: { id } });
+    if (!coverLetter) {
+      return NextResponse.json({ error: "Cover letter not found." }, { status: 404 });
+    }
+
+    const userId = (session.user as any).id;
+    if (coverLetter.userId && coverLetter.userId !== userId) {
+      return NextResponse.json({ error: "Access denied." }, { status: 403 });
+    }
+
     await prisma.coverLetter.delete({
       where: { id },
     });
@@ -35,6 +45,16 @@ export async function PATCH(
     }
 
     const { id } = await params;
+    const coverLetter = await prisma.coverLetter.findUnique({ where: { id } });
+    if (!coverLetter) {
+      return NextResponse.json({ error: "Cover letter not found." }, { status: 404 });
+    }
+
+    const userId = (session.user as any).id;
+    if (coverLetter.userId && coverLetter.userId !== userId) {
+      return NextResponse.json({ error: "Access denied." }, { status: 403 });
+    }
+
     const body = await req.json();
     const { categoryTag, companyName, targetRole } = body;
 
