@@ -268,6 +268,11 @@ html {
     display: none !important;
   }
 
+  /* Single Page Resume Target Print Rules */
+  body:has(#resume-print-target) > :not(#resume-print-target) {
+    display: none !important;
+  }
+
   /* Single Page Cover Letter Target Print Rules */
   body:has(#cover-letter-print-target) > :not(#cover-letter-print-target) {
     display: none !important;

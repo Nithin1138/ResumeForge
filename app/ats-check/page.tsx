@@ -222,7 +222,7 @@ export default function ATSCheckPage() {
         </Link>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-12 max-w-6xl mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center justify-center p-3.5 sm:p-6 md:p-12 max-w-6xl mx-auto w-full">
         
         {/* Title area (only visible when not showing results) */}
         <AnimatePresence mode="wait">
@@ -231,12 +231,12 @@ export default function ATSCheckPage() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, height: 0, margin: 0, overflow: "hidden" }}
-              className="text-center mb-12"
+              className="text-center mb-6 sm:mb-12"
             >
-              <h1 className="text-3xl md:text-7xl font-serif tracking-tight text-text mb-4">
+              <h1 className="text-2xl sm:text-4xl md:text-7xl font-serif tracking-tight text-text mb-3 sm:mb-4">
                 ATS <span className="text-primary italic">Reality Check</span>
               </h1>
-              <p className="text-text-muted text-sm md:text-lg max-w-xl mx-auto">
+              <p className="text-text-muted text-xs sm:text-sm md:text-lg max-w-xl mx-auto px-2">
                 A ruthless, automated audit of your resume structure, keyword density, and recruiter readability.
               </p>
             </motion.div>
@@ -256,7 +256,7 @@ export default function ATSCheckPage() {
                 transition={{ duration: 0.3 }}
                 className="w-full max-w-5xl mx-auto"
               >
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 w-full items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 w-full items-start">
                   {/* Left Column: Upload Area */}
                   <div className="flex flex-col items-center w-full">
                     <div
@@ -264,7 +264,7 @@ export default function ATSCheckPage() {
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
                       onClick={() => fileInputRef.current?.click()}
-                      className={`w-full bg-surface border-2 border-dashed rounded-3xl p-8 md:p-16 text-center cursor-pointer transition-all duration-300 ${
+                      className={`w-full bg-surface border-2 border-dashed rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-16 text-center cursor-pointer transition-all duration-300 ${
                         isDragging 
                           ? "border-primary bg-primary/5" 
                           : file 
@@ -331,7 +331,7 @@ export default function ATSCheckPage() {
                   </div>
 
                   {/* Right Column: What we check & Sample */}
-                  <div className="bg-surface border border-border rounded-3xl p-8 flex flex-col h-full w-full">
+                  <div className="bg-surface border border-border rounded-2xl sm:rounded-3xl p-5 sm:p-8 flex flex-col h-full w-full">
                     <h3 className="text-lg font-bold mb-6 font-serif">What we evaluate</h3>
                     <div className="space-y-5">
                       {SCORING_CRITERIA.slice(0, 4).map((c, i) => (
@@ -468,22 +468,22 @@ export default function ATSCheckPage() {
                 </div>
 
                 {/* Report Footer / CTA */}
-                <div className="mt-16 bg-surface border border-border p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between text-center sm:text-left gap-4">
+                <div className="mt-10 sm:mt-16 bg-surface border border-border p-5 sm:p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between text-center sm:text-left gap-4">
                   <div>
-                    <h3 className="text-xl font-serif text-text font-bold mb-2">Need a guaranteed 95+?</h3>
-                    <p className="text-text-muted text-sm">Our AI builder forces you to structure bullet points exactly how ATS engines read them.</p>
+                    <h3 className="text-lg sm:text-xl font-serif text-text font-bold mb-1.5 sm:mb-2">Need a guaranteed 95+?</h3>
+                    <p className="text-text-muted text-xs sm:text-sm">Our AI builder forces you to structure bullet points exactly how ATS engines read them.</p>
                   </div>
                   
-                  <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-0 md:space-x-4 shrink-0">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto shrink-0">
                     <button
                       onClick={resetState}
-                      className="px-5 py-2.5 text-sm font-semibold text-text-muted hover:text-text transition-colors"
+                      className="w-full sm:w-auto px-5 py-2.5 text-xs sm:text-sm font-semibold text-text-muted hover:text-text border border-border sm:border-transparent rounded-full sm:rounded-none transition-colors"
                     >
                       Scan Another
                     </button>
                     <button
                       onClick={handleImproveResume}
-                      className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-bold rounded-full transition-all duration-300"
+                      className="w-full sm:w-auto px-6 py-3 sm:py-2.5 bg-primary hover:bg-primary/90 text-white text-xs sm:text-sm font-bold rounded-full transition-all duration-300 shadow-sm"
                     >
                       Improve Resume
                     </button>

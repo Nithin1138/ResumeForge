@@ -763,20 +763,20 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
   return (
     <div className="h-auto lg:h-screen lg:overflow-hidden bg-bg-base text-text flex flex-col font-sans print:block print:h-auto print:overflow-visible print:bg-white print:text-black">
       {/* Navbar (hidden during print) */}
-      <header className="glass-panel border-b border-border/40 px-6 py-3.5 flex items-center justify-between print:hidden">
-        <div className="flex items-center space-x-3">
-          <Link href="/" className="flex items-center justify-center">
-            <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
+      <header className="glass-panel border-b border-border/40 px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 print:hidden">
+        <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+          <Link href="/" className="flex items-center justify-center" aria-label="ATSLift Homepage">
+            <img src="/logo.png" alt="ATSLift Logo" className="w-7 h-7 sm:w-8 sm:h-8 rounded-md object-contain logo-rotated shrink-0" />
           </Link>
-          <span className="font-bold text-lg tracking-tight text-text">
+          <span className="font-bold text-base sm:text-lg tracking-tight text-text">
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
-          <Link href="/myresumes" className="ml-3 text-xs font-bold text-primary hover:underline hidden sm:inline">
+          <Link href="/myresumes" className="ml-2 sm:ml-3 text-xs font-bold text-primary hover:underline hidden sm:inline">
             My Resumes
           </Link>
         </div>
         
-        <div className="flex items-center space-x-3 sm:space-x-4">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {/* Don't trust ATSlift? Verify with any AI button */}
           <button
             onClick={() => setVerificationModalOpen(true)}
@@ -791,16 +791,17 @@ ${(output.achievements || []).map(ach => `- ${ach}`).join("\n")}
 
           <button
             onClick={() => setCoverLetterModalOpen(true)}
-            className="px-4 py-2 bg-gradient-to-r from-primary via-emerald-600 to-primary hover:opacity-95 text-white font-extrabold text-xs rounded-full flex items-center space-x-1.5 shadow-md hover:shadow-lg hover:scale-105 transition-all cursor-pointer ring-2 ring-primary/40"
+            className="px-2.5 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-primary via-emerald-600 to-primary hover:opacity-95 text-white font-extrabold text-xs rounded-full flex items-center gap-1 sm:space-x-1.5 shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer ring-1 sm:ring-2 ring-primary/40 shrink-0"
           >
-            <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-            <span>✨ Build Cover Letter</span>
-            <span className="text-[9px] bg-amber-300 text-zinc-950 font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider ml-1 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 animate-pulse shrink-0" />
+            <span className="hidden sm:inline">✨ Build Cover Letter</span>
+            <span className="sm:hidden">Cover Letter</span>
+            <span className="text-[9px] bg-amber-300 text-zinc-950 font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider hidden sm:inline ml-1 shadow-xs">
               FREE
             </span>
           </button>
-          <div className="hidden sm:flex items-center space-x-2 bg-success/15 border border-success/30 px-3 py-1.5 rounded-full text-xs font-bold text-success">
-            <CheckCircle2 className="w-4 h-4" />
+          <div className="hidden sm:flex items-center space-x-1.5 bg-success/15 border border-success/30 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs font-bold text-success shrink-0">
+            <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>Unlocked ✓</span>
           </div>
           <ThemeToggle />

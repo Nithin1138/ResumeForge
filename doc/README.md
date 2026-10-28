@@ -63,22 +63,35 @@ flowchart TD
 
 ---
 
-## 🛠️ Quick Reference Commands
+## 🛠️ Quick Reference & How to Run Locally
+
+### Prerequisites
+- **Node.js**: v20.x or higher
+- **Database**: PostgreSQL (or free serverless Neon database connection string)
+- **AI Engine**: Free Google Gemini API Key from Google AI Studio
+
+### Step-by-Step Local Setup
 
 ```bash
-# Install dependencies
+# 1. Clone repository and install dependencies
+git clone https://github.com/Nithin1138/ResumeForge.git
+cd ResumeForge
 npm install
 
-# Run all 20 unit & integration tests
-npm test
+# 2. Configure environment variables
+cp .env.example .env
+# Set DATABASE_URL and GEMINI_API_KEY in .env
 
-# Run production build validation
-npm run build
+# 3. Initialize database schema
+npx prisma generate
+npx prisma db push
 
-# Start local development server
-npm run dev
+# 4. Run test suite & start development server
+npm test         # Executes all 20 unit & integration tests (runs in <200ms)
+npm run dev      # Launches local dev server on http://localhost:3000
+npm run build    # Generates production bundle with Turbopack
 
-# Query live system health check
+# 5. Query health check endpoint
 curl http://localhost:3000/api/health
 ```
 
