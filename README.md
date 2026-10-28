@@ -8,7 +8,9 @@
 [![Tests](https://img.shields.io/badge/Tests-20_Passed-brightgreen?style=flat-square&logo=node.js)](tests/)
 
 > **Live Platform:** [atslift.app](https://atslift.app)  
-> **Master Technical Interview Guide & Architecture Deep-Dive:** [RESUME.md](RESUME.md)
+> **Master Technical Interview Guide:** [RESUME.md](RESUME.md)  
+> **📚 Comprehensive Project Documentation Portal:** [/doc/README.md](doc/README.md)  
+> *(Includes: [Architecture](doc/architecture.md), [System Design](doc/system-design.md), [Testing Strategy](doc/testing-strategy.md), [Demo Guide](doc/demo-guide.md), [Benchmarks](doc/benchmarks.md), [API Reference](doc/api-reference.md), [Security](doc/security-and-compliance.md))*
 
 ResumeForge (ATSLift) is a production-grade full-stack web application and autonomous placement drive engine engineered for engineering students. It converts raw academic records into recruiter-aligned ATS resumes, computes real-time keyword gap scores, and autonomously monitors incoming campus placement emails to verify eligibility and broadcast instant Telegram alerts.
 
