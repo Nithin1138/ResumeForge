@@ -1,1 +1,0 @@
-John Doe, Software Engineer, Python, React, Next.js

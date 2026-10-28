@@ -394,16 +394,23 @@ Return ONLY a valid JSON object matching this exact structure:
     try {
       const jsonResult = JSON.parse(responseText);
       return NextResponse.json(jsonResult);
-    } catch (parseError) {
-      console.error("Failed to parse AI response:", responseText);
-      throw new Error(`Failed to parse AI response. Raw output: ${responseText.substring(0, 100)}...`);
+    } catch (parseError: any) {
+      console.error("[ats-check] Failed to parse AI response into JSON. Length:", responseText.length);
+      return NextResponse.json(
+        {
+          error: "Resume parsing completed with formatting issues. Please try re-uploading a clean PDF or Word document.",
+          hint: "Ensure your file is not password-protected and text is selectable."
+        },
+        { status: 422 }
+      );
     }
 
   } catch (error: any) {
-    console.error("API /api/ats-check POST error:", error);
+    console.error("API /api/ats-check POST error:", error?.message || error);
+    const isClientError = error?.message?.includes("File size exceeds") || error?.message?.includes("No file provided");
     return NextResponse.json(
-      { error: error.message || "Internal server error occurred during resume parsing." },
-      { status: 500 }
+      { error: isClientError ? error.message : "Our AI parsing engine encountered a temporary issue. Please try again in a moment." },
+      { status: isClientError ? 400 : 500 }
     );
   }
 }

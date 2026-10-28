@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendResumeEmail } from "@/lib/resend";
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   try {
@@ -108,18 +109,106 @@ ${proj.duration ? `Duration: ${proj.duration}\n` : ""}${proj.bullets.map((b: str
             `.trim();
 
             sendResumeEmail(toEmail, customerName, resumeId, plainTextResume)
-              .then(sent => console.log(`[Webhook] Email trigger: ${sent ? 'Sent successfully' : 'Skipped'}`))
-              .catch(err => console.error("[Webhook] Background email delivery failure:", err));
+              .then(sent => logger.info(`[Webhook] Email trigger: ${sent ? 'Sent successfully' : 'Skipped'}`, { resumeId }))
+              .catch(err => logger.error("[Webhook] Background email delivery failure:", { resumeId, error: err?.message }));
           }
-        } catch (emailErr) {
-          console.error("[Webhook] Background candidate resolution failed:", emailErr);
+        } catch (emailErr: any) {
+          logger.error("[Webhook] Background candidate resolution failed:", { resumeId, error: emailErr?.message });
+        }
+      }
+    }
+
+    // Process failed payments
+    if (event === "payment.failed") {
+      const paymentEntity = payload.payload?.payment?.entity;
+      const resumeId = paymentEntity?.notes?.resumeId;
+      const reason = paymentEntity?.error_description || paymentEntity?.error_reason || "Payment declined";
+
+      logger.warn(`[Webhook] Payment failed: resumeId=${resumeId}`, {
+        resumeId,
+        paymentId: paymentEntity?.id,
+        reason,
+      });
+
+      if (resumeId) {
+        try {
+          await prisma.resume.update({
+            where: { id: resumeId },
+            data: { paymentStatus: "FAILED" },
+          });
+
+          await prisma.analyticsEvent.create({
+            data: {
+              sessionId: `failed_${resumeId}`,
+              eventType: "PAYMENT_FAILED",
+              page: `result_${resumeId}`,
+              metadata: JSON.stringify({ resumeId, reason, paymentId: paymentEntity?.id }),
+            },
+          });
+        } catch (dbErr: any) {
+          logger.error("[Webhook] Failed to update resume status on payment failure:", { error: dbErr?.message });
+        }
+      }
+    }
+
+    // Process expired payment links
+    if (event === "payment_link.expired") {
+      const paymentLinkEntity = payload.payload?.payment_link?.entity;
+      const resumeId = paymentLinkEntity?.notes?.resumeId;
+
+      logger.info(`[Webhook] Payment link expired: resumeId=${resumeId}`, { resumeId });
+
+      if (resumeId) {
+        try {
+          await prisma.resume.update({
+            where: { id: resumeId },
+            data: { paymentStatus: "EXPIRED" },
+          });
+        } catch (e: any) {
+          logger.error("[Webhook] Error updating expired link status:", { error: e?.message });
+        }
+      }
+    }
+
+    // Process refunds
+    if (event === "refund.processed") {
+      const refundEntity = payload.payload?.refund?.entity;
+      const paymentId = refundEntity?.payment_id;
+
+      logger.info(`[Webhook] Refund processed for paymentId=${paymentId}`, {
+        refundId: refundEntity?.id,
+        paymentId,
+        amount: refundEntity?.amount,
+      });
+
+      if (paymentId) {
+        try {
+          const matched = await prisma.resume.findFirst({
+            where: { paymentId },
+          });
+          if (matched) {
+            await prisma.resume.update({
+              where: { id: matched.id },
+              data: { paymentStatus: "REFUNDED", status: "REFUNDED" },
+            });
+            await prisma.analyticsEvent.create({
+              data: {
+                sessionId: matched.sessionId,
+                eventType: "PAYMENT_REFUNDED",
+                page: `result_${matched.id}`,
+                metadata: JSON.stringify({ resumeId: matched.id, paymentId, refundId: refundEntity?.id }),
+              },
+            });
+          }
+        } catch (refundErr: any) {
+          logger.error("[Webhook] Failed to mark resume as refunded:", { error: refundErr?.message });
         }
       }
     }
 
     return NextResponse.json({ status: "success", received: true });
-  } catch (error) {
-    console.error("API /api/payment/webhook POST error:", error);
+  } catch (error: any) {
+    logger.error("API /api/payment/webhook POST error:", { error: error?.message || String(error) });
     return NextResponse.json({ error: "Webhook notification processing failed." }, { status: 500 });
   }
 }

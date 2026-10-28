@@ -7,6 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "tsx --test tests/**/*.test.ts",
     "test:email": "node scripts/test-inbound-email.js",
     "test:email:all": "node scripts/test-all-emails.js",
     "stress:test": "node scripts/stress-test.js"
@@ -56,6 +57,7 @@
     "eslint-config-next": "16.2.6",
     "prisma": "^7.8.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

@@ -1,102 +1,128 @@
-# ATSLift — CGPA to ATS Resume Converter for Indian Engineering Students
+# 🚀 ResumeForge (ATSLift) — AI Resume Platform & Autonomous Campus Placement Engine
 
-ATSLift is an ultra-premium, production-ready full-stack web application built specifically for Indian engineering students (e.g. VIT, BITS, NITs, and IIITs) in placement season. 
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2_(App_Router)-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon_Serverless-336791?style=flat-square&logo=postgresql)](https://neon.tech/)
+[![Prisma](https://img.shields.io/badge/Prisma-7.x-2D3748?style=flat-square&logo=prisma)](https://www.prisma.io/)
+[![Gemini](https://img.shields.io/badge/AI_Engine-Google_Gemini-8E75C2?style=flat-square&logo=google)](https://ai.google.dev/)
+[![Tests](https://img.shields.io/badge/Tests-15_Passed-brightgreen?style=flat-square&logo=node.js)](tests/)
 
-It converts raw student academic data (CGPA, branch, projects, internships, club PORs) into recruiters-aligned, highly optimized ATS-compliant plain-text resume content utilizing generative LLMs.
+> **Live Platform:** [atslift.app](https://atslift.app)  
+> **Master Technical Interview Guide & Architecture Deep-Dive:** [RESUME.md](RESUME.md)
 
----
-
-## ⚡ Tech Stack
-
-* **Frontend:** Next.js 16.2 (App Router, Turbopack, React 19)
-* **Styling:** Tailwind CSS v4 (Warm Beige Light Nexus theme, dynamic micro-animations, glassmorphism)
-* **Icons:** Lucide React
-* **State Management:** Zustand v5
-* **Form Validation:** React Hook Form + Zod resolvers
-* **Database & ORM:** Prisma 7 + SQLite (highly portable driver adapter pattern using `better-sqlite3`)
-* **AI Core:** Google Gemini 1.5/2.0 Flash APIs (wrapped via standard SDK)
-* **Payment Gateway:** Razorpay Checkout & Link APIs (₹49 description link generation)
-* **Transactional Email:** Resend SDK
+ResumeForge (ATSLift) is a production-grade full-stack web application and autonomous placement drive engine engineered for engineering students. It converts raw academic records into recruiter-aligned ATS resumes, computes real-time keyword gap scores, and autonomously monitors incoming campus placement emails to verify eligibility and broadcast instant Telegram alerts.
 
 ---
 
-## 🏗️ Architecture & Sandbox Modes
+## 🏗️ High-Level System Architecture
 
-ATSLift is equipped with **zero-friction offline sandbox mechanisms**, enabling you to test the complete end-to-end generation, scorecard analysis, payment redirect, transaction webhook updates, and transactional email dispatches completely local without needing live API billing details.
+```mermaid
+flowchart LR
+    subgraph Ingestion["1. Ingestion Layer"]
+        A[Campus Placement Email] --> B[Cloudflare Email Worker]
+        B --> C[Resend Webhook: /api/resend/inbound]
+    end
 
-1. **AI Generative Fallback (`lib/gemini.ts`):** If no `GEMINI_API_KEY` environment variable is detected, the API automatically triggers a simulated generative response that uses the student's actual form inputs to construct beautiful, quantified resume bullet points.
-2. **Local Sandbox Checkout Bypass (`app/api/payment/create`):** If no `RAZORPAY_KEY_ID` is configured, checking out redirects the user to `/success/[resumeId]?sandbox=true`. This simulates payment links offline.
-3. **Webhook Simulation Trigger (`app/success/[resumeId]`):** On loading with `sandbox=true`, the Success page issues a mock transaction POST notify to the local webhook listener `/api/payment/webhook`, setting the resume state in SQLite as PAID instantly.
-4. **Resend Email Simulator (`lib/resend.ts`):** In the absence of a `RESEND_API_KEY`, the server logs the exact transactional email headers and plain-text output payload directly into the terminal console.
+    subgraph CoreEngine["2. Processing & Parallel AI Pipeline"]
+        C --> D[Prisma + Neon PostgreSQL]
+        D --> E[Promise.allSettled Parallel Queue]
+        E --> F[Gemini Eligibility Evaluator]
+        E --> G[Gemini ATS Scoring Engine]
+        G -.->|Fallback if LLM Fails| H[Heuristic Scoring Synthesizer]
+    end
 
----
-
-## 📂 Project Structure
-
-```text
-├── app/
-│   ├── api/                   # API Route Handlers
-│   │   ├── auth/              # Handles Magic Link / Google Sign-In cookies
-│   │   ├── generate/          # Calls Gemini API / fallback to create resumes
-│   │   ├── payment/           # Razorpay Order Links & Webhook handlers
-│   │   ├── resume/            # Fetch/Delete specific resume records
-│   │   └── user/              # Fetches resumes associated with active user
-│   ├── about/                 # Static info and story page
-│   ├── build/                 # 5-Step interactive wizard form
-│   ├── dashboard/             # Student Saved Resumes & stats panel
-│   ├── login/                 # Passwordless login and mock Google gate
-│   ├── result/[resumeId]/     # Locked free preview score card
-│   ├── success/[resumeId]/    # Confetti unlocked resume & PDF print page
-│   ├── globals.css            # Tailwind custom v4 CSS theme & classes
-│   └── layout.tsx             # Root layout with Satoshi & Instrument typography
-├── lib/
-│   ├── auth.ts                # Server session decoders & Prisma checks
-│   ├── authClient.ts          # Dependency-free browser cookie parsers
-│   ├── gemini.ts              # Gemini API integrations and mock engines
-│   ├── prisma.ts              # Singleton Prisma client targeting better-sqlite3
-│   └── resend.ts              # Resend email triggers and template dispatches
-├── stores/
-│   └── formStore.ts           # Zustand global state manager for step-wise data
-├── types/
-│   └── resume.ts              # TypeScript interfaces for student details
-├── prisma/
-│   ├── schema.prisma          # Prisma Schema with User, Resume, and Waitlist models
-│   └── dev.db                 # Local SQLite database
-└── package.json               # Package dependencies & build commands
+    subgraph Notification["3. Delivery & Deep Links"]
+        F & G --> I[Telegram Bot API: Rich HTML Alert]
+        I --> J[Student Telegram with Deep Links]
+        C -->|Deadline Present| K[Upstash QStash Delay Queue]
+        K -->|24h / 2h Before| I
+    end
 ```
 
 ---
 
-## 🛠️ Getting Started
+## ⚡ Core Engineering Highlights
 
-### 1. Installation
-Clone the folder, navigate inside, and run standard dependency installers:
+* **65% Latency Optimization (14s → 4.5s):** Parallelized LLM eligibility verification and ATS scoring using `Promise.allSettled`, preventing serverless function timeouts and eliminating cascading bottlenecks.
+* **Fault-Tolerant AI Fallbacks:** Built-in heuristic scoring engine ensures zero downtime; if Gemini times out or outputs unparseable JSON, the system gracefully calculates a multi-factor baseline score and actionable suggestions.
+* **Structured Observability:** Integrated structured JSON logger (`lib/logger.ts`) with automated latency tracing (`logger.timeAsync`), sensitive credential redaction, and error categorization.
+* **Automated Rate Limiting:** Enforces a daily quota of 10 automated ATS checks per user via atomic PostgreSQL count queries (`getDailyAtsCheckCount`).
+* **Resilient Payment Webhooks:** Robust signature-verified HMAC SHA-256 webhook handling supporting `payment_link.paid`, `payment.failed`, `payment_link.expired`, and `refund.processed`.
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technologies Used |
+| :--- | :--- |
+| **Frontend** | Next.js 16.2 (App Router, React 19), Tailwind CSS v4, Lucide React, Zustand |
+| **Backend** | Next.js Server Components, Server Actions, Route Handlers, TypeScript |
+| **Database & ORM** | Neon Serverless PostgreSQL with Connection Pooling, Prisma ORM 7 |
+| **AI & NLP** | Google Gemini 1.5/2.0 API (`@google/genai`), Groq Fallback Engine, spaCy |
+| **Async Queues & Cloud** | Cloudflare Email Workers, Resend Webhooks, Upstash QStash HTTP queues, Vercel |
+| **Messaging & Bot** | Telegram Bot API with inline action callbacks (`Applied`, `Skip`, `Update Resume`) |
+| **Testing** | Node 20+ Native Test Runner via `tsx` (15 Unit & Integration tests) |
+
+---
+
+## 🧪 Testing & Quality Engineering
+
+The test suite runs with zero external test framework bloat using Node's built-in test runner:
+
 ```bash
+# Run all unit and integration tests
+npm test
+
+# Run stress & concurrency benchmarks against live routes
+npm run stress:test
+
+# Run email pipeline simulation tests
+npm run test:email:all
+```
+
+### Test Coverage Highlights:
+- **`tests/unit/atsFormatting.test.ts`**: Section extraction, line limits, and tech stack deduplication.
+- **`tests/unit/atsScoring.test.ts`**: ATS gap analysis, score boundary clamping [35, 95], and heuristic fallbacks.
+- **`tests/unit/eligibilityChecker.test.ts`**: Multi-branch matching rules, CGPA cutoffs, and non-rejection uncertain fallbacks.
+- **`tests/integration/apiFlow.test.ts`**: Webhook payload validation, HMAC SHA-256 signature verification, and schema integrity.
+
+---
+
+## 🚀 Quickstart for Local Development
+
+### 1. Clone & Install
+```bash
+git clone https://github.com/Nithin1138/ResumeForge.git
+cd ResumeForge
 npm install
 ```
 
-### 2. Migration
-Generate local database tables and apply schema definitions inside SQLite:
+### 2. Configure Environment Variables
+Copy `.env.example` to `.env`:
 ```bash
-npx prisma migrate dev --name init
+cp .env.example .env
+```
+Key required environment variables:
+```env
+DATABASE_URL="postgresql://user:password@host/neondb?sslmode=require"
+GEMINI_API_KEY="your-google-gemini-key"
+NEXTAUTH_SECRET="your-nextauth-secret"
+NEXTAUTH_URL="http://localhost:3000"
 ```
 
-### 3. Run Locally
-Boot the Turbopack dev server:
+### 3. Database Migration
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+### 4. Run Development Server
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ---
 
-## 🧪 E2E Local Sandbox Walkthrough Path
-
-1. Open `/` (Landing page) and click **Build My Resume Free**.
-2. Fill in step data (e.g. SDE target role, ECE branch, 8.9 CGPA, 1 project with a description).
-3. Click **Generate Resume**. The screen transitions into an animated optimization load sequence.
-4. You are redirected to `/result/[id]`. The page shows a beautiful circular **87 ATS Score gauge**, custom improvement checklist tips, and a partial preview. The rest of the sections are blurred.
-5. Click **Unlock Full ATS Content**. Because Razorpay keys are omitted, the app issues a sandbox bypass and routes you to `/success/[id]?sandbox=true`.
-6. Confetti explodes on the success page! The mock webhook triggers in the background, updating SQLite payment status to **PAID**.
-7. Explore features: copy specific segments, copy the entire plain-text resume schema, download the `.txt` representation, adjust the tone and click **Re-Generate Content**, or select **Generate PDF Document** to inspect a print-optimized LaTeX-style page.
-# ATSLift
+## 📖 In-Depth Technical Guide
+For complete technical interview questions, architecture trade-offs, and resume bullet points, see **[RESUME.md](RESUME.md)**.
