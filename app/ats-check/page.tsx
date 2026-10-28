@@ -74,6 +74,7 @@ export default function ATSCheckPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [errorHint, setErrorHint] = useState<string | null>(null);
   const [result, setResult] = useState<ATSResult | null>(null);
   
   const router = useRouter();
@@ -148,13 +149,18 @@ export default function ATSCheckPage() {
       const text = await response.text();
       if (!response.ok) {
         let errorMessage = "Failed to analyze resume";
+        let hint: string | null = null;
         try {
           const errorData = JSON.parse(text);
           errorMessage = errorData.error || errorMessage;
+          hint = errorData.hint || null;
         } catch (e) {
           errorMessage = `Server Error (${response.status}): ${response.statusText || "Internal Server Error"}`;
         }
-        throw new Error(errorMessage);
+        setError(errorMessage);
+        setErrorHint(hint);
+        setIsLoading(false);
+        return;
       }
 
       let data: ATSResult;
@@ -171,6 +177,7 @@ export default function ATSCheckPage() {
       }, 1000);
     } catch (err: any) {
       setError(err.message || "An error occurred while analyzing the resume.");
+      setErrorHint(null);
       setIsLoading(false);
     }
   };
@@ -179,6 +186,7 @@ export default function ATSCheckPage() {
     setFile(null);
     setResult(null);
     setError(null);
+    setErrorHint(null);
   };
   
   const getScoreColorText = (score: number, max: number) => {
@@ -299,9 +307,14 @@ export default function ATSCheckPage() {
                     </div>
 
                     {error && (
-                      <div className="mt-6 p-4 rounded-xl bg-error/5 border border-error/20 flex items-center space-x-3 text-error w-full">
-                        <AlertCircle className="w-5 h-5 shrink-0" />
-                        <span className="text-sm font-medium">{error}</span>
+                      <div className="mt-6 p-4 rounded-xl bg-error/5 border border-error/20 flex flex-col space-y-1.5 text-error w-full text-left">
+                        <div className="flex items-start space-x-2.5">
+                          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                          <span className="text-sm font-semibold">{error}</span>
+                        </div>
+                        {errorHint && (
+                          <p className="text-xs text-text-muted pl-7 leading-relaxed">{errorHint}</p>
+                        )}
                       </div>
                     )}
 
