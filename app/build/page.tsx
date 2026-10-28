@@ -2496,38 +2496,43 @@ function BuildPageContent() {
         </div>
       )}
       {/* Header */}
-      <header className="sticky top-0 z-40 glass-panel border-b border-border/40 px-6 py-4 flex items-center justify-between backdrop-blur-md bg-surface/90 shadow-2xs">
-        <div className="flex items-center space-x-2">
-          <Link href="/" className="flex items-center justify-center">
-            <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
+      <header className="sticky top-0 z-40 glass-panel border-b border-border/40 px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between backdrop-blur-md bg-surface/90 shadow-2xs gap-2">
+        <div className="flex items-center space-x-2 shrink-0">
+          <Link href="/" className="flex items-center justify-center" aria-label="ATSLift Homepage">
+            <img src="/logo.png" alt="ATSLift Logo" className="w-7 h-7 sm:w-8 sm:h-8 rounded-md object-contain logo-rotated shrink-0" />
           </Link>
-          <span className="font-bold text-lg tracking-tight text-text">
+          <span className="font-bold text-base sm:text-lg tracking-tight text-text">
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
         </div>
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-3">
-            <button 
-              onClick={() => {
-                if (window.confirm("Are you sure you want to reset the form? This will clear all your data.")) {
-                  resetForm();
-                  goToStep(1);
-                }
-              }}
-              className="relative text-sm text-error transition-all duration-300 ease-in-out font-bold cursor-pointer px-5 py-2.5 rounded-[14px] border border-error/20 flex items-center space-x-2 hover:bg-error/10 hover:-translate-y-0.5"
-              title="Reset Form"
-            >
-              <RotateCcw className="w-4 h-4" />
-              <span className="tracking-wide">Reset</span>
-            </button>
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          <button 
+            type="button"
+            onClick={() => {
+              if (window.confirm("Are you sure you want to reset the form? This will clear all your data.")) {
+                resetForm();
+                goToStep(1);
+              }
+            }}
+            className="relative text-xs sm:text-sm text-error transition-all duration-200 ease-in-out font-bold cursor-pointer p-2 sm:px-4 sm:py-2 rounded-xl sm:rounded-[14px] border border-error/20 flex items-center justify-center gap-1.5 hover:bg-error/10 hover:-translate-y-0.5 active:scale-95 shrink-0"
+            title="Reset Form"
+            aria-label="Reset Form"
+          >
+            <RotateCcw className="w-4 h-4 shrink-0" />
+            <span className="hidden sm:inline tracking-wide">Reset</span>
+          </button>
 
-            <label className={`relative text-sm text-white transition-all duration-300 ease-in-out font-bold cursor-pointer px-6 py-2.5 rounded-[14px] flex items-center space-x-2 shadow-[0_2px_10px_rgba(1,105,111,0.2)] hover:shadow-[0_6px_20px_rgba(1,105,111,0.3)] hover:-translate-y-0.5 ${isParsing ? 'bg-primary/70 cursor-wait' : 'bg-primary hover:bg-[#014e52]'}`} title="Auto-fill form from a PDF, Word (DOCX), or Image resume">
-              {isParsing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-              <span className="tracking-wide">{isParsing ? 'Parsing Document...' : 'Auto-Fill from Resume'}</span>
-              <input type="file" accept=".pdf,application/pdf,.docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword,image/png,image/jpeg,image/webp,image/jpg,.png,.jpg,.jpeg,.webp" onChange={handleAutoFillUpload} className="hidden" disabled={isParsing} />
-            </label>
-            <ThemeToggle />
-          </div>
+          <label 
+            className={`relative text-xs sm:text-sm text-white transition-all duration-200 ease-in-out font-bold cursor-pointer px-2.5 py-1.5 sm:px-5 sm:py-2 rounded-xl sm:rounded-[14px] flex items-center justify-center gap-1.5 shadow-[0_2px_10px_rgba(1,105,111,0.2)] hover:shadow-[0_6px_20px_rgba(1,105,111,0.3)] hover:-translate-y-0.5 active:scale-95 shrink-0 select-none ${isParsing ? 'bg-primary/70 cursor-wait' : 'bg-primary hover:bg-[#014e52]'}`} 
+            title="Auto-fill form from a PDF, Word (DOCX), or Image resume"
+          >
+            {isParsing ? <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin shrink-0" /> : <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />}
+            <span className="hidden sm:inline tracking-wide">{isParsing ? 'Parsing Document...' : 'Auto-Fill from Resume'}</span>
+            <span className="sm:hidden tracking-wide whitespace-nowrap">{isParsing ? 'Parsing...' : 'Auto-Fill'}</span>
+            <input type="file" accept=".pdf,application/pdf,.docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword,image/png,image/jpeg,image/webp,image/jpg,.png,.jpg,.jpeg,.webp" onChange={handleAutoFillUpload} className="hidden" disabled={isParsing} />
+          </label>
+
+          <ThemeToggle />
         </div>
       </header>
 

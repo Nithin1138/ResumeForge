@@ -378,14 +378,14 @@ export default function LandingPage() {
       </AnimatePresence>
 
       {/* Premium Navbar */}
-      <header className={`sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300 border-b ${
+      <header className={`sticky top-0 z-50 px-3.5 sm:px-6 py-3 sm:py-4 flex items-center justify-between transition-colors duration-300 border-b ${
         landingVariant === "dashboard"
           ? "bg-[#080b0c]/85 border-[#20292b] backdrop-blur-md text-white shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
           : "glass-panel border-border/40 text-text"
       }`}>
-        <div className="flex items-center space-x-2">
-          <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain logo-rotated" />
-          <span className="font-bold text-lg tracking-tight font-sans">
+        <div className="flex items-center space-x-2 shrink-0">
+          <img src="/logo.png" alt="ATSLift Logo" className="w-7 h-7 sm:w-8 sm:h-8 rounded-md object-contain logo-rotated shrink-0" />
+          <span className="font-bold text-base sm:text-lg tracking-tight font-sans">
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
         </div>
@@ -427,15 +427,16 @@ export default function LandingPage() {
         </div>
         
         {/* Mobile Hamburger Button */}
-        <div className="md:hidden flex items-center gap-3">
+        <div className="md:hidden flex items-center gap-2 sm:gap-3 shrink-0">
           <Link
             href="/build"
-            className="px-4 py-2 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full shadow-sm"
+            className="px-3 py-1.5 sm:px-4 sm:py-2 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full shadow-sm"
           >
             Build Resume Free
           </Link>
           <button
             onClick={() => setMobileMenuOpen(true)}
+            aria-label="Open mobile navigation menu"
             className={`p-2 rounded-lg ${landingVariant === "dashboard" ? "text-white bg-white/5" : "text-text bg-border/30"}`}
           >
             <Menu className="w-5 h-5" />

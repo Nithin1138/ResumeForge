@@ -199,16 +199,16 @@ export default function ATSCheckPage() {
     <div className="min-h-screen bg-bg-base text-text font-sans flex flex-col selection:bg-primary/20">
       
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-bg-base/80 backdrop-blur-lg border-b border-border/50 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center space-x-3">
-          <img src="/logo.png" alt="ATSLift Logo" className="w-8 h-8 rounded-md object-contain" />
-          <span className="font-bold text-lg tracking-tight text-text">
+      <header className="sticky top-0 z-50 bg-bg-base/80 backdrop-blur-lg border-b border-border/50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+        <Link href="/" className="flex items-center space-x-2 sm:space-x-3">
+          <img src="/logo.png" alt="ATSLift Logo" className="w-7 h-7 sm:w-8 sm:h-8 rounded-md object-contain logo-rotated" />
+          <span className="font-bold text-base sm:text-lg tracking-tight text-text">
             ATS<span className="text-primary font-medium font-serif italic">Lift</span>
           </span>
         </Link>
         <Link
           href="/build"
-          className="px-5 py-2 bg-text hover:bg-text/90 text-bg-base text-xs md:text-sm font-semibold rounded-full transition-all duration-300"
+          className="px-3.5 py-1.5 sm:px-5 sm:py-2 bg-text hover:bg-text/90 text-bg-base text-xs sm:text-sm font-semibold rounded-full transition-all duration-200"
         >
           Builder
         </Link>
