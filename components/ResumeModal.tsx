@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, Copy, Check, Printer, ArrowLeft, Loader2 } from "lucide-react";
-import ResumePreviewPanel from "./ResumePreviewPanel";
+import ResumePreviewPanel, { printResume } from "./ResumePreviewPanel";
 
 interface ResumeModalProps {
   isOpen: boolean;
@@ -105,10 +105,8 @@ ${(exp.bullets || []).map((b: string) => `- ${b}`).join("\n")}
   };
 
   const handlePrint = () => {
-    const originalTitle = document.title;
-    document.title = "";
-    window.print();
-    setTimeout(() => { document.title = originalTitle; }, 500);
+    const candidateName = resume?.personalInfo?.fullName || "Resume";
+    printResume(`${candidateName.replace(/[^a-zA-Z0-9]/g, "_")}_Resume`);
   };
 
   return createPortal(

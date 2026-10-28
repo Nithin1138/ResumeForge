@@ -122,6 +122,71 @@ function SectionTitle({ children, accentColor }: { children: React.ReactNode; ac
   );
 }
 
+// ── Print helper functions ──────────────────────────────────────────────────
+export function prepareResumePrintPortal(): () => void {
+  if (typeof document === "undefined") return () => {};
+
+  const resumeNode = document.getElementById("resume-print-target");
+  if (!resumeNode) return () => {};
+
+  // Remove any previous stale portal
+  const stale = document.getElementById("resume-body-print-portal");
+  if (stale) stale.remove();
+
+  const portal = document.createElement("div");
+  portal.id = "resume-body-print-portal";
+
+  const clone = resumeNode.cloneNode(true) as HTMLElement;
+  clone.id = "resume-print-clone";
+  clone.style.width = "210mm";
+  clone.style.minHeight = "297mm";
+  clone.style.maxHeight = "none";
+  clone.style.height = "auto";
+  clone.style.transform = "none";
+  clone.style.transformOrigin = "top center";
+  clone.style.margin = "0";
+  clone.style.marginBottom = "0";
+  clone.style.padding = "0";
+  clone.style.boxShadow = "none";
+  clone.style.border = "none";
+  clone.style.borderRadius = "0";
+  clone.style.backgroundImage = "none";
+  clone.style.backgroundColor = "white";
+
+  portal.appendChild(clone);
+  document.body.appendChild(portal);
+
+  return () => {
+    const target = document.getElementById("resume-body-print-portal");
+    if (target) target.remove();
+  };
+}
+
+export function printResume(customTitle?: string) {
+  if (typeof window === "undefined") return;
+
+  const cleanup = prepareResumePrintPortal();
+  const originalTitle = document.title;
+  if (customTitle) {
+    document.title = customTitle;
+  } else {
+    document.title = "";
+  }
+
+  const handleAfterPrint = () => {
+    cleanup();
+    document.title = originalTitle;
+    window.removeEventListener("afterprint", handleAfterPrint);
+  };
+
+  window.addEventListener("afterprint", handleAfterPrint);
+
+  setTimeout(() => {
+    window.print();
+    setTimeout(handleAfterPrint, 1500);
+  }, 100);
+}
+
 // ── Main component ─────────────────────────────────────────────────────────
 export default function ResumePreviewPanel({ 
   resume, 
@@ -163,6 +228,33 @@ export default function ResumePreviewPanel({
     });
     ro.observe(el);
     return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    let cleanupPortal: (() => void) | null = null;
+
+    const handleBeforePrint = () => {
+      if (document.getElementById("resume-body-print-portal")) return;
+      cleanupPortal = prepareResumePrintPortal();
+    };
+
+    const handleAfterPrint = () => {
+      if (cleanupPortal) {
+        cleanupPortal();
+        cleanupPortal = null;
+      }
+      const existing = document.getElementById("resume-body-print-portal");
+      if (existing) existing.remove();
+    };
+
+    window.addEventListener("beforeprint", handleBeforePrint);
+    window.addEventListener("afterprint", handleAfterPrint);
+
+    return () => {
+      window.removeEventListener("beforeprint", handleBeforePrint);
+      window.removeEventListener("afterprint", handleAfterPrint);
+      handleAfterPrint();
+    };
   }, []);
 
   const d = {
@@ -491,59 +583,8 @@ function cleanBulletList(bulletsInput: any): string[] {
             size: A4 portrait;
             margin: 0mm !important;
           }
-          html, body {
-            background: white !important;
-            color: black !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 210mm !important;
-            max-width: 210mm !important;
-            height: 297mm !important;
-            max-height: 297mm !important;
-            overflow: hidden !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          header, nav, footer, .print\:hidden {
+          header, nav, footer, .print\\:hidden {
             display: none !important;
-          }
-          html, body, main, div:not(#resume-print-target):not(#resume-modal-portal) {
-            overflow: visible !important;
-            height: auto !important;
-            max-height: none !important;
-            float: none !important;
-            position: static !important;
-            flex: none !important;
-            grid: none !important;
-            transform: none !important;
-          }
-          #resume-print-target, .print-exact {
-            display: block !important;
-            position: fixed !important;
-            left: 0 !important;
-            top: 0 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 210mm !important;
-            max-width: 210mm !important;
-            height: 297mm !important;
-            max-height: 297mm !important;
-            transform: none !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-            border: none !important;
-            overflow: hidden !important;
-            background-image: none !important;
-            background: white !important;
-            visibility: visible !important;
-            box-sizing: border-box !important;
-            z-index: 999999 !important;
-          }
-          #resume-print-target *, .print-exact * {
-            box-sizing: border-box !important;
-            visibility: visible !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
           }
         }
       `}</style>

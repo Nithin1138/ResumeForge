@@ -10,7 +10,7 @@ import { FullResumeOutput } from "@/types/resume";
 import { calculateDynamicMetrics } from "@/lib/atsScoring";
 import { getLocalSession } from "@/lib/authClient";
 import { normalizeNormalBullet } from "@/lib/atsFormatting";
-import ResumePreviewPanel, { formatEducationScore } from "@/components/ResumePreviewPanel";
+import ResumePreviewPanel, { formatEducationScore, printResume } from "@/components/ResumePreviewPanel";
 import CoverLetterModal from "@/components/CoverLetterModal";
 import AIVerificationSection from "@/components/AIVerificationSection";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -686,14 +686,8 @@ export default function SuccessPage({ params }: { params: Promise<{ resumeId: st
   };
 
   const triggerBrowserPrint = () => {
-    // Temporarily blank the document title so the browser doesn't show it
-    // in the print header area.  Restore the original title afterward.
-    const originalTitle = document.title;
-    document.title = "";
-    window.print();
-    // Restore asynchronously – the print dialog blocks the JS thread in most
-    // browsers, so this runs after the user dismisses the dialog.
-    setTimeout(() => { document.title = originalTitle; }, 500);
+    const candidateName = liveResume?.personalInfo?.fullName || resume?.personalInfo?.fullName || "Resume";
+    printResume(`${candidateName.replace(/[^a-zA-Z0-9]/g, "_")}_Resume`);
   };
 
   if (loading) {
