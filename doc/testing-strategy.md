@@ -16,15 +16,17 @@ npm test  # Executes tsx --test tests/**/*.test.ts in ~180ms
 
 ---
 
-## 2. Test Suite Breakdown (20 Tests across 5 Suites)
+## 2. Test Suite Breakdown (40 Tests across 11 Suites)
 
 ```mermaid
-pie title ATSLift Automated Test Distribution (20 Tests)
+pie title ATSLift Automated Test Distribution (40 Tests)
     "Integration & Security (apiFlow.test.ts)" : 5
-    "ATS Normalization (atsFormatting.test.ts)" : 4
+    "ATS Normalization (atsFormatting.test.ts)" : 5
     "ATS Scoring & Fallbacks (atsScoring.test.ts)" : 5
+    "Cover Letter Generator (cover-letter.test.ts)" : 7
     "Eligibility Engine (eligibilityChecker.test.ts)" : 3
     "Mobile Routing Integrity (navigation.test.ts)" : 3
+    "PII Redaction & Sanitization (pii.test.ts)" : 12
 ```
 
 ### Suite 1: API Flow & Webhook Security (`tests/integration/apiFlow.test.ts`)
@@ -43,31 +45,46 @@ pie title ATSLift Automated Test Distribution (20 Tests)
 | `normalizeTechStack` | Tests case normalization, deduplication (e.g. `React, react.js, ReactJS` ➔ `React`), and comma sanitization. |
 | `formatProfileDataForPrompt` | Verifies that candidate vault profiles extract clean, markdown-formatted prompt inputs for the LLM. |
 | `buildAtsScoringPrompt` | Asserts that Job Descriptions are correctly merged into the ATS prompt when provided. |
+| `normalizeNormalBullet` | Validates boilerplate stripping and strict 1–1.5 line (70–125 character) bullet point enforcement for normal density. |
 
 ### Suite 3: ATS Scoring Logic & Heuristic Fallbacks (`tests/unit/atsScoring.test.ts`)
 | Test Name | Focus & Verification |
 | :--- | :--- |
 | `DAILY_ATS_CHECK_LIMIT enforcement` | Validates that free-tier candidate accounts are capped at a maximum of 10 automated checks per day. |
-| `generateHeuristicAtsFallback (minimal profile)` | Verifies that a sparse resume receives a baseline score (e.g. ~45–55) rather than crashing. |
-| `generateHeuristicAtsFallback (points allocation)` | Tests that points are systematically awarded for GitHub links, live projects, CGPA, and metrics. |
-| `Missing JD keyword identification` | Tests that missing domain keywords (e.g. `Docker, Kubernetes, AWS`) are accurately identified in gap reports. |
-| `Boundary clamping [35, 95]` | Asserts that heuristic scores are strictly clamped between 35 and 95 (no unrealistic 0% or 100% scores). |
+| `generateHeuristicAtsFallback (minimal profile)` | Tests algorithmic keyword counting fallback when upstream LLMs time out. |
+| `generateHeuristicAtsFallback (skills & links)` | Confirms point allocation for GitHub/LinkedIn links, quantified metrics, and matching skills. |
+| `generateHeuristicAtsFallback (missing keywords)` | Asserts accurate detection of job description keywords absent from the candidate resume. |
+| `Score clamping [35, 95]` | Guarantees scores never violate the realistic bounds (35 to 95). |
 
-### Suite 4: Campus Placement Eligibility Engine (`tests/unit/eligibilityChecker.test.ts`)
+### Suite 4: Cover Letter Engine (`tests/unit/cover-letter.test.ts`)
 | Test Name | Focus & Verification |
 | :--- | :--- |
-| `Strict non-rejection uncertain fallback rules` | Asserts that when an email is ambiguous, the system outputs `uncertain` rather than prematurely rejecting the student. |
-| `BRANCH_SKILL_CONFIGS mapping` | Validates discipline-specific skill requirements across CSE, ECE, EEE, Mechanical, and Civil engineering. |
-| `Personalized branch match instruction` | Verifies that multi-branch job dumps are filtered specifically to the candidate's enrolled department. |
+| `Candidate name deduplication` | Strips repeated candidate names appended via newlines or commas in sign-offs. |
+| `Case-insensitive name stripping` | Ensures candidate name duplicates are caught across mixed casings and trailing spaces. |
+| `Sign-off punctuation enforcement` | Validates standard comma attachment for greetings and closings. |
+| `Generic placeholder removal` | Removes `[Your Name]`, `[Candidate Name]` artifacts. |
+| `Null/undefined safety` | Handles empty or missing sign-off values gracefully without runtime exceptions. |
 
-### Suite 5: Mobile Navigation & Routing Integrity (`tests/unit/navigation.test.ts`)
+### Suite 5: PII Redaction & Data Protection (`tests/unit/pii.test.ts`)
 | Test Name | Focus & Verification |
 | :--- | :--- |
-| `Valid non-empty navigation paths` | Asserts that all mobile drawer and bottom bar links target valid, non-empty paths starting with `/`. |
-| `Unique route targets` | Validates that no duplicate destination paths exist across the primary navigation items. |
-| `Active route matching logic` | Verifies that route prefix matching (e.g. `/myresumes/preview/123` matching `/myresumes`) highlights the correct tab. |
+| `Email & Phone masking` | Masks email local-parts and phone numbers while keeping essential verification tokens. |
+| `Text Stream PII Scrubber` | Redacts Aadhaar IDs, SSNs, Bearer tokens, and secrets from unstructured output. |
+| `ATS Profile Anonymization` | Strips candidate identifiers before sending data to external LLMs. |
+| `Deep Logger Sanitizer` | Recursively cleans password, token, and authorization fields before logging. |
 
----
+### Suite 6: Campus Placement Eligibility (`tests/unit/eligibilityChecker.test.ts`)
+| Test Name | Focus & Verification |
+| :--- | :--- |
+| `Branch matching rules` | Asserts CSE, ECE, Mech, Civil requirement matching against recruiter criterion. |
+| `Strict non-rejection rules` | Validates uncertain evaluation fallbacks to avoid false negative candidate exclusions. |
+
+### Suite 7: Mobile Navigation (`tests/unit/navigation.test.ts`)
+| Test Name | Focus & Verification |
+| :--- | :--- |
+| `Route validity` | Validates all mobile drawer and bottom-nav routes map to active Next.js endpoints. |
+| `No duplicate routes` | Guarantees uniqueness across mobile touch targets. |
+----
 
 ## 3. Running the Test Suite
 
