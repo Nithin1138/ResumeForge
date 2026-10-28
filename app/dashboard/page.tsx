@@ -71,11 +71,11 @@ export default async function DashboardPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <CoverLetterButton variant="header" />
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+            <CoverLetterButton variant="header" className="max-sm:px-4 max-sm:py-3 max-sm:text-[11px]" />
             <Link
               href="/build"
-              className="px-6 py-3.5 bg-primary hover:bg-primary/95 text-white text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer shrink-0"
+              className="px-5 sm:px-6 py-3 sm:py-3.5 bg-primary hover:bg-primary/95 text-white text-[11px] sm:text-xs font-bold rounded-full inline-flex items-center justify-center space-x-2 transition-all shadow-sm hover:shadow-md cursor-pointer shrink-0"
             >
               <Plus className="w-4 h-4" />
               <span>Build New Resume</span>
